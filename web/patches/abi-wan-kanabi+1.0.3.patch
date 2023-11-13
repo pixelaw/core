@@ -1,0 +1,32 @@
+diff --git a/node_modules/abi-wan-kanabi/index.ts b/node_modules/abi-wan-kanabi/index.ts
+index 8552c83..f49d1fe 100644
+--- a/node_modules/abi-wan-kanabi/index.ts
++++ b/node_modules/abi-wan-kanabi/index.ts
+@@ -12,8 +12,14 @@ export function call<
+   TAbi extends Abi,
+   TFunctionName extends ExtractAbiFunctionNames<TAbi>,
+ >(
++  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
++  // @ts-ignore
+   abi: TAbi,
++  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
++  // @ts-ignore
+   f: TFunctionName,
++  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
++  // @ts-ignore
+   args: FunctionArgs<TAbi, TFunctionName>,
+ ): FunctionRet<TAbi, TFunctionName> {
+   throw new Error('todo')
+diff --git a/node_modules/abi-wan-kanabi/kanabi.ts b/node_modules/abi-wan-kanabi/kanabi.ts
+index 2de07f1..969a43b 100644
+--- a/node_modules/abi-wan-kanabi/kanabi.ts
++++ b/node_modules/abi-wan-kanabi/kanabi.ts
+@@ -175,6 +175,8 @@ export type ExtractAbiEnum<
+ > = Extract<ExtractAbiEnums<TAbi>, { name: TEnumName }>
+ 
+ // Question: why do we need TAbi extends Abi here, it's not used ?
++// eslint-disable-next-line @typescript-eslint/ban-ts-comment
++// @ts-ignore
+ type PrimitiveTypeLookup<TAbi extends Abi> = {
+   [_ in CairoFelt]: BigNumberish
+ } & {

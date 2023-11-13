@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+spec:
+  replicas: {{ .Values.replicaSet }}
+  selector:
+    matchLabels:
+      app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+    spec: 
+      containers:
+      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+        image: {{ .Values.dockerImage }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.webappContainerService.port }}                   

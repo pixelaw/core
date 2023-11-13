@@ -1,0 +1,174 @@
+query getEntities {
+  entities(keys: ["*"], first: 4096) {
+    edges {
+      node {
+        keys
+        models {
+          ... on Alert {
+            x
+            y
+            alert
+            __typename
+          }
+          ... on AppName {
+            name
+            system
+            __typename
+          }
+          ... on App {
+            name
+            system
+            __typename
+          }
+          ... on CoreActionsAddress {
+            key
+            value
+            __typename
+          }
+          ... on Game {
+            x
+            y
+            id
+            state
+            player1
+            player2
+            player1_commit
+            player1_move
+            player2_move
+            started_timestamp
+            __typename
+          }
+          ... on Permissions {
+            allowing_app
+            allowed_app
+            permission {
+              alert
+              app
+              color
+              owner
+              text
+              timestamp
+              action
+              __typename
+            }
+            __typename
+          }
+          ... on Pixel {
+            x
+            y
+            created_at
+            updated_at
+            alert
+            app
+            color
+            owner
+            text
+            timestamp
+            action
+            __typename
+          }
+          ... on Player {
+            player_id
+            wins
+            __typename
+          }
+          ... on Snake {
+            length
+            first_segment_id
+            last_segment_id
+            direction
+            owner
+            color
+            text
+            is_dying
+            __typename
+          }
+          ... on SnakeSegment {
+            id
+            previous_id
+            next_id
+            x
+            y
+            pixel_original_color
+            pixel_original_text
+            __typename
+          }
+        }
+      }
+    }
+  }
+}
+
+query all_filtered_entities(
+  $first: Int
+  $xMin: u64
+  $xMax: u64
+  $yMin: u64
+  $yMax: u64
+) {
+  pixelModels(
+    first: $first
+    where: { xGTE: $xMin, xLTE: $xMax, yGTE: $yMin, yLTE: $yMax }
+  ) {
+    edges {
+      node {
+        x
+        y
+        created_at
+        updated_at
+        alert
+        app
+        color
+        owner
+        text
+        timestamp
+        action
+        __typename
+      }
+    }
+  }
+}
+
+query getNeedsAttention($first: Int, $address: ContractAddress){
+  pixelModels(first: $first, where: { ownerEQ: $address}) {
+    edges {
+      node {
+        x
+        y
+        created_at
+        updated_at
+        alert
+        app
+        color
+        owner
+        text
+        timestamp
+        action
+        __typename
+      }
+    }
+  }
+  alertModels(first:$first, where: { alert: true}){
+    edges{
+      node{
+        x
+        y
+        alert
+        __typename
+      }
+    }
+  }
+}
+
+query apps {
+  appModels {
+    edges {
+      node {
+        action
+        name
+        system
+        __typename
+      }
+    }
+  }
+}

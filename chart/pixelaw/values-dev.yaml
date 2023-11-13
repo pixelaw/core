@@ -1,0 +1,39 @@
+projectName: pixelaw
+nameSpace: dev
+appType:
+  frontend: webapp
+  database: db
+  api: api
+
+replicaSet: 1
+
+minReplicas: 1
+maxReplicas: 3
+averageUtilization: 50
+
+webappContainerService:
+  type: ClusterIP  # {{ .Values.webappContainerService.type }}
+  port: 3000       # {{ .Values.webappContainerService.port }}
+
+katanaContainerService:
+  type: ClusterIP  # {{ .Values.katanaContainerService.type }}
+  port: 5050       # {{ .Values.katanaContainerService.port }}
+
+toriiContainerService:
+  type: ClusterIP  # {{ .Values.toriiContainerService.type }}
+  port: 8080       # {{ .Values.toriiContainerService.port }}
+
+grpcToriiContainerService:
+  type: ClusterIP  # {{ .Values.grpcToriiContainerService.type }}
+  port: 50051      # {{ .Values.grpcToriiContainerService.port }}
+
+
+domainName: pixelaw.xyz                # {{ .Values.domainName }}
+
+subDomainName: 
+  pixelaw: demo                     # {{ .Values.subDomainName.pixelaw }}
+  katana: katana.demo           # {{ .Values.subDomainName.katana }}
+  torii: torii.demo             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc.demo    # {{ .Values.subDomainName.grpcTorii }}
+
+dockerImage: oostvoort/pixelaw-dev:latest

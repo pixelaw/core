@@ -1,0 +1,6 @@
+target
+node_modules
+.env
+.idea
+deployed.log
+last_deployed_world

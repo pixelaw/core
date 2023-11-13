@@ -1,0 +1,29 @@
+{
+  "name": "bots",
+  "version": "1.0.0",
+  "description": "gets queueEvents and processes them",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wait-port 5050 && nodemon index.ts",
+    "selector": "tsx utils/selector.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.8.4",
+    "@aws-sdk/client-s3": "^3.418.0",
+    "canvas": "^2.11.2",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
+    "pngjs": "^7.0.0",
+    "starknet": "^5.19.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.7.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "wait-port": "^1.0.4"
+  }
+}

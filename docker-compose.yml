@@ -1,0 +1,19 @@
+services:
+  keiko:
+    image: oostvoort/keiko:v0.0.6
+    container_name: keiko
+    ports:
+      - "5050:5050"
+      - "3000:3000"
+      - "8080:8080"
+      - "50051"
+    restart: unless-stopped
+    volumes:
+      - ./contracts:/opt/contracts
+    networks:
+      - pixelaw
+
+networks:
+  pixelaw:
+    driver: bridge
+

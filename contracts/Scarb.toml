@@ -1,0 +1,47 @@
+[package]
+cairo-version = "2.3.0"
+name = "pixelaw"
+version = "0.1.0"
+homepage = "https://github.com/pixelaw/contracts"
+
+[cairo]
+sierra-replace-ids = true
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.3.10" }
+
+[[target.dojo]]
+build-external-contracts = []
+
+[lib]
+
+[tool.dojo]
+initializer_class_hash = "0xbeef"
+
+[scripts]
+init_auth = "./scripts/init_auth.sh"
+post_deploy = "./scripts/update_scarb.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh"
+post_deploy_mac = "./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh"
+deploy = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
+deploy_mac = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
+spawn_pixel_1 = "./scripts/spawn_pixel_1.sh"
+put_color_1 = "./scripts/put_color_1.sh"
+spawn_rps_1 = "./scripts/spawn_rps_1.sh"
+put_rps_1 = "./scripts/put_rps_1.sh"
+simple_test = "./scripts/simple_test.sh"
+get_2 = "./scripts/get_2.sh"
+spawn_pixel_2 = "./scripts/spawn_pixel_2.sh"
+put_color_2 = "./scripts/put_color_2.sh"
+spawn_rps_2 = "./scripts/spawn_rps_2.sh"
+update_accounts = "./scripts/update_accounts.sh"
+
+[tool.dojo.env]
+rpc_url = "http://localhost:5050/"
+world_address = "0x72025860d14238aa9fe95c5657e130155518d9d1e8eaef1e174ef4b40972720"
+
+# Default account for katana with seed = 0
+account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
+private_key = "0x1800000000300000180000000000030000000000003006001800006600"
+
+#keystore_password = "password"
+#keystore_path = "../keystore.json"
