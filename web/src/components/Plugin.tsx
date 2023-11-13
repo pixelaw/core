@@ -1,20 +1,78 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import Image from '@/components/ui/Image'
-import { plugins } from '@/global/config'
 import { Button } from '@/components/ui/button'
 import Footer from '@/components/Footer'
 import { gameModeAtom, positionWithAddressAndTypeAtom } from '@/global/states'
 import { useAtom, useAtomValue } from 'jotai'
 import { useApps } from '@/hooks/entities/useApps'
-import { useEntityQuery } from '@dojoengine/react'
+import { useComponentValue, useEntityQuery } from '@dojoengine/react'
 import { Has } from '@latticexyz/recs'
 import { useDojo } from '@/DojoContext'
-import { felt252ToString } from '@/global/utils'
+import { felt252ToString, felt252ToUnicode } from '@/global/utils'
+import { getEntityIdFromKeys } from '@dojoengine/utils'
+import { shortString } from 'starknet'
 
 const Apps: React.FC = () => {
   useApps()
   return <></>
+}
+
+type PluginButtonPropsType = {
+  // contract address
+  system: string
+  onSelect?: (appName: string) => void
+  expanded?: boolean,
+  selected?: boolean
+}
+
+const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonPropsType) => {
+  const {
+    setup: {
+      components: {
+        App
+      }
+    },
+  } = useDojo()
+
+  const entityId = getEntityIdFromKeys([BigInt(system)])
+  const app = useComponentValue(App, entityId)
+  const name = felt252ToString(app?.name ?? 'app name')
+  const icon = felt252ToUnicode(app?.icon ?? 'app icon')
+  const isOpen = expanded === true
+
+  return (
+    <div
+      className={cn(['flex justify-center items-center w-full ', {'gap-x-xs justify-start': isOpen}])}
+      onClick={() => {
+        if (onSelect) onSelect(name)
+      }}
+    >
+      <Button
+        variant={'icon'}
+        size={'icon'}
+        className={cn([
+          'font-emoji',
+          'my-xs',
+          'text-center text-[36px]',
+          'border border-brand-violetAccent rounded',
+          {'border-white': selected}
+        ])}
+      >
+        {icon}
+
+      </Button>
+
+      <h3 className={cn(
+        ['text-brand-skyblue text-left text-base uppercase font-silkscreen',
+          {'hidden': !isOpen},
+          {'text-white': selected}
+        ])}
+      >
+        {name}
+      </h3>
+    </div>
+  )
 }
 
 export default function Plugin() {
@@ -22,19 +80,19 @@ export default function Plugin() {
   const {
     setup: {
       components: {
-        AppName
+        App, AppName
       }
     },
   } = useDojo()
     const [isOpen, setIsOpen] = React.useState<boolean>(false)
 
   const [gameMode, setGameMode] = useAtom(gameModeAtom)
+  const selectedAppId = getEntityIdFromKeys([BigInt(shortString.encodeShortString(gameMode))])
+  const selectedApp = useComponentValue(AppName, selectedAppId)
+
   const positionWithAddressAndType = useAtomValue(positionWithAddressAndTypeAtom)
 
-
-  // TODO: ideally the icons should also come from the contracts instead of hardcoded in
-  const apps = useEntityQuery([Has(AppName)])
-    .map(name => felt252ToString(name))
+  const apps = useEntityQuery([Has(App)])
 
     return (
         <>
@@ -83,41 +141,16 @@ export default function Plugin() {
                         ])}
                     >
                         {
-                            plugins
-                              .filter(plugin => apps.includes(plugin.name))
-                              .map((plugin, index) => {
-                              const selected = plugin.name === gameMode
+                            apps
+                              .map((app) => {
                                 return (
-                                    <div
-                                      key={index}
-                                      className={cn(['flex justify-center items-center w-full ', {'gap-x-xs justify-start': isOpen}])}
-                                      onClick={() => setGameMode(plugin.name as "none" | "paint" | "rps" | "snake")}
-                                    >
-                                        <Button
-                                            key={index}
-                                            variant={'icon'}
-                                            size={'icon'}
-                                            className={cn([
-                                                'font-emoji',
-                                                'my-xs',
-                                                'text-center text-[36px]',
-                                                'border border-brand-violetAccent rounded',
-                                                {'border-white': selected}
-                                            ])}
-                                        >
-                                            {plugin.icon}
-
-                                        </Button>
-
-                                        <h3 className={cn(
-                                            ['text-brand-skyblue text-left text-base uppercase font-silkscreen',
-                                                {'hidden': !isOpen},
-                                              {'text-white': selected}
-                                            ])}
-                                        >
-                                            {plugin.name}
-                                        </h3>
-                                    </div>
+                                    <PluginButton
+                                      key={app}
+                                      system={app as unknown as string}
+                                      selected={(app as unknown as string) === selectedApp?.system}
+                                      onSelect={(name) => setGameMode(name)}
+                                      expanded={isOpen}
+                                    />
                                 )
                             })
                         }

@@ -11,6 +11,9 @@ struct App {
     #[key]
     system: ContractAddress,
     name: felt252,
+    // ipfs link to the contract's manifest.json
+    manifest: felt252,
+    icon: felt252,
     // Default action for the UI (a function in the system)
     action: felt252
 }

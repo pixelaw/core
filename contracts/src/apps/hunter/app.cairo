@@ -48,7 +48,7 @@ mod hunter_actions {
         fn init(self: @ContractState) {
             let core_actions = get_core_actions(self.world_dispatcher.read());
 
-            core_actions.update_app_name(APP_KEY);
+            core_actions.update_app_name(APP_KEY, '');
         }
 
 

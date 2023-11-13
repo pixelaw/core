@@ -88,6 +88,8 @@ export type App = {
   __typename?: 'App';
   action?: Maybe<Scalars['felt252']['output']>;
   entity?: Maybe<World__Entity>;
+  icon?: Maybe<Scalars['felt252']['output']>;
+  manifest?: Maybe<Scalars['felt252']['output']>;
   name?: Maybe<Scalars['felt252']['output']>;
   system?: Maybe<Scalars['ContractAddress']['output']>;
 };
@@ -157,6 +159,8 @@ export type AppOrder = {
 
 export enum AppOrderField {
   Action = 'ACTION',
+  Icon = 'ICON',
+  Manifest = 'MANIFEST',
   Name = 'NAME',
   System = 'SYSTEM'
 }
@@ -224,6 +228,20 @@ export type AppWhereInput = {
   actionLT?: InputMaybe<Scalars['felt252']['input']>;
   actionLTE?: InputMaybe<Scalars['felt252']['input']>;
   actionNEQ?: InputMaybe<Scalars['felt252']['input']>;
+  icon?: InputMaybe<Scalars['felt252']['input']>;
+  iconEQ?: InputMaybe<Scalars['felt252']['input']>;
+  iconGT?: InputMaybe<Scalars['felt252']['input']>;
+  iconGTE?: InputMaybe<Scalars['felt252']['input']>;
+  iconLT?: InputMaybe<Scalars['felt252']['input']>;
+  iconLTE?: InputMaybe<Scalars['felt252']['input']>;
+  iconNEQ?: InputMaybe<Scalars['felt252']['input']>;
+  manifest?: InputMaybe<Scalars['felt252']['input']>;
+  manifestEQ?: InputMaybe<Scalars['felt252']['input']>;
+  manifestGT?: InputMaybe<Scalars['felt252']['input']>;
+  manifestGTE?: InputMaybe<Scalars['felt252']['input']>;
+  manifestLT?: InputMaybe<Scalars['felt252']['input']>;
+  manifestLTE?: InputMaybe<Scalars['felt252']['input']>;
+  manifestNEQ?: InputMaybe<Scalars['felt252']['input']>;
   name?: InputMaybe<Scalars['felt252']['input']>;
   nameEQ?: InputMaybe<Scalars['felt252']['input']>;
   nameGT?: InputMaybe<Scalars['felt252']['input']>;
@@ -1327,7 +1345,7 @@ export type GetNeedsAttentionQuery = { __typename?: 'World__Query', pixelModels?
 export type AppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AppsQuery = { __typename?: 'World__Query', appModels?: { __typename?: 'AppConnection', edges?: Array<{ __typename?: 'AppEdge', node?: { __typename: 'App', action?: any | null, name?: any | null, system?: any | null } | null } | null> | null } | null };
+export type AppsQuery = { __typename?: 'World__Query', appModels?: { __typename?: 'AppConnection', edges?: Array<{ __typename?: 'AppEdge', node?: { __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | null } | null> | null } | null };
 
 
 export const GetEntitiesDocument = gql`
@@ -1494,6 +1512,8 @@ export const AppsDocument = gql`
   appModels {
     edges {
       node {
+        manifest
+        icon
         action
         name
         system

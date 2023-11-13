@@ -19,7 +19,7 @@ import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
 
 type DrawPanelType = {
-  gameMode: 'none' | 'paint' | 'rps' | 'snake',
+  gameMode: string,
   cellSize: number,
   selectedHexColor: string
   coordinates: [ number | undefined, number | undefined ] | undefined
