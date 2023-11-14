@@ -5,7 +5,7 @@ use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 const APP_KEY: felt252 = 'minesweeper';
-const APP_ICON: felt252 = 'U+1F4A3';
+const APP_ICON: felt252 = 'U+1F4A5';
 const GAME_MAX_DURATION: u64 = 20000;
 
 /// BASE means using the server's default manifest.json handler
