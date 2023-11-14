@@ -3,9 +3,9 @@ import { useMutation } from '@tanstack/react-query'
 import { convertToDecimal, felt252ToString } from '@/global/utils'
 import { EntityIndex, getComponentValue } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import manifest from './../../dojo/manifest.json'
 import { num } from 'starknet'
 import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction'
+import useManifest from '@/hooks/systems/useManifest'
 
 const DEFAULT_PARAMETERS_TYPE = 'pixelaw::core::utils::DefaultParameters'
 
@@ -15,45 +15,39 @@ const convertSnakeToPascal = (snakeCaseString: string) => {
   }).join('')
 }
 
-/// @dev this does not handle struct params yet...will support this on a later iteration
-const useInteract = (
-  contractName: string,
-  color: string,
-  position: {x: number, y: number}
-) => {
-
-  const {
-    setup: {
-      systemCalls: {interact},
-      components: {Pixel}
-    },
-    account: { account }
-  } = useDojo()
-
-  const solidColor = color.replace('#', '0xFF')
-  const decimalColor = convertToDecimal(solidColor)
-
-  const entityId = getEntityIdFromKeys([BigInt(position.x), BigInt(position.y)]) as EntityIndex
-  const pixelValue = getComponentValue(Pixel, entityId)
-
-  const action = (!pixelValue?.action || pixelValue?.action.toString() === '0x0') ? 'interact' : pixelValue.action
-  const methodName = felt252ToString(action)
-
+const getParamsDef: (manifest: any, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
+  (manifest, contractName, methodName, position, strict = false) => {
+  if (!manifest) {
+    if (strict) throw new Error('manifest not found')
+    else return []
+  }
   const contract = manifest.contracts.find(contract => contract.name === contractName)
-  if (!contract) throw new Error(`unknown contract: ${contractName}`)
+  if (!contract) {
+    if (strict) throw new Error(`unknown contract: ${contractName}`)
+    else return []
+  }
   const interfaceName = `I${convertSnakeToPascal(contractName)}`
   const methods = contract.abi.find(x => x.type === 'interface' && x.name.includes(interfaceName))
-  if (!methods) throw new Error(`unknown interface: ${interfaceName}`)
-  if (!methods?.items) throw new Error(`no methods for interface: ${interfaceName}`)
+  if (!methods) {
+    if (strict) throw new Error(`unknown interface: ${interfaceName}`)
+    else return []
+  }
+  if (!methods?.items) {
+    if (strict) throw new Error(`no methods for interface: ${interfaceName}`)
+    else return []
+  }
 
   let functionDef = methods.items.find(method => method.name === methodName && method.type === 'function')
   if (!functionDef) {
     functionDef = methods.items.find(method => method.name === 'interact' && method.type === 'function')
-    if (!functionDef) throw new Error(`function ${methodName} not found`)
+    if (!functionDef) {
+      if (strict) throw new Error(`function ${methodName} not found`)
+      else return []
+    }
   }
   const parameters = functionDef.inputs.filter(input => input.type !== DEFAULT_PARAMETERS_TYPE)
 
-  const paramsDef: ParamDefinitionType[] = parameters.map(param => {
+  return parameters.map(param => {
     if (isInstruction(param.name)) {
       // problem with types on contract.abi
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -64,18 +58,18 @@ const useInteract = (
     let type: 'number' | 'string' | 'enum' = 'number'
     let variants: {name: string, value: number}[] = []
     if (!isPrimitiveType) {
-        const typeDefinition = contract.abi.find(x => x.name === param.type)
-        if (typeDefinition?.type === "enum") {
-          variants = (typeDefinition?.variants ?? [])
-            .map((variant, index) => {
-              return {
-                name: variant.name,
-                value: index
-              }
-            })
-            .filter(variant => variant.name !== 'None')
-          type = 'enum'
-        }
+      const typeDefinition = contract.abi.find(x => x.name === param.type)
+      if (typeDefinition?.type === "enum") {
+        variants = (typeDefinition?.variants ?? [])
+          .map((variant, index) => {
+            return {
+              name: variant.name,
+              value: index
+            }
+          })
+          .filter(variant => variant.name !== 'None')
+        type = 'enum'
+      }
     } else if (param.type.includes("core::felt252")) {
       type = 'string'
     }
@@ -92,15 +86,50 @@ const useInteract = (
 
     }
   })
+}
+
+/// @dev this does not handle struct params yet...will support this on a later iteration
+const useInteract = (
+  appName: string,
+  color: string,
+  position: {x: number, y: number}
+) => {
+
+  const {
+    setup: {
+      systemCalls: {interact},
+      components: {Pixel},
+      network: { switchManifest }
+    },
+    account: { account }
+  } = useDojo()
+
+  const manifest = useManifest({ name: appName })
+
+  const contractName = `${appName}_actions`
+
+  const solidColor = color.replace('#', '0xFF')
+  const decimalColor = convertToDecimal(solidColor)
+
+  const entityId = getEntityIdFromKeys([BigInt(position.x), BigInt(position.y)]) as EntityIndex
+  const pixelValue = getComponentValue(Pixel, entityId)
+
+  const action = (!pixelValue?.action || pixelValue?.action.toString() === '0x0') ? 'interact' : pixelValue.action
+  const methodName = felt252ToString(action)
+
+  const paramsDef = getParamsDef(manifest?.data, contractName, methodName, position)
 
   const fillableParamDefs = paramsDef.filter(paramDef => paramDef?.value == null)
 
   return {
+    manifest,
     interact: useMutation({
       mutationKey: ['useInteract', contractName, color],
       mutationFn: async ({otherParams}: {
         otherParams?: Record<string, any>
       }) => {
+        if (!manifest.data) throw new Error('manifest has not loaded yet')
+        switchManifest(manifest.data)
         if (!otherParams && fillableParamDefs.length > 0) throw new Error('incomplete parameters')
         else if (!otherParams && !paramsDef.length) {
           return interact(account, contractName, position, decimalColor, methodName)

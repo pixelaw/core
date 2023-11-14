@@ -57,5 +57,9 @@ export async function setupNetwork() {
     entities: async (component: string, partition: number) => {
       return provider.entities(component, partition);
     },
+
+    switchManifest: (manifest: any) => {
+      provider.manifest = manifest
+    }
   };
 }

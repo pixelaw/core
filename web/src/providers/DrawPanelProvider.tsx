@@ -74,7 +74,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const [position, setPositionWithAddressAndType] = useAtom(positionWithAddressAndTypeAtom)
 
   const { interact, params } = useInteract(
-    `${gameMode}_actions`,
+    `${gameMode}`,
     selectedHexColor,
     {
       x: position?.x ?? 10,

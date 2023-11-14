@@ -2,7 +2,7 @@
 
 SYSTEMS=("paint" "minesweeper" "snake" "rps")
 BASE_URL="http://localhost:3000/manifests"
-JSON_FILE="../target/dev/manifest.json"
+JSON_FILE="./target/dev/manifest.json"
 
 echo "Upload manifests for system"
 for system in ${SYSTEMS[@]}; do
