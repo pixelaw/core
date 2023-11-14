@@ -1,6 +1,6 @@
 services:
   keiko:
-    image: oostvoort/keiko:v0.0.6
+    image: oostvoort/keiko:v0.0.7
     container_name: keiko
     ports:
       - "5050:5050"
@@ -9,7 +9,7 @@ services:
       - "50051"
     restart: unless-stopped
     volumes:
-      - ./contracts:/opt/contracts
+      - ./contracts:/keiko/contracts
     networks:
       - pixelaw
 

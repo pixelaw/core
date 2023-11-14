@@ -20,7 +20,7 @@ initializer_class_hash = "0xbeef"
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"
-post_deploy = "./scripts/update_scarb.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh && ./scripts/upload_manifest.sh"
+post_deploy = "./scripts/update_scarb.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh && bash ./scripts/upload_manifest.sh"
 post_deploy_mac = "./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh"
 deploy = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
 deploy_mac = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
