@@ -26,7 +26,7 @@ const useManifest = ({name}: PropsType) => {
 
   return useQuery(
     {
-      queryKey: [ 'manifest', manifest],
+      queryKey: ['manifest', manifest],
       queryFn: async () => {
         if (manifest.startsWith('BASE/')) {
           const result = await fetch(manifest.replace('BASE', ''))

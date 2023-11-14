@@ -6,6 +6,7 @@ import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { num } from 'starknet'
 import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction'
 import useManifest from '@/hooks/systems/useManifest'
+import { InterfaceType, Manifest } from '@/global/types'
 
 const DEFAULT_PARAMETERS_TYPE = 'pixelaw::core::utils::DefaultParameters'
 
@@ -15,7 +16,7 @@ const convertSnakeToPascal = (snakeCaseString: string) => {
   }).join('')
 }
 
-const getParamsDef: (manifest: any, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
+const getParamsDef: (manifest: Manifest, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
   (manifest, contractName, methodName, position, strict = false) => {
   if (!manifest) {
     if (strict) throw new Error('manifest not found')
@@ -27,7 +28,7 @@ const getParamsDef: (manifest: any, contractName: string, methodName: string, po
     else return []
   }
   const interfaceName = `I${convertSnakeToPascal(contractName)}`
-  const methods = contract.abi.find(x => x.type === 'interface' && x.name.includes(interfaceName))
+  const methods = contract.abi.find(x => x.type === 'interface' && x.name.includes(interfaceName)) as InterfaceType | undefined
   if (!methods) {
     if (strict) throw new Error(`unknown interface: ${interfaceName}`)
     else return []
@@ -126,6 +127,7 @@ const useInteract = (
     interact: useMutation({
       mutationKey: ['useInteract', contractName, color],
       mutationFn: async ({otherParams}: {
+        // eslint-disable-next-line
         otherParams?: Record<string, any>
       }) => {
         if (!manifest.data) throw new Error('manifest has not loaded yet')

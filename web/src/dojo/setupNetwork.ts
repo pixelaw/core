@@ -4,23 +4,14 @@ import { RPCProvider, Query, } from "@dojoengine/core";
 import { Account, num } from "starknet";
 import { GraphQLClient } from 'graphql-request';
 import { getSdk } from '@/generated/graphql';
-// import { streamToString } from '@/global/utils'
 import manifest from './manifest.json'
+import { Manifest } from '@/global/types'
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
-
-// const getManifest: () => Promise<{ world: { address?: string }, contracts: { name: string, address: string }[]}> = async () => {
-//   const result = await  fetch("/world/manifest.json")
-//   const stream = result.body
-//   if (!stream) return {}
-//   return JSON.parse( await streamToString(stream))
-// }
 
 export async function setupNetwork() {
   // Extract environment variables for better readability.
   const { VITE_PUBLIC_NODE_URL, VITE_PUBLIC_TORII } = import.meta.env;
-
-  // const manifest = await getManifest()
 
   const worldAddress = manifest.world.address
 
@@ -58,7 +49,7 @@ export async function setupNetwork() {
       return provider.entities(component, partition);
     },
 
-    switchManifest: (manifest: any) => {
+    switchManifest: (manifest: Manifest) => {
       provider.manifest = manifest
     }
   };
