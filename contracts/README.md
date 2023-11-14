@@ -1,12 +1,20 @@
-# Paint
+# PixeLAW Contracts
+Contracts written in Cairo using Dojo to showcase a Pixel World with app interoperability. Its
+interoperability is made possible with core actions. Apps are any other contracts that are deployed
+to the Pixel World.
 
-## Overview
+## Default Apps
+These are apps developed by PixeLAW
+
+## Paint
+
+### Overview
 The Paint App is a collection of functions that allow players to manipulate the color of a Pixel.
 
-## Properties
+### Properties
 None, Paint is just behavior.
 
-## Behavior
+### Behavior
 - public put_color (color)
   - context: position
 - both put_fading_color (color)
@@ -15,19 +23,19 @@ None, Paint is just behavior.
   - context: position
 
 
-# Snake
+## Snake
 
-## Overview
+### Overview
 It it basically the game "snake", but with Pixels not necessarily available to move on/over. It is a player-initialized instance that coordinates pixel's color and text being overriden and reverted (if allowed).
 If hitting an unowned Pixel, the snake will move, if Pixel is owned by player, Snake grows, and if Pixel is not owned but it's App allows Snake, it shrinks. In all other cases, Snake dies.
 
-## Properties
+### Properties
 - position
 - color
 - text
 - direction
 
-## Behavior
+### Behavior
 
 - public spawn ( color, text, direction )
   - context: position
@@ -37,28 +45,28 @@ If hitting an unowned Pixel, the snake will move, if Pixel is owned by player, S
 
 
 
-# Rock Paper Scissors
+## Rock Paper Scissors
 
-## Overview
+### Overview
 Each Pixel can contain an instance of the RPS App, where it holds a commitment (rock, paper or scissors) from player1. Any other player can now "join" and submit their move. Player1 can then reveal, the winner is decided then. Winner gains ownership of the losing RPS pixel. In case of a draw, the pixel is reset.
 The App is also tracking score for each Player.
 
-## Global Properties
+### Global Properties
 - player+wins
 
-## Game-based Properties
+### Game-based Properties
 - player1
 - player2
 
-## Behavior
+### Behavior
 - create (position, player1, commit1)
 - join (position, player2, move2)
 - finish (position, move1, salt1)
 - reset (position)
 
 
-# CommitReveal inputs
-## Param of the action
+## CommitReveal inputs
+### Param of the action
 - (Hashed Commit)
   - parametername of action has structure: "PREFIX_TYPE_NAME"
   - PREFIX is "cr_"
@@ -68,7 +76,7 @@ The App is also tracking score for each Player.
   - parametername of action has structure: "PREFIX_NAME"
   - PREFIX shall always be "rv_"
   - NAME is the same name user during sending the commit
-## Clientside functioning
+### Clientside functioning
 - If client finds a param starting with "cr_"
 - It will prompt user for a param with TYPE
   - example:
