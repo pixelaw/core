@@ -5,7 +5,11 @@ use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 const APP_KEY: felt252 = 'minesweeper';
+const APP_ICON: felt252 = 'U+1F4A3';
 const GAME_MAX_DURATION: u64 = 20000;
+
+/// BASE means using the server's default manifest.json handler
+const APP_MANIFEST: felt252 = 'BASE/manifests/minesweeper';
 
 #[derive(Serde, Copy, Drop, PartialEq, Introspect)]
 enum State {
@@ -15,7 +19,7 @@ enum State {
 }
 
 #[derive(Model, Copy, Drop, Serde, SerdeLen)]
-struct Game {
+struct MinesweeperGame {
     #[key]
     x: u64,
     #[key]
@@ -86,7 +90,7 @@ mod minesweeper_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
-    use super::{APP_KEY, GAME_MAX_DURATION, Game, State};
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST, GAME_MAX_DURATION, MinesweeperGame, State};
     use pixelaw::core::utils::{get_core_actions, Position, DefaultParameters};
 	use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
     use debug::PrintTrait;
@@ -110,7 +114,7 @@ mod minesweeper_actions {
             let world = self.world_dispatcher.read();
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.update_app_name(APP_KEY, '');
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
 
             core_actions.update_permission('snake',
                 Permission {
@@ -143,7 +147,7 @@ mod minesweeper_actions {
             let mut pixel = get!(world, (position.x, position.y), (Pixel));
 			let caller_address = get_caller_address();
             let caller_app = get!(world, caller_address, (App));
-			let mut game = get!(world, (position.x, position.y), Game);
+			let mut game = get!(world, (position.x, position.y), MinesweeperGame);
 			let timestamp = starknet::get_block_timestamp();
 
 			//if pixel.app == caller_app.system && game.state == State::Open && pixel.alert == 'reveal'
@@ -160,7 +164,7 @@ mod minesweeper_actions {
 			{
 				let mut id = world.uuid(); //do we need this in this condition?
                 game =
-                    Game {
+                    MinesweeperGame {
                         x: position.x,
                         y: position.y,
                         id,

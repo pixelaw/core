@@ -1442,9 +1442,9 @@
       "computed": []
     },
     {
-      "name": "hunter_actions",
-      "address": "0x7b667c974a99cc003cdb958b60ca7fbf2586da06bfcc4a98a670d5f425e7e49",
-      "class_hash": "0x7f5c8c18b31de0e2d7f1e0153628123e7274f9bf689ea06fa0d87260475e66d",
+      "name": "minesweeper_actions",
+      "address": "0x413981d8449c0d363aabecc9522efdb55ecdf1007a4cd2725b7f8516dab6aed",
+      "class_hash": "0x7a24867fecd1e5853533c5043d81c92fcd9378648e50363cf22370a53498fd",
       "abi": [
         {
           "type": "impl",
@@ -1471,8 +1471,8 @@
         },
         {
           "type": "impl",
-          "name": "HunterActionsImpl",
-          "interface_name": "pixelaw::apps::hunter::app::IHunterActions"
+          "name": "MinesweeperActionsImpl",
+          "interface_name": "pixelaw::apps::minesweeper::app::IMinesweeperActions"
         },
         {
           "type": "struct",
@@ -1511,8 +1511,22 @@
           ]
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "interface",
-          "name": "pixelaw::apps::hunter::app::IHunterActions",
+          "name": "pixelaw::apps::minesweeper::app::IMinesweeperActions",
           "items": [
             {
               "type": "function",
@@ -1528,9 +1542,61 @@
                 {
                   "name": "default_params",
                   "type": "pixelaw::core::utils::DefaultParameters"
+                },
+                {
+                  "name": "size",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "mines_amount",
+                  "type": "core::integer::u64"
                 }
               ],
               "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "reveal",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "explode",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "ownerless_space",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                },
+                {
+                  "name": "size",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
               "state_mutability": "view"
             }
           ]
@@ -1548,17 +1614,41 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::hunter::app::hunter_actions::Event",
+          "name": "pixelaw::apps::minesweeper::app::minesweeper_actions::GameOpened",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "game_id",
+              "type": "core::integer::u32",
+              "kind": "data"
+            },
+            {
+              "name": "creator",
+              "type": "core::starknet::contract_address::ContractAddress",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "pixelaw::apps::minesweeper::app::minesweeper_actions::Event",
           "kind": "enum",
-          "variants": []
+          "variants": [
+            {
+              "name": "GameOpened",
+              "type": "pixelaw::apps::minesweeper::app::minesweeper_actions::GameOpened",
+              "kind": "nested"
+            }
+          ]
         }
       ],
       "reads": [
-        "LastAttempt",
+        "App",
+        "MinesweeperGame",
         "Pixel"
       ],
       "writes": [
-        "LastAttempt"
+        "MinesweeperGame"
       ],
       "computed": []
     },
@@ -3259,20 +3349,50 @@
       ]
     },
     {
-      "name": "LastAttempt",
+      "name": "MinesweeperGame",
       "members": [
         {
-          "name": "player",
-          "type": "ContractAddress",
+          "name": "x",
+          "type": "u64",
           "key": true
         },
         {
-          "name": "timestamp",
+          "name": "y",
+          "type": "u64",
+          "key": true
+        },
+        {
+          "name": "id",
+          "type": "u32",
+          "key": false
+        },
+        {
+          "name": "creator",
+          "type": "ContractAddress",
+          "key": false
+        },
+        {
+          "name": "state",
+          "type": "State",
+          "key": false
+        },
+        {
+          "name": "size",
+          "type": "u64",
+          "key": false
+        },
+        {
+          "name": "mines_amount",
+          "type": "u64",
+          "key": false
+        },
+        {
+          "name": "started_timestamp",
           "type": "u64",
           "key": false
         }
       ],
-      "class_hash": "0x530f718861f41146b8d19497a5cc6f2ed0f757a35b34f75f8b991c611584ed",
+      "class_hash": "0x4be961ff8106de546b35b4b6f726a18f9fa7b8e054ed429a76a345dbf633acb",
       "abi": [
         {
           "type": "function",
@@ -3429,7 +3549,7 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::hunter::app::last_attempt::Event",
+          "name": "pixelaw::apps::minesweeper::app::minesweeper_game::Event",
           "kind": "enum",
           "variants": []
         }

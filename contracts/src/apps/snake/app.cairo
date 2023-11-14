@@ -96,13 +96,16 @@ mod snake_actions {
     const APP_KEY: felt252 = 'snake';
     const APP_ICON: felt252 = 'U+1F40D';
 
+    /// BASE means using the server's default manifest.json handler
+    const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
+
 
     #[external(v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
         fn init(self: @ContractState) {
             let core_actions = get_core_actions(self.world_dispatcher.read());
 
-            core_actions.update_app_name(APP_KEY, APP_ICON);
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
         }
 
 

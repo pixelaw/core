@@ -44,12 +44,12 @@ for model in ${APP_MODELS[@]}; do
 done
 echo "Write permissions for RPS_ACTIONS: Done"
 
-#echo "Write permissions for MINESWEEPER_ACTIONS"
-#for model in ${APP_MODELS[@]}; do
-#    sleep 0.1
-#    sozo auth writer $model $MINESWEEPER_ACTIONS
-#done
-#echo "Write permissions for MINESWEEPER_ACTIONS: Done"
+echo "Write permissions for MINESWEEPER_ACTIONS"
+for model in ${APP_MODELS[@]}; do
+    sleep 0.1
+    sozo auth writer $model $MINESWEEPER_ACTIONS
+done
+echo "Write permissions for MINESWEEPER_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
@@ -72,9 +72,9 @@ sleep 0.1
 sozo execute $RPS_ACTIONS init
 echo "Initialize RPS_ACTIONS: Done"
 
-#echo "Initialize MINESWEEPER: Done"
-#sleep 0.1
-#sozo execute $MINESWEEPER_ACTIONS init
-#echo "Initialize MINESWEEPER_ACTIONS: Done"
+echo "Initialize MINESWEEPER: Done"
+sleep 0.1
+sozo execute $MINESWEEPER_ACTIONS init
+echo "Initialize MINESWEEPER_ACTIONS: Done"
 
 
