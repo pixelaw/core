@@ -1,59 +1,5 @@
 import React from 'react'
 
-import { PAPER, ROCK, SCISSORS } from './constants'
-
-export type OptionType = typeof ROCK | typeof PAPER | typeof SCISSORS
-
-export type OwnerComponent = {
-  address: string,
-  __typename: "Owner"
-}
-
-export type PositionComponent = {
-  x: number,
-  y: number,
-  __typename: "Position"
-}
-
-export type PixelTypeComponent = {
-  name: string,
-  __typename: "PixelType"
-}
-
-export type TimestampComponent = {
-  created_at: number
-  updated_at: number
-  __typename: "Timestamp"
-}
-
-export type ColorComponent = {
-  r: number
-  g: number
-  b: number
-  __typename: "Color"
-}
-
-export type ColorCountComponent = {
-  count: string
-  __typename: "ColorCount"
-}
-
-
-export type PixelEntity = {
-  id: string,
-  owner?: string,
-  position?: { x: number, y: number },
-  pixelType?: string,
-  createdAt?: number,
-  updatedAt?: number,
-  color?: {
-    r: number,
-    g: number,
-    b: number
-  },
-  colorCount?: number
-}
-
 export enum Active_Page {
   Home,
   Network,
@@ -85,4 +31,108 @@ export type NotificationDataType = {
   x: number | undefined
   y: number | undefined
   pixelType?: string | number
+}
+
+/// Manifest types
+type ImplType = {
+  type: 'impl',
+  name: string,
+  interface_name: string
+}
+
+type BaseType = {
+  name: string,
+  type: string
+}
+
+type FunctionType = {
+  type: 'function',
+  name: string,
+  inputs: BaseType[],
+  outputs: {type: string}[],
+  state_mutability: 'external' | 'view'
+}
+
+export type InterfaceType = {
+  type: 'interface',
+  name: string,
+  items: FunctionType[]
+}
+
+type StructType = {
+  type: 'struct',
+  name: string,
+  members: BaseType[]
+}
+
+export type EnumType = {
+  type: 'enum',
+  name: string,
+  variants: BaseType[]
+}
+
+type EventMember = {
+  name: string,
+  type: string,
+  kind: string
+}
+
+type EventStructType = {
+  type: 'event',
+  name: string,
+  kind: 'struct',
+  members: EventMember[]
+}
+
+type EventEnumType = {
+  type: 'event',
+  name: string,
+  kind: 'enum',
+  variants: EventMember[]
+}
+
+export type AbiType = (ImplType | InterfaceType | StructType | EnumType | FunctionType | EventStructType | EventEnumType)[]
+
+type ComputedValueEntryPoint = {
+  contract: string,
+  entrypoint: string,
+  model?: string
+}
+
+
+type Contract = {
+  name: string,
+  address?: string,
+  class_hash: string,
+  abi: AbiType,
+  reads: string[],
+  writes: string[],
+  computed: ComputedValueEntryPoint[]
+}
+
+type Class = {
+  name: string,
+  class_hash: string,
+  abi: AbiType
+}
+
+type Member = {
+  name: string,
+  type: string,
+  key: boolean
+}
+
+type Model = {
+  name: string,
+  members: Member[],
+  class_hash: string,
+  abi: AbiType
+}
+
+export type Manifest = {
+  world: Contract,
+  executor: Contract,
+  base: Class,
+  contracts: Contract[],
+  models: Model[]
 }

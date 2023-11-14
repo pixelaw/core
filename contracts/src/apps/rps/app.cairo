@@ -4,6 +4,11 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
 
 const APP_KEY: felt252 = 'rps';
+const APP_ICON: felt252 = 'U+270A';
+
+/// BASE means using the server's default manifest.json handler
+const APP_MANIFEST: felt252 = 'BASE/manifests/rps';
+
 const GAME_MAX_DURATION: u64 = 20000;
 
 
@@ -81,7 +86,7 @@ mod rps_actions {
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
 
     use super::IRpsActions;
-    use super::{APP_KEY, GAME_MAX_DURATION, Move, State};
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST, GAME_MAX_DURATION, Move, State};
     use super::{Game, Player};
     // use super::{STATE_NONE, State::Created, State::Joined, State::Finished};
 
@@ -106,7 +111,7 @@ mod rps_actions {
         fn init(self: @ContractState) {
             let core_actions = get_core_actions(self.world_dispatcher.read());
 
-            core_actions.update_app_name(APP_KEY);
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
         }
 
 

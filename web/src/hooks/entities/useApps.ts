@@ -25,7 +25,7 @@ export function useApps() {
       if (!data || !data.appModels?.edges) return { appbysystemModels: { edges: [] } }
       for (const edge of data.appModels.edges) {
         if (!edge || !edge.node) continue
-        const {name, system, action} = edge.node
+        const {name, system, action, manifest, icon} = edge.node
         const nameId = getEntityIdFromKeys([ BigInt(name)]) as EntityIndex
         const systemId = getEntityIdFromKeys([BigInt(system)]) as EntityIndex
 
@@ -34,7 +34,7 @@ export function useApps() {
 
         // do not update if it's already equal
         if (!isEqual(currentName, { name, system })) setComponent(AppName, nameId, { name, system })
-        if (!isEqual(currentSystem, { name, system, action })) setComponent(App, systemId, { name, system, action })
+        if (!isEqual(currentSystem, { name, system, action, manifest, icon })) setComponent(App, systemId, { name, system, action, manifest, icon })
       }
 
       return data

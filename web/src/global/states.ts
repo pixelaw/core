@@ -3,7 +3,7 @@ import { NotificationDataType, PositionWithAddressAndType } from '@/global/types
 
 export const colorAtom = atom('#FFFFFF')
 
-export const gameModeAtom = atom<"none" |"paint" | "rps" | "snake">("paint")
+export const gameModeAtom = atom<string>("paint")
 
 export const zoomLevelAtom = atom<number>(50)
 

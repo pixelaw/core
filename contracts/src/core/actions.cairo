@@ -11,7 +11,7 @@ const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 trait IActions<TContractState> {
     fn init(self: @TContractState);
     fn update_permission(self: @TContractState, for_system: felt252, permission: Permission);
-    fn update_app_name(self: @TContractState, name: felt252);
+    fn update_app(self: @TContractState, name: felt252, icon: felt252, manifest: felt252);
     fn has_write_access(
         self: @TContractState,
         for_player: ContractAddress,
@@ -40,7 +40,7 @@ trait IActions<TContractState> {
         for_system: ContractAddress,
         pixel_update: PixelUpdate
     );
-    fn new_app(self: @TContractState, system: ContractAddress, name: felt252) -> App;
+    fn new_app(self: @TContractState, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App;
     fn get_system_address(self: @TContractState, for_system: ContractAddress) -> ContractAddress;
     fn get_player_address(self: @TContractState, for_player: ContractAddress) -> ContractAddress;
 }
@@ -124,10 +124,12 @@ mod actions {
         /// # Arguments
         ///
         /// * `name` - The new name of the app
-        fn update_app_name(self: @ContractState, name: felt252) {
+        /// * `icon` - unicode hex of the icon of the app
+        /// * `manifest` - url to the system's manifest.json
+        fn update_app(self: @ContractState, name: felt252, icon: felt252, manifest: felt252) {
             let world = self.world_dispatcher.read();
             let system = get_caller_address();
-            let app = self.new_app(system, name);
+            let app = self.new_app(system, name, icon, manifest);
             emit!(world, AppNameUpdated { app, caller: system.into() });
         }
 
@@ -382,11 +384,13 @@ mod actions {
         ///
         /// * `system` - Contract address of the app's systems
         /// * `name` - Name of the app
+        /// * `icon` - unicode hex of the icon of the app
+        /// * `manifest` - url to the system's manifest.json
         ///
         /// # Returns
         ///
         /// * `App` - Struct with contractaddress and name fields
-        fn new_app(self: @ContractState, system: ContractAddress, name: felt252) -> App {
+        fn new_app(self: @ContractState, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App {
             let world = self.world_dispatcher.read();
             // Load app
             let mut app = get!(world, system, (App));
@@ -403,6 +407,10 @@ mod actions {
 
             // Associate system with name
             app.name = name;
+
+            app.icon = icon;
+
+            app.manifest = manifest;
 
             // Associate name with system
             app_name.system = system;

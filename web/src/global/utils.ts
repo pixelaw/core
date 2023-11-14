@@ -42,6 +42,16 @@ export const felt252ToString = (felt252: string | number) => {
   return felt252.toString()
 }
 
+export const felt252ToUnicode = (felt252: string | number) => {
+  const string = felt252ToString(felt252)
+  if (string.includes('U+')) {
+    const text = string.replace('U+', '')
+    const codePoint = parseInt(text, 16)
+    return String.fromCodePoint(codePoint)
+  }
+  return string
+}
+
 export const formatAddress = (address: string) => {
   if (address.length > 30) {
     return address.substr(0, 6) + '...' + address.substr(address.length - 4, address.length)

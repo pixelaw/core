@@ -735,7 +735,8 @@
       }
     ],
     "reads": [],
-    "writes": []
+    "writes": [],
+    "computed": []
   },
   "executor": {
     "name": "executor",
@@ -795,7 +796,8 @@
       }
     ],
     "reads": [],
-    "writes": []
+    "writes": [],
+    "computed": []
   },
   "base": {
     "name": "base",
@@ -862,7 +864,7 @@
     {
       "name": "actions",
       "address": "0x5a8c45891c00ab589542d169769555327af8cdf9fae5d042263fd9b49d4df9a",
-      "class_hash": "0x589f9fe70af2da7600c800f7decace4fceb214d04b01d746f7a7c93a57825be",
+      "class_hash": "0x651fd0753449df1c600706a8e91dcc8a1ffb43d8d01509338e579e6465cf08c",
       "abi": [
         {
           "type": "impl",
@@ -1111,6 +1113,14 @@
               "type": "core::felt252"
             },
             {
+              "name": "manifest",
+              "type": "core::felt252"
+            },
+            {
+              "name": "icon",
+              "type": "core::felt252"
+            },
+            {
               "name": "action",
               "type": "core::felt252"
             }
@@ -1149,6 +1159,10 @@
               "inputs": [
                 {
                   "name": "name",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "icon",
                   "type": "core::felt252"
                 }
               ],
@@ -1266,6 +1280,14 @@
                 {
                   "name": "name",
                   "type": "core::felt252"
+                },
+                {
+                  "name": "icon",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "manifest",
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [
@@ -1311,7 +1333,7 @@
         },
         {
           "type": "function",
-          "name": "name",
+          "name": "dojo_resource",
           "inputs": [],
           "outputs": [
             {
@@ -1416,132 +1438,13 @@
         "CoreActionsAddress",
         "Permissions",
         "Pixel"
-      ]
-    },
-    {
-      "name": "hunter_actions",
-      "address": "0x7b667c974a99cc003cdb958b60ca7fbf2586da06bfcc4a98a670d5f425e7e49",
-      "class_hash": "0x2776667592637e17366f1bbe8649d813bde92ae311ed56eece96d483ef16af8",
-      "abi": [
-        {
-          "type": "impl",
-          "name": "Upgradeable",
-          "interface_name": "dojo::upgradable::IUpgradeable"
-        },
-        {
-          "type": "interface",
-          "name": "dojo::upgradable::IUpgradeable",
-          "items": [
-            {
-              "type": "function",
-              "name": "upgrade",
-              "inputs": [
-                {
-                  "name": "new_class_hash",
-                  "type": "core::starknet::class_hash::ClassHash"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "HunterActionsImpl",
-          "interface_name": "pixelaw::apps::hunter::app::IHunterActions"
-        },
-        {
-          "type": "struct",
-          "name": "pixelaw::core::utils::Position",
-          "members": [
-            {
-              "name": "x",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "y",
-              "type": "core::integer::u64"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "pixelaw::core::utils::DefaultParameters",
-          "members": [
-            {
-              "name": "for_player",
-              "type": "core::starknet::contract_address::ContractAddress"
-            },
-            {
-              "name": "for_system",
-              "type": "core::starknet::contract_address::ContractAddress"
-            },
-            {
-              "name": "position",
-              "type": "pixelaw::core::utils::Position"
-            },
-            {
-              "name": "color",
-              "type": "core::integer::u32"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "pixelaw::apps::hunter::app::IHunterActions",
-          "items": [
-            {
-              "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "interact",
-              "inputs": [
-                {
-                  "name": "default_params",
-                  "type": "pixelaw::core::utils::DefaultParameters"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "event",
-          "name": "pixelaw::apps::hunter::app::hunter_actions::Event",
-          "kind": "enum",
-          "variants": []
-        }
       ],
-      "reads": [
-        "LastAttempt",
-        "Pixel"
-      ],
-      "writes": [
-        "LastAttempt"
-      ]
+      "computed": []
     },
     {
       "name": "minesweeper_actions",
       "address": "0x413981d8449c0d363aabecc9522efdb55ecdf1007a4cd2725b7f8516dab6aed",
-      "class_hash": "0x342c1208392c3663f14fab85616fcefefff2975f5b4e9c448f5e0b3f3dd8a51",
+      "class_hash": "0x7a24867fecd1e5853533c5043d81c92fcd9378648e50363cf22370a53498fd",
       "abi": [
         {
           "type": "impl",
@@ -1608,6 +1511,20 @@
           ]
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "pixelaw::apps::minesweeper::app::IMinesweeperActions",
           "items": [
@@ -1628,21 +1545,65 @@
                 },
                 {
                   "name": "size",
-                  "type": "core::integer::u8"
+                  "type": "core::integer::u64"
                 },
                 {
                   "name": "mines_amount",
-                  "type": "core::integer::u8"
+                  "type": "core::integer::u64"
                 }
               ],
               "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "reveal",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "explode",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "ownerless_space",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                },
+                {
+                  "name": "size",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
               "state_mutability": "view"
             }
           ]
         },
         {
           "type": "function",
-          "name": "name",
+          "name": "dojo_resource",
           "inputs": [],
           "outputs": [
             {
@@ -1653,18 +1614,48 @@
         },
         {
           "type": "event",
+          "name": "pixelaw::apps::minesweeper::app::minesweeper_actions::GameOpened",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "game_id",
+              "type": "core::integer::u32",
+              "kind": "data"
+            },
+            {
+              "name": "creator",
+              "type": "core::starknet::contract_address::ContractAddress",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
           "name": "pixelaw::apps::minesweeper::app::minesweeper_actions::Event",
           "kind": "enum",
-          "variants": []
+          "variants": [
+            {
+              "name": "GameOpened",
+              "type": "pixelaw::apps::minesweeper::app::minesweeper_actions::GameOpened",
+              "kind": "nested"
+            }
+          ]
         }
       ],
-      "reads": [],
-      "writes": []
+      "reads": [
+        "App",
+        "MinesweeperGame",
+        "Pixel"
+      ],
+      "writes": [
+        "MinesweeperGame"
+      ],
+      "computed": []
     },
     {
       "name": "paint_actions",
       "address": "0x44d1fe83a484fc8f0e13fe7a524c8f2d2c9121721450ae57dc9240362c27647",
-      "class_hash": "0x3cb3d583270bab827001b7c182cc0eb3d98db922cf673a08dbd6e0904f3760",
+      "class_hash": "0x60268e2d995ac4c74a635e3c929e58173a0cd1492ece45452371c2da551ec11",
       "abi": [
         {
           "type": "impl",
@@ -1769,7 +1760,7 @@
         },
         {
           "type": "function",
-          "name": "name",
+          "name": "dojo_resource",
           "inputs": [],
           "outputs": [
             {
@@ -1788,12 +1779,13 @@
       "reads": [
         "Pixel"
       ],
-      "writes": []
+      "writes": [],
+      "computed": []
     },
     {
       "name": "rps_actions",
       "address": "0x617decd4dbeb7291a7a00a506f9287389eb75a7fc125edf49e3cad4611ef175",
-      "class_hash": "0x555a8abc67b4c2a3b49c0988ef23f6261c3efb744509f72e4e2afa6ef14b160",
+      "class_hash": "0x5c70dabac9a603875dde78baf0dacc14256aac19d2c4d9df725332e2d3f9d1",
       "abi": [
         {
           "type": "impl",
@@ -1960,7 +1952,7 @@
         },
         {
           "type": "function",
-          "name": "name",
+          "name": "dojo_resource",
           "inputs": [],
           "outputs": [
             {
@@ -2005,12 +1997,13 @@
       ],
       "writes": [
         "Game"
-      ]
+      ],
+      "computed": []
     },
     {
       "name": "snake_actions",
       "address": "0x26c141617c37324fa943e5509d29a21b4017abad5ee56f6351deef299c819d0",
-      "class_hash": "0x4cddf85ed65e6f74b379e668608b56494ac94018eac1d41ebd1b87a6a97239b",
+      "class_hash": "0x6c9502af2830a5aa59ecf55a784b263069f42416f65e088350629ad18939ab",
       "abi": [
         {
           "type": "impl",
@@ -2149,7 +2142,7 @@
         },
         {
           "type": "function",
-          "name": "name",
+          "name": "dojo_resource",
           "inputs": [],
           "outputs": [
             {
@@ -2223,7 +2216,8 @@
       "writes": [
         "Snake",
         "SnakeSegment"
-      ]
+      ],
+      "computed": []
     }
   ],
   "models": [
@@ -2423,12 +2417,22 @@
           "key": false
         },
         {
+          "name": "manifest",
+          "type": "felt252",
+          "key": false
+        },
+        {
+          "name": "icon",
+          "type": "felt252",
+          "key": false
+        },
+        {
           "name": "action",
           "type": "felt252",
           "key": false
         }
       ],
-      "class_hash": "0x7078b6620aa15fa57bd59637c3019fe6ebee7ad372b71160ba83059ff1183c8",
+      "class_hash": "0x2439aa1eb8d295ea4f10d39089c0ecfe85290156fed8fd2e02b8722bb607812",
       "abi": [
         {
           "type": "function",
@@ -3146,13 +3150,33 @@
           "key": false
         },
         {
-          "name": "size",
-          "type": "u8",
+          "name": "state",
+          "type": "State",
           "key": false
         },
         {
-          "name": "mines_amount",
-          "type": "u8",
+          "name": "player1",
+          "type": "ContractAddress",
+          "key": false
+        },
+        {
+          "name": "player2",
+          "type": "ContractAddress",
+          "key": false
+        },
+        {
+          "name": "player1_commit",
+          "type": "felt252",
+          "key": false
+        },
+        {
+          "name": "player1_move",
+          "type": "Move",
+          "key": false
+        },
+        {
+          "name": "player2_move",
+          "type": "Move",
           "key": false
         },
         {
@@ -3161,7 +3185,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x2417bf5da1ecaac5ee44b79f4c33d7ce08086b5b18fd8aaa9889b25994da9a8",
+      "class_hash": "0x7013e36daf8e106b7e02a57309a1fe6fcaaacbfacbcb922c64831ff45d46b78",
       "abi": [
         {
           "type": "function",
@@ -3318,27 +3342,57 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::minesweeper::app::game::Event",
+          "name": "pixelaw::apps::rps::app::game::Event",
           "kind": "enum",
           "variants": []
         }
       ]
     },
     {
-      "name": "LastAttempt",
+      "name": "MinesweeperGame",
       "members": [
         {
-          "name": "player",
-          "type": "ContractAddress",
+          "name": "x",
+          "type": "u64",
           "key": true
         },
         {
-          "name": "timestamp",
+          "name": "y",
+          "type": "u64",
+          "key": true
+        },
+        {
+          "name": "id",
+          "type": "u32",
+          "key": false
+        },
+        {
+          "name": "creator",
+          "type": "ContractAddress",
+          "key": false
+        },
+        {
+          "name": "state",
+          "type": "State",
+          "key": false
+        },
+        {
+          "name": "size",
+          "type": "u64",
+          "key": false
+        },
+        {
+          "name": "mines_amount",
+          "type": "u64",
+          "key": false
+        },
+        {
+          "name": "started_timestamp",
           "type": "u64",
           "key": false
         }
       ],
-      "class_hash": "0x530f718861f41146b8d19497a5cc6f2ed0f757a35b34f75f8b991c611584ed",
+      "class_hash": "0x4be961ff8106de546b35b4b6f726a18f9fa7b8e054ed429a76a345dbf633acb",
       "abi": [
         {
           "type": "function",
@@ -3495,7 +3549,7 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::hunter::app::last_attempt::Event",
+          "name": "pixelaw::apps::minesweeper::app::minesweeper_game::Event",
           "kind": "enum",
           "variants": []
         }

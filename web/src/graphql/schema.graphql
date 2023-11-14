@@ -164,6 +164,8 @@ query apps {
   appModels {
     edges {
       node {
+        manifest
+        icon
         action
         name
         system

@@ -5,7 +5,11 @@ use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 const APP_KEY: felt252 = 'minesweeper';
+const APP_ICON: felt252 = 'U+1F4A3';
 const GAME_MAX_DURATION: u64 = 20000;
+
+/// BASE means using the server's default manifest.json handler
+const APP_MANIFEST: felt252 = 'BASE/manifests/minesweeper';
 
 #[derive(Serde, Copy, Drop, PartialEq, Introspect)]
 enum State {
@@ -15,7 +19,7 @@ enum State {
 }
 
 #[derive(Model, Copy, Drop, Serde, SerdeLen)]
-struct Game {
+struct MinesweeperGame {
     #[key]
     x: u64,
     #[key]
@@ -26,11 +30,11 @@ struct Game {
     size: u64,
     mines_amount: u64,
     started_timestamp: u64
-}  
+}
 
 #[starknet::interface]
 trait IMinesweeperActions<TContractState> {
-    
+
     //1. read the world state
     //2. get_core_actions to call the `update_app_name` function and add the minesweeper app to the world.
     //3. update permissions to other apps (if wanted).
@@ -38,26 +42,26 @@ trait IMinesweeperActions<TContractState> {
 
     //1. the interact function is a must of any pixelaw app. This is what the front-end calls.
     //- If you add an optional third parameter, your can allow for additional user input.
-    
+
     //2. Load important variables
-    //- world: any system that impacts the world needs to 
+    //- world: any system that impacts the world needs to
     //- core_actions:
     //- position: the position clicked by the player. (part of default parameter utils)
     //- player: get_player_address
     //- system: get_system_address
     //- pixel: get the state of selected pixel.
-    
+
     //3. check if 10x10 pixel field around the pixel is ownerless.  && has to check if the selected pixel is inside an open minesweeper.
 
     //4. load the game
     //- create a game struct(key x, key y, id, state, size, mines_amount, player address, started _timestamp)
     //- create minesweeper game
-    
+
     //5. add game to world State
     //- update properties of affected pixels.
-    
+
     //6. set the mines
-    
+
     fn interact(self: @TContractState, default_params: DefaultParameters, size: u64, mines_amount: u64);
 
     //1. Load relevant pixels
@@ -86,7 +90,7 @@ mod minesweeper_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
-    use super::{APP_KEY, GAME_MAX_DURATION, Game, State};
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST, GAME_MAX_DURATION, MinesweeperGame, State};
     use pixelaw::core::utils::{get_core_actions, Position, DefaultParameters};
 	use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
     use debug::PrintTrait;
@@ -110,7 +114,7 @@ mod minesweeper_actions {
             let world = self.world_dispatcher.read();
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.update_app_name(APP_KEY);
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
 
             core_actions.update_permission('snake',
                 Permission {
@@ -131,7 +135,7 @@ mod minesweeper_actions {
                     text: true,
                     timestamp: false,
                     action: false
-                });       
+                });
         }
 
         fn interact(self: @ContractState, default_params: DefaultParameters, size: u64, mines_amount: u64) {
@@ -143,7 +147,7 @@ mod minesweeper_actions {
             let mut pixel = get!(world, (position.x, position.y), (Pixel));
 			let caller_address = get_caller_address();
             let caller_app = get!(world, caller_address, (App));
-			let mut game = get!(world, (position.x, position.y), Game);
+			let mut game = get!(world, (position.x, position.y), MinesweeperGame);
 			let timestamp = starknet::get_block_timestamp();
 
 			//if pixel.app == caller_app.system && game.state == State::Open && pixel.alert == 'reveal'
@@ -159,8 +163,8 @@ mod minesweeper_actions {
 			else if self.ownerless_space(default_params, size: size) == true //check if size grid ownerless;
 			{
 				let mut id = world.uuid(); //do we need this in this condition?
-                game = 
-                    Game {
+                game =
+                    MinesweeperGame {
                         x: position.x,
                         y: position.y,
                         id,
@@ -177,12 +181,12 @@ mod minesweeper_actions {
 
                 let mut i: u64 = 0;
 				let mut j: u64 = 0;
-                loop { 
+                loop {
 					if i >= size {
 						break;
 					}
 					j = 0;
-					loop { 
+					loop {
 						if j >= size {
 							break;
 						}
@@ -397,12 +401,12 @@ mod minesweeper_actions {
 
 		// 	let mut i: u64 = 0;
 		// 	let mut j: u64 = 0;
-		// 	loop { 
+		// 	loop {
 		// 		if i > size {
 		// 			break;
 		// 			}
 		// 			j = 0;
-		// 			loop { 
+		// 			loop {
 		// 				if j > size {
 		// 					break;
 		// 				}

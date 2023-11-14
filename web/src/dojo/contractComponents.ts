@@ -19,7 +19,7 @@ export function defineContractComponents(world: World) {
 	  App: (() => {
 	    return defineComponent(
 	      world,
-	      { system: RecsType.String, name: RecsType.Number, action: RecsType.Number },
+	      { system: RecsType.String, name: RecsType.Number, manifest: RecsType.Number, icon: RecsType.Number, action: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "App",

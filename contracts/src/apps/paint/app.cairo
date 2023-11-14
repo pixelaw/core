@@ -12,6 +12,10 @@ trait IPaintActions<TContractState> {
 }
 
 const APP_KEY: felt252 = 'paint';
+const APP_ICON: felt252 = 'U+1F58C';
+
+/// BASE means using the server's default manifest.json handler
+const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
 #[dojo::contract]
 mod paint_actions {
@@ -27,7 +31,7 @@ mod paint_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
-    use super::APP_KEY;
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
 
     use debug::PrintTrait;
@@ -66,7 +70,7 @@ mod paint_actions {
             let world = self.world_dispatcher.read();
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.update_app_name(APP_KEY);
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
 
 
             // TODO: replace this with proper granting of permission

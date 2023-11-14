@@ -19,7 +19,7 @@ import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
 
 type DrawPanelType = {
-  gameMode: 'none' | 'paint' | 'rps' | 'snake',
+  gameMode: string,
   cellSize: number,
   selectedHexColor: string
   coordinates: [ number | undefined, number | undefined ] | undefined
@@ -74,7 +74,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const [position, setPositionWithAddressAndType] = useAtom(positionWithAddressAndTypeAtom)
 
   const { interact, params } = useInteract(
-    `${gameMode}_actions`,
+    `${gameMode}`,
     selectedHexColor,
     {
       x: position?.x ?? 10,
