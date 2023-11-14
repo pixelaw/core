@@ -1,5 +1,5 @@
 REPO = pixelaw/core
-CORE_VERSION = v0.0.1
+CORE_VERSION = v0.0.3
 KEIKO_VERSION = v0.0.7
 
 

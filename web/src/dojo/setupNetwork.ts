@@ -4,16 +4,24 @@ import { RPCProvider, Query, } from "@dojoengine/core";
 import { Account, num } from "starknet";
 import { GraphQLClient } from 'graphql-request';
 import { getSdk } from '@/generated/graphql';
-import manifest from './manifest.json'
 import { Manifest } from '@/global/types'
+import { streamToString } from '@/global/utils'
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
+const MANIFEST_URL = '/manifests/paint'
 
 export async function setupNetwork() {
   // Extract environment variables for better readability.
   const { VITE_PUBLIC_NODE_URL, VITE_PUBLIC_TORII } = import.meta.env;
 
-  const worldAddress = manifest.world.address
+  const manifest: Manifest = await (async () => {
+    const result = await fetch(MANIFEST_URL)
+    if (!result.body) return {}
+    const string = await streamToString(result.body)
+    return JSON.parse(string)
+  })()
+
+  const worldAddress = manifest.world.address ?? ''
 
   // Create a new RPCProvider instance.
   const provider = new RPCProvider(worldAddress, manifest, VITE_PUBLIC_NODE_URL);
@@ -49,6 +57,7 @@ export async function setupNetwork() {
       return provider.entities(component, partition);
     },
 
+    // switches the manifest to passed value
     switchManifest: (manifest: Manifest) => {
       provider.manifest = manifest
     }

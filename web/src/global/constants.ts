@@ -1,5 +1,3 @@
-export const TORII_END_POINT: string = import.meta.env.VITE_PUBLIC_TORII ?? 'http://localhost:8080/'
-
 export const PUBLIC_NODE_URL: string = import.meta.env.VITE_PUBLIC_NODE_URL ?? 'http://localhost:5050'
 
 export const BLOCK_TIME = 1_000
