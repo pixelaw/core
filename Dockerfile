@@ -59,15 +59,6 @@ RUN yarn build --mode production
 
 FROM oostvoort/keiko:v0.0.7 AS runtime
 
-# Build the core contracts
-WORKDIR /core/contracts
-COPY /contracts .
-
-#COPY ./contracts/Scarb.toml contracts/Scarb.toml
-#COPY ./contracts/scripts contracts/scripts
-
-RUN sozo build
-
 HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localhost:5050) || exit 1
 
 WORKDIR /keiko
@@ -79,5 +70,10 @@ COPY --from=web_node_builder /app/dist static/
 COPY ./bots ./bots
 COPY ./bots/.env.production ./bots/.env
 COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
+
+COPY ./contracts ./contracts
+
+
+RUN sozo build --manifest-path ./contracts/Scarb.toml
 
 CMD ["bash", "./startup.sh"]
