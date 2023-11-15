@@ -68,20 +68,16 @@ COPY /contracts .
 
 RUN sozo build
 
-WORKDIR /core/web
-COPY --from=web_node_builder /app/dist static/
-
-
-
-WORKDIR /core/bots
-COPY ./bots/ .
-COPY ./bots/.env.production ./bots/.env
-COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
-
 HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localhost:5050) || exit 1
 
 WORKDIR /keiko
 
 COPY ./startup.sh ./startup.sh
+COPY --from=web_node_builder /app/dist static/
+
+
+COPY ./bots ./bots
+COPY ./bots/.env.production ./bots/.env
+COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
 CMD ["bash", "./startup.sh"]
