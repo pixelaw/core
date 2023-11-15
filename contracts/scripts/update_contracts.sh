@@ -8,3 +8,4 @@ declare "PAINT_ACTIONS"=$(cat target/dev/manifest.copy.json | jq -r '.contracts[
 declare "RPS_ACTIONS"=$(cat target/dev/manifest.copy.json | jq -r '.contracts[] | select(.name=="rps_actions") | .address')
 declare "SNAKE_ACTIONS"=$(cat target/dev/manifest.copy.json | jq -r '.contracts[] | select(.name=="snake_actions") | .address')
 declare "MINESWEEPER_ACTIONS"=$(cat target/dev/manifest.copy.json | jq -r '.contracts[] | select(.name=="minesweeper_actions") | .address')
+declare "HUNTER_ACTIONS"=$(cat target/dev/manifest.copy.json | jq -r '.contracts[] | select(.name=="hunter_actions") | .address')

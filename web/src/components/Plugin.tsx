@@ -55,6 +55,7 @@ const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonProp
           'font-emoji',
           'my-xs',
           'text-center text-[36px]',
+          'w-[1.25em]',
           'border border-brand-violetAccent rounded',
           {'border-white': selected}
         ])}
