@@ -151,14 +151,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }
 
   const updatePixelData = (position: Coordinate, color: string) => {
-    const newData = { ...pixelData }
-
-    newData[`[${position[0]},${position[1]}]`] = {
-      text: pixelData[`[${position[0]},${position[1]}]`]?.text ?? '',
-      color,
-
-    }
-
     setTempData(prev => {
       return {
         ...prev,

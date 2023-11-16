@@ -374,7 +374,7 @@ mod actions {
                 return for_system;
             } else {
                 // Return the caller account from the transaction (the end user)
-                return get_contract_address();
+                return get_caller_address();
             }
         }
 

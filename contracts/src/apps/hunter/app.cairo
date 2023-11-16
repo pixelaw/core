@@ -80,7 +80,7 @@ mod hunter_actions {
 
             let mut last_attempt = get!(world, (player), LastAttempt);
 
-            // assert(timestamp - last_attempt.timestamp > COOLDOWN_SEC, 'Not so fast');
+            // assert(timestamp - last_attempt.timestamp > COOLDOWN_SEC, 'Not so fast'); 
             assert(pixel.owner.is_zero(), 'Hunt only empty pixels');
 
             let timestamp_felt252 = timestamp.into();
@@ -94,9 +94,17 @@ mod hunter_actions {
             // let MASK = 0xFFFFFFFFFFFFFFFF0000;  // TODO, this is a placeholder
             // let MASK: u256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; // use this for debug.
             let MASK: u256 = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc00;  // this represents: 1/1024
-            let result = ((hash | MASK) == MASK);
+            let winning = ((hash | MASK) == MASK);
 
-            assert(result, 'Oops, no luck');
+            let mut text = Option::None;
+            let mut owner = Option::None;
+
+            if (winning) {
+                text = Option::Some('U+2B50');
+                owner = Option::Some(player);
+            }
+
+            // assert(result, 'Oops, no luck');
 
             // We can now update color of the pixel
             core_actions
@@ -109,9 +117,9 @@ mod hunter_actions {
                         color: Option::Some(default_params.color),
                         alert: Option::Some(''),    // TODO a notification?
                         timestamp: Option::None,
-                        text: Option::Some('U+2B50'),   // Star emoji
+                        text: text,   // Star emoji
                         app: Option::Some(system),
-                        owner: Option::Some(player),
+                        owner: owner,
                         action: Option::None
                     }
                 );
@@ -122,7 +130,5 @@ mod hunter_actions {
 
             'hunt DONE'.print();
         }
-
-
     }
 }

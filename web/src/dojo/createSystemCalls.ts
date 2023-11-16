@@ -51,8 +51,9 @@ export function createSystemCalls(
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 100})
       setComponentsFromEvents(contractComponents, getEvents(receipt))
     } catch (e) {
-      console.error(e)
       Pixel.removeOverride(pixelId)
+      console.error(e)
+      throw new Error(e?.toString() ?? 'interaction failed')
     } finally {
       Pixel.removeOverride(pixelId)
     }
