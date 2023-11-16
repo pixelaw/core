@@ -1,5 +1,5 @@
 # PixeLAW Game (test)
-A game built on top of Dojo. See live example [here](https://pixelaw.aw.oostvoort.work/)
+A game built on top of Dojo. See live example at <SECRET_URL: please reach out us on discord>.
 
 ## Concepts
 - World : A Cartesian plane (2d grid), where every position represents a "Pixel"
