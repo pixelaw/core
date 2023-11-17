@@ -8,7 +8,7 @@ import { Manifest } from '@/global/types'
 import { streamToString } from '@/global/utils'
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
-const MANIFEST_URL = '/manifests/paint'
+const MANIFEST_URL = '/manifests/core'
 
 export async function setupNetwork() {
   // Extract environment variables for better readability.
