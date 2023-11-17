@@ -11,8 +11,6 @@ import {
 } from '@/global/states.ts'
 import {CANVAS_HEIGHT, CANVAS_WIDTH, MAX_CELL_SIZE, MAX_ROWS_COLS} from '@/global/constants.ts'
 import {useEntityQuery} from '@dojoengine/react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {getComponentValue, getComponentValueStrict, Has, HasValue} from '@latticexyz/recs'
 import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
@@ -59,7 +57,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const zoomLevel = useAtomValue(zoomLevelAtom)
   const cellSize = MAX_CELL_SIZE * (zoomLevel / 100)
 
-  //selected color in color pallete
+  //selected color in color pallet
   const [ selectedHexColor,  ] = useAtom(colorAtom)
 
   // offset is a negative value
@@ -103,7 +101,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const entityIds = useEntityQuery([ Has(Pixel) ])
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const notifEntitiyIds = useEntityQuery([ HasValue(Alert, { alert: true }), HasValue(Pixel, { owner: account.address }) ])
+  const notifEntityIds = useEntityQuery([ HasValue(Alert, { alert: true }), HasValue(Pixel, { owner: account.address }) ])
 
 
   const pixels = entityIds
@@ -112,13 +110,13 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
 
 
   pixels.forEach(pixel => {
-      pixelData[`[${pixel!.x},${pixel!.y}]`] = {
-        color: argbToHex(pixel!.color),
-        text: pixel?.text?.toString() ?? ''
-      }
+    pixelData[`[${pixel!.x},${pixel!.y}]`] = {
+      color: argbToHex(pixel!.color),
+      text: pixel?.text?.toString() ?? ''
+    }
   })
 
-  const entityNeedsAttentions = notifEntitiyIds
+  const entityNeedsAttentions = notifEntityIds
     .map(entityId => {
       return getComponentValueStrict(Alert, entityId)
     })
@@ -151,14 +149,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }
 
   const updatePixelData = (position: Coordinate, color: string) => {
-    const newData = { ...pixelData }
-
-    newData[`[${position[0]},${position[1]}]`] = {
-      text: pixelData[`[${position[0]},${position[1]}]`]?.text ?? '',
-      color,
-
-    }
-
     setTempData(prev => {
       return {
         ...prev,
@@ -180,10 +170,13 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
       .then()
       .catch(err => {
         console.error('reversing color because of: ', err)
+      })
+      .finally(() => {
         setTempData({})
       })
 
     setOpenModal(false)
+    setAdditionalParams({})
   }
 
   const handleCellClick = (coordinate: Coordinate) => {
@@ -273,13 +266,9 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
       {children}
       <ParamPicker
         value={additionalParams}
-        setAdditionalParams={setAdditionalParams}
-        onChange={(newValue) => {
-          setAdditionalParams(newValue)
-          // TODO: right now this is assuming we olways only have one other parameter aside from the defaultParams
-          // fix this to be able to handle more than one parameter
-          handleInteract(newValue)
-        }}
+        onChange={(newValue) => setAdditionalParams(newValue)}
+        onSelect={(newValue) => handleInteract(newValue)}
+        onSubmit={() => handleInteract(additionalParams)}
         params={params}
         open={openModal}
         onOpenChange={(open) => setOpenModal(open)}

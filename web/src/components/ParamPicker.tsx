@@ -14,8 +14,10 @@ type ParamDefinition = {
 
 type PropsType = {
   value: Record<string, any>,
-  setAdditionalParams: (newValue: Record<string, any>) => void,
-  onChange: (newValue: Record<string, any>) => void,
+  onChange?: (newValue: Record<string, any>) => void,
+
+  // for when the param is only one enum
+  onSelect?: (newValue: Record<string, any>) => void,
   params: ParamDefinition[],
   onSubmit?: () => void,
   open?: boolean,
@@ -46,9 +48,20 @@ const EnumPicker: React.FC<EnumPickerPropsType> = ( { label, value, variants, on
   )
 }
 
-const ParamPicker: React.FC<PropsType> = ({ value, setAdditionalParams, onChange, params, onSubmit, open, onOpenChange }) => {
-  const hasOnSubmit = !!onSubmit
-  let needConfirm = false;
+const ParamPicker: React.FC<PropsType> = ({ value, onChange, onSelect, params, onSubmit, open, onOpenChange }) => {
+  const needsSubmitButton = params.length > 1 ||  !!(params.filter(param => param.type === 'number' || param.type === 'string')).length
+  const handleOnChange = (newValue: any, paramName: string) => {
+    const finalizedValue = {...value, [paramName]: newValue}
+
+    // means there is only one param and that param is an enum
+    if (!needsSubmitButton && !!onSelect) {
+      onSelect(finalizedValue)
+      return
+    }
+
+    if (onChange) onChange(finalizedValue)
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={'p-md'}>
@@ -63,43 +76,37 @@ const ParamPicker: React.FC<PropsType> = ({ value, setAdditionalParams, onChange
                     value={value[param.name]}
                     label={param.name}
                     variants={param.variants ?? []}
-                    onChange={(e) => onChange({...value, [param.name]: e})}
+                    onChange={(e) => handleOnChange(e, param.name)}
                   />
                 );
               case 'number':
-                needConfirm = true;
                 return (
                     <Input
                       key={`${param.name}-input`}
                       type={'number'}
                       placeholder={param.name}
-                      value={value[param.name]}
+                      value={value[param.name] ?? ''}
                       className='mb-3'
-                      onChange={(e) => setAdditionalParams({...value, [param.name]: Number(e.target.value)})}
+                      onChange={(e) => handleOnChange(e.target.valueAsNumber, param.name)}
                     />
                 );
               case 'string':
-                needConfirm = true;
                 return (
                     <Input
                       key={`${param.name}-input`}
                       type={'text'}
                       placeholder={param.name}
-                      value={value[param.name]}
+                      value={value[param.name] ?? ''}
                       className='mr-2'
-                      onChange={(e) => setAdditionalParams({...value, [param.name]: Number(e.target.value)})}
+                      onChange={(e) => handleOnChange(e.target.value, param.name)}
                     />
                 );
               default:
                 return null;
             }
           })}
-        {needConfirm && <Button 
-          className={"w-[50%]"} onClick={() => onChange(value)}>
-          Confirm
-        </Button>}
         </div>
-        {hasOnSubmit && (
+        {needsSubmitButton && (
           <DialogFooter>
             <Button size={"sm"} onClick={onSubmit}>confirm</Button>
           </DialogFooter>

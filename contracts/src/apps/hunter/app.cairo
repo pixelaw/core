@@ -19,6 +19,9 @@ struct LastAttempt {
 }
 
 const APP_KEY: felt252 = 'hunter';
+const APP_ICON: felt252 = 'U+27B6';
+/// BASE means using the server's default manifest.json handler
+const APP_MANIFEST: felt252 = 'BASE/manifests/hunter';
 
 #[dojo::contract]
 mod hunter_actions {
@@ -35,7 +38,7 @@ mod hunter_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
-    use super::APP_KEY;
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
 
     use debug::PrintTrait;
@@ -48,7 +51,7 @@ mod hunter_actions {
         fn init(self: @ContractState) {
             let core_actions = get_core_actions(self.world_dispatcher.read());
 
-            core_actions.update_app(APP_KEY, '', '');
+            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
         }
 
 
@@ -77,7 +80,7 @@ mod hunter_actions {
 
             let mut last_attempt = get!(world, (player), LastAttempt);
 
-            // assert(timestamp - last_attempt.timestamp > COOLDOWN_SEC, 'Not so fast');
+            // assert(timestamp - last_attempt.timestamp > COOLDOWN_SEC, 'Not so fast'); 
             assert(pixel.owner.is_zero(), 'Hunt only empty pixels');
 
             let timestamp_felt252 = timestamp.into();
@@ -91,9 +94,17 @@ mod hunter_actions {
             // let MASK = 0xFFFFFFFFFFFFFFFF0000;  // TODO, this is a placeholder
             // let MASK: u256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; // use this for debug.
             let MASK: u256 = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc00;  // this represents: 1/1024
-            let result = ((hash | MASK) == MASK);
+            let winning = ((hash | MASK) == MASK);
 
-            assert(result, 'Oops, no luck');
+            let mut text = Option::None;
+            let mut owner = Option::None;
+
+            if (winning) {
+                text = Option::Some('U+2B50');
+                owner = Option::Some(player);
+            }
+
+            // assert(result, 'Oops, no luck');
 
             // We can now update color of the pixel
             core_actions
@@ -106,9 +117,9 @@ mod hunter_actions {
                         color: Option::Some(default_params.color),
                         alert: Option::Some(''),    // TODO a notification?
                         timestamp: Option::None,
-                        text: Option::Some('U+2B50'),   // Star emoji
+                        text: text,   // Star emoji
                         app: Option::Some(system),
-                        owner: Option::Some(player),
+                        owner: owner,
                         action: Option::None
                     }
                 );
@@ -119,7 +130,5 @@ mod hunter_actions {
 
             'hunt DONE'.print();
         }
-
-
     }
 }
