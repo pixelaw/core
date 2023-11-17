@@ -1,4 +1,9 @@
 import { shortString } from 'starknet'
+
+/*
+* @notice converts a number to hexadecimal
+* @param n is the decimal number to convert to hexadecimal
+* */
 export const convertToHexadecimal = (n: number) => n.toString(16)
 export const prefixString = (prefix: string, base: string) => `${prefix}${base}`
 export const convertToHexadecimalAndLeadWithOx = (n: number) => prefixString('0x', convertToHexadecimal(n))

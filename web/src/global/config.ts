@@ -46,28 +46,3 @@ export const wallets: Record<string, WalletType> = {
   }
 }
 
-/* PLUGINS */
-
-export const plugins = [
-  {
-    icon: "🖌️",
-    name: "paint"
-  },
-  {
-    icon: "🐍",
-    name: "snake"
-  },
-  {
-    icon: "✊",
-    name: "rps"
-  },
-  {
-    icon: "🌳",
-    name: "tree"
-  },
-  {
-    icon: "💥",
-    name: "minesweeper"
-  }
-]
-

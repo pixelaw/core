@@ -10,32 +10,28 @@ query getEntities {
             alert
             __typename
           }
+          ... on App {
+            manifest
+            icon
+            action
+            name
+            system
+             __typename
+          }
           ... on AppName {
             name
             system
             __typename
           }
-          ... on App {
-            name
+          ... on AppUser {
+            action
+            player
             system
             __typename
           }
           ... on CoreActionsAddress {
             key
             value
-            __typename
-          }
-          ... on Game {
-            x
-            y
-            id
-            state
-            player1
-            player2
-            player1_commit
-            player1_move
-            player2_move
-            started_timestamp
             __typename
           }
           ... on Permissions {
@@ -67,30 +63,9 @@ query getEntities {
             action
             __typename
           }
-          ... on Player {
-            player_id
-            wins
-            __typename
-          }
-          ... on Snake {
-            length
-            first_segment_id
-            last_segment_id
-            direction
-            owner
-            color
-            text
-            is_dying
-            __typename
-          }
-          ... on SnakeSegment {
+          ... on QueueItem {
             id
-            previous_id
-            next_id
-            x
-            y
-            pixel_original_color
-            pixel_original_text
+            valid
             __typename
           }
         }

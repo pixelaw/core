@@ -1,11 +1,7 @@
 import { SetupNetworkResult } from './setupNetwork'
 import { Account, num, Event } from 'starknet'
 import { getEntityIdFromKeys, getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { EntityIndex } from '@latticexyz/recs'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { uuid } from '@latticexyz/utils'
 import { ClientComponents } from '@/dojo/createClientComponents'
 import { ZERO_ADDRESS } from '@/global/constants'
@@ -15,6 +11,16 @@ export function createSystemCalls(
     { Pixel }: ClientComponents
 ) {
 
+  /**
+   * @notice calls an action in a specific pixel
+   * @dev the only value being optimistically rendered is color
+   * @param signer is the account that's calling an action
+   * @param contractName is the name of the contract that owns the action being called
+   * @param position is where the pixel is located
+   * @param color is expressed in argb
+   * @param action is the function being called (defaults to interact)
+   * @param otherParams are other param meters that follow the defaultParams
+   * */
   const interact = async (
     signer: Account,
     contractName: string,
@@ -24,6 +30,7 @@ export function createSystemCalls(
     otherParams?: num.BigNumberish[]
   ) => {
 
+    // for optimistic rendering
     const entityId = getEntityIdFromKeys([BigInt(position.x), BigInt(position.y)]) as EntityIndex
     const pixelId = uuid()
     Pixel.addOverride(pixelId, {
