@@ -121,6 +121,15 @@ mod snake_actions {
 
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);
+            let mut snake = get!(world, player, Snake);
+
+            // change direction if snake already exists
+            if snake.length > 0 {
+              snake.direction = direction;
+              set!(world, (snake));
+              return snake.first_segment_id;
+            }
+
 
             // TODO check if the pixel is unowned or player owned
 
@@ -132,7 +141,7 @@ mod snake_actions {
             let color = default_params.color;
             let text = ''; //TODO
             // Initialize the Snake model
-            let snake = Snake {
+            snake = Snake {
                 owner: player,
                 length: 1,
                 first_segment_id: id,

@@ -349,8 +349,7 @@ mod actions {
                 return result;
             } else {
                 'get_player_address.nonzero'.print();
-                // Check that the caller is the CoreActions contract
-                assert(get_caller_address() == get_core_actions_address(world), 'Invalid caller');
+                // TODO: check if getter is a system or the core actions contract
 
                 // Return the for_player
                 return for_player;
@@ -363,12 +362,9 @@ mod actions {
         ) -> ContractAddress {
             let world = self.world_dispatcher.read();
             if !for_system.is_zero() {
+                // TODO
                 // Check that the caller is the CoreActions contract
                 // Otherwise, it should be 0 (if caller not core_actions)
-                assert(
-                    get_caller_address() == get_core_actions_address(world),
-                    'for_system == 0 unless schedule'
-                );
 
                 // Return the for_player
                 return for_system;

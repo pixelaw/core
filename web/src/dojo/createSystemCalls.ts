@@ -1,6 +1,6 @@
 import { SetupNetworkResult } from './setupNetwork'
-import { Account, num } from 'starknet'
-import { getEntityIdFromKeys, getEvents, setComponentsFromEvents } from '@dojoengine/utils'
+import { Account, num, Event } from 'starknet'
+import { getEntityIdFromKeys, getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { EntityIndex } from '@latticexyz/recs'
@@ -49,7 +49,17 @@ export function createSystemCalls(
       );
 
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 100})
-      setComponentsFromEvents(contractComponents, getEvents(receipt))
+
+      // these events could contain custom components not just core components so filtering out non-core components
+      const events: Event[] = getEvents(receipt)
+      const filteredEvents = events.filter(event => {
+        const componentName = hexToAscii(event.data?.[0] ?? '0x0')
+        const component = contractComponents[componentName as keyof typeof contractComponents]
+        return !!component
+      })
+
+      setComponentsFromEvents(contractComponents, filteredEvents)
+
     } catch (e) {
       Pixel.removeOverride(pixelId)
       console.error(e)
