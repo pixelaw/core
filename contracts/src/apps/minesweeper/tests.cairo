@@ -8,7 +8,7 @@ mod tests {
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use dojo::test_utils::{spawn_test_world, deploy_contract};
     use pixelaw::apps::minesweeper::app::{
-        minesweeper_actions, Game, State, IMinesweeperActionsDispatcher, IMinesweeperActionsDispatcherTrait, game};
+        minesweeper_actions, MinesweeperGame, State, IMinesweeperActionsDispatcher, IMinesweeperActionsDispatcherTrait, minesweeper_game};
 
     use pixelaw::core::models::pixel::{pixel};
     use pixelaw::core::models::permissions::{permissions};
@@ -19,7 +19,7 @@ mod tests {
         let world = spawn_test_world(
             array![
                 pixel::TEST_CLASS_HASH,
-                game::TEST_CLASS_HASH,
+                minesweeper_game::TEST_CLASS_HASH,
                 app::TEST_CLASS_HASH,
                 app_name::TEST_CLASS_HASH,
                 core_actions_address::TEST_CLASS_HASH,
@@ -44,7 +44,7 @@ mod tests {
         world.grant_writer('CoreActionsAddress',core_actions_address);
         world.grant_writer('Permissions',core_actions_address);
 
-        world.grant_writer('Game',minesweeper_actions_address);
+        world.grant_writer('MinesweeperGame',minesweeper_actions_address);
         world.grant_writer('Player',minesweeper_actions_address);
 
 
@@ -81,7 +81,7 @@ mod tests {
                 mines_amount
             );
     }
-    
+
     // #[test]
     // #[available_gas(3000000000)]
     // fn test_create_conditions() {
@@ -118,7 +118,7 @@ mod tests {
     //             action: Option::Some('reveal'),
     //             }
     //         );
-        
+
 
 
     //     // Player creates minefield
