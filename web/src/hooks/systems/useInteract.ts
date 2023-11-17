@@ -8,6 +8,7 @@ import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction
 import useManifest from '@/hooks/systems/useManifest'
 import { InterfaceType, Manifest } from '@/global/types'
 import { sleep } from '@latticexyz/utils'
+import { useToast } from '@/components/ui/use-toast'
 
 const DEFAULT_PARAMETERS_TYPE = 'pixelaw::core::utils::DefaultParameters'
 
@@ -106,6 +107,8 @@ const useInteract = (
     account: { account }
   } = useDojo()
 
+  const { toast } = useToast()
+
   const manifest = useManifest({ name: appName })
 
   const contractName = `${appName}_actions`
@@ -134,10 +137,6 @@ const useInteract = (
         if (!manifest.data) throw new Error('manifest has not loaded yet')
         switchManifest(manifest.data)
         if (!otherParams && fillableParamDefs.length > 0) throw new Error('incomplete parameters')
-        else if (!otherParams && !paramsDef.length) {
-          return interact(account, contractName, position, decimalColor, methodName)
-        }
-
         const additionalParams: num.BigNumberish[] = []
 
         for (const paramDef of paramsDef) {
@@ -161,9 +160,26 @@ const useInteract = (
             else additionalParams.push(param)
           }
         }
+
         // TODO: add sleep for now so that nonce issue is mitigated
         await sleep(1_000)
-        await interact(account, contractName, position, decimalColor, methodName, additionalParams)
+        const interaction = `${appName}.${methodName}`
+        try {
+          await interact(account, contractName, position, decimalColor, methodName, additionalParams)
+          const paramsList = additionalParams.length ? ` with params: [${additionalParams.join(", ")}]` : ''
+          toast({
+            title: 'Successful Transaction',
+            description: `${interaction}${paramsList} was successful`
+          })
+        } catch (e) {
+          toast({
+            variant: "destructive",
+            title: 'Failed Transaction',
+            description: e?.toString() ?? `${interaction} could not be completed`
+          })
+          throw e
+        }
+
       }
     }),
     params: fillableParamDefs
