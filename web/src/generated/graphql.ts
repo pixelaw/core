@@ -450,7 +450,101 @@ export type LastAttemptWhereInput = {
   timestampNEQ?: InputMaybe<Scalars['u64']['input']>;
 };
 
-export type ModelUnion = Alert | App | AppName | AppUser | CoreActionsAddress | Game | LastAttempt | Permissions | Pixel | Player | QueueItem | Snake | SnakeSegment;
+export type MinesweeperGame = {
+  __typename?: 'MinesweeperGame';
+  creator?: Maybe<Scalars['ContractAddress']['output']>;
+  entity?: Maybe<World__Entity>;
+  id?: Maybe<Scalars['u32']['output']>;
+  mines_amount?: Maybe<Scalars['u64']['output']>;
+  size?: Maybe<Scalars['u64']['output']>;
+  started_timestamp?: Maybe<Scalars['u64']['output']>;
+  state?: Maybe<Scalars['Enum']['output']>;
+  x?: Maybe<Scalars['u64']['output']>;
+  y?: Maybe<Scalars['u64']['output']>;
+};
+
+export type MinesweeperGameConnection = {
+  __typename?: 'MinesweeperGameConnection';
+  edges?: Maybe<Array<Maybe<MinesweeperGameEdge>>>;
+  total_count: Scalars['Int']['output'];
+};
+
+export type MinesweeperGameEdge = {
+  __typename?: 'MinesweeperGameEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<MinesweeperGame>;
+};
+
+export type MinesweeperGameOrder = {
+  direction: OrderDirection;
+  field: MinesweeperGameOrderField;
+};
+
+export enum MinesweeperGameOrderField {
+  Creator = 'CREATOR',
+  Id = 'ID',
+  MinesAmount = 'MINES_AMOUNT',
+  Size = 'SIZE',
+  StartedTimestamp = 'STARTED_TIMESTAMP',
+  State = 'STATE',
+  X = 'X',
+  Y = 'Y'
+}
+
+export type MinesweeperGameWhereInput = {
+  creator?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  id?: InputMaybe<Scalars['u32']['input']>;
+  idEQ?: InputMaybe<Scalars['u32']['input']>;
+  idGT?: InputMaybe<Scalars['u32']['input']>;
+  idGTE?: InputMaybe<Scalars['u32']['input']>;
+  idLT?: InputMaybe<Scalars['u32']['input']>;
+  idLTE?: InputMaybe<Scalars['u32']['input']>;
+  idNEQ?: InputMaybe<Scalars['u32']['input']>;
+  mines_amount?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountEQ?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountGT?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountGTE?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountLT?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountLTE?: InputMaybe<Scalars['u64']['input']>;
+  mines_amountNEQ?: InputMaybe<Scalars['u64']['input']>;
+  size?: InputMaybe<Scalars['u64']['input']>;
+  sizeEQ?: InputMaybe<Scalars['u64']['input']>;
+  sizeGT?: InputMaybe<Scalars['u64']['input']>;
+  sizeGTE?: InputMaybe<Scalars['u64']['input']>;
+  sizeLT?: InputMaybe<Scalars['u64']['input']>;
+  sizeLTE?: InputMaybe<Scalars['u64']['input']>;
+  sizeNEQ?: InputMaybe<Scalars['u64']['input']>;
+  started_timestamp?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampEQ?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampGT?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampGTE?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampLT?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampLTE?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampNEQ?: InputMaybe<Scalars['u64']['input']>;
+  state?: InputMaybe<Scalars['Enum']['input']>;
+  x?: InputMaybe<Scalars['u64']['input']>;
+  xEQ?: InputMaybe<Scalars['u64']['input']>;
+  xGT?: InputMaybe<Scalars['u64']['input']>;
+  xGTE?: InputMaybe<Scalars['u64']['input']>;
+  xLT?: InputMaybe<Scalars['u64']['input']>;
+  xLTE?: InputMaybe<Scalars['u64']['input']>;
+  xNEQ?: InputMaybe<Scalars['u64']['input']>;
+  y?: InputMaybe<Scalars['u64']['input']>;
+  yEQ?: InputMaybe<Scalars['u64']['input']>;
+  yGT?: InputMaybe<Scalars['u64']['input']>;
+  yGTE?: InputMaybe<Scalars['u64']['input']>;
+  yLT?: InputMaybe<Scalars['u64']['input']>;
+  yLTE?: InputMaybe<Scalars['u64']['input']>;
+  yNEQ?: InputMaybe<Scalars['u64']['input']>;
+};
+
+export type ModelUnion = Alert | App | AppName | AppUser | CoreActionsAddress | Game | LastAttempt | MinesweeperGame | Permissions | Pixel | Player | QueueItem | Snake | SnakeSegment;
 
 export enum OrderDirection {
   Asc = 'ASC',
@@ -1031,6 +1125,7 @@ export type World__Query = {
   gameModels?: Maybe<GameConnection>;
   lastattemptModels?: Maybe<LastAttemptConnection>;
   metadatas?: Maybe<World__MetadataConnection>;
+  minesweepergameModels?: Maybe<MinesweeperGameConnection>;
   model: World__Model;
   models?: Maybe<World__ModelConnection>;
   permissionsModels?: Maybe<PermissionsConnection>;
@@ -1162,6 +1257,18 @@ export type World__QueryMetadatasArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type World__QueryMinesweepergameModelsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<MinesweeperGameOrder>;
+  where?: InputMaybe<MinesweeperGameWhereInput>;
 };
 
 
@@ -1321,7 +1428,7 @@ export type World__TransactionEdge = {
 export type GetEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typename?: 'World__EntityConnection', edges?: Array<{ __typename?: 'World__EntityEdge', node?: { __typename?: 'World__Entity', keys?: Array<string | null> | null, models?: Array<{ __typename: 'Alert', x?: any | null, y?: any | null, alert?: any | null } | { __typename: 'App', name?: any | null, system?: any | null } | { __typename: 'AppName', name?: any | null, system?: any | null } | { __typename?: 'AppUser' } | { __typename: 'CoreActionsAddress', key?: any | null, value?: any | null } | { __typename: 'Game', x?: any | null, y?: any | null, id?: any | null, state?: any | null, player1?: any | null, player2?: any | null, player1_commit?: any | null, player1_move?: any | null, player2_move?: any | null, started_timestamp?: any | null } | { __typename?: 'LastAttempt' } | { __typename: 'Permissions', allowing_app?: any | null, allowed_app?: any | null, permission?: { __typename: 'Permissions_Permission', alert?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, alert?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | { __typename: 'Player', player_id?: any | null, wins?: any | null } | { __typename?: 'QueueItem' } | { __typename: 'Snake', length?: any | null, first_segment_id?: any | null, last_segment_id?: any | null, direction?: any | null, owner?: any | null, color?: any | null, text?: any | null, is_dying?: any | null } | { __typename: 'SnakeSegment', id?: any | null, previous_id?: any | null, next_id?: any | null, x?: any | null, y?: any | null, pixel_original_color?: any | null, pixel_original_text?: any | null } | null> | null } | null } | null> | null } | null };
+export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typename?: 'World__EntityConnection', edges?: Array<{ __typename?: 'World__EntityEdge', node?: { __typename?: 'World__Entity', keys?: Array<string | null> | null, models?: Array<{ __typename: 'Alert', x?: any | null, y?: any | null, alert?: any | null } | { __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | { __typename: 'AppName', name?: any | null, system?: any | null } | { __typename: 'AppUser', action?: any | null, player?: any | null, system?: any | null } | { __typename: 'CoreActionsAddress', key?: any | null, value?: any | null } | { __typename?: 'Game' } | { __typename?: 'LastAttempt' } | { __typename?: 'MinesweeperGame' } | { __typename: 'Permissions', allowing_app?: any | null, allowed_app?: any | null, permission?: { __typename: 'Permissions_Permission', alert?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, alert?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | { __typename?: 'Player' } | { __typename: 'QueueItem', id?: any | null, valid?: any | null } | { __typename?: 'Snake' } | { __typename?: 'SnakeSegment' } | null> | null } | null } | null> | null } | null };
 
 export type All_Filtered_EntitiesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1361,32 +1468,28 @@ export const GetEntitiesDocument = gql`
             alert
             __typename
           }
+          ... on App {
+            manifest
+            icon
+            action
+            name
+            system
+            __typename
+          }
           ... on AppName {
             name
             system
             __typename
           }
-          ... on App {
-            name
+          ... on AppUser {
+            action
+            player
             system
             __typename
           }
           ... on CoreActionsAddress {
             key
             value
-            __typename
-          }
-          ... on Game {
-            x
-            y
-            id
-            state
-            player1
-            player2
-            player1_commit
-            player1_move
-            player2_move
-            started_timestamp
             __typename
           }
           ... on Permissions {
@@ -1418,30 +1521,9 @@ export const GetEntitiesDocument = gql`
             action
             __typename
           }
-          ... on Player {
-            player_id
-            wins
-            __typename
-          }
-          ... on Snake {
-            length
-            first_segment_id
-            last_segment_id
-            direction
-            owner
-            color
-            text
-            is_dying
-            __typename
-          }
-          ... on SnakeSegment {
+          ... on QueueItem {
             id
-            previous_id
-            next_id
-            x
-            y
-            pixel_original_color
-            pixel_original_text
+            valid
             __typename
           }
         }

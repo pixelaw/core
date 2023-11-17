@@ -64,32 +64,8 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
-	  Game: (() => {
-	    return defineComponent(
-	      world,
-	      { x: RecsType.Number, y: RecsType.Number, id: RecsType.Number, state: RecsType.Number, player1: RecsType.String, player2: RecsType.String, player1_commit: RecsType.Number, player1_move: RecsType.Number, player2_move: RecsType.Number, started_timestamp: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "Game",
-	          types: ["Direction","Direction","Direction"],
-	        },
-	      }
-	    );
-	  })(),
-	  LastAttempt: (() => {
-	    return defineComponent(
-	      world,
-	      { player: RecsType.String, timestamp: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "LastAttempt",
-	          types: [],
-	        },
-	      }
-	    );
-	  })(),
 	  Permissions: (() => {
-	    return defineComponent(
+      return defineComponent(
 	      world,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -114,18 +90,6 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
-	  Player: (() => {
-	    return defineComponent(
-	      world,
-	      { player_id: RecsType.Number, wins: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "Player",
-	          types: [],
-	        },
-	      }
-	    );
-	  })(),
 	  QueueItem: (() => {
 	    return defineComponent(
 	      world,
@@ -133,30 +97,6 @@ export function defineContractComponents(world: World) {
 	      {
 	        metadata: {
 	          name: "QueueItem",
-	          types: [],
-	        },
-	      }
-	    );
-	  })(),
-	  Snake: (() => {
-	    return defineComponent(
-	      world,
-	      { owner: RecsType.String, length: RecsType.Number, first_segment_id: RecsType.Number, last_segment_id: RecsType.Number, direction: RecsType.Number, color: RecsType.Number, text: RecsType.Number, is_dying: RecsType.Boolean },
-	      {
-	        metadata: {
-	          name: "Snake",
-	          types: ["Direction"],
-	        },
-	      }
-	    );
-	  })(),
-	  SnakeSegment: (() => {
-	    return defineComponent(
-	      world,
-	      { id: RecsType.Number, previous_id: RecsType.Number, next_id: RecsType.Number, x: RecsType.Number, y: RecsType.Number, pixel_original_color: RecsType.Number, pixel_original_text: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "SnakeSegment",
 	          types: [],
 	        },
 	      }
