@@ -8,6 +8,7 @@ use starknet::{get_caller_address, get_contract_address, get_execution_info, Con
 trait IPaintActions<TContractState> {
     fn init(self: @TContractState);
     fn interact(self: @TContractState, default_params: DefaultParameters);
+    fn put_color(self: @TContractState, default_params: DefaultParameters);
     fn fade(self: @TContractState, default_params: DefaultParameters);
 }
 
@@ -51,16 +52,40 @@ mod paint_actions {
     // normal color: 0x 00 FF FF FF
 
     fn encode_color(r: u8, g: u8, b: u8) -> u32 {
-        (r.into() * 0x10000) + (g.into() * 0x100) + b.into()
+      (0xff * 0x1000000) + (r.into() * 0x10000) + (g.into() * 0x100) + b.into()
     }
 
     fn decode_color(color: u32) -> (u8, u8, u8) {
-        let r = (color / 0x10000);
-        let g = (color / 0x100) & 0xff;
-        let b = color & 0xff;
+        let r: u32 = (color / 0x10000);
+        let g: u32 = (color / 0x100) & 0xff;
+        let b: u32 = color & 0xff;
 
-        (r.try_into().unwrap(), g.try_into().unwrap(), b.try_into().unwrap())
-    }
+        let r: Option<u8> = r.try_into();
+        let g: Option<u8> = g.try_into();
+        let b: Option<u8> = b.try_into();
+
+        let r: u8 = match r {
+          Option::Some(r) => r,
+          Option::None => 0
+        };
+
+        let g: u8 = match g {
+          Option::Some(g) => g,
+          Option::None => 0,
+        };
+
+        let b: u8 = match b {
+          Option::Some(b) => b,
+          Option::None => 0,
+        };
+
+      'rgb'.print();
+      r.print();
+      g.print();
+      b.print();
+
+    (r, g, b)
+  }
 
     // impl: implement functions specified in trait
     #[external(v0)]
@@ -99,7 +124,7 @@ mod paint_actions {
             self: @ContractState,
             default_params: DefaultParameters
         ) {
-            'put_color'.print();
+            'interact'.print();
 
             // Load important variables
             let world = self.world_dispatcher.read();
@@ -124,25 +149,64 @@ mod paint_actions {
                 'Cooldown not over'
             );
 
-            // We can now update color of the pixel
-            core_actions
-                .update_pixel(
-                    player,
-                    system,
-                    PixelUpdate {
-                        x: position.x,
-                        y: position.y,
-                        color: Option::Some(default_params.color),
-                        alert: Option::None,
-                        timestamp: Option::None,
-                        text: Option::None,
-                        app: Option::Some(system),
-                        owner: Option::Some(player),
-                        action: Option::None  // Not using this feature for paint
-                    }
-                );
+            if pixel.color == default_params.color {self.fade(default_params);}
+            else { self.put_color(default_params); }
+        }
 
-            'put_color DONE'.print();
+        /// Put color on a certain position
+        ///
+        /// # Arguments
+        ///
+        /// * `position` - Position of the pixel.
+        /// * `new_color` - Color to set the pixel to.
+        fn put_color(
+          self: @ContractState,
+          default_params: DefaultParameters
+        ) {
+          'put_color'.print();
+
+          // Load important variables
+          let world = self.world_dispatcher.read();
+          let core_actions = get_core_actions(world);
+          let position = default_params.position;
+          let player = core_actions.get_player_address( default_params.for_player);
+          let system = core_actions.get_system_address( default_params.for_system);
+
+
+          // Load the Pixel
+          let mut pixel = get!(world, (position.x, position.y), (Pixel));
+
+          // TODO: Load Paint App Settings like the fade steptime
+          // For example for the Cooldown feature
+          let COOLDOWN_SECS = 5;
+
+          // Check if 5 seconds have passed or if the sender is the owner
+          // TODO error message confusing, have to split this
+          assert(
+          pixel.owner.is_zero() || (pixel.owner) == player || starknet::get_block_timestamp()
+          - pixel.timestamp < COOLDOWN_SECS,
+          'Cooldown not over'
+          );
+
+          // We can now update color of the pixel
+          core_actions
+            .update_pixel(
+              player,
+              system,
+              PixelUpdate {
+                x: position.x,
+                y: position.y,
+                color: Option::Some(default_params.color),
+                alert: Option::None,
+                timestamp: Option::None,
+                text: Option::None,
+                app: Option::Some(system),
+                owner: Option::Some(player),
+                action: Option::None  // Not using this feature for paint
+              }
+          );
+
+          'put_color DONE'.print();
         }
 
 
@@ -165,6 +229,7 @@ mod paint_actions {
             let system = core_actions.get_system_address( default_params.for_system);
             let pixel = get!(world, (position.x, position.y), Pixel);
 
+'decode_color'.print();
 
             let (r, g, b) = decode_color(pixel.color);
 
@@ -177,9 +242,29 @@ mod paint_actions {
 
             // Fade the color
             let FADE_STEP = 5;
+
+            'encode_color'.print();
             let new_color = encode_color(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP)
             );
+
+// We can now update color of the pixel
+core_actions
+  .update_pixel(
+    player,
+    system,
+    PixelUpdate {
+    x: position.x,
+    y: position.y,
+    color: Option::Some(new_color),
+      alert: Option::None,
+      timestamp: Option::None,
+      text: Option::None,
+      app: Option::Some(system),
+      owner: Option::Some(player),
+      action: Option::None  // Not using this feature for paint
+    }
+);
 
             let FADE_SECONDS = 0;
 
@@ -206,7 +291,7 @@ mod paint_actions {
                 .schedule_queue(
                     queue_timestamp, // When to fade next
                     THIS_CONTRACT_ADDRESS, // This contract address
-                    get_execution_info().unbox().entry_point_selector, // This selector
+0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // This selector
                     calldata.span() // The calldata prepared
                 );
             'put_fading_color DONE'.print();
