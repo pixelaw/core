@@ -69,3 +69,15 @@ export const argbToHex = (argb: number) => {
   const hexCode = convertToHexadecimalAndLeadWithOx(argb)
   return hexCode.replace("0xff", "#")
 }
+
+export const getProductionUrl = (type: 'katana' | 'torii') => {
+  const protocol = window.location.protocol
+  const hostname = window.location.hostname.replace('www.', '')
+
+  if (hostname === 'localhost') {
+    if (type === 'katana') return 'http://localhost:5050'
+    else return 'http://localhost:8080'
+  }
+
+  return`${protocol}//${type}.${hostname}`
+}

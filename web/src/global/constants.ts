@@ -1,4 +1,8 @@
-export const PUBLIC_NODE_URL: string = import.meta.env.VITE_PUBLIC_NODE_URL ?? 'http://localhost:5050'
+import { getProductionUrl } from '@/global/utils'
+
+export const PUBLIC_TORII: string =  import.meta.env.VITE_PUBLIC_TORII ?? getProductionUrl('torii')
+
+export const PUBLIC_NODE_URL: string = import.meta.env.VITE_PUBLIC_NODE_URL ?? getProductionUrl('katana')
 
 export const BLOCK_TIME = 1_000
 

@@ -6,13 +6,12 @@ import { GraphQLClient } from 'graphql-request';
 import { getSdk } from '@/generated/graphql';
 import { Manifest } from '@/global/types'
 import { streamToString } from '@/global/utils'
+import { PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
 const MANIFEST_URL = '/manifests/core'
 
 export async function setupNetwork() {
-  // Extract environment variables for better readability.
-  const { VITE_PUBLIC_NODE_URL, VITE_PUBLIC_TORII } = import.meta.env;
 
   const manifest: Manifest = await (async () => {
     const result = await fetch(MANIFEST_URL)
@@ -24,12 +23,12 @@ export async function setupNetwork() {
   const worldAddress = manifest.world.address ?? ''
 
   // Create a new RPCProvider instance.
-  const provider = new RPCProvider(worldAddress, manifest, VITE_PUBLIC_NODE_URL);
+  const provider = new RPCProvider(worldAddress, manifest, PUBLIC_NODE_URL);
 
   // Utility function to get the SDK.
   // Add in new queries or subscriptions in src/graphql/schema.graphql
   // then generate them using the codegen and fix-codegen commands in package.json
-  const createGraphSdk = () => getSdk(new GraphQLClient(VITE_PUBLIC_TORII));
+  const createGraphSdk = () => getSdk(new GraphQLClient(`${PUBLIC_TORII}/graphql`));
 
   // Return the setup object.
   return {
