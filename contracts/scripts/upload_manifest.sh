@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SYSTEMS=("core" "paint" "minesweeper" "snake" "rps" "hunter")
+SYSTEMS=("core" "paint" "snake")
 BASE_URL="http://localhost:3000/manifests"
 JSON_FILE="./target/dev/manifest.json"
 
