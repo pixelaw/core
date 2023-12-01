@@ -4,9 +4,9 @@ import { DEFAULT_COLOR, GET_ENTITIES } from './constants'
 import getEnv from '../utils/getEnv'
 import { shortString } from 'starknet'
 
-const TORII_URI = getEnv<string>("TORII_URI", 'http://0.0.0.0:8080/graphql')
+const TORII_URI = getEnv<string>("PUBLIC_TORII", 'http://0.0.0.0:8080')
 
-const client = createClient(TORII_URI)
+const client = createClient(`${TORII_URI}/graphql`)
 
 type PixelModelType = {
   node: {

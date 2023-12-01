@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "wait-port 5050 && nodemon index.ts",
+    "dev": "nodemon index.ts",
     "selector": "tsx utils/selector.ts"
   },
   "dependencies": {

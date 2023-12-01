@@ -1,8 +1,6 @@
-import { getProductionUrl } from '@/global/utils'
+export const PUBLIC_TORII: string =  import.meta.env.PUBLIC_TORII
 
-export const PUBLIC_TORII: string =  import.meta.env.VITE_PUBLIC_TORII ?? getProductionUrl('torii')
-
-export const PUBLIC_NODE_URL: string = import.meta.env.VITE_PUBLIC_NODE_URL ?? getProductionUrl('katana')
+export const PUBLIC_NODE_URL: string = import.meta.env.PUBLIC_NODE_URL
 
 export const BLOCK_TIME = 1_000
 

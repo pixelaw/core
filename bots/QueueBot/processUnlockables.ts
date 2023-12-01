@@ -1,8 +1,8 @@
 import fetchApi from '../utils/fetchApi'
 import { Account, num } from 'starknet'
 import execute from '../utils/execute'
-import { MASTER_ACCOUNT_ADDRESS, MASTER_PRIVATE_KEY, PROCESS_QUEUE_SYSTEM_IN_HEX, provider } from './constants'
 import { eventsToProcess } from './memory'
+import { getProvider } from './utils'
 
 let botPrivateKey = ''
 let botAddress = ''
@@ -34,23 +34,19 @@ const processQueue = async (id: string, timestamp: number, called_system: string
   console.log(callData)
 
   if (!botAddress || !botPrivateKey) {
-    // const accounts = await fetchApi<AccountType[]>("accounts", "json")
-    const master = {
-      address: MASTER_ACCOUNT_ADDRESS,
-      private_key: MASTER_PRIVATE_KEY
-    }
+    const [master] = await fetchApi<AccountType[]>("accounts", "json")
     botAddress = master.address
     botPrivateKey = master.private_key
   }
 
-  const signer = new Account(provider, botAddress, botPrivateKey)
+  const signer = new Account(getProvider(), botAddress, botPrivateKey)
   return execute(signer, CORE_ACTIONS_ADDRESS, CORE_ACTIONS_SELECTOR, callData)
 }
 
 // actual queue processing
 const processUnlockables = async () => {
   if (!Object.values(eventsToProcess).length) return
-  const currentBlock = await provider.getBlock("latest")
+  const currentBlock = await getProvider().getBlock("latest")
   const blockTimeStamp = currentBlock.timestamp
   const unlockables = Object.values(eventsToProcess)
     .filter(eventToProcess => blockTimeStamp >= eventToProcess.timestamp)
