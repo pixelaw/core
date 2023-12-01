@@ -1,10 +1,12 @@
 // something to add to torii
-import { provider, QUEUE_FINISHED_KEY_EVENT, QUEUE_STARTED_KEY_EVENT } from './constants'
+import { QUEUE_FINISHED_KEY_EVENT, QUEUE_STARTED_KEY_EVENT } from './constants'
 import { eventsToProcess } from './memory'
+import { getProvider } from './utils'
 
 let lastBlockIndexed = 0
 
 async function indexEvents () {
+  const provider = getProvider()
   const currentBlock = await provider.getBlock("latest")
 
   if (lastBlockIndexed === currentBlock.block_number) return

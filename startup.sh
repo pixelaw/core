@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function buildWebApp() {
+  npx import-meta-env -x .env.core.example -p static/index.html
+}
+
 # Define the first function (thread)
 function thread1() {
     cd bots && npm run dev;
@@ -7,8 +11,10 @@ function thread1() {
 
 # Define the second function (thread)
 function thread2() {
-   ./server
+   ./keiko
 }
+
+buildWebApp &
 
 # Start the first thread in the background
 thread1 &

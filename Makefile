@@ -1,10 +1,13 @@
 REPO = pixelaw/core
-CORE_VERSION = v0.0.3
-KEIKO_VERSION = v0.0.7
+CORE_VERSION = v0.0.8
+KEIKO_VERSION = v0.0.10
 
 
 docker_build:
 	docker build -t $(REPO):$(CORE_VERSION) -t $(REPO):latest --build-arg KEIKO_VERSION=$(KEIKO_VERSION) --progress=plain .
+
+docker_run:
+	docker run -p 3000:3000 -p 5050:5050 -p 8080:8080 $(REPO):$(CORE_VERSION)
 
 build:
 	cd contracts;sozo build;
