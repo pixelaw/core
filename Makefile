@@ -1,6 +1,6 @@
 REPO = pixelaw/core
-CORE_VERSION = v0.0.8
-KEIKO_VERSION = v0.0.10
+CORE_VERSION = v0.0.9
+KEIKO_VERSION = v0.0.11
 
 
 docker_build:
