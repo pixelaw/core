@@ -157,7 +157,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`{{ .Values.subDomainName.grpc }}.{{ .Values.domainName }}`)
+    - match: Host(`{{ .Values.subDomainName.grpcTorii }}.{{ .Values.domainName }}`)
       kind: Rule
       middlewares:
         - name: grpc-torii-{{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-ingress-redirect-scheme
@@ -176,7 +176,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.subDomainName.grpc }}.{{ .Values.domainName }}`)
+    - match: Host(`{{ .Values.subDomainName.grpcTorii }}.{{ .Values.domainName }}`)
       kind: Rule
       services:
         - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-grpc-torii
