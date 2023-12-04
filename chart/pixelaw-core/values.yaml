@@ -31,9 +31,9 @@ grpcToriiContainerService:
 domainName: pixelaw.xyz                # {{ .Values.domainName }}
 
 subDomainName: 
-  pixelaw: demo.core                     # {{ .Values.subDomainName.pixelaw }}
-  katana: katana.core.demo           # {{ .Values.subDomainName.katana }}
-  torii: torii.core.demo             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc.core.demo    # {{ .Values.subDomainName.grpcTorii }}
+  pixelaw: demo                     # {{ .Values.subDomainName.pixelaw }}
+  katana: katana.demo           # {{ .Values.subDomainName.katana }}
+  torii: torii.demo             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc.demo    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: oostvoort/pixelaw-core:latest
