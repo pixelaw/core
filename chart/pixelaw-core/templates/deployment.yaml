@@ -21,4 +21,9 @@ spec:
         image: {{ .Values.dockerImage }}
         imagePullPolicy: Always
         ports:
-        - containerPort: {{ .Values.webappContainerService.port }}                   
+        - containerPort: {{ .Values.webappContainerService.port }}       
+        env:
+        - name: PUBLIC_NODE_URL
+          value: "https://katana.demo.pixelaw.xyz"                  
+        - name: PUBLIC_TORII
+          value: "https://torii.demo.pixelaw.xyz"           
