@@ -4,29 +4,40 @@ import { Button } from '@/components/ui/button'
 import Image from '@/components/ui/Image'
 import { useComponentValue } from '@dojoengine/react'
 import { useDojo } from '@/DojoContext'
-import { EntityIndex } from '@latticexyz/recs'
 import { felt252ToString } from '@/global/utils'
 import { notificationDataAtom } from '@/global/states.ts'
 import { useSetAtom } from 'jotai'
+import useAlerts from '@/hooks/events/useAlerts'
+import { getEntityIdFromKeys } from '@dojoengine/utils'
 
-const Notif: React.FC<{ entityIndex: EntityIndex }> = ({ entityIndex }) => {
+type AlertType = {
+  position: {
+    x: number,
+    y: number
+  },
+  caller: string,
+  player: string,
+  message: string,
+  timestamp: bigint
+}
+
+const Alert: React.FC<AlertType> = ({ position, caller, message }) => {
   const {
     setup: {
-      components: { Pixel },
+      components: { App },
     },
   } = useDojo()
 
-  const pixelType = useComponentValue(Pixel, entityIndex)
-  const name = felt252ToString(pixelType?.app ?? 'Unknown')
+  const app = useComponentValue(App, getEntityIdFromKeys([BigInt(caller)]))
+  const name = felt252ToString(app?.name ?? 'caller')
 
   const setNotificationData = useSetAtom(notificationDataAtom)
 
   const handleOnClickNotification = () => {
-    if (!pixelType) return
     setNotificationData({
-      x: pixelType.x,
-      y: pixelType.y,
-      pixelType: felt252ToString(pixelType.app),
+      x: position.x,
+      y: position.y,
+      pixelType: name,
     })
   }
 
@@ -41,7 +52,7 @@ const Notif: React.FC<{ entityIndex: EntityIndex }> = ({ entityIndex }) => {
         <div className={cn(['h-2 w-2 rounded-full bg-brand-danger'])}/>
       </div>
       <div className={cn(['grow'])}>
-        <h2 className={cn(['text-white text-left text-sm font-semibold'])}>{name} pixel needs your attention</h2>
+        <h2 className={cn(['text-white text-left text-sm font-semibold'])}>{name.toUpperCase()}: {message}</h2>
       </div>
       <Button
         onClick={handleOnClickNotification}
@@ -58,8 +69,8 @@ const Notif: React.FC<{ entityIndex: EntityIndex }> = ({ entityIndex }) => {
 export default function Notification() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
-  const notifs: EntityIndex[] = []
-  const hasNotification = notifs && notifs.length > 0
+  const alerts = useAlerts()
+  const hasNotification = alerts.data && alerts.data?.length > 0
 
     return (
         <>
@@ -119,8 +130,8 @@ export default function Notification() {
                         </Button>
                     </div>
 
-                    {notifs.map(notif => (
-                      <Notif entityIndex={notif} key={notif} />
+                    {(alerts?.data ?? []).map(alert => (
+                      <Alert {...alert} key={alert.id} />
                     ))}
 
                 </div>

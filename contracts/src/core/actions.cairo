@@ -2,6 +2,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+use pixelaw::core::utils::Position;
 
 use starknet::{ContractAddress, ClassHash};
 
@@ -43,6 +44,8 @@ trait IActions<TContractState> {
     fn new_app(self: @TContractState, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App;
     fn get_system_address(self: @TContractState, for_system: ContractAddress) -> ContractAddress;
     fn get_player_address(self: @TContractState, for_player: ContractAddress) -> ContractAddress;
+    fn alert_player(self: @TContractState, position: Position, player: ContractAddress, message: felt252);
+
 }
 
 
@@ -60,7 +63,7 @@ mod actions {
     use debug::PrintTrait;
     use poseidon::poseidon_hash_span;
     use pixelaw::core::models::queue::{QueueItem};
-    use pixelaw::core::utils::{get_core_actions_address};
+    use pixelaw::core::utils::{get_core_actions_address, Position};
     use zeroable::Zeroable;
 
 
@@ -84,12 +87,22 @@ mod actions {
         caller: felt252
     }
 
+    #[derive(Drop, starknet::Event)]
+    struct Alert {
+      position: Position,
+      caller: ContractAddress,
+      player: ContractAddress,
+      message: felt252,
+      timestamp: u64
+    }
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         QueueScheduled: QueueScheduled,
         QueueProcessed: QueueProcessed,
-        AppNameUpdated: AppNameUpdated
+        AppNameUpdated: AppNameUpdated,
+        Alert: Alert
     }
 
 
@@ -409,6 +422,14 @@ mod actions {
 
             // Return the system association
             app
+        }
+
+        fn alert_player(self: @ContractState, position: Position, player: ContractAddress, message: felt252) {
+          let world = self.world_dispatcher.read();
+          let caller = get_caller_address();
+          let app = get!(world, caller, (App));
+          assert(app.name != '', 'cannot be called by a non-app');
+          emit!(world, Alert { position, caller, player, message, timestamp: starknet::get_block_timestamp() });
         }
     }
 }

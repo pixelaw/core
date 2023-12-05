@@ -224,6 +224,8 @@ mod snake_actions {
                 snake.length -= 1;
 
                 if snake.length == 0 {
+                    let position = Position { x: first_segment.x, y: first_segment.y };
+                    core_actions.alert_player(position, snake.owner, 'Snake died here');
                     emit!(world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y });
                     set!(world, (snake));
                     // Since we return immediately, the next Queue for move will never be set

@@ -202,7 +202,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }
 
   React.useEffect(() => {
-    if (!notificationData || !notificationData.x || !notificationData.y) return
+    if (!notificationData) return
     const targetPixelX = notificationData.x * cellSize
     const targetPixelY = notificationData.y * cellSize
 

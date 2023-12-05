@@ -16,6 +16,7 @@ export function useRenderGrid() {
     visibleAreaYStart: number,
     visibleAreaYEnd: number,
     pixels: Array<CellDatum | undefined> | undefined
+    focus: Array<{x: number, y: number}>
   }) => {
     const {
       cellSize,
@@ -30,6 +31,7 @@ export function useRenderGrid() {
       visibleAreaYStart,
       visibleAreaYEnd,
       pixels,
+      focus
     } = options
 
     ctx.clearRect(0, 0, width, height)
@@ -73,6 +75,17 @@ export function useRenderGrid() {
         ctx.fillRect(x, y, cellSize, cellSize)
         ctx.strokeStyle = '#2E0A3E'
         ctx.strokeRect(x, y, cellSize, cellSize)
+
+        if(focus.length){
+          const pixelNeedAttention = focus.find(p => p.x === row && p.y === col)
+          if(pixelNeedAttention){
+            ctx.strokeStyle = '#FFFFFF'
+            ctx.shadowColor = '#FFFFFF'
+            ctx.shadowBlur = 10
+            ctx.strokeRect(x, y, cellSize, cellSize)
+            ctx.shadowColor = 'transparent'
+          }
+        }
 
 
 
