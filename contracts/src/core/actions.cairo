@@ -254,10 +254,7 @@ mod actions {
 
             let permissions = get!(world, (pixel.app, caller_app.system).into(), (Permissions));
 
-            if pixel_update.alert.is_some() && !permissions.permission.alert {
-                return false;
-            };
-            if pixel_update.app.is_some() && !permissions.permission.alert {
+            if pixel_update.app.is_some() && !permissions.permission.app {
                 return false;
             };
             if pixel_update.color.is_some() && !permissions.permission.color {
@@ -301,10 +298,6 @@ mod actions {
 
                 pixel.created_at = now;
                 pixel.updated_at = now;
-            }
-
-            if pixel_update.alert.is_some() {
-                pixel.alert = pixel_update.alert.unwrap();
             }
 
             if pixel_update.app.is_some() {

@@ -102,7 +102,6 @@ mod paint_actions {
 
             core_actions.update_permission('snake',
               Permission {
-                alert: false,
                 app: false,
                 color: true,
                 owner: false,
@@ -197,7 +196,6 @@ mod paint_actions {
                 x: position.x,
                 y: position.y,
                 color: Option::Some(default_params.color),
-                alert: Option::None,
                 timestamp: Option::None,
                 text: Option::None,
                 app: Option::Some(system),
@@ -257,7 +255,6 @@ core_actions
     x: position.x,
     y: position.y,
     color: Option::Some(new_color),
-      alert: Option::None,
       timestamp: Option::None,
       text: Option::None,
       app: Option::Some(system),

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CellDatum, NeedsAttentionDatum } from '@/components/shared/DrawPanel.tsx'
+import { CellDatum } from '@/components/shared/DrawPanel.tsx'
 import { felt252ToString } from '@/global/utils'
 
 export function useRenderGrid() {
@@ -15,8 +15,7 @@ export function useRenderGrid() {
     visibleAreaXEnd: number,
     visibleAreaYStart: number,
     visibleAreaYEnd: number,
-    pixels: Array<CellDatum | undefined> | undefined,
-    needsAttentionData:  Array<NeedsAttentionDatum | undefined> | undefined,
+    pixels: Array<CellDatum | undefined> | undefined
   }) => {
     const {
       cellSize,
@@ -31,7 +30,6 @@ export function useRenderGrid() {
       visibleAreaYStart,
       visibleAreaYEnd,
       pixels,
-      needsAttentionData,
     } = options
 
     ctx.clearRect(0, 0, width, height)
@@ -64,18 +62,6 @@ export function useRenderGrid() {
               // Skip this iteration if the pixel color hasn't changed
               continue
             }
-          }
-        }
-
-        if(needsAttentionData && needsAttentionData.length > 0){
-          const pixelNeedAttention = needsAttentionData.find(p => p && p.coordinates[0] === row && p.coordinates[1] === col)
-          if(pixelNeedAttention){
-            ctx.strokeStyle = '#FFFFFF'
-            ctx.shadowColor = '#FFFFFF'
-            ctx.shadowBlur = 10
-            ctx.strokeRect(x, y, cellSize, cellSize)
-            ctx.shadowColor = 'transparent'
-            ctx.shadowBlur = 0
           }
         }
 

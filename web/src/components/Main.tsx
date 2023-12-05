@@ -5,7 +5,6 @@ import { ColorResult, CompactPicker } from 'react-color'
 import DrawPanel from '@/components/shared/DrawPanel'
 import { useFilteredEntities } from '@/hooks/entities/useFilteredEntities'
 import { Account } from '@/global/types'
-import { useNeedsAttention } from '@/hooks/entities/useNeedsAttention'
 import DrawPanelProvider, { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
 import { useAtom } from 'jotai'
 import { colorAtom } from '@/global/states.ts'
@@ -13,7 +12,6 @@ import { colorAtom } from '@/global/states.ts'
 const FilteredComponents: React.FC = () => {
   const { visibleAreaStart, visibleAreaEnd } = useDrawPanel()
   useFilteredEntities(visibleAreaStart[0], visibleAreaEnd[0], visibleAreaStart[1], visibleAreaEnd[1])
-  useNeedsAttention()
   return <></>
 }
 

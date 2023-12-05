@@ -30,14 +30,14 @@ export function useFilteredEntities(
       for (const edge of data.pixelModels.edges) {
         if (!edge || !edge.node) continue
         const fetchedNode = edge.node
+        const entityId = getEntityIdFromKeys([ BigInt(fetchedNode.x), BigInt(fetchedNode.y) ])
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         delete fetchedNode['__typename']
-        const entityId = getEntityIdFromKeys([ BigInt(fetchedNode.x), BigInt(fetchedNode.y) ])
-        const currentColor = getComponentValue(Pixel, entityId)
+        const currentPixel = getComponentValue(Pixel, entityId)
 
         // do not update if it's already equal
-        if (isEqual(currentColor, fetchedNode)) continue
+        if (isEqual(currentPixel, fetchedNode)) continue
 
         // to update latticexyz indexer
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

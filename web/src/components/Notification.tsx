@@ -2,12 +2,9 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import Image from '@/components/ui/Image'
-import { useComponentValue, useEntityQuery } from '@dojoengine/react'
+import { useComponentValue } from '@dojoengine/react'
 import { useDojo } from '@/DojoContext'
-// TODO: Remove ts ignore
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { HasValue, EntityIndex } from '@latticexyz/recs'
+import { EntityIndex } from '@latticexyz/recs'
 import { felt252ToString } from '@/global/utils'
 import { notificationDataAtom } from '@/global/states.ts'
 import { useSetAtom } from 'jotai'
@@ -61,17 +58,7 @@ const Notif: React.FC<{ entityIndex: EntityIndex }> = ({ entityIndex }) => {
 export default function Notification() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
-  const {
-    setup: {
-      components: { Alert, Pixel },
-    },
-    account: { account }
-  } = useDojo()
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const notifs = useEntityQuery([HasValue(Alert, { value: true }), HasValue(Pixel, { owner: account.address })])
-
+  const notifs: EntityIndex[] = []
   const hasNotification = notifs && notifs.length > 0
 
     return (
@@ -120,7 +107,7 @@ export default function Notification() {
                     >
                         <div className={cn(['w-[20px] grow-0'])}></div>
                         <div className={cn(['grow py-xs'])}>
-                            <h2 className={cn(['text-brand-violetAccent text-left text-base uppercase font-silkscreen'])}>Notifications</h2>
+                            <h2 className={cn(['text-brand-violetAccent text-left text-base uppercase font-silkscreen'])}>Alerts</h2>
                         </div>
                         <Button
                             variant={'icon'}

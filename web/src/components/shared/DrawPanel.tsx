@@ -12,11 +12,6 @@ export type CellDatum = {
   text: string
 }
 
-export type NeedsAttentionDatum = {
-  coordinates: Array<number>
-  value: boolean | undefined
-}
-
 const DrawPanel = () => {
   const {
     gameMode,
@@ -24,7 +19,6 @@ const DrawPanel = () => {
     coordinates,
     selectedHexColor,
     data,
-    needsAttentionData,
     panOffsetX,
     panOffsetY,
     setPanOffsetX,
@@ -82,7 +76,6 @@ const DrawPanel = () => {
         visibleAreaYStart,
         visibleAreaYEnd,
         pixels: data,
-        needsAttentionData,
       })
     }
   }, [ coordinates, panOffsetX, panOffsetY, cellSize, selectedHexColor, data, renderGrid, visibleAreaXStart, visibleAreaXEnd, visibleAreaYStart, visibleAreaYEnd ])

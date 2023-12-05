@@ -1,5 +1,5 @@
 import React, {SetStateAction} from 'react'
-import {CellDatum, Coordinate, NeedsAttentionDatum} from '@/components/shared/DrawPanel.tsx'
+import {CellDatum, Coordinate} from '@/components/shared/DrawPanel.tsx'
 import {useDojo} from '@/DojoContext.tsx'
 import { useAtom, useAtomValue } from 'jotai'
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/global/states.ts'
 import {CANVAS_HEIGHT, CANVAS_WIDTH, MAX_CELL_SIZE, MAX_ROWS_COLS} from '@/global/constants.ts'
 import {useEntityQuery} from '@dojoengine/react'
-import {getComponentValue, getComponentValueStrict, Has, HasValue} from '@latticexyz/recs'
+import {getComponentValue, Has} from '@latticexyz/recs'
 import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
@@ -28,7 +28,6 @@ type DrawPanelType = {
   setPanOffsetX: React.Dispatch<SetStateAction<number>>
   setPanOffsetY: React.Dispatch<SetStateAction<number>>
   data?: Array<CellDatum | undefined> | undefined,
-  needsAttentionData?: Array<NeedsAttentionDatum | undefined> | undefined,
 
   onCellClick?: (position: [ number, number ]) => void,
   onVisibleAreaCoordinate?: (visibleAreaStart: Coordinate, visibleAreaEnd: Coordinate) => void
@@ -39,13 +38,9 @@ export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPan
 
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
-    account: {
-      account,
-    },
     setup: {
       components: {
-        Pixel,
-        Alert
+        Pixel
       },
     },
   } = useDojo()
@@ -96,13 +91,8 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const [ notificationData, ] = useAtom(notificationDataAtom)
 
   const pixelData: Record<`[${number},${number}]`, { color: string, text: string}> = {}
-  const needAttentionData: Record<`[${number},${number}]`, boolean | undefined> = {}
 
   const entityIds = useEntityQuery([ Has(Pixel) ])
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const notifEntityIds = useEntityQuery([ HasValue(Alert, { alert: true }), HasValue(Pixel, { owner: account.address }) ])
-
 
   const pixels = entityIds
     .map(entityId => getComponentValue(Pixel, entityId))
@@ -116,15 +106,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
     }
   })
 
-  const entityNeedsAttentions = notifEntityIds
-    .map(entityId => {
-      return getComponentValueStrict(Alert, entityId)
-    })
-
-  entityNeedsAttentions.forEach(entityNeedsAttention => {
-    needAttentionData[`[${entityNeedsAttention.x},${entityNeedsAttention.y}]`] = !!entityNeedsAttention.alert
-  })
-
   const handleData = () => {
     const data = {
       ...tempData,
@@ -135,15 +116,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         coordinates: key.match(/\d+/g)?.map(Number) as [ number, number ],
         hexColor: value.color,
         text: value.text
-      }
-    })
-  }
-
-  const handleNeedsAttentionData = () => {
-    return Object.entries(needAttentionData).map(([ key, value ]) => {
-      return {
-        coordinates: key.match(/\d+/g)?.map(Number) as [ number, number ],
-        value: value,
       }
     })
   }
@@ -258,7 +230,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
       setPanOffsetX,
       setPanOffsetY,
       data: handleData(),
-      needsAttentionData: handleNeedsAttentionData(),
       onCellClick: handleCellClick,
       onVisibleAreaCoordinate: handleVisibleAreaCoordinate,
       onHover: handleHover,
