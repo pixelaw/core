@@ -3,6 +3,8 @@ import { BLOCK_TIME } from '@/global/constants'
 import { useQuery } from '@tanstack/react-query'
 import { convertToDecimal, felt252ToString } from '@/global/utils'
 
+const ALERTS_TO_GET = 1_000
+
 const useAlerts = () => {
   const {
     setup: {
@@ -16,7 +18,8 @@ const useAlerts = () => {
   return useQuery({
     queryKey: ['alerts', account.address],
     queryFn: async () => {
-      const {data} = await graphSdk.alerts()
+      /// TODO: paginate getting alerts. Settling for this right now
+      const {data} = await graphSdk.alerts({ first: ALERTS_TO_GET })
       return (data.events?.edges ?? [])
         .filter(edge => {
           if (!edge?.node?.data) return false
