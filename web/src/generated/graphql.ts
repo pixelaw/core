@@ -1,4 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
 import { print } from 'graphql'
 import gql from 'graphql-tag';
@@ -1174,15 +1176,23 @@ const AppsDocumentString = print(AppsDocument);
 const AlertsDocumentString = print(AlertsDocument);
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
     getEntities(variables?: GetEntitiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: GetEntitiesQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<GetEntitiesQuery>(GetEntitiesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEntities', 'query');
     },
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
     all_filtered_entities(variables?: All_Filtered_EntitiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: All_Filtered_EntitiesQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<All_Filtered_EntitiesQuery>(All_Filtered_EntitiesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'all_filtered_entities', 'query');
     },
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
     apps(variables?: AppsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: AppsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<AppsQuery>(AppsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'apps', 'query');
     },
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
     alerts(variables?: AlertsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: AlertsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<AlertsQuery>(AlertsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'alerts', 'query');
     }
