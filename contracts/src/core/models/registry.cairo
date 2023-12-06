@@ -43,4 +43,15 @@ struct CoreActionsAddress {
     value: ContractAddress
 }
 
+#[derive(Model, Copy, Drop, Serde)]
+struct Instruction {
+  #[key]
+  system: ContractAddress,
+  #[key]
+  selector: felt252,
+  instruction: felt252
+}
+
+
+
 

@@ -106,6 +106,11 @@ mod snake_actions {
             let core_actions = get_core_actions(self.world_dispatcher.read());
 
             core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
+
+            // TODO should use something like: starknet_keccak(array!['interact'].span())
+            let INTERACT_SELECTOR = 0x476d5e1b17fd9d508bd621909241c5eb4c67380f3651f54873c5c1f2b891f4;
+            let INTERACT_INSTRUCTION = 'select direction for snake';
+            core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
 
 

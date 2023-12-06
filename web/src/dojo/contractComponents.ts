@@ -52,12 +52,24 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
+	  Instruction: (() => {
+	    return defineComponent(
+	      world,
+	      { system: RecsType.String, selector: RecsType.Number, instruction: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Instruction",
+	          types: [],
+	        },
+	      }
+	    );
+	  })(),
 	  Permissions: (() => {
 	    return defineComponent(
 	      world,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-	      { allowing_app: RecsType.String, allowed_app: RecsType.String, permission: { alert: RecsType.Boolean, app: RecsType.Boolean, color: RecsType.Boolean, owner: RecsType.Boolean, text: RecsType.Boolean, timestamp: RecsType.Boolean, action: RecsType.Boolean } },
+	      { allowing_app: RecsType.String, allowed_app: RecsType.String, permission: { app: RecsType.Boolean, color: RecsType.Boolean, owner: RecsType.Boolean, text: RecsType.Boolean, timestamp: RecsType.Boolean, action: RecsType.Boolean } },
 	      {
 	        metadata: {
 	          name: "Permissions",

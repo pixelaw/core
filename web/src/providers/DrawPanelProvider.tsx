@@ -15,6 +15,7 @@ import {getComponentValue, Has} from '@latticexyz/recs'
 import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
+import { useInstructions } from '@/hooks/entities/useInstructions'
 
 type DrawPanelType = {
   gameMode: string,
@@ -35,6 +36,11 @@ type DrawPanelType = {
 }
 
 export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPanelType)
+
+const LoadInstructions = () => {
+  useInstructions()
+  return <></>
+}
 
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -66,7 +72,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   //setting the coordinates and passing it to plugin when hover in the cell
   const [position, setPositionWithAddressAndType] = useAtom(positionWithAddressAndTypeAtom)
 
-  const { interact, params } = useInteract(
+  const { interact, params, instruction } = useInteract(
     `${gameMode}`,
     selectedHexColor,
     {
@@ -236,6 +242,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
     }}>
       {children}
       <ParamPicker
+        instruction={instruction}
         value={additionalParams}
         onChange={(newValue) => setAdditionalParams(newValue)}
         onSelect={(newValue) => handleInteract(newValue)}
@@ -244,6 +251,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         open={openModal}
         onOpenChange={(open) => setOpenModal(open)}
       />
+      <LoadInstructions />
     </DrawPanelContext.Provider>
   )
 }

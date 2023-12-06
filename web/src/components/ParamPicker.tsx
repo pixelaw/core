@@ -21,7 +21,8 @@ type PropsType = {
   params: ParamDefinition[],
   onSubmit?: () => void,
   open?: boolean,
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void,
+  instruction?: string
 }
 
 type EnumPickerPropsType = {
@@ -48,7 +49,7 @@ const EnumPicker: React.FC<EnumPickerPropsType> = ( { label, value, variants, on
   )
 }
 
-const ParamPicker: React.FC<PropsType> = ({ value, onChange, onSelect, params, onSubmit, open, onOpenChange }) => {
+const ParamPicker: React.FC<PropsType> = ({ instruction, value, onChange, onSelect, params, onSubmit, open, onOpenChange }) => {
   const needsSubmitButton = params.length > 1 ||  !!(params.filter(param => param.type === 'number' || param.type === 'string')).length
   const handleOnChange = (newValue: any, paramName: string) => {
     const finalizedValue = {...value, [paramName]: newValue}
@@ -62,9 +63,14 @@ const ParamPicker: React.FC<PropsType> = ({ value, onChange, onSelect, params, o
     if (onChange) onChange(finalizedValue)
   }
 
+  const hasInstruction = !!instruction
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={'p-md'}>
+        {hasInstruction && (
+          <div>{instruction}</div>
+        )}
         <div>
           {params.map((param) => {
 
