@@ -175,7 +175,6 @@ mod snake_actions {
                         x: position.x,
                         y: position.y,
                         color: Option::Some(color),
-                        alert: Option::None,
                         timestamp: Option::None,
                         text: Option::Some(text),
                         app: Option::None,
@@ -225,6 +224,8 @@ mod snake_actions {
                 snake.length -= 1;
 
                 if snake.length == 0 {
+                    let position = Position { x: first_segment.x, y: first_segment.y };
+                    core_actions.alert_player(position, snake.owner, 'Snake died here');
                     emit!(world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y });
                     set!(world, (snake));
                     // Since we return immediately, the next Queue for move will never be set
@@ -259,7 +260,6 @@ mod snake_actions {
                       x: next_x,
                       y: next_y,
                       color: Option::Some(snake.color),
-                      alert: Option::None,
                       timestamp: Option::None,
                       text: Option::Some(snake.text),
                       app: Option::None,
@@ -363,7 +363,6 @@ mod snake_actions {
                     x: pixel.x,
                     y: pixel.y,
                     color: Option::Some(last_segment.pixel_original_color),
-                    alert: Option::None,
                     timestamp: Option::None,
                     text: Option::Some(last_segment.pixel_original_text),
                     app: Option::None,
@@ -419,7 +418,6 @@ mod snake_actions {
                     x: pixel.x,
                     y: pixel.y,
                     color: Option::Some(snake.color),
-                    alert: Option::None,
                     timestamp: Option::None,
                     text: Option::Some(snake.text),
                     app: Option::None,

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CellDatum, NeedsAttentionDatum } from '@/components/shared/DrawPanel.tsx'
+import { CellDatum } from '@/components/shared/DrawPanel.tsx'
 import { felt252ToString } from '@/global/utils'
 
 export function useRenderGrid() {
@@ -15,8 +15,8 @@ export function useRenderGrid() {
     visibleAreaXEnd: number,
     visibleAreaYStart: number,
     visibleAreaYEnd: number,
-    pixels: Array<CellDatum | undefined> | undefined,
-    needsAttentionData:  Array<NeedsAttentionDatum | undefined> | undefined,
+    pixels: Array<CellDatum | undefined> | undefined
+    focus: Array<{x: number, y: number}>
   }) => {
     const {
       cellSize,
@@ -31,7 +31,7 @@ export function useRenderGrid() {
       visibleAreaYStart,
       visibleAreaYEnd,
       pixels,
-      needsAttentionData,
+      focus
     } = options
 
     ctx.clearRect(0, 0, width, height)
@@ -67,18 +67,6 @@ export function useRenderGrid() {
           }
         }
 
-        if(needsAttentionData && needsAttentionData.length > 0){
-          const pixelNeedAttention = needsAttentionData.find(p => p && p.coordinates[0] === row && p.coordinates[1] === col)
-          if(pixelNeedAttention){
-            ctx.strokeStyle = '#FFFFFF'
-            ctx.shadowColor = '#FFFFFF'
-            ctx.shadowBlur = 10
-            ctx.strokeRect(x, y, cellSize, cellSize)
-            ctx.shadowColor = 'transparent'
-            ctx.shadowBlur = 0
-          }
-        }
-
         if (coordinates && row === coordinates[0] && col === coordinates[1]) {
           pixelColor = selectedHexColor
         }
@@ -87,6 +75,17 @@ export function useRenderGrid() {
         ctx.fillRect(x, y, cellSize, cellSize)
         ctx.strokeStyle = '#2E0A3E'
         ctx.strokeRect(x, y, cellSize, cellSize)
+
+        if(focus.length){
+          const pixelNeedAttention = focus.find(p => p.x === row && p.y === col)
+          if(pixelNeedAttention){
+            ctx.strokeStyle = '#FFFFFF'
+            ctx.shadowColor = '#FFFFFF'
+            ctx.shadowBlur = 10
+            ctx.strokeRect(x, y, cellSize, cellSize)
+            ctx.shadowColor = 'transparent'
+          }
+        }
 
 
 

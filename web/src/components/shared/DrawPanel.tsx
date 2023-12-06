@@ -3,6 +3,8 @@ import { clsx } from 'clsx'
 import { useRenderGrid } from '@/hooks/useRenderGrid'
 import { CANVAS_HEIGHT, CANVAS_WIDTH, MAX_ROWS_COLS } from '@/global/constants'
 import { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
+import { useAtomValue } from 'jotai'
+import { notificationDataAtom } from '@/global/states'
 
 export type Coordinate = [ number, number ]
 
@@ -12,19 +14,12 @@ export type CellDatum = {
   text: string
 }
 
-export type NeedsAttentionDatum = {
-  coordinates: Array<number>
-  value: boolean | undefined
-}
-
 const DrawPanel = () => {
   const {
-    gameMode,
     cellSize,
     coordinates,
     selectedHexColor,
     data,
-    needsAttentionData,
     panOffsetX,
     panOffsetY,
     setPanOffsetX,
@@ -57,12 +52,14 @@ const DrawPanel = () => {
   //canvas ref
   const gridCanvasRef = React.useRef<HTMLCanvasElement>()
 
+  const notificationData = useAtomValue(notificationDataAtom)
+
+  const focus = notificationData ? [ notificationData ] : []
+
   //It should be run one time only
   React.useEffect(() => {
-    if (gameMode !== 'paint') return
     onVisibleAreaCoordinate?.([ visibleAreaXStart, visibleAreaYStart ], [ visibleAreaXEnd, visibleAreaYEnd ])
   }, [])
-  // useFilteredEntities(visibleAreaXStart, visibleAreaXEnd, visibleAreaYStart, visibleAreaYEnd)
 
   React.useEffect(() => {
     if (gridCanvasRef.current) {
@@ -82,7 +79,7 @@ const DrawPanel = () => {
         visibleAreaYStart,
         visibleAreaYEnd,
         pixels: data,
-        needsAttentionData,
+        focus
       })
     }
   }, [ coordinates, panOffsetX, panOffsetY, cellSize, selectedHexColor, data, renderGrid, visibleAreaXStart, visibleAreaXEnd, visibleAreaYStart, visibleAreaYEnd ])

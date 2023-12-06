@@ -4,12 +4,6 @@ query getEntities {
       node {
         keys
         models {
-          ... on Alert {
-            x
-            y
-            alert
-            __typename
-          }
           ... on App {
             manifest
             icon
@@ -38,7 +32,6 @@ query getEntities {
             allowing_app
             allowed_app
             permission {
-              alert
               app
               color
               owner
@@ -54,7 +47,6 @@ query getEntities {
             y
             created_at
             updated_at
-            alert
             app
             color
             owner
@@ -91,7 +83,6 @@ query all_filtered_entities(
         y
         created_at
         updated_at
-        alert
         app
         color
         owner
@@ -104,36 +95,6 @@ query all_filtered_entities(
   }
 }
 
-query getNeedsAttention($first: Int, $address: ContractAddress){
-  pixelModels(first: $first, where: { ownerEQ: $address}) {
-    edges {
-      node {
-        x
-        y
-        created_at
-        updated_at
-        alert
-        app
-        color
-        owner
-        text
-        timestamp
-        action
-        __typename
-      }
-    }
-  }
-  alertModels(first:$first, where: { alert: true}){
-    edges{
-      node{
-        x
-        y
-        alert
-        __typename
-      }
-    }
-  }
-}
 
 query apps {
   appModels {
@@ -145,6 +106,26 @@ query apps {
         name
         system
         __typename
+      }
+    }
+  }
+}
+
+query alerts(
+  $first: Int
+) {
+  events(
+    first: $first,
+    keys: [
+      "0x4f01980329bc5de8cd181e4fb67fefefe583bd41f04365fa472ba112e7e5ef"
+    ]) {
+    edges {
+      node {
+        id
+        keys
+        data
+        created_at
+        transaction_hash
       }
     }
   }

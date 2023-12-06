@@ -4,18 +4,6 @@ import { defineComponent, Type as RecsType, World } from "@latticexyz/recs";
 
 export function defineContractComponents(world: World) {
   return {
-	  Alert: (() => {
-	    return defineComponent(
-	      world,
-	      { x: RecsType.Number, y: RecsType.Number, alert: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "Alert",
-	          types: [],
-	        },
-	      }
-	    );
-	  })(),
 	  App: (() => {
 	    return defineComponent(
 	      world,
@@ -65,7 +53,7 @@ export function defineContractComponents(world: World) {
 	    );
 	  })(),
 	  Permissions: (() => {
-      return defineComponent(
+	    return defineComponent(
 	      world,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -81,7 +69,7 @@ export function defineContractComponents(world: World) {
 	  Pixel: (() => {
 	    return defineComponent(
 	      world,
-	      { x: RecsType.Number, y: RecsType.Number, created_at: RecsType.Number, updated_at: RecsType.Number, alert: RecsType.Number, app: RecsType.String, color: RecsType.Number, owner: RecsType.String, text: RecsType.Number, timestamp: RecsType.Number, action: RecsType.Number },
+	      { x: RecsType.Number, y: RecsType.Number, created_at: RecsType.Number, updated_at: RecsType.Number, app: RecsType.String, color: RecsType.Number, owner: RecsType.String, text: RecsType.Number, timestamp: RecsType.Number, action: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Pixel",
