@@ -12,8 +12,8 @@ enum Direction {
 
 #[derive(Copy, Drop, Serde, SerdeLen)]
 struct Position {
-    x: u64,
-    y: u64
+    x: u32,
+    y: u32
 }
 
 
@@ -37,7 +37,7 @@ impl DirectionIntoFelt252 of Into<Direction, felt252> {
         }
     }
 }
-const U64_MAX: u64 = 0xFFFFFFFFFFFFFFFF;
+const U32_MAX: u32 = 0xFFFFFFFF;
 
 
 /// Computes the starknet keccak to have a hash that fits in one felt.
@@ -73,7 +73,7 @@ fn get_position(direction: Direction, position: Position) -> Position {
             }
         },
         Direction::Right => {
-            if position.x == U64_MAX {
+            if position.x == U32_MAX {
                 position
             } else {
                 Position { x: position.x + 1, y: position.y }
@@ -87,7 +87,7 @@ fn get_position(direction: Direction, position: Position) -> Position {
             }
         },
         Direction::Down => {
-            if position.y == U64_MAX {
+            if position.y == U32_MAX {
                 position
             } else {
                 Position { x: position.x, y: position.y + 1 }
