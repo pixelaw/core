@@ -68,10 +68,10 @@ query getEntities {
 
 query all_filtered_entities(
   $first: Int
-  $xMin: u64
-  $xMax: u64
-  $yMin: u64
-  $yMax: u64
+  $xMin: u32
+  $xMax: u32
+  $yMin: u32
+  $yMax: u32
 ) {
   pixelModels(
     first: $first

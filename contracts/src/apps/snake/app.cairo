@@ -3,7 +3,7 @@ use starknet::{ContractAddress, ClassHash};
 use pixelaw::core::utils::{Direction, Position, DefaultParameters, starknet_keccak};
 
 
-fn next_position(x: u64, y: u64, direction: Direction) -> Option<(u64, u64)> {
+fn next_position(x: u32, y: u32, direction: Direction) -> Option<(u32, u32)> {
     match direction {
         Direction::None(()) => { Option::Some((x, y)) },
         Direction::Left(()) => {
@@ -39,8 +39,8 @@ struct SnakeSegment {
     id: u32,
     previous_id: u32,
     next_id: u32,
-    x: u64,
-    y: u64,
+    x: u32,
+    y: u32,
     pixel_original_color: u32,
     pixel_original_text: felt252
 }
@@ -82,8 +82,8 @@ mod snake_actions {
     #[derive(Drop, starknet::Event)]
     struct Died {
         owner: ContractAddress,
-        x: u64,
-        y: u64
+        x: u32,
+        y: u32
     }
 
     #[derive(Drop, starknet::Event)]

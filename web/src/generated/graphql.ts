@@ -380,8 +380,8 @@ export type Pixel = {
   text?: Maybe<Scalars['felt252']['output']>;
   timestamp?: Maybe<Scalars['u64']['output']>;
   updated_at?: Maybe<Scalars['u64']['output']>;
-  x?: Maybe<Scalars['u64']['output']>;
-  y?: Maybe<Scalars['u64']['output']>;
+  x?: Maybe<Scalars['u32']['output']>;
+  y?: Maybe<Scalars['u32']['output']>;
 };
 
 export type PixelConnection = {
@@ -471,20 +471,20 @@ export type PixelWhereInput = {
   updated_atLT?: InputMaybe<Scalars['u64']['input']>;
   updated_atLTE?: InputMaybe<Scalars['u64']['input']>;
   updated_atNEQ?: InputMaybe<Scalars['u64']['input']>;
-  x?: InputMaybe<Scalars['u64']['input']>;
-  xEQ?: InputMaybe<Scalars['u64']['input']>;
-  xGT?: InputMaybe<Scalars['u64']['input']>;
-  xGTE?: InputMaybe<Scalars['u64']['input']>;
-  xLT?: InputMaybe<Scalars['u64']['input']>;
-  xLTE?: InputMaybe<Scalars['u64']['input']>;
-  xNEQ?: InputMaybe<Scalars['u64']['input']>;
-  y?: InputMaybe<Scalars['u64']['input']>;
-  yEQ?: InputMaybe<Scalars['u64']['input']>;
-  yGT?: InputMaybe<Scalars['u64']['input']>;
-  yGTE?: InputMaybe<Scalars['u64']['input']>;
-  yLT?: InputMaybe<Scalars['u64']['input']>;
-  yLTE?: InputMaybe<Scalars['u64']['input']>;
-  yNEQ?: InputMaybe<Scalars['u64']['input']>;
+  x?: InputMaybe<Scalars['u32']['input']>;
+  xEQ?: InputMaybe<Scalars['u32']['input']>;
+  xGT?: InputMaybe<Scalars['u32']['input']>;
+  xGTE?: InputMaybe<Scalars['u32']['input']>;
+  xLT?: InputMaybe<Scalars['u32']['input']>;
+  xLTE?: InputMaybe<Scalars['u32']['input']>;
+  xNEQ?: InputMaybe<Scalars['u32']['input']>;
+  y?: InputMaybe<Scalars['u32']['input']>;
+  yEQ?: InputMaybe<Scalars['u32']['input']>;
+  yGT?: InputMaybe<Scalars['u32']['input']>;
+  yGTE?: InputMaybe<Scalars['u32']['input']>;
+  yLT?: InputMaybe<Scalars['u32']['input']>;
+  yLTE?: InputMaybe<Scalars['u32']['input']>;
+  yNEQ?: InputMaybe<Scalars['u32']['input']>;
 };
 
 export type QueueItem = {
@@ -582,8 +582,8 @@ export type SnakeSegment = {
   pixel_original_color?: Maybe<Scalars['u32']['output']>;
   pixel_original_text?: Maybe<Scalars['felt252']['output']>;
   previous_id?: Maybe<Scalars['u32']['output']>;
-  x?: Maybe<Scalars['u64']['output']>;
-  y?: Maybe<Scalars['u64']['output']>;
+  x?: Maybe<Scalars['u32']['output']>;
+  y?: Maybe<Scalars['u32']['output']>;
 };
 
 export type SnakeSegmentConnection = {
@@ -649,20 +649,20 @@ export type SnakeSegmentWhereInput = {
   previous_idLT?: InputMaybe<Scalars['u32']['input']>;
   previous_idLTE?: InputMaybe<Scalars['u32']['input']>;
   previous_idNEQ?: InputMaybe<Scalars['u32']['input']>;
-  x?: InputMaybe<Scalars['u64']['input']>;
-  xEQ?: InputMaybe<Scalars['u64']['input']>;
-  xGT?: InputMaybe<Scalars['u64']['input']>;
-  xGTE?: InputMaybe<Scalars['u64']['input']>;
-  xLT?: InputMaybe<Scalars['u64']['input']>;
-  xLTE?: InputMaybe<Scalars['u64']['input']>;
-  xNEQ?: InputMaybe<Scalars['u64']['input']>;
-  y?: InputMaybe<Scalars['u64']['input']>;
-  yEQ?: InputMaybe<Scalars['u64']['input']>;
-  yGT?: InputMaybe<Scalars['u64']['input']>;
-  yGTE?: InputMaybe<Scalars['u64']['input']>;
-  yLT?: InputMaybe<Scalars['u64']['input']>;
-  yLTE?: InputMaybe<Scalars['u64']['input']>;
-  yNEQ?: InputMaybe<Scalars['u64']['input']>;
+  x?: InputMaybe<Scalars['u32']['input']>;
+  xEQ?: InputMaybe<Scalars['u32']['input']>;
+  xGT?: InputMaybe<Scalars['u32']['input']>;
+  xGTE?: InputMaybe<Scalars['u32']['input']>;
+  xLT?: InputMaybe<Scalars['u32']['input']>;
+  xLTE?: InputMaybe<Scalars['u32']['input']>;
+  xNEQ?: InputMaybe<Scalars['u32']['input']>;
+  y?: InputMaybe<Scalars['u32']['input']>;
+  yEQ?: InputMaybe<Scalars['u32']['input']>;
+  yGT?: InputMaybe<Scalars['u32']['input']>;
+  yGTE?: InputMaybe<Scalars['u32']['input']>;
+  yLT?: InputMaybe<Scalars['u32']['input']>;
+  yLTE?: InputMaybe<Scalars['u32']['input']>;
+  yNEQ?: InputMaybe<Scalars['u32']['input']>;
 };
 
 export type SnakeWhereInput = {
@@ -1084,10 +1084,10 @@ export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typ
 
 export type All_Filtered_EntitiesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
-  xMin?: InputMaybe<Scalars['u64']['input']>;
-  xMax?: InputMaybe<Scalars['u64']['input']>;
-  yMin?: InputMaybe<Scalars['u64']['input']>;
-  yMax?: InputMaybe<Scalars['u64']['input']>;
+  xMin?: InputMaybe<Scalars['u32']['input']>;
+  xMax?: InputMaybe<Scalars['u32']['input']>;
+  yMin?: InputMaybe<Scalars['u32']['input']>;
+  yMax?: InputMaybe<Scalars['u32']['input']>;
 }>;
 
 
@@ -1183,7 +1183,7 @@ export const GetEntitiesDocument = gql`
 }
     `;
 export const All_Filtered_EntitiesDocument = gql`
-    query all_filtered_entities($first: Int, $xMin: u64, $xMax: u64, $yMin: u64, $yMax: u64) {
+    query all_filtered_entities($first: Int, $xMin: u32, $xMax: u32, $yMin: u32, $yMax: u32) {
   pixelModels(
     first: $first
     where: {xGTE: $xMin, xLTE: $xMax, yGTE: $yMin, yLTE: $yMax}
