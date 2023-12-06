@@ -1,5 +1,5 @@
 REPO = pixelaw/core
-CORE_VERSION = v0.0.13
+CORE_VERSION = v0.0.14
 KEIKO_VERSION = v0.0.11
 
 
@@ -65,9 +65,9 @@ NEW_VERSION=$(shell echo $(VERSION) | awk -F. -v type=$(type) 'BEGIN {OFS = FS} 
 # To use tag make push-tag
 # type=patch for patch version, type=minor for minor version, type=major for major version
 push-tag:
-	echo v$(VERSION) to v$(NEW_VERSION)
+	echo v$(VERSION) to $(CORE_VERSION)
 	# Create a new tag
-	git tag v$(NEW_VERSION)
+	git tag $(CORE_VERSION)
 
 	# Push the tag to the remote repository
-	git push origin v$(NEW_VERSION)
+	git push origin $(CORE_VERSION)

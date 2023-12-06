@@ -130,3 +130,18 @@ query alerts(
     }
   }
 }
+
+query instructions(
+  $first: Int
+) {
+  instructionModels(first: $first) {
+    edges {
+      node {
+        system
+        selector,
+        instruction,
+        __typename
+      }
+    }
+  }
+}

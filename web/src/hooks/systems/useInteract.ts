@@ -3,12 +3,13 @@ import { useMutation } from '@tanstack/react-query'
 import { convertToDecimal, felt252ToString } from '@/global/utils'
 import { EntityIndex, getComponentValue } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import { num } from 'starknet'
+import { num, selector, shortString } from 'starknet'
 import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction'
 import useManifest from '@/hooks/systems/useManifest'
 import { InterfaceType, Manifest } from '@/global/types'
 import { sleep } from '@latticexyz/utils'
 import { useToast } from '@/components/ui/use-toast'
+import { useComponentValue } from '@dojoengine/react'
 
 const DEFAULT_PARAMETERS_TYPE = 'pixelaw::core::utils::DefaultParameters'
 
@@ -101,7 +102,7 @@ const useInteract = (
   const {
     setup: {
       systemCalls: {interact},
-      components: {Pixel},
+      components: { Pixel, AppName, Instruction },
       network: { switchManifest }
     },
     account: { account }
@@ -125,6 +126,13 @@ const useInteract = (
   const paramsDef = getParamsDef(manifest?.data, contractName, methodName, position)
 
   const fillableParamDefs = paramsDef.filter(paramDef => paramDef?.value == null)
+
+  const contractAddress = useComponentValue(AppName, getEntityIdFromKeys([BigInt(shortString.encodeShortString(appName))]))
+
+  const instruction = useComponentValue(Instruction, getEntityIdFromKeys([
+    BigInt(contractAddress?.system ?? '0x0'),
+    BigInt(selector.getSelectorFromName(methodName))
+  ]))
 
   return {
     manifest,
@@ -182,7 +190,8 @@ const useInteract = (
 
       }
     }),
-    params: fillableParamDefs
+    params: fillableParamDefs,
+    instruction: felt252ToString(instruction?.instruction ?? '')
   }
 }
 

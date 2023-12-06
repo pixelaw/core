@@ -45,7 +45,7 @@ trait IActions<TContractState> {
     fn get_system_address(self: @TContractState, for_system: ContractAddress) -> ContractAddress;
     fn get_player_address(self: @TContractState, for_player: ContractAddress) -> ContractAddress;
     fn alert_player(self: @TContractState, position: Position, player: ContractAddress, message: felt252);
-
+    fn set_instruction(self: @TContractState, selector: felt252, instruction: felt252);
 }
 
 
@@ -56,7 +56,7 @@ mod actions {
     };
     use starknet::info::TxInfo;
     use super::IActions;
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use dojo::executor::{IExecutorDispatcher, IExecutorDispatcherTrait};
@@ -430,6 +430,21 @@ mod actions {
           let app = get!(world, caller, (App));
           assert(app.name != '', 'cannot be called by a non-app');
           emit!(world, Alert { position, caller, player, message, timestamp: starknet::get_block_timestamp() });
+        }
+
+        fn set_instruction(self: @ContractState, selector: felt252, instruction: felt252) {
+          let world = self.world_dispatcher.read();
+          let system = get_caller_address();
+          let app = get!(world, system, (App));
+          assert(app.name != '', 'cannot be called by a non-app');
+          set!(
+            world, (
+              Instruction {
+                system,
+                selector,
+                instruction
+              }
+          ))
         }
     }
 }

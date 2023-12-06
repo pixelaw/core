@@ -249,7 +249,62 @@ export type CoreActionsAddressWhereInput = {
   valueNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
 };
 
-export type ModelUnion = App | AppName | AppUser | CoreActionsAddress | Permissions | Pixel | QueueItem | Snake | SnakeSegment;
+export type Instruction = {
+  __typename?: 'Instruction';
+  entity?: Maybe<World__Entity>;
+  instruction?: Maybe<Scalars['felt252']['output']>;
+  selector?: Maybe<Scalars['felt252']['output']>;
+  system?: Maybe<Scalars['ContractAddress']['output']>;
+};
+
+export type InstructionConnection = {
+  __typename?: 'InstructionConnection';
+  edges?: Maybe<Array<Maybe<InstructionEdge>>>;
+  total_count: Scalars['Int']['output'];
+};
+
+export type InstructionEdge = {
+  __typename?: 'InstructionEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<Instruction>;
+};
+
+export type InstructionOrder = {
+  direction: OrderDirection;
+  field: InstructionOrderField;
+};
+
+export enum InstructionOrderField {
+  Instruction = 'INSTRUCTION',
+  Selector = 'SELECTOR',
+  System = 'SYSTEM'
+}
+
+export type InstructionWhereInput = {
+  instruction?: InputMaybe<Scalars['felt252']['input']>;
+  instructionEQ?: InputMaybe<Scalars['felt252']['input']>;
+  instructionGT?: InputMaybe<Scalars['felt252']['input']>;
+  instructionGTE?: InputMaybe<Scalars['felt252']['input']>;
+  instructionLT?: InputMaybe<Scalars['felt252']['input']>;
+  instructionLTE?: InputMaybe<Scalars['felt252']['input']>;
+  instructionNEQ?: InputMaybe<Scalars['felt252']['input']>;
+  selector?: InputMaybe<Scalars['felt252']['input']>;
+  selectorEQ?: InputMaybe<Scalars['felt252']['input']>;
+  selectorGT?: InputMaybe<Scalars['felt252']['input']>;
+  selectorGTE?: InputMaybe<Scalars['felt252']['input']>;
+  selectorLT?: InputMaybe<Scalars['felt252']['input']>;
+  selectorLTE?: InputMaybe<Scalars['felt252']['input']>;
+  selectorNEQ?: InputMaybe<Scalars['felt252']['input']>;
+  system?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  systemNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+};
+
+export type ModelUnion = App | AppName | AppUser | CoreActionsAddress | Instruction | Permissions | Pixel | QueueItem | Snake | SnakeSegment;
 
 export enum OrderDirection {
   Asc = 'ASC',
@@ -770,6 +825,7 @@ export type World__Query = {
   entities?: Maybe<World__EntityConnection>;
   entity: World__Entity;
   events?: Maybe<World__EventConnection>;
+  instructionModels?: Maybe<InstructionConnection>;
   metadatas?: Maybe<World__MetadataConnection>;
   model: World__Model;
   models?: Maybe<World__ModelConnection>;
@@ -855,6 +911,18 @@ export type World__QueryEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type World__QueryInstructionModelsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<InstructionOrder>;
+  where?: InputMaybe<InstructionWhereInput>;
 };
 
 
@@ -1012,7 +1080,7 @@ export type World__TransactionEdge = {
 export type GetEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typename?: 'World__EntityConnection', edges?: Array<{ __typename?: 'World__EntityEdge', node?: { __typename?: 'World__Entity', keys?: Array<string | null> | null, models?: Array<{ __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | { __typename: 'AppName', name?: any | null, system?: any | null } | { __typename: 'AppUser', action?: any | null, player?: any | null, system?: any | null } | { __typename: 'CoreActionsAddress', key?: any | null, value?: any | null } | { __typename: 'Permissions', allowing_app?: any | null, allowed_app?: any | null, permission?: { __typename: 'Permissions_Permission', app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | { __typename: 'QueueItem', id?: any | null, valid?: any | null } | { __typename?: 'Snake' } | { __typename?: 'SnakeSegment' } | null> | null } | null } | null> | null } | null };
+export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typename?: 'World__EntityConnection', edges?: Array<{ __typename?: 'World__EntityEdge', node?: { __typename?: 'World__Entity', keys?: Array<string | null> | null, models?: Array<{ __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | { __typename: 'AppName', name?: any | null, system?: any | null } | { __typename: 'AppUser', action?: any | null, player?: any | null, system?: any | null } | { __typename: 'CoreActionsAddress', key?: any | null, value?: any | null } | { __typename?: 'Instruction' } | { __typename: 'Permissions', allowing_app?: any | null, allowed_app?: any | null, permission?: { __typename: 'Permissions_Permission', app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | { __typename: 'QueueItem', id?: any | null, valid?: any | null } | { __typename?: 'Snake' } | { __typename?: 'SnakeSegment' } | null> | null } | null } | null> | null } | null };
 
 export type All_Filtered_EntitiesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1036,6 +1104,13 @@ export type AlertsQueryVariables = Exact<{
 
 
 export type AlertsQuery = { __typename?: 'World__Query', events?: { __typename?: 'World__EventConnection', edges?: Array<{ __typename?: 'World__EventEdge', node?: { __typename?: 'World__Event', id?: string | null, keys?: Array<string | null> | null, data?: Array<string | null> | null, created_at?: any | null, transaction_hash?: string | null } | null } | null> | null } | null };
+
+export type InstructionsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type InstructionsQuery = { __typename?: 'World__Query', instructionModels?: { __typename?: 'InstructionConnection', edges?: Array<{ __typename?: 'InstructionEdge', node?: { __typename: 'Instruction', system?: any | null, selector?: any | null, instruction?: any | null } | null } | null> | null } | null };
 
 
 export const GetEntitiesDocument = gql`
@@ -1165,6 +1240,20 @@ export const AlertsDocument = gql`
   }
 }
     `;
+export const InstructionsDocument = gql`
+    query instructions($first: Int) {
+  instructionModels(first: $first) {
+    edges {
+      node {
+        system
+        selector
+        instruction
+        __typename
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1174,6 +1263,7 @@ const GetEntitiesDocumentString = print(GetEntitiesDocument);
 const All_Filtered_EntitiesDocumentString = print(All_Filtered_EntitiesDocument);
 const AppsDocumentString = print(AppsDocument);
 const AlertsDocumentString = print(AlertsDocument);
+const InstructionsDocumentString = print(InstructionsDocument);
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -1195,6 +1285,11 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
 // @ts-ignore
     alerts(variables?: AlertsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: AlertsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<AlertsQuery>(AlertsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'alerts', 'query');
+    },
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+    instructions(variables?: InstructionsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: InstructionsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
+        return withWrapper((wrappedRequestHeaders) => client.rawRequest<InstructionsQuery>(InstructionsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'instructions', 'query');
     }
   };
 }
