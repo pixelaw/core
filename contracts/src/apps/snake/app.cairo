@@ -68,6 +68,8 @@ mod snake_actions {
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
 
+    use dojo::database::introspect::Introspect;
+
     use debug::PrintTrait;
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -238,7 +240,10 @@ mod snake_actions {
                     // TODO handle situation where someone manually calls 'move', it will
                     // spam Died events..
                     let snake_owner_felt: felt252 = snake.owner.into();
-                    world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span());
+
+                    let mut layout = array![];
+                    Introspect::<Snake>::layout(ref layout);
+                    world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
                     return;
                 }
 
@@ -379,7 +384,9 @@ mod snake_actions {
         let result = last_segment.previous_id;
 
         let segment_id_felt: felt252 = snake.last_segment_id.into();
-        world.delete_entity('SnakeSegment'.into(), array![segment_id_felt.into()].span());
+        let mut layout = array![];
+        Introspect::<SnakeSegment>::layout(ref layout);
+        world.delete_entity('SnakeSegment'.into(), array![segment_id_felt.into()].span(), layout.span());
 
         // Return the new last_segment_id for the snake
         result
