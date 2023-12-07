@@ -1,7 +1,7 @@
 import { useDojo } from '@/DojoContext'
-import { BLOCK_TIME } from '@/global/constants'
 import { useQuery } from '@tanstack/react-query'
-import { convertToDecimal, felt252ToString } from '@/global/utils'
+import { removeNullsFromArray } from '@/global/utils'
+import { parseEventData } from '@/hooks/events/utils'
 
 const ALERTS_TO_GET = 1_000
 
@@ -27,28 +27,10 @@ const useAlerts = () => {
           return player?.toLowerCase() === account.address.toLowerCase()
         })
         .map((edge, index) => {
-          const [
-            x,
-            y,
-            caller,
-            player,
-            message,
-            timestamp
-          ] = (edge?.node?.data ?? [])
-          return {
-            id: edge?.node?.id ?? index.toString(),
-            position: {
-              x: convertToDecimal(x ?? '0x0'),
-              y: convertToDecimal(y ?? '0x0')
-            },
-            caller: caller ?? '0x0',
-            player: player ?? '0x0',
-            message: felt252ToString(message ?? ''),
-            timestamp: BigInt(timestamp ?? '0x0')
-          }
+          const eventData = removeNullsFromArray(edge?.node?.data ?? [])
+          return parseEventData(edge?.node?.id ?? index.toString(), eventData)
         })
-    },
-    refetchInterval: BLOCK_TIME,
+    }
   })
 }
 

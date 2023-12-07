@@ -1,10 +1,12 @@
 import { SetupNetworkResult } from './setupNetwork'
-import { Account, num, Event } from 'starknet'
+import { Account, Event, num, TransactionStatus } from 'starknet'
 import { getEntityIdFromKeys, getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
 import { EntityIndex } from '@latticexyz/recs'
 import { uuid } from '@latticexyz/utils'
 import { ClientComponents } from '@/dojo/createClientComponents'
 import { ZERO_ADDRESS } from '@/global/constants'
+
+const FAILURE_REASON_REGEX = /Failure reason: ".+"/;
 
 export function createSystemCalls(
     { execute, contractComponents }: SetupNetworkResult,
@@ -57,6 +59,18 @@ export function createSystemCalls(
 
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 100})
 
+      if ('execution_status' in receipt && receipt.execution_status === TransactionStatus.REVERTED) {
+        if ('revert_reason' in receipt && !!receipt.revert_reason) {
+          throw receipt.revert_reason.match(FAILURE_REASON_REGEX)?.[0] ?? receipt.revert_reason
+        }
+        else throw new Error('transaction reverted')
+      }
+
+      if (receipt.status === TransactionStatus.REJECTED) {
+        if ('transaction_failure_reason' in receipt) throw  receipt.transaction_failure_reason.error_message
+        else throw new Error('transaction rejected')
+      }
+
       // these events could contain custom components not just core components so filtering out non-core components
       const events: Event[] = getEvents(receipt)
       const filteredEvents = events.filter(event => {
@@ -70,7 +84,7 @@ export function createSystemCalls(
     } catch (e) {
       Pixel.removeOverride(pixelId)
       console.error(e)
-      throw new Error(e?.toString() ?? 'interaction failed')
+      throw e
     } finally {
       Pixel.removeOverride(pixelId)
     }
