@@ -24,6 +24,14 @@ spec:
         - containerPort: {{ .Values.webappContainerService.port }}       
         env:
         - name: PUBLIC_NODE_URL
-          value: "https://katana.demo.pixelaw.xyz"                  
+          value: "https://api.cartridge.gg/x/pixelaw/katana"                  
         - name: PUBLIC_TORII
-          value: "https://torii.demo.pixelaw.xyz"           
+          value: "https://api.cartridge.gg/x/pixelaw/torii"           
+        - name: SLOT_KATANA
+          value: "https://api.cartridge.gg/x/pixelaw/katana"           
+        - name: SLOT_TORII
+          value: "https://api.cartridge.gg/x/pixelaw/torii"    
+        - name: SEED
+          value: "17885659508068513399"           
+        - name: TOTAL_ACCOUNTS
+          value: "4"           
