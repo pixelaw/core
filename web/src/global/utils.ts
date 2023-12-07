@@ -69,3 +69,7 @@ export const argbToHex = (argb: number) => {
   const hexCode = convertToHexadecimalAndLeadWithOx(argb)
   return hexCode.replace("0xff", "#")
 }
+
+export const removeNullsFromArray = <T>(array: (T | null)[]) => {
+  return array.filter(element => element !== null) as T[]
+}

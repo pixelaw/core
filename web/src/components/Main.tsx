@@ -8,6 +8,7 @@ import { Account } from '@/global/types'
 import DrawPanelProvider, { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
 import { useAtom } from 'jotai'
 import { colorAtom } from '@/global/states.ts'
+import useAnnounceAlert from '@/hooks/events/useAnnounceAlert'
 
 const FilteredComponents: React.FC = () => {
   const { visibleAreaStart, visibleAreaEnd } = useDrawPanel()
@@ -62,6 +63,8 @@ const Main = () => {
   const handleColorChange = (color: ColorResult) => {
     setColor(color.hex)
   }
+
+  useAnnounceAlert()
 
 
   return (
