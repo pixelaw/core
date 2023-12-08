@@ -17,6 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        'new-primary': 'hsl(var(--new-primary))',
         'brand-blackAccent': 'hsl(var(--brand-blackAccent))',
         'brand-redAccent': 'hsl(var(--brand-redAccent))',
         'brand-body': 'hsl(var(--brand-body))',
