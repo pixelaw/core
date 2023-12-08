@@ -1,6 +1,8 @@
 # PixeLAW Game (test)
 A game built on top of Dojo. See live example at <SECRET_URL: please reach out us on discord>.
 
+This repository includes core components and systems. For more details, please check [PixeLAW Book](https://pixelaw.github.io/book/index.html).
+
 ## Concepts
 - World : A Cartesian plane (2d grid), where every position represents a "Pixel"
 - Pixel : One x/y Position, that has 6 primitive properties and one behavior template (App)
