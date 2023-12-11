@@ -1,6 +1,6 @@
 services:
   keiko:
-    image: oostvoort/keiko:v0.0.12
+    image: oostvoort/keiko:v0.0.13
     container_name: keiko
     ports:
       - "5050:5050"
