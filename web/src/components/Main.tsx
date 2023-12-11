@@ -9,6 +9,7 @@ import DrawPanelProvider, { useDrawPanel } from '@/providers/DrawPanelProvider.t
 import { useAtom } from 'jotai'
 import { colorAtom } from '@/global/states.ts'
 import useAnnounceAlert from '@/hooks/events/useAnnounceAlert'
+import useUpdateComponent from '@/hooks/entities/useUpdateComponent'
 
 const FilteredComponents: React.FC = () => {
   const { visibleAreaStart, visibleAreaEnd } = useDrawPanel()
@@ -64,8 +65,9 @@ const Main = () => {
     setColor(color.hex)
   }
 
+  // subscribe to torii messages to announce alerts and automatically update the components
   useAnnounceAlert()
-
+  useUpdateComponent()
 
   return (
       <React.Fragment>
