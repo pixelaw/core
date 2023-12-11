@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDojo } from '@/DojoContext.tsx'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getComponentValue, setComponent } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import { BLOCK_TIME } from '@/global/constants.ts'
 import isEqual from 'lodash/isEqual'
 
 export function useFilteredEntities(
@@ -23,7 +20,7 @@ export function useFilteredEntities(
   } = useDojo()
 
   return useQuery({
-    queryKey: ['filtered-entitities', xMin, xMax, yMin, yMax],
+    queryKey: ['filtered-entities', xMin, xMax, yMin, yMax],
     queryFn: async () => {
       const {data} = await graphSdk.all_filtered_entities({first: 65536, xMin, xMax, yMin, yMax})
       if (!data || !data.pixelModels?.edges) return { pixelModels: { edges: [] } }
@@ -46,7 +43,6 @@ export function useFilteredEntities(
       }
 
       return data
-    },
-    refetchInterval: BLOCK_TIME,
+    }
   })
 }

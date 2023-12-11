@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useDojo } from '@/DojoContext.tsx'
 import { getComponentValue, setComponent } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import { BLOCK_TIME } from '@/global/constants.ts'
 import isEqual from 'lodash/isEqual'
 
 export function useInstructions() {
@@ -35,7 +34,6 @@ export function useInstructions() {
       }
 
       return data
-    },
-    refetchInterval: BLOCK_TIME,
+    }
   })
 }

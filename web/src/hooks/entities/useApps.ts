@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDojo } from '@/DojoContext.tsx'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { EntityIndex, getComponentValue, setComponent } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import { BLOCK_TIME } from '@/global/constants.ts'
 import isEqual from 'lodash/isEqual'
 
 export function useApps() {
@@ -38,7 +35,6 @@ export function useApps() {
       }
 
       return data
-    },
-    refetchInterval: BLOCK_TIME,
+    }
   })
 }
