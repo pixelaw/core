@@ -30,12 +30,12 @@ const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonProp
   const {
     setup: {
       components: {
-        App
-      }
+        App,
+      },
     },
   } = useDojo()
 
-  const entityId = getEntityIdFromKeys([BigInt(system)])
+  const entityId = getEntityIdFromKeys([ BigInt(system) ])
   const app = useComponentValue(App, entityId)
   const name = felt252ToString(app?.name ?? 'app name')
   const icon = felt252ToUnicode(app?.icon ?? 'app icon')
@@ -43,21 +43,20 @@ const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonProp
 
   return (
     <div
-      className={cn(['flex justify-center items-center w-full ', {'gap-x-xs justify-start': isOpen}])}
+      className={cn([ 'flex justify-center items-center w-full mb-[15px]', { 'gap-xs justify-start': isOpen } ])}
       onClick={() => {
         if (onSelect) onSelect(name)
       }}
     >
       <Button
         variant={'icon'}
-        size={'icon'}
         className={cn([
+          'h-[48px] w-[48px]  ',
+          'bg-[#220630]',
           'font-emoji',
-          'my-xs',
           'text-center text-[36px]',
-          'w-[1.25em]',
-          'border border-brand-violetAccent rounded',
-          {'border-white': selected}
+          'border border-[#220630] rounded-[4px]',
+          { 'bg-[#7C0BB4] border-[#7C0BB4]': selected },
         ])}
       >
         {icon}
@@ -65,9 +64,9 @@ const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonProp
       </Button>
 
       <h3 className={cn(
-        ['text-brand-skyblue text-left text-base uppercase font-silkscreen',
-          {'hidden': !isOpen},
-          {'text-white': selected}
+        [ 'text-brand-skyblue text-left text-base uppercase font-silkscreen',
+          { 'hidden': !isOpen },
+          { 'text-white': selected },
         ])}
       >
         {name}
@@ -81,89 +80,92 @@ export default function Plugin() {
   const {
     setup: {
       components: {
-        App, AppName
-      }
+        App, AppName,
+      },
     },
   } = useDojo()
-    const [isOpen, setIsOpen] = React.useState<boolean>(false)
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
-  const [gameMode, setGameMode] = useAtom(gameModeAtom)
-  const selectedAppId = getEntityIdFromKeys([BigInt(shortString.encodeShortString(gameMode))])
+  const [ gameMode, setGameMode ] = useAtom(gameModeAtom)
+  const selectedAppId = getEntityIdFromKeys([ BigInt(shortString.encodeShortString(gameMode)) ])
   const selectedApp = useComponentValue(AppName, selectedAppId)
 
   const positionWithAddressAndType = useAtomValue(positionWithAddressAndTypeAtom)
 
-  const apps = useEntityQuery([Has(App)])
+  const apps = useEntityQuery([ Has(App) ])
 
-    return (
-        <>
-            <div
-                className={cn([
-                    'fixed bottom-0 right-0 z-20',
-                    'h-[calc(100vh-var(--header-height))]',
-                    'bg-[#3E0C57] border-l-[1px] border-black',
-                    {'animate-slide-left': isOpen},
-                    {'animate-slide-right': !isOpen},
-                ])}
-            >
-                <div
-                    className={cn([
-                        'flex flex-col',
-                        'h-full',
-                    ])}
-                >
-                    <div
-                        className={cn([
-                            'h-[190px] w-full',
-                            'flex items-start justify-center',
-                            'pt-xs',
-                            'border-b-[1px] border-brand-violetAccent',
-                            {'justify-start border-none': isOpen}
-                        ])}
-                    >
-                        <Button
-                            className={cn([{'mx-xs': isOpen}])}
-                            variant={'icon'}
-                            size={'icon'}
-                            onClick={() => setIsOpen(!isOpen)}
-                        >
-                            <Image
-                                className={cn(['w-[14px]'])}
-                                src={`/assets/svg/icon_chevron_${isOpen ? 'right' : 'left'}.svg`}
-                                alt={'Arrow left Icon'}
-                            />
-                        </Button>
-                    </div>
+  return (
+    <>
+      <div
+        className={cn([
+          'fixed bottom-0  z-20',
+          'h-[calc(100vh-var(--header-height))]',
+          { 'animate-slide-left-icon right-0': isOpen },
+          { 'animate-slide-right-icon right-[72px]': !isOpen },
+        ])}
+      >
+        <Button
+          className={cn([
+            'bg-[#220630]',
+            'w-[16px] h-[30px]',
+          ])}
+          variant={'icon'}
+          size={'icon'}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <Image
+            className={cn([ 'w-[11px] h-[7px]' ])}
+            src={`/assets/svg/icon_chevron_${isOpen ? 'right' : 'left'}.svg`}
+            alt={'Arrow left Icon'}
+          />
+        </Button>
+      </div>
 
-                    <div
-                        className={cn([
-                            'flex-1 ',
-                            {'mx-xs': isOpen}
-                        ])}
-                    >
-                        {
-                            apps
-                              .map((app) => {
-                                return (
-                                    <PluginButton
-                                      key={app}
-                                      system={app as unknown as string}
-                                      selected={(app as unknown as string) === selectedApp?.system}
-                                      onSelect={(name) => setGameMode(name)}
-                                      expanded={isOpen}
-                                    />
-                                )
-                            })
-                        }
-                    </div>
+      <div
+        className={cn([
+          'fixed bottom-0 right-0 z-20',
+          'h-[calc(100vh-var(--header-height))]',
+          'bg-[#2A0D39]',
+          { 'animate-slide-left': isOpen },
+          { 'animate-slide-right': !isOpen },
+        ])}
+      >
+        <div
+          className={cn([
+            'flex flex-col',
+            'h-full',
+          ])}
+        >
+          <div
+            className={cn([
+              'py-[15px] gap-[15px]',
+              'flex-1 ',
+              { 'mx-xs': isOpen },
+            ])}
+          >
+            {
+              apps
+                .map((app) => {
+                  return (
+                    <PluginButton
+                      key={app}
+                      system={app as unknown as string}
+                      selected={(app as unknown as string) === selectedApp?.system}
+                      onSelect={(name) => setGameMode(name)}
+                      expanded={isOpen}
+                    />
+                  )
+                })
+            }
+          </div>
 
-                  <Footer
-                    coordinates={{ x: Number(positionWithAddressAndType.x), y: Number(positionWithAddressAndType.y) }}
-                    collapsed={isOpen} type={String(positionWithAddressAndType.pixel)}
-                    owner={String(positionWithAddressAndType.address)} />
-                </div>
-            </div>
-          <Apps />
-        </>
-    )
+          <Footer
+            coordinates={{ x: Number(positionWithAddressAndType.x), y: Number(positionWithAddressAndType.y) }}
+            collapsed={isOpen} type={String(positionWithAddressAndType.pixel)}
+            owner={String(positionWithAddressAndType.address)} />
+        </div>
+      </div>
+      <Apps />
+    </>
+  )
 }

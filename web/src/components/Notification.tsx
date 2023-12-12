@@ -97,8 +97,9 @@ export default function Notification() {
               size={'notification'}
               className={cn(
                 [
-                  'fixed left-5 top-20 z-40',
+                  'fixed left-3 top-[70px] z-40',
                   'font-emoji text-[28px]',
+                  'bg-[#2A0D39] rounded-full h-[48px] w-[48px]'
                 ])}
               onClick={() => setIsOpen(true)}
             >

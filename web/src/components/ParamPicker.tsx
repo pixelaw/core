@@ -1,14 +1,15 @@
 import React from 'react'
-import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogOverlay } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import ButtonGroup from '@/components/ui/ButtonGroup'
+import { cn } from '@/lib/utils.ts'
 
 type ParamDefinition = {
   name: string,
   type: 'number' | 'string' | 'enum',
-  variants?: {name: string, value: number}[],
+  variants?: { name: string, value: number }[],
   structDefinition?: Record<string, any>
 }
 
@@ -28,31 +29,51 @@ type PropsType = {
 type EnumPickerPropsType = {
   value?: number,
   label: string
-  variants: {name: string, value: number}[],
+  variants: { name: string, value: number }[],
   onChange?: (value: number) => void
 }
 
-const EnumPicker: React.FC<EnumPickerPropsType> = ( { label, value, variants, onChange }) => {
+const EnumPicker: React.FC<EnumPickerPropsType> = ({ label, value, variants, onChange }) => {
   const id = `enum-group-${label}`
   return (
-    <>
-      <Label htmlFor={id} className={'capitalize'}>{label}</Label>
+    <div className={'justify-center flex flex-col gap-xs'}>
+      <Label
+        htmlFor={id}
+        className={cn([
+          'text-center text-white',
+          'capitalize',
+        ])}
+      >
+        {label}
+      </Label>
+
       <ButtonGroup
         id={id}
-        options={variants.map(variant => { return { label: variant.name, value: variant.value }})}
+        options={variants.map(variant => {
+          return { label: variant.name, value: variant.value }
+        })}
         value={value}
         onChange={(newValue) => {
           if (onChange) onChange(newValue ?? 0)
         }}
       />
-    </>
+    </div>
   )
 }
 
-const ParamPicker: React.FC<PropsType> = ({ instruction, value, onChange, onSelect, params, onSubmit, open, onOpenChange }) => {
-  const needsSubmitButton = params.length > 1 ||  !!(params.filter(param => param.type === 'number' || param.type === 'string')).length
+const ParamPicker: React.FC<PropsType> = ({
+  instruction,
+  value,
+  onChange,
+  onSelect,
+  params,
+  onSubmit,
+  open,
+  onOpenChange,
+}) => {
+  const needsSubmitButton = params.length > 1 || !!(params.filter(param => param.type === 'number' || param.type === 'string')).length
   const handleOnChange = (newValue: any, paramName: string) => {
-    const finalizedValue = {...value, [paramName]: newValue}
+    const finalizedValue = { ...value, [paramName]: newValue }
 
     // means there is only one param and that param is an enum
     if (!needsSubmitButton && !!onSelect) {
@@ -67,9 +88,16 @@ const ParamPicker: React.FC<PropsType> = ({ instruction, value, onChange, onSele
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={'p-md'}>
+      <DialogOverlay className={cn(['bg-[#0F0414] opacity-5'])} />
+      <DialogContent
+        className={cn([
+          'bg-[#220630] p-sm',
+          'border-[#220630] rounded-[16px]'
+        ])}
+      >
         {hasInstruction && (
-          <div>{instruction}</div>
+          <h2
+            className={cn([ 'text-[#FFC400] text-center text-base uppercase text-[32px] font-silkscreen' ])}>{instruction}</h2>
         )}
         <div>
           {params.map((param) => {
@@ -84,44 +112,44 @@ const ParamPicker: React.FC<PropsType> = ({ instruction, value, onChange, onSele
                     variants={param.variants ?? []}
                     onChange={(e) => handleOnChange(e, param.name)}
                   />
-                );
+                )
               case 'number':
                 return (
-                    <Input
-                      key={`${param.name}-input`}
-                      type={'number'}
-                      placeholder={param.name}
-                      value={value[param.name] ?? ''}
-                      className='mb-3'
-                      onChange={(e) => handleOnChange(e.target.valueAsNumber, param.name)}
-                    />
-                );
+                  <Input
+                    key={`${param.name}-input`}
+                    type={'number'}
+                    placeholder={param.name}
+                    value={value[param.name] ?? ''}
+                    className="mb-3"
+                    onChange={(e) => handleOnChange(e.target.valueAsNumber, param.name)}
+                  />
+                )
               case 'string':
                 return (
-                    <Input
-                      key={`${param.name}-input`}
-                      type={'text'}
-                      placeholder={param.name}
-                      value={value[param.name] ?? ''}
-                      className='mr-2'
-                      onChange={(e) => handleOnChange(e.target.value, param.name)}
-                    />
-                );
+                  <Input
+                    key={`${param.name}-input`}
+                    type={'text'}
+                    placeholder={param.name}
+                    value={value[param.name] ?? ''}
+                    className="mr-2"
+                    onChange={(e) => handleOnChange(e.target.value, param.name)}
+                  />
+                )
               default:
-                return null;
+                return null
             }
           })}
         </div>
         {needsSubmitButton && (
           <DialogFooter>
-            <Button size={"sm"} onClick={onSubmit}>confirm</Button>
+            <Button size={'sm'} onClick={onSubmit}>confirm</Button>
           </DialogFooter>
         )}
 
       </DialogContent>
 
     </Dialog>
-  );
+  )
 }
 
-export default ParamPicker;
+export default ParamPicker
