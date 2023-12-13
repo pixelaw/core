@@ -9,7 +9,8 @@ replicaSet: 1
 
 minReplicas: 1
 maxReplicas: 3
-averageUtilization: 50
+averageCPUUtilization: 50
+averageMemoryUtilization: 50
 
 webappContainerService:
   type: ClusterIP  # {{ .Values.webappContainerService.type }}
