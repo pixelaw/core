@@ -17,9 +17,9 @@ spec:
       target:
         type: Utilization
         averageUtilization: {{ .Values.averageCPUUtilization }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.averageMemoryUtilization }}        
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.averageMemoryUtilization }}        
