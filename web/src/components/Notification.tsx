@@ -10,6 +10,7 @@ import { useSetAtom } from 'jotai'
 import useAlerts from '@/hooks/events/useAlerts'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import useLocalStorage from '@/hooks/useLocalStorage'
+import useAccountAddress from '@/hooks/utils/useAccountAddress'
 
 type AlertType = {
   id: string,
@@ -20,37 +21,26 @@ type AlertType = {
   caller: string,
   player: string,
   message: string,
-  timestamp: bigint
+  timestamp: bigint,
+  read?: boolean
 }
 
 type AlertProp = AlertType & {
-  className?: string
+  className?: string,
+  onAlertClick?: (position: {x: number, y: number}, id: string) => void
 }
-const Alert: React.FC<AlertProp> = ({ position, caller, message, className, id }) => {
+const Alert: React.FC<AlertProp> = ({ position, caller, message, className, onAlertClick, id, read }) => {
   const {
     setup: {
       components: { App },
-    },
-    account: {
-      account
     }
   } = useDojo()
-
-  const [ readAlerts, setReadAlerts ] = useLocalStorage<string[]>(`pixelaw::read_alerts::${account.address}`, [])
-  const hasReadAlert = readAlerts.includes(id)
 
   const app = useComponentValue(App, getEntityIdFromKeys([BigInt(caller)]))
   const name = felt252ToString(app?.name ?? 'caller')
 
-  const setNotificationData = useSetAtom(notificationDataAtom)
-
   const handleOnClickNotification = () => {
-    if (!hasReadAlert) setReadAlerts(prevReadAlerts => [...prevReadAlerts, id])
-    setNotificationData({
-      x: position.x,
-      y: position.y,
-      pixelType: caller,
-    })
+    if (onAlertClick) onAlertClick(position, id)
   }
 
   return (
@@ -64,7 +54,7 @@ const Alert: React.FC<AlertProp> = ({ position, caller, message, className, id }
         ])}
     >
       <div onClick={handleOnClickNotification} className={'cursor-pointer w-[95%] pr-[5px]'}>{name} - {message}</div>
-      {!hasReadAlert && (
+      {read !== true && (
         <div className={cn(['grow-0'])}>
           <div className={cn(['h-2 w-2 rounded-full bg-brand-danger'])}/>
         </div>
@@ -77,14 +67,19 @@ export default function Notification() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
   const alerts = useAlerts()
+  const accountAddress = useAccountAddress() ?? 'DEFAULT'
 
-  const {
-    account: {
-      account
-    }
-  } = useDojo()
+  const [ readAlerts, setReadAlerts ] = useLocalStorage<string[]>(`pixelaw::read_alerts::${accountAddress}`, [])
 
-  const [ readAlerts ] = useLocalStorage<string[]>(`pixelaw::read_alerts::${account.address}`, [])
+  const setNotificationData = useSetAtom(notificationDataAtom)
+
+  const handleOnAlertClick = (position: {x: number, y: number}, id: string) => {
+    setReadAlerts(prevReadAlerts => prevReadAlerts.includes(id) ? prevReadAlerts : [...prevReadAlerts, id])
+    setNotificationData({
+      x: position.x,
+      y: position.y
+    })
+  }
 
   const hasNotification = alerts.data ?
     alerts.data.filter(alert => !readAlerts.includes(alert.id)).length > 0 : false
@@ -151,7 +146,12 @@ export default function Notification() {
                     </div>
 
                     {(alerts?.data ?? []).map(alert => (
-                      <Alert {...alert} key={alert.id} className={'mb-xs'} />
+                      <Alert {...alert}
+                             key={alert.id}
+                             className={'mb-xs'}
+                             onAlertClick={handleOnAlertClick}
+                             read={readAlerts.includes(alert.id)}
+                      />
                     ))}
 
                 </div>
