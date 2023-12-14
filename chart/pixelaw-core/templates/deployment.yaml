@@ -49,6 +49,6 @@ spec:
           # subPath: prometheus.yml
       volumes:
 
-      - name: pixelaw-core-main--pvc
+      - name: keiko-manifests
         persistentVolumeClaim:
           claimName: pixelaw-core-main--pvc          
