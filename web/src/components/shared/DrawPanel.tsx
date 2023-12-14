@@ -155,10 +155,10 @@ const DrawPanel = () => {
   return (
     <React.Fragment>
       <div className={clsx([
-        'mt-20 w-full h-[704px]',
+        'w-full h-full',
       ])}>
         <div id={'canvas-container'} className={clsx([
-          ' h-full max-w-[1728px] overflow-hidden',
+          `h-full w-full overflow-hidden`,
         ])}>
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/*@ts-ignore*/}

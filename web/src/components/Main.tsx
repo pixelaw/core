@@ -34,15 +34,13 @@ const Main = () => {
       <React.Fragment>
           {
                 <DrawPanelProvider>
-                      <div className={'m-sm'}>
                         <DrawPanel />
 
-                          <div className="fixed bottom-5 right-20">
+                          <div className="fixed bottom-1 flex justify-center w-full">
                             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                             {/*// @ts-ignore*/}
                             <CompactPicker color={selectedHexColor} onChangeComplete={handleColorChange} />
                           </div>
-                      </div>
 
                       <Plugin/>
 
