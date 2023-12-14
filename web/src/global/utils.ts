@@ -65,6 +65,20 @@ export const formatAddress = (address: string) => {
   return address
 }
 
+export const getUrlParam = <T extends string | number>(param: string, defaultVal: T): T => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramValue = urlParams.get(param);
+
+  if (!paramValue) return defaultVal
+
+  if (typeof defaultVal === 'number') {
+    const numParamValue = parseInt(paramValue)
+    return isNaN(numParamValue) ? defaultVal : numParamValue as T
+  }
+
+  return paramValue as T
+}
+
 export const argbToHex = (argb: number) => {
   const hexCode = convertToHexadecimalAndLeadWithOx(argb)
   return hexCode.replace("0xff", "#")
