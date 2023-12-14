@@ -44,11 +44,11 @@ spec:
         #     memory: "1Gi"
         #     cpu: "1000m" 
         volumeMounts:
-        - name: keiko-manifest
+        - name: keiko-manifests
           mountPath: /keiko/manifests
           # subPath: prometheus.yml
       volumes:
 
-      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc
+      - name: pixelaw-core-main--pvc
         persistentVolumeClaim:
-          claimName: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc            
+          claimName: pixelaw-core-main--pvc          
