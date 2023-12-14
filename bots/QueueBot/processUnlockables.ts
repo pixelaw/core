@@ -1,10 +1,9 @@
 import fetchApi from '../utils/fetchApi'
 import { Account, num } from 'starknet'
 import execute from '../utils/execute'
-import { eventsToProcess } from './memory'
 import { getProvider } from './utils'
-import getEnv from '../utils/getEnv'
-import streamToString from '../utils/streamToString'
+import { queue } from './queue'
+import getCoreAddress from './getCoreAddress'
 
 let botPrivateKey = ''
 let botAddress = ''
@@ -20,19 +19,8 @@ type AccountType = {
 let coreActionsAddress = ''
 const CORE_ACTIONS_SELECTOR = "process_queue"
 
-const API_URL = getEnv("API_URL", "http://0.0.0.0:3000")
-
-const fetchCoreAddress: () => Promise<string> = async () => {
-  const result = await fetch(`${API_URL}/manifests/core`)
-  const stream = result.body
-  if (!stream) throw new Error("Stream not found")
-  const processedStream = await streamToString(stream)
-  const { contracts } = JSON.parse(processedStream)
-  return contracts.find(contract => contract.name === 'actions')?.address ?? ''
-}
-
 // wrapper for the execute function and solely for processing the queue
-const processQueue = async (id: string, timestamp: number, called_system: string, selector: string, args: num.BigNumberish[]) => {
+const processQueue = async (id: string, timestamp: bigint, called_system: string, selector: string, args: num.BigNumberish[]) => {
   console.log(`executing ${called_system}-${selector} with args: ${args.join(", ")}`)
   const callData = [
     id,
@@ -43,8 +31,6 @@ const processQueue = async (id: string, timestamp: number, called_system: string
     ...args
   ]
 
-  console.log(callData)
-
   if (!botAddress || !botPrivateKey) {
     const [master] = await fetchApi<AccountType[]>("accounts", "json")
     botAddress = master.address
@@ -52,7 +38,7 @@ const processQueue = async (id: string, timestamp: number, called_system: string
   }
 
   if (!coreActionsAddress) {
-    coreActionsAddress = await fetchCoreAddress()
+    coreActionsAddress = await getCoreAddress()
   }
 
   const signer = new Account(getProvider(), botAddress, botPrivateKey)
@@ -61,12 +47,12 @@ const processQueue = async (id: string, timestamp: number, called_system: string
 
 // actual queue processing
 const processUnlockables = async () => {
-  if (!Object.values(eventsToProcess).length) return
+  if (!Object.values(queue).length) return
   const currentBlock = await getProvider().getBlock("latest")
   const blockTimeStamp = currentBlock.timestamp
-  const unlockables = Object.values(eventsToProcess)
+  const unlockables = Object.values(queue)
     .filter(eventToProcess => blockTimeStamp >= eventToProcess.timestamp)
-    .sort((eventToProcessA, eventToProcessB) => eventToProcessA.timestamp - eventToProcessB.timestamp)
+    .sort((eventToProcessA, eventToProcessB) => Number(eventToProcessA.timestamp - eventToProcessB.timestamp))
 
   if (!unlockables.length) return
 

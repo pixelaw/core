@@ -34,4 +34,24 @@ spec:
         - name: SEED
           value: "17885659508068513399"           
         - name: TOTAL_ACCOUNTS
-          value: "4"           
+          value: "4"       
+                 
+        # resources:
+        #   requests:
+        #     memory: "512Mi"
+        #     cpu: "500m" 
+        #   limits:
+        #     memory: "1Gi"
+        #     cpu: "1000m" 
+        volumeMounts:
+        - name: keiko-manifest
+          mountPath: /keiko/manifests
+          # subPath: prometheus.yml
+      volumes:
+      - name: keiko-manifest
+        configMap:
+          name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-cm
+
+      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc            
