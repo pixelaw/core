@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   pixelaw-core:
   - apiVersion: v2
+    appVersion: 0.0.26
+    created: "2023-12-14T03:46:42.232494912Z"
+    description: A Helm chart for Kubernetes
+    digest: 61c48dc6710f8f7adcb7288b4b7d2644630303bf16542c4435589aa23ac09b59
+    name: pixelaw-core
+    type: application
+    urls:
+    - https://github.com/pixelaw/core/releases/download/pixelaw-core-0.0.26/pixelaw-core-0.0.26.tgz
+    version: 0.0.26
+  - apiVersion: v2
     appVersion: 0.0.25
     created: "2023-12-14T03:31:03.801531584Z"
     description: A Helm chart for Kubernetes
@@ -241,4 +251,4 @@ entries:
     urls:
     - https://github.com/pixelaw/core/releases/download/pixelaw-core-0.0.1/pixelaw-core-0.0.1.tgz
     version: 0.0.1
-generated: "2023-12-14T03:31:03.801714806Z"
+generated: "2023-12-14T03:46:42.232703615Z"
