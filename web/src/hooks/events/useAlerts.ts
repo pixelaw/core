@@ -16,7 +16,7 @@ const useAlerts = () => {
   } = useDojo()
 
   return useQuery({
-    queryKey: ['alerts', account.address],
+    queryKey: ['alerts', account.address.toLowerCase()],
     queryFn: async () => {
       /// TODO: paginate getting alerts. Settling for this right now
       const {data} = await graphSdk.alerts({ first: ALERTS_TO_GET })

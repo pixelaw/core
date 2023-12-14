@@ -13,13 +13,13 @@ const buttonVariants = cva(
                 destructive:
                     "bg-destructive text-destructive-foreground hover:bg-destructive/90",
                 outline:
-                    "border border-brand-redAccent bg-black text-white font-silkscreen",
+                    "bg-black text-white font-silkscreen",
                 secondary:
                     "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 ghost: "hover:bg-accent hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 hover:underline",
                 icon: 'flex flex-col gap-y-xs',
-                notification: 'bg-brand-violet rounded-br-xl'
+                notification: 'bg-brand-body rounded-3xl'
             },
             size: {
                 default: "h-[54px] max-w-[330px] w-full px-4 py-2",
@@ -27,7 +27,7 @@ const buttonVariants = cva(
                 lg: "h-11 rounded-md px-8",
                 icon: "p-0",
                 'walletHeader': 'h-9 w-[184px] px-4 py-2 rounded',
-                'notification': 'w-[74px] h-[64px]',
+                'notification': 'w-[25px] h-[25px]',
             },
         },
         defaultVariants: {

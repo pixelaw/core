@@ -9,8 +9,11 @@ import { notificationDataAtom } from '@/global/states.ts'
 import { useSetAtom } from 'jotai'
 import useAlerts from '@/hooks/events/useAlerts'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
+import useLocalStorage from '@/hooks/useLocalStorage'
+import useAccountAddress from '@/hooks/utils/useAccountAddress'
 
 type AlertType = {
+  id: string,
   position: {
     x: number,
     y: number
@@ -18,50 +21,44 @@ type AlertType = {
   caller: string,
   player: string,
   message: string,
-  timestamp: bigint
+  timestamp: bigint,
+  read?: boolean
 }
 
-const Alert: React.FC<AlertType> = ({ position, caller, message }) => {
+type AlertProp = AlertType & {
+  className?: string,
+  onAlertClick?: (position: {x: number, y: number}, id: string) => void
+}
+const Alert: React.FC<AlertProp> = ({ position, caller, message, className, onAlertClick, id, read }) => {
   const {
     setup: {
       components: { App },
-    },
+    }
   } = useDojo()
 
   const app = useComponentValue(App, getEntityIdFromKeys([BigInt(caller)]))
   const name = felt252ToString(app?.name ?? 'caller')
 
-  const setNotificationData = useSetAtom(notificationDataAtom)
-
   const handleOnClickNotification = () => {
-    setNotificationData({
-      x: position.x,
-      y: position.y,
-      pixelType: name,
-    })
+    if (onAlertClick) onAlertClick(position, id)
   }
 
   return (
     <div
       className={cn(
         [
-          'flex items-center'
+          'flex items-center',
+          'w-full',
+          'text-new-primary',
+          className ?? ''
         ])}
     >
-      <div className={cn(['w-[20px] grow-0'])}>
-        <div className={cn(['h-2 w-2 rounded-full bg-brand-danger'])}/>
-      </div>
-      <div className={cn(['grow'])}>
-        <h2 className={cn(['text-white text-left text-sm font-semibold'])}>{name.toUpperCase()}: {message}</h2>
-      </div>
-      <Button
-        onClick={handleOnClickNotification}
-        variant={'icon'}
-        size={'icon'}
-        className={cn(['w-[20px] grow-0 font-emoji text-xl text-brand-skyblue'])}
-      >
-        &#x1f50d;
-      </Button>
+      <div onClick={handleOnClickNotification} className={'cursor-pointer w-[95%] pr-[5px]'}>{name} - {message}</div>
+      {read !== true && (
+        <div className={cn(['grow-0'])}>
+          <div className={cn(['h-2 w-2 rounded-full bg-brand-danger'])}/>
+        </div>
+      )}
     </div>
   )
 }
@@ -70,36 +67,55 @@ export default function Notification() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
   const alerts = useAlerts()
-  const hasNotification = alerts.data && alerts.data?.length > 0
+  const accountAddress = useAccountAddress() ?? 'DEFAULT'
+
+  const [ readAlerts, setReadAlerts ] = useLocalStorage<string[]>(`pixelaw::read_alerts::${accountAddress}`, [])
+
+  const setNotificationData = useSetAtom(notificationDataAtom)
+
+  const handleOnAlertClick = (position: {x: number, y: number}, id: string) => {
+    setReadAlerts(prevReadAlerts => prevReadAlerts.includes(id) ? prevReadAlerts : [...prevReadAlerts, id])
+    setNotificationData({
+      x: position.x,
+      y: position.y
+    })
+  }
+
+  const hasNotification = alerts.data ?
+    alerts.data.filter(alert => !readAlerts.includes(alert.id)).length > 0 : false
 
     return (
         <>
+          {!isOpen && (
             <Button
-                variant={'notification'}
-                size={'notification'}
-                className={cn(
-                    [
-                        'fixed left-0 z-40',
-                        'font-emoji text-[28px]'
-                    ])}
-                onClick={() => setIsOpen(true)}
+              variant={'notification'}
+              size={'notification'}
+              className={cn(
+                [
+                  'fixed left-3 top-[70px] z-40',
+                  'font-emoji text-[28px]',
+                  'bg-[#2A0D39] rounded-full h-[48px] w-[48px]'
+                ])}
+              onClick={() => setIsOpen(true)}
             >
                 <span className={cn(['relative'])}>
-                    &#x1F514;
+                    <Image src={'/assets/svg/icon_logs.svg'} alt={'Event logs icon'}/>
                     <div
-                      className={cn([ 'absolute top-[9px] right-[5px] border h-2 w-2 rounded-full bg-brand-danger', { 'hidden': !hasNotification } ])} />
+                      className={cn([ 'absolute top-[-5px] right-[-5px] border h-2 w-2 rounded-full bg-brand-danger', { 'hidden': !hasNotification } ])} />
                 </span>
             </Button>
+          )}
 
             <div
                 className={cn(
                     [
                       'fixed bottom-0 z-50 overflow-y-auto',
                         'h-[calc(100vh-var(--header-height))] w-[237px]',
-                        'bg-brand-violet border-r-[1px] border-black',
-                        'py-sm pr-sm pl-xs',
+                        'bg-brand-body border-r-[1px] border-black',
+                        'p-xs',
                         'transform transition-transform duration-300',
                         '-translate-x-full',
+                        'opacity-[.88]',
                         {'translate-x-0': isOpen}
                     ])}
             >
@@ -107,7 +123,7 @@ export default function Notification() {
                     className={cn(
                         [
                             'h-full',
-                            'flex flex-col gap-y-sm'
+                            'flex flex-col'
                         ])}
                 >
                     <div
@@ -116,9 +132,8 @@ export default function Notification() {
                                 'flex items-center'
                             ])}
                     >
-                        <div className={cn(['w-[20px] grow-0'])}></div>
                         <div className={cn(['grow py-xs'])}>
-                            <h2 className={cn(['text-brand-violetAccent text-left text-base uppercase font-silkscreen'])}>Alerts</h2>
+                            <h2 className={cn(['text-[#FFC400] text-left text-base uppercase font-silkscreen'])}>Event Logs</h2>
                         </div>
                         <Button
                             variant={'icon'}
@@ -126,12 +141,17 @@ export default function Notification() {
                             className={cn(['w-[20px] grow-0'])}
                             onClick={() => setIsOpen(false)}
                         >
-                            <Image src={'/assets/svg/icon_chevron_left.svg'} alt={'Arrow Left Icon'}/>
+                            <Image src={'/assets/svg/icon_close.svg'} alt={'Arrow Left Icon'}/>
                         </Button>
                     </div>
 
                     {(alerts?.data ?? []).map(alert => (
-                      <Alert {...alert} key={alert.id} />
+                      <Alert {...alert}
+                             key={alert.id}
+                             className={'mb-xs'}
+                             onAlertClick={handleOnAlertClick}
+                             read={readAlerts.includes(alert.id)}
+                      />
                     ))}
 
                 </div>

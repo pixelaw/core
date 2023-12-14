@@ -17,6 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        'new-primary': 'hsl(var(--new-primary))',
         'brand-blackAccent': 'hsl(var(--brand-blackAccent))',
         'brand-redAccent': 'hsl(var(--brand-redAccent))',
         'brand-body': 'hsl(var(--brand-body))',
@@ -121,12 +122,20 @@ module.exports = {
           to: {opacity:0}
         },
         "slide-left": {
-          '0%': {width: '64px', display: 'none'},
+          '0%': {width: '72px', display: 'none'},
           '100%': {width: '237px'},
         },
         "slide-right": {
           '0%': {width: '237px'},
-          '100%': {width: '64px'},
+          '100%': {width: '72px'},
+        },
+        "slide-left-icon": {
+          '0%': {width: '72px'},
+          '100%': {width: '253px'},
+        },
+        "slide-right-icon": {
+          '0': {width: '253px'},
+          '100': {width: '72px'},
         }
       },
       animation: {
@@ -135,7 +144,9 @@ module.exports = {
         "fade-in": "fade-in 0.3s ease-in-out forwards",
         "fade-out": "fade-out 0.3s ease-in-out forwards",
         "slide-left": "slide-left 0.3s linear forwards",
-        "slide-right": "slide-right 0.3s linear forwards"
+        "slide-right": "slide-right 0.3s linear forwards",
+        "slide-left-icon": "slide-left-icon 0.3s linear forwards",
+        "slide-right-icon": "slide-right-icon 0.3s linear forwards",
       },
       boxShadow: {
         glow: '0 0 10px 0 rgba(255, 255, 255, 1)',

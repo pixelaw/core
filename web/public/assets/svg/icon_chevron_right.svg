@@ -1,5 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="12.001" height="20" viewBox="0 0 12.001 20">
-  <g id="Group_100" data-name="Group 100" transform="translate(-1693 -103)">
-    <path id="Union_2" data-name="Union 2" d="M859,20V16h4v4Zm4-4V12h4v4Zm4-4V8h4v4Zm-4-4V4h4V8Zm-4-4V0h4V4Z" transform="translate(834 103)" fill="#a174e3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="6.275" height="10.458" viewBox="0 0 6.275 10.458">
+  <g id="Group_1952" data-name="Group 1952" transform="translate(6.275) rotate(90)">
+    <rect id="Rectangle_395" data-name="Rectangle 395" width="2.092" height="2.092" transform="translate(10.458 2.092) rotate(180)" fill="#b44ac0"/>
+    <rect id="Rectangle_561" data-name="Rectangle 561" width="2.092" height="2.092" transform="translate(2.092 2.092) rotate(180)" fill="#b44ac0"/>
+    <rect id="Rectangle_396" data-name="Rectangle 396" width="2.092" height="2.092" transform="translate(8.366 4.183) rotate(180)" fill="#b44ac0"/>
+    <rect id="Rectangle_559" data-name="Rectangle 559" width="2.092" height="2.092" transform="translate(4.183 4.183) rotate(180)" fill="#b44ac0"/>
+    <rect id="Rectangle_397" data-name="Rectangle 397" width="2.092" height="2.092" transform="translate(6.275 6.275) rotate(180)" fill="#b44ac0"/>
   </g>
 </svg>
