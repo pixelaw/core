@@ -35,6 +35,8 @@ spec:
           value: "17885659508068513399"           
         - name: TOTAL_ACCOUNTS
           value: "4"       
+        - name: WORLD_ADDRESS
+          value: "0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89"
                  
         # resources:
         #   requests:
@@ -44,14 +46,11 @@ spec:
         #     memory: "1Gi"
         #     cpu: "1000m" 
         volumeMounts:
-        - name: keiko-manifest
+        - name: keiko-manifests
           mountPath: /keiko/manifests
-          # subPath: prometheus.yml
-      volumes:
-      - name: keiko-manifest
-        configMap:
-          name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-cm
 
-      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc
+      volumes:
+
+      - name: keiko-manifests
         persistentVolumeClaim:
-          claimName: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc            
+          claimName: pixelaw-core-main--pvc          
