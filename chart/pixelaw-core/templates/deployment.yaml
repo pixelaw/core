@@ -48,9 +48,6 @@ spec:
           mountPath: /keiko/manifests
           # subPath: prometheus.yml
       volumes:
-      - name: keiko-manifest
-        configMap:
-          name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-cm
 
       - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc
         persistentVolumeClaim:
