@@ -6,6 +6,9 @@ import {Active_Page, MainLayoutType} from "@/global/types";
 import ZoomControl from "@/components/ZoomControl";
 import { useDojo } from '@/DojoContext'
 import WalletAddress from '@/components/WalletAddress'
+import Loading from '@/components/Loading'
+import { getUrlParam } from '@/global/utils'
+import useCreateBurner from '@/hooks/utils/useCreateBurner'
 
 export const MainLayoutContext = React.createContext<MainLayoutType>({} as MainLayoutType)
 
@@ -38,9 +41,26 @@ export default function MainLayout({children}: { children: React.ReactNode }) {
 
   const {
     account: {
-      account
-    }
+      account,
+      select
+    },
   } = useDojo()
+
+  const index = getUrlParam('account', 0)
+
+  const { isLoading, data, isSuccess } = useCreateBurner(index)
+
+  React.useEffect(() => {
+    if (account.address === data || !data || !isSuccess) return
+    select(data)
+  }, [select, account.address, data, isSuccess])
+
+  if (isLoading) {
+    return <Loading>Deploying burner wallet</Loading>
+  }
+
+
+
 
   return (
     <MainLayoutContext.Provider value={{
