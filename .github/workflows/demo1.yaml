@@ -74,12 +74,12 @@ jobs:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
         run: |
-            argocd app create $PROJECTNAME-${GITHUB_REF##*/} \
+            argocd app create $PROJECTNAME-demo1 \
                 --repo https://pixelaw.github.io/core/ \
                 --path chart/  \
                 --revision ${VERSION:1} \
                 --helm-chart $PROJECTNAME \
-                --dest-namespace $PROJECTNAME-${GITHUB_REF##*/} \
+                --dest-namespace $PROJECTNAME-demo1 \
                 --dest-server https://kubernetes.default.svc \
                 --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \a
                 --upsert \
