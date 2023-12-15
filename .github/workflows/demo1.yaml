@@ -31,9 +31,59 @@ jobs:
         run: |       
           helm lint --values ./chart/pixelaw-core/values.yaml ./chart/pixelaw-core                  
 
+  helmRelease:
+    needs: [helmTest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get latest release
+        id: get-latest-release
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return release.data.tag_name;
+
+      - name: Set ENV variable
+        run: echo "VERSION=${{ steps.get-latest-release.outputs.result }}" >> $GITHUB_ENV          
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.1
+
+      - name: custom packaging
+        run: |
+          rm -rf .cr-release-packages
+          mkdir -p .cr-release-packages
+          helm package chart/$PROJECTNAME-demo1 --app-version=${VERSION:1} --version=${VERSION:1} --destination=.cr-release-packages
+
+      - name: Run chart-releaser
+        # switch back to helm/chart-releaser-action if this contribution is ever mergedd
+        uses: askcloudarchitech/chart-releaser-action@skip-packaging-option
+        with:
+          skip_packaging: true
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   deploy:
-    needs: [helmTest]
+    needs: [helmRelease]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -78,5 +128,6 @@ jobs:
                 --upsert \
                 --server $ARGOCD_SERVER \
                 --auth-token $ARGOCD_AUTH_TOKEN 
+                
             argocd app sync pixelaw-core
             argocd app wait pixelaw-core
