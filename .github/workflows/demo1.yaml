@@ -81,7 +81,7 @@ jobs:
                 --helm-chart pixelaw-core \
                 --dest-namespace pixelaw-core-demo1 \
                 --dest-server https://kubernetes.default.svc \
-                --helm-set-string dockerImage=$REGISTRY/pixelaw-core:v0.0.33 \a
+                --helm-set-string dockerImage=$REGISTRY/pixelaw-core:v0.0.33 \
                 --upsert \
                 --server $ARGOCD_SERVER \
                 --auth-token $ARGOCD_AUTH_TOKEN 
