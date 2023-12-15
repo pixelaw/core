@@ -124,8 +124,8 @@ query alerts(
         id
         keys
         data
-        created_at
-        transaction_hash
+        createdAt
+        transactionHash
       }
     }
   }

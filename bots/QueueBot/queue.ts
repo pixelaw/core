@@ -17,11 +17,11 @@ type EventType = {
       id: string,
       keys: string[],
       data: string[],
-      created_at: string,
-      transaction_hash: string
+      createdAt: string,
+      transactionHash: string
     }
   }[],
-  total_count: number
+  totalCount: number
 }
 
 type EntityGqlReturn = {
@@ -41,11 +41,11 @@ const EVENT_NODE_TEMPLATE = `
           id
           keys
           data
-          created_at
-          transaction_hash
+          createdAt
+          transactionHash
         }
       }
-      total_count
+      totalCount
 `
 
 const QUERY = gql`
