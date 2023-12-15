@@ -13,8 +13,8 @@ const QUERY = `
       id
       keys
       data
-      createdAt
-      transactionHash
+      created_at
+      transaction_hash
     }
   }
 `
@@ -25,8 +25,8 @@ type EventDataMessage = {
       id: string,
       keys: string[],
       data: string[],
-      createdAt: string,
-      transactionHash: string
+      created_at: string,
+      transaction_hash: string
     }
   }
 }

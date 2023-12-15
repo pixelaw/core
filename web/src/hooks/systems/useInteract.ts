@@ -19,78 +19,78 @@ const convertSnakeToPascal = (snakeCaseString: string) => {
   }).join('')
 }
 
-const getParamsDef: (manifest: Manifest | undefined, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
+const getParamsDef: (manifest: Manifest, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
   (manifest, contractName, methodName, position, strict = false) => {
-  if (!manifest) {
-    if (strict) throw new Error('manifest not found')
-    else return []
-  }
-  const contract = manifest.contracts.find(contract => contract.name.includes(contractName))
-  if (!contract) {
-    if (strict) throw new Error(`unknown contract: ${contractName}`)
-    else return []
-  }
-  const interfaceName = `I${convertSnakeToPascal(contractName)}`
-  const methods = contract.abi.find(x => x.type === 'interface' && x.name.includes(interfaceName)) as InterfaceType | undefined
-  if (!methods) {
-    if (strict) throw new Error(`unknown interface: ${interfaceName}`)
-    else return []
-  }
-  if (!methods?.items) {
-    if (strict) throw new Error(`no methods for interface: ${interfaceName}`)
-    else return []
-  }
-
-  let functionDef = methods.items.find(method => method.name === methodName && method.type === 'function')
-  if (!functionDef) {
-    functionDef = methods.items.find(method => method.name === 'interact' && method.type === 'function')
-    if (!functionDef) {
-      if (strict) throw new Error(`function ${methodName} not found`)
+    if (!manifest) {
+      if (strict) throw new Error('manifest not found')
       else return []
     }
-  }
-  const parameters = functionDef.inputs.filter(input => input.type !== DEFAULT_PARAMETERS_TYPE)
-
-  return parameters.map(param => {
-    if (isInstruction(param.name)) {
-      // problem with types on contract.abi
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return interpret(contractName, position, param.name, contract.abi)
+    const contract = manifest.contracts.find(contract => contract.name === contractName)
+    if (!contract) {
+      if (strict) throw new Error(`unknown contract: ${contractName}`)
+      else return []
     }
-    const isPrimitiveType = param.type.includes("core::integer") || param.type.includes("core::felt252")
-    let type: 'number' | 'string' | 'enum' = 'number'
-    let variants: {name: string, value: number}[] = []
-    if (!isPrimitiveType) {
-      const typeDefinition = contract.abi.find(x => x.name === param.type)
-      if (typeDefinition?.type === "enum") {
-        variants = (typeDefinition?.variants ?? [])
-          .map((variant, index) => {
-            return {
-              name: variant.name,
-              value: index
-            }
-          })
-          .filter(variant => variant.name !== 'None')
-        type = 'enum'
+    const interfaceName = `I${convertSnakeToPascal(contractName)}`
+    const methods = contract.abi.find(x => x.type === 'interface' && x.name.includes(interfaceName)) as InterfaceType | undefined
+    if (!methods) {
+      if (strict) throw new Error(`unknown interface: ${interfaceName}`)
+      else return []
+    }
+    if (!methods?.items) {
+      if (strict) throw new Error(`no methods for interface: ${interfaceName}`)
+      else return []
+    }
+
+    let functionDef = methods.items.find(method => method.name === methodName && method.type === 'function')
+    if (!functionDef) {
+      functionDef = methods.items.find(method => method.name === 'interact' && method.type === 'function')
+      if (!functionDef) {
+        if (strict) throw new Error(`function ${methodName} not found`)
+        else return []
       }
-    } else if (param.type.includes("core::felt252")) {
-      type = 'string'
     }
-    return {
-      name: param.name,
-      type,
+    const parameters = functionDef.inputs.filter(input => input.type !== DEFAULT_PARAMETERS_TYPE)
 
-      // if is not primitive type fill these out
-      variants,
+    return parameters.map(param => {
+      if (isInstruction(param.name)) {
+        // problem with types on contract.abi
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return interpret(contractName, position, param.name, contract.abi)
+      }
+      const isPrimitiveType = param.type.includes("core::integer") || param.type.includes("core::felt252")
+      let type: 'number' | 'string' | 'enum' = 'number'
+      let variants: {name: string, value: number}[] = []
+      if (!isPrimitiveType) {
+        const typeDefinition = contract.abi.find(x => x.name === param.type)
+        if (typeDefinition?.type === "enum") {
+          variants = (typeDefinition?.variants ?? [])
+            .map((variant, index) => {
+              return {
+                name: variant.name,
+                value: index
+              }
+            })
+            .filter(variant => variant.name !== 'None')
+          type = 'enum'
+        }
+      } else if (param.type.includes("core::felt252")) {
+        type = 'string'
+      }
+      return {
+        name: param.name,
+        type,
 
-      // for interpret instruction only
-      transformValue: undefined,
-      value: undefined,
+        // if is not primitive type fill these out
+        variants,
 
-    }
-  })
-}
+        // for interpret instruction only
+        transformValue: undefined,
+        value: undefined,
+
+      }
+    })
+  }
 
 /// @dev this does not handle struct params yet...will support this on a later iteration
 const useInteract = (
@@ -112,9 +112,7 @@ const useInteract = (
 
   const manifest = useManifest({ name: appName })
 
-  const suffixedAppName = `${appName}_actions`
-
-  const contractName = manifest?.data?.contracts.find(contract => contract.name.includes(suffixedAppName))?.name ?? suffixedAppName
+  const contractName = `${appName}_actions`
 
   const solidColor = color.replace('#', '0xFF')
   const decimalColor = convertToDecimal(solidColor)
@@ -125,11 +123,9 @@ const useInteract = (
   const action = (!pixelValue?.action || pixelValue?.action.toString() === '0x0') ? 'interact' : pixelValue.action
   const methodName = felt252ToString(action)
 
-  const paramsDef = getParamsDef(manifest?.data, suffixedAppName, methodName, position)
+  const paramsDef = getParamsDef(manifest?.data, contractName, methodName, position)
 
   const fillableParamDefs = paramsDef.filter(paramDef => paramDef?.value == null)
-
-  console.log({ manifest: manifest?.data, contractName, methodName, position })
 
   const contractAddress = useComponentValue(AppName, getEntityIdFromKeys([BigInt(shortString.encodeShortString(appName))]))
 

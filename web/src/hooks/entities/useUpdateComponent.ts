@@ -10,9 +10,9 @@ subscription entities {
   entityUpdated {
     id
     keys
-    eventId
-    createdAt
-    updatedAt
+    event_id
+    created_at
+    updated_at
     models {
       ... on App {
         system
@@ -107,9 +107,9 @@ type EntityUpdatedMessage = {
     entityUpdated: {
       id: string,
       keys: string[],
-      eventId: string,
-      createdAt: string,
-      updatedAt: string,
+      event_id: string,
+      created_at: string,
+      updated_at: string,
       models: (AppEntity| AppNameEntity | AppUserEntity | InstructionEntity | PixelEntity)[]
     },
   }
