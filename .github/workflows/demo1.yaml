@@ -29,7 +29,7 @@ jobs:
 
       - name: Lint Helm Chart         
         run: |       
-          helm lint --values ./chart/pixelaw-core/values.yaml ./chart/pixelaw-core                  
+          helm lint --values ./chart/pixelaw-core-demo1/values.yaml ./chart/pixelaw-core-demo1
 
   helmRelease:
     needs: [helmTest]
