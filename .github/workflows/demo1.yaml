@@ -17,26 +17,23 @@ jobs:
 
   getReleaseVersion:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-latest-release.outputs.version }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Get latest release
-      id: get-latest-release
-      uses: actions/github-script@v3
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          const release = await github.repos.getLatestRelease({
-            owner: context.repo.owner,
-            repo: context.repo.repo
-          });
-          return release.data.tag_name;
-
-    - name: Set ENV variable
-      run: echo "VERSION=${{ steps.get-latest-release.outputs.result }}" >> $GITHUB_ENV
-    
+      - name: Get latest release
+        id: get-latest-release
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            core.setOutput('version', release.data.tag_name); // Set the output
+       
+            
 
   helmTest:
     runs-on: ubuntu-latest
@@ -73,15 +70,16 @@ jobs:
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
+          latestRelease: ${{ needs.get-version.outputs.version }}
         run: |
             argocd app create pixelaw-core-demo1 \
                 --repo https://pixelaw.github.io/core/ \
                 --path chart/  \
-                --revision ${VERSION:1} \
+                --revision ${latestRelease:1} \
                 --helm-chart pixelaw-core \
                 --dest-namespace pixelaw-core-demo1 \
                 --dest-server https://kubernetes.default.svc \
-                --helm-set-string dockerImage=$REGISTRY/pixelaw-core:${VERSION} \
+                --helm-set-string dockerImage=$REGISTRY/pixelaw-core:${latestRelease} \
                 --upsert \
                 --server $ARGOCD_SERVER \
                 --auth-token $ARGOCD_AUTH_TOKEN 
