@@ -257,3 +257,35 @@ scarb run upload_manifest <replace-with-webapp-url-followed-by-a-/manifests>
 | pixelaw  | 0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89 | v0.0.30      | v0.3.15 | main   |
 | pixelaw1 | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
 
+
+
+### How to create new Demo
+- Create a new demo branch
+- Add new workflow `.github/workflows/demo{x}.yaml`
+- Copy the content of demo1.yaml and only change below lines
+    ``` - name: Deploy Application Dry Run
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
+        run: |
+            argocd app create $PROJECTNAME-{demo1} \        <-- Change demo1 to preferred demo number
+                --repo https://github.com/pixelaw/core.git \
+                --path chart/pixelaw-core  \
+                --revision {demo1} \                        <--- Revision = BranchName, change it
+                --dest-namespace $PROJECTNAME-{demo1} \     <-- Change demo1 to preferred demo number
+                --dest-server https://kubernetes.default.svc \
+                --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \
+                --upsert \
+                --server $ARGOCD_SERVER \
+                --auth-token $ARGOCD_AUTH_TOKEN 
+
+
+- Edit `chart/pixelaw-core/values.yaml`
+- ``` appType:
+        frontend: webapp-demo1  <-- Change demo1 to preferred demo number
+
+      subDomainName:            <-- Change subdomains to preferred ones
+        pixelaw: demo                 
+        katana: katana.demo           
+        torii: torii.demo             
+        grpcTorii: grpc.demo    
