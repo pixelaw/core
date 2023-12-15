@@ -15,26 +15,6 @@ defaults:
 
 jobs:
 
-  getReleaseVersion:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get-latest-release.outputs.version }}
-
-    steps:
-      - name: Get latest release
-        id: get-latest-release
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const release = await github.repos.getLatestRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-            core.setOutput('version', release.data.tag_name); // Set the output
-       
-            
-
   helmTest:
     runs-on: ubuntu-latest
     steps:
@@ -53,11 +33,27 @@ jobs:
 
 
   deploy:
-    needs: [helmTest, getReleaseVersion]
+    needs: [helmTest]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+
+      - name: Get latest release
+        id: get-latest-release
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return release.data.tag_name;
+
+      - name: Set ENV variable
+        run: echo "VERSION=${{ steps.get-latest-release.outputs.result }}" >> $GITHUB_ENV
 
       - name: Install ArgoCD CLI if not exists
         run: |
@@ -70,16 +66,15 @@ jobs:
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
-          latestRelease: ${{ needs.get-version.outputs.version }}
         run: |
-            argocd app create pixelaw-core-demo1 \
+            argocd app create $PROJECTNAME-demo1 \
                 --repo https://pixelaw.github.io/core/ \
                 --path chart/  \
-                --revision 0.0.33 \
-                --helm-chart pixelaw-core \
-                --dest-namespace pixelaw-core-demo1 \
+                --revision ${VERSION:1} \
+                --helm-chart $PROJECTNAME \
+                --dest-namespace $PROJECTNAME-demo1 \
                 --dest-server https://kubernetes.default.svc \
-                --helm-set-string dockerImage=$REGISTRY/pixelaw-core:v0.0.33 \
+                --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \
                 --upsert \
                 --server $ARGOCD_SERVER \
                 --auth-token $ARGOCD_AUTH_TOKEN 

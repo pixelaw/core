@@ -1,5 +1,5 @@
 projectName: pixelaw-core-demo1
-nameSpace: main
+nameSpace: demo1
 appType:
   frontend: webapp
   database: db
