@@ -1,4 +1,4 @@
-projectName: pixelaw-core
+projectName: pixelaw-core-demo1
 nameSpace: main
 appType:
   frontend: webapp
@@ -32,9 +32,9 @@ grpcToriiContainerService:
 domainName: pixelaw.xyz                # {{ .Values.domainName }}
 
 subDomainName: 
-  pixelaw: demo                     # {{ .Values.subDomainName.pixelaw }}
-  katana: katana.demo           # {{ .Values.subDomainName.katana }}
-  torii: torii.demo             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc.demo    # {{ .Values.subDomainName.grpcTorii }}
+  pixelaw: demo1                     # {{ .Values.subDomainName.pixelaw }}
+  katana: katana1.demo           # {{ .Values.subDomainName.katana }}
+  torii: torii1.demo             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc1.demo    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: oostvoort/pixelaw-core:latest
