@@ -1,4 +1,4 @@
-# PixeLAW Game (test)
+# PixeLAW Core
 A game built on top of Dojo. See live example at <SECRET_URL: please reach out us on discord>.
 
 This repository includes core components and systems. For more details, please check [PixeLAW Book](https://pixelaw.github.io/book/index.html).
@@ -218,3 +218,42 @@ And then switch accounts like this:
 ```
 starknet::testing::set_contract_address(player1);
 ```
+
+## Deploying Contracts Remotely
+### Step 1 Follow slot deployment
+Replace the rpc_url in Scarb.toml, as well as the account_address, and private_key with the slot katana url,
+account_address, and private_key. Read [this](https://book.dojoengine.org/tutorial/deploy-using-slot/main.html) to
+familiarize yourself with slot deployments. NOTE: set the invoke-max-steps to a sufficiently high number to allow
+ml-based games (4_000_000_000 is a good amount). Also, take note of copying the SEED, TOTAL_ACCOUNTS, and WORLD_ADDRESS
+
+### Step 2 Run post slot deployment
+This will initialize the deployed world
+````console
+cd contracts
+scarb run slot_post_deploy
+````
+
+### Step 3 Set environment variables
+Set the following environment variables in the Docker Container that holds the PixeLAW Core image:
+1. PUBLIC_NODE_URL - the slot katana url provided
+2. PUBLIC_TORII - the slot torii url provided
+3. SLOT_KATANA - same value as the PUBLIC_NODE_URL
+4. SLOT_TORII - same value as the PUBLIC_TORII
+5. SEED - the seed provided when first deploying with Slot
+6. TOTAL_ACCOUNTS - number of accounts prefunded
+7. WORLD_ADDRESS - the address of the deployed world
+
+### Step 4 Upload the manifest
+Wait till the Docker Container is up and running, then execute this command:
+````console
+cd contracts
+scarb run upload_manifest <replace-with-webapp-url-followed-by-a-/manifests>
+````
+
+## Deployed Worlds
+
+| ID       | Address                                                           | Core Version | Dojo    | Branch |
+|----------|-------------------------------------------------------------------|--------------|---------|--------|
+| pixelaw  | 0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89 | v0.0.30      | v0.3.15 | main   |
+| pixelaw1 | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
+
