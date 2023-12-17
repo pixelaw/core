@@ -1,6 +1,6 @@
 {
-  "name": "bots",
-  "version": "1.0.0",
+  "name": "pixelaw-core-bots",
+  "version": "0.0.38",
   "description": "gets queueEvents and processes them",
   "main": "index.js",
   "license": "MIT",
