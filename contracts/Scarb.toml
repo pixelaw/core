@@ -1,8 +1,8 @@
 [package]
 cairo-version = "2.3.0"
-name = "pixelaw"
-version = "0.0.35"
-homepage = "https://github.com/pixelaw/contracts"
+name = "pixelaw-core-contracts"
+version = "0.0.38"
+homepage = "https://github.com/pixelaw/core"
 
 [cairo]
 sierra-replace-ids = true
