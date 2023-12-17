@@ -1,7 +1,7 @@
 {
-  "name": "react-example",
+  "name": "pixelaw-core",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.35",
   "type": "module",
   "scripts": {
     "dev": "vite",
