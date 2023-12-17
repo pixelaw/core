@@ -221,26 +221,37 @@ mod snake_actions {
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));
 
-            assert(!snake.owner.is_zero(), 'no snake');
+            assert(snake.length > 0, 'no snake');
             let first_segment = get!(world, (snake.first_segment_id), SnakeSegment);
 
             // If the snake is dying, handle that
             if snake.is_dying {
-
+                'snake shrinks due to dying'.print();
                 snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
 
                 if snake.length == 0 {
+                    'snake is dead: deleting'.print();
                     let position = Position { x: first_segment.x, y: first_segment.y };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
                     emit!(world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y });
-                    set!(world, (snake));
-                    // Since we return immediately, the next Queue for move will never be set
-                    // This will stop the movement loop
-                    // TODO handle situation where someone manually calls 'move', it will
-                    // spam Died events..
-                    let snake_owner_felt: felt252 = snake.owner.into();
 
+                    // TODO Properly use the delete functionality of Dojo.
+                    set!(world, (Snake {
+                            owner: snake.owner,
+                            length: 0,
+                            first_segment_id: 0,
+                            last_segment_id: 0,
+                            direction: Direction::None,
+                            color: 0,
+                            text: Zeroable::zero(),
+                            is_dying: false
+                    }));
+
+                    // According to answer on 
+                    // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
+                    // This is the right approach, but it doesnt seem to work.
+                    let snake_owner_felt: felt252 = snake.owner.into();
                     let mut layout = array![];
                     Introspect::<Snake>::layout(ref layout);
                     world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
@@ -255,7 +266,7 @@ mod snake_actions {
             // Determine next pixel the head will move to
             let next_move = next_position(first_segment.x, first_segment.y, snake.direction);
 
-            if next_move.is_some() {
+            if next_move.is_some() && !snake.is_dying {
               let (next_x, next_y) = next_move.unwrap();
 
                 // Load next pixel
@@ -327,10 +338,10 @@ mod snake_actions {
                         snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                     }
                 }
-            } else {
-              'snake will die'.print();
-              // Snake hit a pixel that is not allowing anyting: DIE
-              snake.is_dying = true;
+            // } else {
+            //   'snake will die'.print();
+            //   // Snake hit a pixel that is not allowing anyting: DIE
+            //   snake.is_dying = true;
             }
 
             // Save the snake
