@@ -77,6 +77,7 @@ COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
 COPY ./contracts ./contracts
 
+LABEL org.opencontainers.image.description = "PixeLAW core container"
 
 RUN sozo build --manifest-path ./contracts/Scarb.toml
 
