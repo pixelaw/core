@@ -1,5 +1,6 @@
 projectName: pixelaw-core
 nameSpace: main
+
 appType:
   frontend: webapp
   database: db
@@ -8,7 +9,7 @@ appType:
 replicaSet: 1
 
 minReplicas: 1
-maxReplicas: 3
+maxReplicas: 1
 averageCPUUtilization: 50
 averageMemoryUtilization: 50
 
@@ -31,10 +32,10 @@ grpcToriiContainerService:
 
 domainName: pixelaw.xyz                # {{ .Values.domainName }}
 
-subDomainName: 
+subDomainName:
   pixelaw: demo                     # {{ .Values.subDomainName.pixelaw }}
   katana: katana.demo           # {{ .Values.subDomainName.katana }}
   torii: torii.demo             # {{ .Values.subDomainName.torii }}
   grpcTorii: grpc.demo    # {{ .Values.subDomainName.grpcTorii }}
 
-dockerImage: oostvoort/pixelaw-core:latest
+dockerImage: ghcr.io/pixelaw/core:latest
