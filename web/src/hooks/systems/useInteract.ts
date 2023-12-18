@@ -19,13 +19,13 @@ const convertSnakeToPascal = (snakeCaseString: string) => {
   }).join('')
 }
 
-const getParamsDef: (manifest: Manifest, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
+const getParamsDef: (manifest: Manifest | undefined, contractName: string, methodName: string, position: {x: number, y: number}, strict?: boolean) => ParamDefinitionType[] =
   (manifest, contractName, methodName, position, strict = false) => {
     if (!manifest) {
       if (strict) throw new Error('manifest not found')
       else return []
     }
-    const contract = manifest.contracts.find(contract => contract.name === contractName)
+    const contract = manifest.contracts.find(contract => contract.name.includes(contractName))
     if (!contract) {
       if (strict) throw new Error(`unknown contract: ${contractName}`)
       else return []
@@ -112,7 +112,9 @@ const useInteract = (
 
   const manifest = useManifest({ name: appName })
 
-  const contractName = `${appName}_actions`
+  const suffixedAppName = `${appName}_actions`
+
+  const contractName = manifest?.data?.contracts.find(contract => contract.name.includes(suffixedAppName))?.name ?? suffixedAppName
 
   const solidColor = color.replace('#', '0xFF')
   const decimalColor = convertToDecimal(solidColor)
@@ -123,7 +125,7 @@ const useInteract = (
   const action = (!pixelValue?.action || pixelValue?.action.toString() === '0x0') ? 'interact' : pixelValue.action
   const methodName = felt252ToString(action)
 
-  const paramsDef = getParamsDef(manifest?.data, contractName, methodName, position)
+  const paramsDef = getParamsDef(manifest?.data, suffixedAppName, methodName, position)
 
   const fillableParamDefs = paramsDef.filter(paramDef => paramDef?.value == null)
 

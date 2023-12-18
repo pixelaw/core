@@ -1,14 +1,14 @@
 [package]
-cairo-version = "2.3.0"
-name = "pixelaw-core-contracts"
-version = "0.0.40"
-homepage = "https://github.com/pixelaw/core"
+cairo-version = "2.4.0"
+name = "pixelaw"
+version = "0.1.0"
+homepage = "https://github.com/pixelaw/contracts"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.3.15" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.4.1" }
 
 [[target.dojo]]
 build-external-contracts = []
@@ -40,7 +40,7 @@ update_scarb = "bash ./scripts/update_scarb.sh"
 
 [tool.dojo.env]
 rpc_url = "http://localhost:5050/"
-world_address = "0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89"
+world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
 
 # Default account for katana with seed = 0
 account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"

@@ -4,6 +4,7 @@ import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { shortString } from 'starknet'
 import { useQuery } from '@tanstack/react-query'
 import { felt252ToString, streamToString } from '@/global/utils'
+import { Manifest } from '@/global/types'
 
 type PropsType = {
   name: string
@@ -24,7 +25,7 @@ const useManifest = ({name}: PropsType) => {
   const app = useComponentValue(App, appEntityId)
   const manifest = felt252ToString(app?.manifest ?? '')
 
-  return useQuery(
+  return useQuery<Manifest>(
     {
       queryKey: ['manifest', manifest],
       queryFn: async () => {
