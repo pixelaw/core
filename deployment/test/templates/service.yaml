@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+ namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+spec:
+ type: {{ .Values.webappContainerService.type }}
+ ports:
+ - targetPort: {{ .Values.webappContainerService.port }}
+   port: {{ .Values.webappContainerService.port }}
+ selector:
+   app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-katana
+ namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+spec:
+ type: {{ .Values.katanaContainerService.type }}
+ ports:
+ - targetPort: {{ .Values.katanaContainerService.port }}
+   port: {{ .Values.katanaContainerService.port }}
+ selector:
+   app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-torii
+ namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+spec:
+ type: {{ .Values.toriiContainerService.type }}
+ ports:
+ - targetPort: {{ .Values.toriiContainerService.port }}
+   port: {{ .Values.toriiContainerService.port }}
+ selector:
+   app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-grpc-torii
+ namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+spec:
+ type: {{ .Values.toriiContainerService.type }}
+ ports:
+ - targetPort: {{ .Values.grpcToriiContainerService.port }}
+   port: {{ .Values.grpcToriiContainerService.port }}
+ selector:
+   app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}

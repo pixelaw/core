@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+spec:
+  replicas: {{ .Values.replicaSet }}
+  selector:
+    matchLabels:
+      app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+    spec:
+      containers:
+      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+        image: {{ .Values.dockerImage }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.webappContainerService.port }}
+        env:
+        - name: PUBLIC_NODE_URL
+          value: "https://api.cartridge.gg/x/pixelaw1/katana"
+        - name: PUBLIC_TORII
+          value: "https://api.cartridge.gg/x/pixelaw1/torii"
+        - name: SLOT_KATANA
+          value: "https://api.cartridge.gg/x/pixelaw1/katana"
+        - name: SLOT_TORII
+          value: "https://api.cartridge.gg/x/pixelaw1/torii"
+        - name: SEED
+          value: "7380699824140797174"
+        - name: TOTAL_ACCOUNTS
+          value: "4"
+        - name: WORLD_ADDRESS
+          value: "0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47"
+
+        # resources:
+        #   requests:
+        #     memory: "512Mi"
+        #     cpu: "500m"
+        #   limits:
+        #     memory: "1Gi"
+        #     cpu: "1000m"
+        volumeMounts:
+        - name: keiko-manifests
+          mountPath: /keiko/manifests
+
+      volumes:
+
+      - name: keiko-manifests
+        persistentVolumeClaim:
+          claimName: pixelaw-core-main--pvc
