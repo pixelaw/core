@@ -1,5 +1,5 @@
 projectName: pixelaw-core
-nameSpace: main
+nameSpace: test
 
 appType:
   frontend: webapp
