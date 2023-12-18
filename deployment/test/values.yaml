@@ -35,9 +35,9 @@ domainName: pixelaw.xyz                # {{ .Values.domainName }}
 subDomain: test
 
 subDomainName:
-  pixelaw: {{subDomain}}                      # {{ .Values.subDomainName.pixelaw }}
-  katana: katana.{{subDomain}}           # {{ .Values.subDomainName.katana }}
-  torii: torii.{{subDomain}}             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc.{{subDomain}}    # {{ .Values.subDomainName.grpcTorii }}
+  pixelaw: test                     # {{ .Values.subDomainName.pixelaw }}
+  katana: katana.test           # {{ .Values.subDomainName.katana }}
+  torii: torii.test             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc.test    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: ghcr.io/pixelaw/core:latest
