@@ -35,7 +35,7 @@ domainName: pixelaw.xyz                # {{ .Values.domainName }}
 subDomain: test
 
 subDomainName:
-  pixelaw: demo                     # {{ .Values.subDomainName.pixelaw }}
+  pixelaw: {{subDomain}}                      # {{ .Values.subDomainName.pixelaw }}
   katana: katana.{{subDomain}}           # {{ .Values.subDomainName.katana }}
   torii: torii.{{subDomain}}             # {{ .Values.subDomainName.torii }}
   grpcTorii: grpc.{{subDomain}}    # {{ .Values.subDomainName.grpcTorii }}
