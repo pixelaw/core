@@ -113,7 +113,7 @@ jobs:
 
 
   deploy:
-    needs: [ testImage ]
+    needs: [ helmRelease ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
