@@ -13,7 +13,7 @@ for row in $(cat target/dev/manifest.json | jq -r '.contracts[] | @base64'); do
      address=$(_jq '.address')
 
      # Convert to uppercase and replace '-' with '_'
-     var_name=$(echo $name | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+     var_name=$(echo $name | tr '[:lower:]' '[:upper:]' | tr '-' '_' | sed 's/::/_/g')
 
      declare "${var_name}"=$address
 done
