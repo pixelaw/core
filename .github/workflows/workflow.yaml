@@ -2,7 +2,7 @@ name: Docker build and deploy to argoCD
 on:
   push:
     tags:
-      - "*"
+      - "none"
 
 env:
   PROJECTNAME: pixelaw-core
@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
-            ${{ runner.os }}- 
+            ${{ runner.os }}-
 
 
       - name: Login to Dockerhub
@@ -42,18 +42,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME}}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: push README to Dockerhub
-      #   uses: christian-korneck/update-container-description-action@v1
-      #   env:
-      #     DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME}}
-      #     DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      #   with:
-      #     destination_container_repo: oostvoort/pixelaw
-      #     provider: dockerhub
-      #     short_description: ''
-      #     readme_file: 'README.md'             
 
       - name: Build, tag, and push image
         id: build-image
@@ -70,9 +58,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'image'
-          image-ref: 'oostvoort/pixelaw-core:latest'
-          severity: 'HIGH,CRITICAL' 
-          exit-code: '0'       
+          image-ref: 'pixelaw/pixelaw-core:latest'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
 
   helmTest:
     runs-on: ubuntu-latest
@@ -86,16 +74,16 @@ jobs:
           chmod 700 get_helm.sh
           ./get_helm.sh
 
-      - name: Lint Helm Chart         
-        run: |       
-          helm lint --values ./chart/$PROJECTNAME/values.yaml ./chart/$PROJECTNAME                  
+      - name: Lint Helm Chart
+        run: |
+          helm lint --values ./chart/$PROJECTNAME/values.yaml ./chart/$PROJECTNAME
 
   helmRelease:
     needs: [helmTest]
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write    
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -131,8 +119,8 @@ jobs:
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
-          TAG=${{ github.ref }} 
-          VERSION=${TAG#refs/tags/}     
+          TAG=${{ github.ref }}
+          VERSION=${TAG#refs/tags/}
           gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
 
 
@@ -153,7 +141,7 @@ jobs:
       - name: Deploy Application Dry Run
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
         run: |
             argocd app create $PROJECTNAME \
                 --repo https://pixelaw.github.io/core/ \
@@ -165,6 +153,6 @@ jobs:
                 --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \
                 --upsert \
                 --server $ARGOCD_SERVER \
-                --auth-token $ARGOCD_AUTH_TOKEN 
+                --auth-token $ARGOCD_AUTH_TOKEN
             argocd app sync $PROJECTNAME
             argocd app wait $PROJECTNAME
