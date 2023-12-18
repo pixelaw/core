@@ -1,45 +1,26 @@
 projectName: pixelaw-core
+
 nameSpace: test
 
-appType:
-  frontend: webapp
-  database: db
-  api: api
-
-replicaSet: 1
-
-minReplicas: 1
-maxReplicas: 1
-averageCPUUtilization: 50
-averageMemoryUtilization: 50
-
-webappContainerService:
-  type: ClusterIP  # {{ .Values.webappContainerService.type }}
-  port: 3000       # {{ .Values.webappContainerService.port }}
-
-katanaContainerService:
-  type: ClusterIP  # {{ .Values.katanaContainerService.type }}
-  port: 5050       # {{ .Values.katanaContainerService.port }}
-
-toriiContainerService:
-  type: ClusterIP  # {{ .Values.toriiContainerService.type }}
-  port: 8080       # {{ .Values.toriiContainerService.port }}
-
-grpcToriiContainerService:
-  type: ClusterIP  # {{ .Values.grpcToriiContainerService.type }}
-  port: 50051      # {{ .Values.grpcToriiContainerService.port }}
-
-
-domainName: pixelaw.xyz                # {{ .Values.domainName }}
+domainName: pixelaw.xyz
 
 subDomain: test
 
 subDomainName:
-  pixelaw: test                     # {{ .Values.subDomainName.pixelaw }}
-  katana: katana.test           # {{ .Values.subDomainName.katana }}
-  torii: torii.test             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc.test    # {{ .Values.subDomainName.grpcTorii }}
+  pixelaw: test
+  katana: katana.test
+  torii: torii.test
+  grpcTorii: grpc.test
 
 dockerImage: ghcr.io/pixelaw/core:latest
 
-worldAddress: "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
+worldAddress: "0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89"
+
+webApp:
+  katanaUrl: "https://api.cartridge.gg/x/pixelaw1/katana"
+  toriiUrl: "https://api.cartridge.gg/x/pixelaw1/torii"
+  katanaSlotUrl: "https://api.cartridge.gg/x/pixelaw1/katana"
+  toriiSlotUrl: "https://api.cartridge.gg/x/pixelaw1/torii"
+  seed: "7380699824140797174"
+  totalAccounts: "4"
+

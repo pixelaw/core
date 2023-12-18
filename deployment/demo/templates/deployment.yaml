@@ -24,17 +24,17 @@ spec:
         - containerPort: {{ .Values.webappContainerService.port }}
         env:
         - name: PUBLIC_NODE_URL
-          value: "https://api.cartridge.gg/x/pixelaw/katana"
+          value: {{ .Values.webapp.katanaUrl }}
         - name: PUBLIC_TORII
-          value: "https://api.cartridge.gg/x/pixelaw/torii"
+          value: {{ .Values.webapp.toriiUrl }}
         - name: SLOT_KATANA
-          value: "https://api.cartridge.gg/x/pixelaw/katana"
+          value: {{ .Values.webapp.katanaSlotUrl }}
         - name: SLOT_TORII
-          value: "https://api.cartridge.gg/x/pixelaw/torii"
+          value: {{ .Values.webapp.toriiSlotUrl }}
         - name: SEED
-          value: "8229730863592727681"
+          value: {{ .Values.webapp.seed }}
         - name: TOTAL_ACCOUNTS
-          value: "4"
+          value: {{ .Values.webapp.totalAccounts }}
         - name: WORLD_ADDRESS
           value: {{ .Values.worldAddress }}
 
