@@ -254,7 +254,7 @@ scarb run upload_manifest <replace-with-webapp-url-followed-by-a-/manifests>
 
 | ID       | Address                                                           | Core Version | Dojo    | Branch |
 |----------|-------------------------------------------------------------------|--------------|---------|--------|
-| pixelaw  | 0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89 | v0.0.30      | v0.3.15 | main   |
+| pixelaw  | 0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d | v0.0.45      | v0.4.1  | main   |
 | pixelaw1 | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
 
 
