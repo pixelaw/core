@@ -14,53 +14,6 @@ defaults:
     shell: bash
 
 jobs:
-  buildImage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          submodules: true
-
-
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-
-      - name: Login to Dockerhub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME}}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build, tag, and push image
-        id: build-image
-        run: |
-          docker build -t $REGISTRY/$PROJECTNAME:${VERSION} -t $REGISTRY/$PROJECTNAME:latest  .
-          docker push $REGISTRY/$PROJECTNAME:latest
-          docker push $REGISTRY/$PROJECTNAME:${VERSION}
-
-  testImage:
-    needs: [buildImage]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'image'
-          image-ref: 'pixelaw/pixelaw-core:latest'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '0'
 
   helmTest:
     runs-on: ubuntu-latest
@@ -79,7 +32,7 @@ jobs:
           helm lint --values ./chart/$PROJECTNAME/values.yaml ./chart/$PROJECTNAME
 
   helmRelease:
-    needs: [helmTest]
+    needs: [ helmTest ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -125,7 +78,7 @@ jobs:
 
 
   deploy:
-    needs: [testImage]
+    needs: [ testImage ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -143,16 +96,16 @@ jobs:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
         run: |
-            argocd app create $PROJECTNAME \
-                --repo https://pixelaw.github.io/core/ \
-                --path chart/  \
-                --revision ${VERSION:1} \
-                --helm-chart $PROJECTNAME \
-                --dest-namespace $PROJECTNAME-main \
-                --dest-server https://kubernetes.default.svc \
-                --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \
-                --upsert \
-                --server $ARGOCD_SERVER \
-                --auth-token $ARGOCD_AUTH_TOKEN
-            argocd app sync $PROJECTNAME
-            argocd app wait $PROJECTNAME
+          argocd app create $PROJECTNAME \
+              --repo https://pixelaw.github.io/core/ \
+              --path chart/  \
+              --revision ${VERSION:1} \
+              --helm-chart $PROJECTNAME \
+              --dest-namespace $PROJECTNAME-main \
+              --dest-server https://kubernetes.default.svc \
+              --helm-set-string dockerImage=$REGISTRY/$PROJECTNAME:${VERSION} \
+              --upsert \
+              --server $ARGOCD_SERVER \
+              --auth-token $ARGOCD_AUTH_TOKEN
+          argocd app sync $PROJECTNAME
+          argocd app wait $PROJECTNAME
