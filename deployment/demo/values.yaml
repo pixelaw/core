@@ -1,5 +1,5 @@
 projectName: pixelaw-core
-nameSpace: main
+nameSpace: demo
 
 appType:
   frontend: webapp
@@ -39,3 +39,5 @@ subDomainName:
   grpcTorii: grpc.demo    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: ghcr.io/pixelaw/core:latest
+
+worldAddress: "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"

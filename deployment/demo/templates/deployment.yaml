@@ -36,7 +36,7 @@ spec:
         - name: TOTAL_ACCOUNTS
           value: "4"
         - name: WORLD_ADDRESS
-          value: "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
+          value: {{ .Values.worldAddress }}
 
         # resources:
         #   requests:
@@ -53,4 +53,4 @@ spec:
 
       - name: keiko-manifests
         persistentVolumeClaim:
-          claimName: pixelaw-core-main--pvc
+          claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc

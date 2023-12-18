@@ -36,7 +36,7 @@ spec:
         - name: TOTAL_ACCOUNTS
           value: "4"
         - name: WORLD_ADDRESS
-          value: "0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47"
+          value: {{ .Values.worldAddress }}
 
         # resources:
         #   requests:
