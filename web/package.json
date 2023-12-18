@@ -31,7 +31,6 @@
     "@types/react-color": "^3.0.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "ethers": "^5.7.2",
     "events": "^3.3.0",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
