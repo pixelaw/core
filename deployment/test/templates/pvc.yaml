@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.app }}-pvc
-  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }} 
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-pvc
+  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
 spec:
-  storageClassName: do-block-storage  
+  storageClassName: do-block-storage
   accessModes:
-    - ReadWriteOnce 
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi

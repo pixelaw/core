@@ -53,4 +53,4 @@ spec:
 
       - name: keiko-manifests
         persistentVolumeClaim:
-          claimName: pixelaw-core-main--pvc
+          claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc
