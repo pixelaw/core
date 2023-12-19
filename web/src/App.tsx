@@ -4,14 +4,19 @@ import { Toaster } from '@/components/ui/toaster'
 import { useQuery } from '@tanstack/react-query'
 import { setup } from '@/dojo/setup'
 import setupAccounts from '@/dojo/setupAccounts'
-import { PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
+import { CORE_VERSION, PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
 import { DojoProvider } from './DojoContext';
 import Loading from '@/components/Loading'
 import { cn } from '@/lib/utils'
+import React from 'react'
 
 const DO_NOT_EXCEED_MS = 30_000
 
 function App() {
+  React.useEffect(() => {
+    document.title = `PixeLAW ${CORE_VERSION}`
+  }, [CORE_VERSION])
+
   const checkRpcUrl = useQuery(
     {
       queryKey: ['rpcUrl'],
