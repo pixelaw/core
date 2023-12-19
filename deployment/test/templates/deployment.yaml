@@ -23,6 +23,8 @@ spec:
         ports:
         - containerPort: {{ .Values.webappContainerService.port }}
         env:
+        - name: CORE_VERSION
+          value: "{{ .Chart.AppVersion }}"
         - name: PUBLIC_NODE_URL
           value: "{{ .Values.webapp.katanaUrl }}"
         - name: PUBLIC_TORII
