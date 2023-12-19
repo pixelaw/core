@@ -24,19 +24,19 @@ spec:
         - containerPort: {{ .Values.webappContainerService.port }}
         env:
         - name: PUBLIC_NODE_URL
-          value: {{ .Values.webapp.katanaUrl }}
+          value: "{{ .Values.webapp.katanaUrl }}"
         - name: PUBLIC_TORII
-          value: {{ .Values.webapp.toriiUrl }}
+          value: "{{ .Values.webapp.toriiUrl }}"
         - name: SLOT_KATANA
-          value: {{ .Values.webapp.katanaSlotUrl }}
+          value: "{{ .Values.webapp.katanaSlotUrl }}"
         - name: SLOT_TORII
-          value: {{ .Values.webapp.toriiSlotUrl }}
+          value: "{{ .Values.webapp.toriiSlotUrl }}"
         - name: SEED
-          value: {{ .Values.webapp.seed }}
+          value: "{{ .Values.webapp.seed }}"
         - name: TOTAL_ACCOUNTS
-          value: {{ .Values.webapp.totalAccounts }}
+          value: "{{ .Values.webapp.totalAccounts }}"
         - name: WORLD_ADDRESS
-          value: {{ .Values.worldAddress }}
+          value: "{{ .Values.worldAddress }}"
 
         # resources:
         #   requests:
