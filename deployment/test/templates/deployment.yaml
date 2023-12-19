@@ -23,20 +23,22 @@ spec:
         ports:
         - containerPort: {{ .Values.webappContainerService.port }}
         env:
-          - name: PUBLIC_NODE_URL
-            value: {{ .Values.webapp.katanaUrl }}
-          - name: PUBLIC_TORII
-            value: {{ .Values.webapp.toriiUrl }}
-          - name: SLOT_KATANA
-            value: {{ .Values.webapp.katanaSlotUrl }}
-          - name: SLOT_TORII
-            value: {{ .Values.webapp.toriiSlotUrl }}
-          - name: SEED
-            value: {{ .Values.webapp.seed }}
-          - name: TOTAL_ACCOUNTS
-            value: {{ .Values.webapp.totalAccounts }}
-          - name: WORLD_ADDRESS
-            value: {{ .Values.worldAddress }}
+        - name: CORE_VERSION
+          value: "{{ .Chart.AppVersion }}"
+        - name: PUBLIC_NODE_URL
+          value: "{{ .Values.webapp.katanaUrl }}"
+        - name: PUBLIC_TORII
+          value: "{{ .Values.webapp.toriiUrl }}"
+        - name: SLOT_KATANA
+          value: "{{ .Values.webapp.katanaSlotUrl }}"
+        - name: SLOT_TORII
+          value: "{{ .Values.webapp.toriiSlotUrl }}"
+        - name: SEED
+          value: "{{ .Values.webapp.seed }}"
+        - name: TOTAL_ACCOUNTS
+          value: "{{ .Values.webapp.totalAccounts }}"
+        - name: WORLD_ADDRESS
+          value: "{{ .Values.worldAddress }}"
 
         # resources:
         #   requests:
@@ -51,6 +53,6 @@ spec:
 
       volumes:
 
-      - name: keiko-manifests
-        persistentVolumeClaim:
-          claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc
+        - name: keiko-manifests
+          persistentVolumeClaim:
+            claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc

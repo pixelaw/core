@@ -1,10 +1,36 @@
 projectName: pixelaw-core
-
 nameSpace: test
 
-domainName: pixelaw.xyz
+appType:
+  frontend: webapp
+  database: db
+  api: api
 
-subDomain: test
+replicaSet: 1
+
+minReplicas: 1
+maxReplicas: 1
+averageCPUUtilization: 50
+averageMemoryUtilization: 50
+
+webappContainerService:
+  type: ClusterIP
+  port: 3000
+
+katanaContainerService:
+  type: ClusterIP
+  port: 5050
+
+toriiContainerService:
+  type: ClusterIP
+  port: 8080
+
+grpcToriiContainerService:
+  type: ClusterIP
+  port: 50051
+
+
+domainName: pixelaw.xyz
 
 subDomainName:
   pixelaw: test
@@ -14,13 +40,13 @@ subDomainName:
 
 dockerImage: ghcr.io/pixelaw/core:latest
 
-worldAddress: "0x6395ccab8983e6598b8d54bac18cadb63d04b8e4631bde418a2cfb504b59a89"
+worldAddress: "0x2d409910fb90d701633d9e09139a2b37a13e1cbf1288fc4a9ae6ac09a59ff16"
 
-webApp:
-  katanaUrl: "https://api.cartridge.gg/x/pixelaw1/katana"
-  toriiUrl: "https://api.cartridge.gg/x/pixelaw1/torii"
-  katanaSlotUrl: "https://api.cartridge.gg/x/pixelaw1/katana"
-  toriiSlotUrl: "https://api.cartridge.gg/x/pixelaw1/torii"
-  seed: "7380699824140797174"
+webapp:
+  katanaUrl: "https://api.cartridge.gg/x/pixelaw-test/katana"
+  toriiUrl: "https://api.cartridge.gg/x/pixelaw-test/torii"
+  katanaSlotUrl: "https://api.cartridge.gg/x/pixelaw-test/katana"
+  toriiSlotUrl: "https://api.cartridge.gg/x/pixelaw-test/torii"
+  seed: "9913977515988145757"
   totalAccounts: "4"
 

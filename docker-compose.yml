@@ -1,6 +1,6 @@
 services:
   keiko:
-    image: oostvoort/keiko:v0.0.16
+    image: ghcr.io/oostvoort/keiko:0.0.21
     container_name: keiko
     ports:
       - "5050:5050"

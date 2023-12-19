@@ -226,6 +226,27 @@ account_address, and private_key. Read [this](https://book.dojoengine.org/tutori
 familiarize yourself with slot deployments. NOTE: set the invoke-max-steps to a sufficiently high number to allow
 ml-based games (4_000_000_000 is a good amount). Also, take note of copying the SEED, TOTAL_ACCOUNTS, and WORLD_ADDRESS
 
+Deploying Katana
+````console
+slot deployments create <world-name> katana --invoke-max-steps 4000000000
+````
+
+Get the account information and seed using the logs
+````console
+slot deployments logs <world-name> katana > output.txt
+````
+
+Replace the account_address, private_key, and rpc_url, then deploy your world
+````console
+cd contracts
+sozo migrate --name <world-name>
+````
+
+Deploy Torii
+````console
+slot deployments create <world-name> torii --rpc <katana-rpc-url> --world <world_address> --start-block 0
+````
+
 ### Step 2 Run post slot deployment
 This will initialize the deployed world
 ````console
@@ -252,11 +273,11 @@ scarb run upload_manifest <replace-with-webapp-url-followed-by-a-/manifests>
 
 ## Deployed Worlds
 
-| ID       | Address                                                           | Core Version | Dojo    | Branch |
-|----------|-------------------------------------------------------------------|--------------|---------|--------|
-| pixelaw  | 0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d | v0.0.45      | v0.4.1  | main   |
-| pixelaw1 | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
-
+| ID           | Address                                                           | Core Version | Dojo    | Branch |
+|--------------|-------------------------------------------------------------------|--------------|---------|--------|
+| pixelaw      | 0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d | v0.0.45      | v0.4.1  | main   |
+| pixelaw1     | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
+| pixelaw-test | 0x2d409910fb90d701633d9e09139a2b37a13e1cbf1288fc4a9ae6ac09a59ff16 | v0.0.45      | v0.4.1  | test   |
 
 
 ### How to create new Demo
