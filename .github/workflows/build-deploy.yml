@@ -15,7 +15,7 @@ jobs:
   buildImage:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - name: Checkout repository
@@ -52,6 +52,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          TAG=${{ github.ref }}
+          VERSION=${TAG#refs/tags/}
+          gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
 #  helmTest:
 #    runs-on: ubuntu-latest
 #    steps:
