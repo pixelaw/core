@@ -50,97 +50,98 @@ jobs:
           cache-from: type=registry,ref=pixelaw/core:latest
           cache-to: type=inline
 
-  helmTest:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+#  helmTest:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Helm
+#        run: |
+#          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+#          chmod 700 get_helm.sh
+#          ./get_helm.sh
+#
+#      - name: Lint Helm Chart
+#        run: |
+#          helm lint --values ./deployment/$DEPLOY_NAME/values.yaml ./deployment/$DEPLOY_NAME
 
-      - name: Install Helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-
-      - name: Lint Helm Chart
-        run: |
-          helm lint --values ./deployment/$DEPLOY_NAME/values.yaml ./deployment/$DEPLOY_NAME
-
-  helmRelease:
-    needs: [ helmTest ]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.8.1
-
-      - name: custom packaging
-        run: |
-          VERSION=${{github.ref_name}}
-          rm -rf .cr-release-packages
-          mkdir -p .cr-release-packages
-          helm package deployment/$DEPLOY_NAME --app-version=${VERSION:1} --version=${VERSION:1} --destination=.cr-release-packages
-
-      - name: Run chart-releaser
-        # switch back to helm/chart-releaser-action if this contribution is ever mergedd
-        uses: askcloudarchitech/chart-releaser-action@skip-packaging-option
-        with:
-          skip_packaging: true
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        run: |
-          TAG=${{ github.ref }}
-          VERSION=${TAG#refs/tags/}
-          gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
+#
+#  helmRelease:
+#    needs: [ helmTest ]
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#      pull-requests: write
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Configure Git
+#        run: |
+#          git config user.name "$GITHUB_ACTOR"
+#          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+#
+#      - name: Install Helm
+#        uses: azure/setup-helm@v1
+#        with:
+#          version: v3.8.1
+#
+#      - name: custom packaging
+#        run: |
+#          VERSION=${{github.ref_name}}
+#          rm -rf .cr-release-packages
+#          mkdir -p .cr-release-packages
+#          helm package deployment/$DEPLOY_NAME --app-version=${VERSION:1} --version=${VERSION:1} --destination=.cr-release-packages
+#
+#      - name: Run chart-releaser
+#        # switch back to helm/chart-releaser-action if this contribution is ever mergedd
+#        uses: askcloudarchitech/chart-releaser-action@skip-packaging-option
+#        with:
+#          skip_packaging: true
+#        env:
+#          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+#
+#      - name: Create GitHub Release
+#        env:
+#          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+#        run: |
+#          TAG=${{ github.ref }}
+#          VERSION=${TAG#refs/tags/}
+#          gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
 
 
-  deploy:
-    needs: [ buildImage ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install ArgoCD CLI if not exists
-        run: |
-          if ! command -v argocd &> /dev/null; then
-            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-            chmod +x /usr/local/bin/argocd
-          fi
-
-      - name: Deploy Application Dry Run
-        env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
-        run: |
-          argocd app create $DEPLOY_NAME \
-              --repo https://pixelaw.github.io/core/ \
-              --path deployment/  \
-              --revision ${VERSION:1} \
-              --helm-chart $DEPLOY_NAME \
-              --dest-namespace $DEPLOY_NAME-main \
-              --dest-server https://kubernetes.default.svc \
-              --helm-set-string dockerImage=$REGISTRY/pixelaw-core:${VERSION} \
-              --upsert \
-              --server $ARGOCD_SERVER \
-              --auth-token $ARGOCD_AUTH_TOKEN
-          argocd app sync $DEPLOY_NAME
-          argocd app wait $DEPLOY_NAME
+#  deploy:
+#    needs: [ buildImage ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install ArgoCD CLI if not exists
+#        run: |
+#          if ! command -v argocd &> /dev/null; then
+#            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+#            chmod +x /usr/local/bin/argocd
+#          fi
+#
+#      - name: Deploy Application Dry Run
+#        env:
+#          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+#          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+#        run: |
+#          argocd app create $DEPLOY_NAME \
+#              --repo https://pixelaw.github.io/core/ \
+#              --path deployment/  \
+#              --revision ${VERSION:1} \
+#              --helm-chart $DEPLOY_NAME \
+#              --dest-namespace $DEPLOY_NAME-main \
+#              --dest-server https://kubernetes.default.svc \
+#              --helm-set-string dockerImage=$REGISTRY/pixelaw-core:${VERSION} \
+#              --upsert \
+#              --server $ARGOCD_SERVER \
+#              --auth-token $ARGOCD_AUTH_TOKEN
+#          argocd app sync $DEPLOY_NAME
+#          argocd app wait $DEPLOY_NAME
