@@ -15,3 +15,5 @@ export const positionWithAddressAndTypeAtom = atom<PositionWithAddressAndType>({
 })
 
 export const notificationDataAtom = atom<NotificationDataType | undefined>(undefined)
+
+export const optimisticDataAtom = atom<Record<`${number}-${number}`, string>>({})

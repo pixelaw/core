@@ -16,6 +16,7 @@ import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
 import { useInstructions } from '@/hooks/entities/useInstructions'
+import useOptimisticUpdate from '@/hooks/entities/useOptimisticUpdate'
 
 type DrawPanelType = {
   gameMode: string,
@@ -81,6 +82,8 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
     }
   )
 
+  const { update, remove } = useOptimisticUpdate({x: position?.x ?? 10, y: position?.y ?? 10}, selectedHexColor)
+
   const hasParams = !!params.length
 
   const [additionalParams, setAdditionalParams] = React.useState<Record<string,any>>({})
@@ -88,10 +91,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   React.useEffect(() => {
     setAdditionalParams({})
   }, [gameMode])
-
-
-  //For instant coloring the pixel
-  const [ tempData, setTempData ] = React.useState<Record<`[${number},${number}]`, { color: string, text: string}>>({})
 
   //for notification
   const [ notificationData, ] = useAtom(notificationDataAtom)
@@ -113,27 +112,11 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   })
 
   const handleData = () => {
-    const data = {
-      ...tempData,
-      ...pixelData,
-    }
-    return Object.entries(data).map(([ key, value ]) => {
+    return Object.entries(pixelData).map(([ key, value ]) => {
       return {
         coordinates: key.match(/\d+/g)?.map(Number) as [ number, number ],
         hexColor: value.color,
         text: value.text
-      }
-    })
-  }
-
-  const updatePixelData = (position: Coordinate, color: string) => {
-    setTempData(prev => {
-      return {
-        ...prev,
-        [`[${position[0]},${position[1]}]`]: {
-          text: prev[`[${position[0]},${position[1]}]`]?.text ?? '',
-          color
-        },
       }
     })
   }
@@ -150,7 +133,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         console.error('reversing color because of: ', err)
       })
       .finally(() => {
-        setTempData({})
+        remove()
       })
 
     setOpenModal(false)
@@ -158,6 +141,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }
 
   const handleCellClick = (coordinate: Coordinate) => {
+    update()
     setPositionWithAddressAndType(() => {
       const pixel = pixels.find(pixel => pixel!.x === coordinate[0] && pixel!.y == coordinate[1])
       return {
@@ -167,7 +151,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         pixel: pixel ? pixel.app : 'N/A'
       }
     })
-    updatePixelData(coordinate, selectedHexColor)
     if (hasParams) setOpenModal(true)
     else handleInteract()
   }
