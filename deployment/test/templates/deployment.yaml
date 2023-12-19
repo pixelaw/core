@@ -17,40 +17,40 @@ spec:
         app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
     spec:
       containers:
-      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
-        image: {{ .Values.dockerImage }}
-        imagePullPolicy: Always
-        ports:
-        - containerPort: {{ .Values.webappContainerService.port }}
-        env:
-        - name: PUBLIC_NODE_URL
-          value: "https://api.cartridge.gg/x/pixelaw1/katana"
-        - name: PUBLIC_TORII
-          value: "https://api.cartridge.gg/x/pixelaw1/torii"
-        - name: SLOT_KATANA
-          value: "https://api.cartridge.gg/x/pixelaw1/katana"
-        - name: SLOT_TORII
-          value: "https://api.cartridge.gg/x/pixelaw1/torii"
-        - name: SEED
-          value: "7380699824140797174"
-        - name: TOTAL_ACCOUNTS
-          value: "4"
-        - name: WORLD_ADDRESS
-          value: {{ .Values.worldAddress }}
+        - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+          image: {{ .Values.dockerImage }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.webappContainerService.port }}
+          env:
+            - name: PUBLIC_NODE_URL
+              value: {{ .Values.webapp.katanaUrl }}
+            - name: PUBLIC_TORII
+              value: {{ .Values.webapp.toriiUrl }}
+            - name: SLOT_KATANA
+              value: {{ .Values.webapp.katanaSlotUrl }}
+            - name: SLOT_TORII
+              value: {{ .Values.webapp.toriiSlotUrl }}
+            - name: SEED
+              value: {{ .Values.webapp.seed }}
+            - name: TOTAL_ACCOUNTS
+              value: {{ .Values.webapp.totalAccounts }}
+            - name: WORLD_ADDRESS
+              value: {{ .Values.worldAddress }}
 
-        # resources:
-        #   requests:
-        #     memory: "512Mi"
-        #     cpu: "500m"
-        #   limits:
-        #     memory: "1Gi"
-        #     cpu: "1000m"
-        volumeMounts:
-        - name: keiko-manifests
-          mountPath: /keiko/manifests
+          # resources:
+          #   requests:
+          #     memory: "512Mi"
+          #     cpu: "500m"
+          #   limits:
+          #     memory: "1Gi"
+          #     cpu: "1000m"
+          volumeMounts:
+            - name: keiko-manifests
+              mountPath: /keiko/manifests
 
       volumes:
 
-      - name: keiko-manifests
-        persistentVolumeClaim:
-          claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc
+        - name: keiko-manifests
+          persistentVolumeClaim:
+            claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc

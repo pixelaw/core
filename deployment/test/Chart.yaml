@@ -1,6 +1,6 @@
 apiVersion: v2
 name: pixelaw-test
-description: A Helm chart for Kubernetes
+description: test.pixelaw.xyz
 
 # A chart can be either an 'application' or a 'library' chart.
 #
