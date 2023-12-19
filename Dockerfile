@@ -2,16 +2,16 @@ FROM node:18-bookworm-slim as web_node_deps
 
 WORKDIR /app
 COPY /web/patches ./patches
-COPY /web/package.json ./package.json
-COPY /web/yarn.lock ./yarn.lock
+COPY --link /web/package.json ./package.json
+COPY --link /web/yarn.lock ./yarn.lock
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
 FROM node:18-bookworm-slim as bots_node_deps
 WORKDIR /app
-COPY /bots/package.json ./package.json
-COPY /bots/yarn.lock ./yarn.lock
+COPY --link /bots/package.json ./package.json
+COPY --link /bots/yarn.lock ./yarn.lock
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
@@ -38,13 +38,13 @@ HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localho
 
 WORKDIR /keiko
 
-COPY ./startup.sh ./startup.sh
+COPY --link ./startup.sh ./startup.sh
 COPY --from=web_node_builder /app/dist static/
-COPY ./web/.env.example .env.core.example
+COPY --link ./web/.env.example .env.core.example
 
 
 COPY ./bots ./bots
-COPY ./bots/.env.production ./bots/.env
+COPY --link ./bots/.env.production ./bots/.env
 COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
 COPY ./contracts ./contracts
