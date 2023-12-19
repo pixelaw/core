@@ -26,38 +26,8 @@ COPY --from=web_node_deps /app/node_modules ./node_modules
 RUN yarn build --mode production
 
 
-#FROM debian:bookworm-slim as dojoengine
-#
-## Install dependencies
-#RUN apt-get update && \
-#    apt-get install -y \
-#    jq \
-#    git-all \
-#    build-essential \
-#    curl
-#RUN apt-get autoremove && apt-get clean
-#
-#ARG DOJO_VERSION
-#ARG CACHEBUST=1
-#
-##Install Scarb
-#RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh --output install.sh
-#RUN chmod +x ./install.sh
-#RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
-#RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
-#ENV PATH="/root/.local/bin:${PATH}"
-#
-## Install dojo
-#SHELL ["/bin/bash", "-c"]
-#RUN curl -L https://install.dojoengine.org/ | bash
-#RUN source ~/.bashrc
-#ENV PATH="/root/.dojo/bin:${PATH}"
-#RUN ~/.dojo/bin/dojoup -v $DOJO_VERSION
 
-
-
-
-FROM oostvoort/keiko:v0.0.16 AS runtime
+FROM ghcr.io/oostvoort/keiko:0.0.18 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
