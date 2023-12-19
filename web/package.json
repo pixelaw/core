@@ -1,7 +1,6 @@
 {
   "name": "pixelaw-core-web",
   "private": false,
-  "version": "0.0.56",
   "type": "module",
   "scripts": {
     "dev": "vite",
