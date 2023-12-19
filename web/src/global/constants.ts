@@ -2,6 +2,8 @@ export const PUBLIC_TORII: string =  import.meta.env.PUBLIC_TORII
 
 export const PUBLIC_NODE_URL: string = import.meta.env.PUBLIC_NODE_URL
 
+export const CORE_VERSION: string = import.meta.env.CORE_VERSION
+
 export const BLOCK_TIME = 1_000
 
 export const MAX_CELL_SIZE = 128
