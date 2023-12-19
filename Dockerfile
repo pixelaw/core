@@ -27,7 +27,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/oostvoort/keiko:0.0.18 AS runtime
+FROM ghcr.io/oostvoort/keiko:0.0.21 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
