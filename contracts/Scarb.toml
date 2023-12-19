@@ -1,7 +1,7 @@
 [package]
 cairo-version = "2.4.0"
 name = "pixelaw"
-version = "0.0.49"
+version = "0.0.50"
 homepage = "https://github.com/pixelaw/core"
 
 [cairo]
