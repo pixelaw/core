@@ -184,19 +184,54 @@ mod tests {
         // This command should revert
         // snake_actions.move(player1);
 
-        // Spawn the snake again
+        // Spawn the snake again at 3,1 so it grows from the paint at 4,1
         snake_actions
             .interact(
                 DefaultParameters {
                     for_player: Zeroable::zero(),
                     for_system: Zeroable::zero(),
-                    position: Position { x: 1, y: 1 },
+                    position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
                 Direction::Right
             );
-        assert(get!(world, (1, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 1,1');
+        assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 3,1');
+
+        // Moved to 4,1, it should now grow
+        snake_actions.move(player1);
+
+        // Now turn it Up so it runs into the border
+        snake_actions
+            .interact(
+                DefaultParameters {
+                    for_player: Zeroable::zero(),
+                    for_system: Zeroable::zero(),
+                    position: Position { x: 3, y: 1 },
+                    color: SNAKE_COLOR
+                },
+                Direction::Up
+            );
+
+        // Move up to 4,0
+        snake_actions.move(player1);
+
+
+        // Ran into 4,! - it should die
+        snake_actions.move(player1);
+
+        assert(get!(world, (4, 0), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 4,0');
+        assert(get!(world, (4, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 4,1');
 
         snake_actions.move(player1);
+
+        assert(get!(world, (4, 0), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 4,0');
+        assert(get!(world, (4, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,1');
+
+        snake_actions.move(player1);
+
+        assert(get!(world, (4, 0), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,0');
+        assert(get!(world, (4, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,1');
+
+
     }
 }

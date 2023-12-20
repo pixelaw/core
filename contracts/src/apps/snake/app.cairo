@@ -338,10 +338,10 @@ mod snake_actions {
                         snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                     }
                 }
-            // } else {
-            //   'snake will die'.print();
-            //   // Snake hit a pixel that is not allowing anyting: DIE
-            //   snake.is_dying = true;
+            } else {
+              'snake will die'.print();
+              // Snake hit a pixel that is not allowing anyting: DIE
+              snake.is_dying = true;
             }
 
             // Save the snake
