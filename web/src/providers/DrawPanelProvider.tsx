@@ -62,12 +62,12 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const [ selectedHexColor,  ] = useAtom(colorAtom)
 
   // offset is a negative value
-  const [ panOffsetX, setPanOffsetX ] = React.useState<number>(0)
-  const [ panOffsetY, setPanOffsetY ] = React.useState<number>(0)
+  const [ panOffsetX, setPanOffsetX ] = React.useState<number>(500)
+  const [ panOffsetY, setPanOffsetY ] = React.useState<number>(500)
 
   //For setting the visible area
-  const [ visibleAreaStart, setVisibleAreaStart ] = React.useState<[ number, number ]>([ 0, 0 ])
-  const [ visibleAreaEnd, setVisibleAreaEnd ] = React.useState<[ number, number ]>([ 28, 8 ])
+  const [ visibleAreaStart, setVisibleAreaStart ] = React.useState<[ number, number ]>([ 500, 500 ])
+  const [ visibleAreaEnd, setVisibleAreaEnd ] = React.useState<[ number, number ]>([ 528, 508 ])
 
   //setting the coordinates and passing it to plugin when hover in the cell
   const [position, setPositionWithAddressAndType] = useAtom(positionWithAddressAndTypeAtom)

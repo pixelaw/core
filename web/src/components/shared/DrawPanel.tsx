@@ -32,8 +32,8 @@ const DrawPanel = () => {
   //moving the canvas
   const [ panning, setPanning ] = React.useState<boolean>(false)
 
-  const [ initialPositionX, setInitialPositionX ] = React.useState<number>(0)
-  const [ initialPositionY, setInitialPositionY ] = React.useState<number>(0)
+  const [ initialPositionX, setInitialPositionX ] = React.useState<number>(500)
+  const [ initialPositionY, setInitialPositionY ] = React.useState<number>(500)
 
   // min: [x,y], [10,10]
   const visibleAreaXStart = Math.max(0, Math.floor(-panOffsetX / cellSize))
