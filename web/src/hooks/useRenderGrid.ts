@@ -92,18 +92,26 @@ export function useRenderGrid() {
         if (pixelText) {
           ctx.textAlign = 'center'
 
-          /// "✂" seems to not have its own color and such so doing a quick fix by adding a fill-color to it
-          if (pixelText === '0x552b32373032') {
-            ctx.fillStyle = 'red'
-          }
           ctx.font=`${(cellSize / 2)}px Serif`
 
           let text = felt252ToString(pixelText)
+
+          if (pixelColor === '#000000') ctx.fillStyle = 'white'
+          else ctx.fillStyle = 'black'
 
           if (text.includes('U+')) {
               text = text.replace('U+', '')
               const codePoint = parseInt(text, 16)
               text = String.fromCodePoint(codePoint)
+          } else {
+            // FIXME: make this scale better
+            if (text.length > 4 && text.length <= 8) {
+              ctx.font = `${(cellSize / 4)}px Serif`
+            } else if (text.length > 8 && text.length <= 12) {
+              ctx.font = `${(cellSize / 6)}px Serif`
+            } else if (text.length > 12) {
+              ctx.font = `${(cellSize / 8)}px Serif`
+            }
           }
 
           ctx.fillText(text, x + cellSize / 2, y + cellSize / 1.5)
