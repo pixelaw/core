@@ -7,7 +7,7 @@ import { num, selector, shortString } from 'starknet'
 import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction'
 import useManifest from '@/hooks/systems/useManifest'
 import { InterfaceType, Manifest } from '@/global/types'
-import { sleep } from '@latticexyz/utils'
+import { sleep, uuid } from '@latticexyz/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { useComponentValue } from '@dojoengine/react'
 
@@ -144,6 +144,19 @@ const useInteract = (
         // eslint-disable-next-line
         otherParams?: Record<string, any>
       }) => {
+
+        const entityId = getEntityIdFromKeys([BigInt(position.x), BigInt(position.y)]) as EntityIndex
+        const pixelId = uuid()
+        Pixel.addOverride(pixelId, {
+          entity: entityId,
+          value: {
+            color: decimalColor,
+            x: position.x,
+            y: position.y,
+            owner: account.address,
+          }
+        })
+
         if (!manifest.data) throw new Error('manifest has not loaded yet')
         switchManifest(manifest.data)
         if (!otherParams && fillableParamDefs.length > 0) throw new Error('incomplete parameters')
@@ -188,12 +201,14 @@ const useInteract = (
             description: e?.toString() ?? `${interaction} could not be completed`
           })
           throw e
+        } finally {
+          Pixel.removeOverride(pixelId)
         }
 
       }
     }),
     params: fillableParamDefs,
-    instruction: felt252ToString(instruction?.instruction ?? '')
+    instruction: felt252ToString(instruction?.instruction ?? '0x0')
   }
 }
 

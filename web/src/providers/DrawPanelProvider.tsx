@@ -90,9 +90,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }, [gameMode])
 
 
-  //For instant coloring the pixel
-  const [ tempData, setTempData ] = React.useState<Record<`[${number},${number}]`, { color: string, text: string}>>({})
-
   //for notification
   const [ notificationData, ] = useAtom(notificationDataAtom)
 
@@ -103,6 +100,20 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const pixels = entityIds
     .map(entityId => getComponentValue(Pixel, entityId))
     .filter(entity => !!entity)
+    .filter(entity => entity?.color !== 0)
+
+
+  // get overrides
+  for (const [key, color] of Pixel.values.color.entries()) {
+    if (color === 0 || key.toString().includes('Symbol')) continue
+    const x = Pixel.values.x.get(key)
+    const y = Pixel.values.y.get(key)
+    if (!x || !y) continue
+    pixelData[`[${x},${y}]`] = {
+      color: argbToHex(color),
+      text: Pixel.values.text.get(key)?.toString() ?? ''
+    }
+  }
 
 
   pixels.forEach(pixel => {
@@ -114,7 +125,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
 
   const handleData = () => {
     const data = {
-      ...tempData,
       ...pixelData,
     }
     return Object.entries(data).map(([ key, value ]) => {
@@ -122,18 +132,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         coordinates: key.match(/\d+/g)?.map(Number) as [ number, number ],
         hexColor: value.color,
         text: value.text
-      }
-    })
-  }
-
-  const updatePixelData = (position: Coordinate, color: string) => {
-    setTempData(prev => {
-      return {
-        ...prev,
-        [`[${position[0]},${position[1]}]`]: {
-          text: prev[`[${position[0]},${position[1]}]`]?.text ?? '',
-          color
-        },
       }
     })
   }
@@ -148,9 +146,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
       .then()
       .catch(err => {
         console.error('reversing color because of: ', err)
-      })
-      .finally(() => {
-        setTempData({})
       })
 
     setOpenModal(false)
@@ -167,7 +162,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         pixel: pixel ? pixel.app : 'N/A'
       }
     })
-    updatePixelData(coordinate, selectedHexColor)
     if (hasParams) setOpenModal(true)
     else handleInteract()
   }
