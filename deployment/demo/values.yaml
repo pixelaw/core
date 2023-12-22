@@ -47,6 +47,6 @@ webapp:
   toriiUrl: "https://api.cartridge.gg/x/pixelaw-demo/torii"
   katanaSlotUrl: "https://api.cartridge.gg/x/pixelaw-demo/katana"
   toriiSlotUrl: "https://api.cartridge.gg/x/pixelaw-demo/torii"
-  seed: "12551975208350626939"
+  seed: "8094978241362242376"
   totalAccounts: "4"
 
