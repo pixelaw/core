@@ -103,19 +103,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
     .filter(entity => entity?.color !== 0)
 
 
-  // get overrides
-  for (const [key, color] of Pixel.values.color.entries()) {
-    if (color === 0 || key.toString().includes('Symbol')) continue
-    const x = Pixel.values.x.get(key)
-    const y = Pixel.values.y.get(key)
-    if (!x || !y) continue
-    pixelData[`[${x},${y}]`] = {
-      color: argbToHex(color),
-      text: Pixel.values.text.get(key)?.toString() ?? ''
-    }
-  }
-
-
   pixels.forEach(pixel => {
     pixelData[`[${pixel!.x},${pixel!.y}]`] = {
       color: argbToHex(pixel!.color),
