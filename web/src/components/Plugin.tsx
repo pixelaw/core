@@ -5,18 +5,12 @@ import { Button } from '@/components/ui/button'
 import Footer from '@/components/Footer'
 import { gameModeAtom, positionWithAddressAndTypeAtom } from '@/global/states'
 import { useAtom, useAtomValue } from 'jotai'
-import { useApps } from '@/hooks/entities/useApps'
 import { useComponentValue, useEntityQuery } from '@dojoengine/react'
 import { Has } from '@latticexyz/recs'
 import { useDojo } from '@/DojoContext'
 import { felt252ToString, felt252ToUnicode } from '@/global/utils'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { shortString } from 'starknet'
-
-const Apps: React.FC = () => {
-  useApps()
-  return <></>
-}
 
 type PluginButtonPropsType = {
   // contract address
@@ -165,7 +159,6 @@ export default function Plugin() {
             owner={String(positionWithAddressAndType.address)} />
         </div>
       </div>
-      <Apps />
     </>
   )
 }

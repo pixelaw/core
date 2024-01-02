@@ -2,18 +2,11 @@ import React from 'react'
 import Plugin from '@/components/Plugin'
 import { ColorResult, CompactPicker } from 'react-color'
 import DrawPanel from '@/components/shared/DrawPanel'
-import { useFilteredEntities } from '@/hooks/entities/useFilteredEntities'
-import DrawPanelProvider, { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
+import DrawPanelProvider from '@/providers/DrawPanelProvider.tsx'
 import { useAtom } from 'jotai'
 import { colorAtom } from '@/global/states.ts'
 import useAnnounceAlert from '@/hooks/events/useAnnounceAlert'
 import useUpdateComponent from '@/hooks/entities/useUpdateComponent'
-
-const FilteredComponents: React.FC = () => {
-  const { visibleAreaStart, visibleAreaEnd } = useDrawPanel()
-  useFilteredEntities(visibleAreaStart[0], visibleAreaEnd[0], visibleAreaStart[1], visibleAreaEnd[1])
-  return <></>
-}
 
 const Main = () => {
 
@@ -43,8 +36,6 @@ const Main = () => {
                           </div>
 
                       <Plugin/>
-
-                  <FilteredComponents />
 
                 </DrawPanelProvider>
           }
