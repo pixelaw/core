@@ -3,7 +3,6 @@ import { felt252ToString, formatAddress } from '@/global/utils.ts'
 import { useDojo } from '@/DojoContext.tsx'
 import { useComponentValue } from '@dojoengine/react'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
-import { EntityIndex } from '@latticexyz/recs'
 
 type PropsType = {
     coordinates: {
@@ -29,7 +28,7 @@ export default function Footer(props: PropsType) {
 
   const system = (props.type === 'N/A' ? 0 : props.type) ?? 0
 
-    const systemId = getEntityIdFromKeys([BigInt(system)]) as EntityIndex
+    const systemId = getEntityIdFromKeys([BigInt(system)])
     const app = useComponentValue(App, systemId)
 
     return (

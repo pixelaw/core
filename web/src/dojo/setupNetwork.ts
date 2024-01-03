@@ -1,12 +1,13 @@
 import { defineContractComponents } from "./contractComponents";
 import { world } from "./world";
-import { RPCProvider, Query, } from "@dojoengine/core";
+import { DojoProvider } from '@dojoengine/core'
 import { Account, num } from "starknet";
-import { GraphQLClient } from 'graphql-request';
-import { getSdk } from '@/generated/graphql';
 import { Manifest } from '@/global/types'
 import { streamToString } from '@/global/utils'
 import { PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
+import * as torii from '@dojoengine/torii-client'
+import { GraphQLClient } from 'graphql-request';
+import { getSdk } from '@/generated/graphql';
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
 const MANIFEST_URL = '/manifests/core'
@@ -23,7 +24,13 @@ export async function setupNetwork() {
   const worldAddress = manifest.world.address ?? ''
 
   // Create a new RPCProvider instance.
-  const provider = new RPCProvider(worldAddress, manifest, PUBLIC_NODE_URL);
+  const provider = new DojoProvider(worldAddress, manifest, PUBLIC_NODE_URL);
+
+  const toriiClient = await torii.createClient([], {
+    rpcUrl: PUBLIC_NODE_URL,
+    toriiUrl: PUBLIC_TORII,
+    worldAddress: worldAddress,
+  });
 
   // Utility function to get the SDK.
   // Add in new queries or subscriptions in src/graphql/schema.graphql
@@ -34,6 +41,7 @@ export async function setupNetwork() {
   return {
     provider,
     world,
+    toriiClient,
 
     // Define contract components for the world.
     contractComponents: defineContractComponents(world),
@@ -46,17 +54,6 @@ export async function setupNetwork() {
       return provider.execute(signer, contractName, system, call_data);
     },
 
-    // Entity query function.
-    entity: async (component: string, query: Query) => {
-      return provider.entity(component, query);
-    },
-
-    // Entities query function.
-    entities: async (component: string, partition: number) => {
-      return provider.entities(component, partition);
-    },
-
-    // switches the manifest to passed value
     switchManifest: (manifest: Manifest) => {
       provider.manifest = manifest
     }

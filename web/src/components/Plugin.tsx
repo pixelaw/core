@@ -5,18 +5,14 @@ import { Button } from '@/components/ui/button'
 import Footer from '@/components/Footer'
 import { gameModeAtom, positionWithAddressAndTypeAtom } from '@/global/states'
 import { useAtom, useAtomValue } from 'jotai'
-import { useApps } from '@/hooks/entities/useApps'
 import { useComponentValue, useEntityQuery } from '@dojoengine/react'
-import { Has } from '@latticexyz/recs'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Has, getComponentValue } from '@latticexyz/recs'
 import { useDojo } from '@/DojoContext'
 import { felt252ToString, felt252ToUnicode } from '@/global/utils'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { shortString } from 'starknet'
-
-const Apps: React.FC = () => {
-  useApps()
-  return <></>
-}
 
 type PluginButtonPropsType = {
   // contract address
@@ -35,8 +31,7 @@ const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonProp
     },
   } = useDojo()
 
-  const entityId = getEntityIdFromKeys([ BigInt(system) ])
-  const app = useComponentValue(App, entityId)
+  const app = useComponentValue(App, system)
   const name = felt252ToString(app?.name ?? 'app name')
   const icon = felt252ToUnicode(app?.icon ?? 'app icon')
   const isOpen = expanded === true
@@ -146,11 +141,12 @@ export default function Plugin() {
             {
               apps
                 .map((app) => {
+                  const componentValue = getComponentValue(App, app)
                   return (
                     <PluginButton
                       key={app}
                       system={app as unknown as string}
-                      selected={(app as unknown as string) === selectedApp?.system}
+                      selected={componentValue?.system === selectedApp?.system}
                       onSelect={(name) => setGameMode(name)}
                       expanded={isOpen}
                     />
@@ -165,7 +161,6 @@ export default function Plugin() {
             owner={String(positionWithAddressAndType.address)} />
         </div>
       </div>
-      <Apps />
     </>
   )
 }

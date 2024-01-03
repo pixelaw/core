@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { overridableComponent } from "@latticexyz/recs";
 import { SetupNetworkResult } from "./setupNetwork";
 

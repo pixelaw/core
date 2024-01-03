@@ -1,16 +1,12 @@
 import { SetupNetworkResult } from './setupNetwork'
 import { Account, Event, num, TransactionStatus } from 'starknet'
-import { getEntityIdFromKeys, getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
-import { EntityIndex } from '@latticexyz/recs'
-import { uuid } from '@latticexyz/utils'
-import { ClientComponents } from '@/dojo/createClientComponents'
+import { getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
 import { ZERO_ADDRESS } from '@/global/constants'
 
 const FAILURE_REASON_REGEX = /Failure reason: ".+"/;
 
 export function createSystemCalls(
-    { execute, contractComponents }: SetupNetworkResult,
-    { Pixel }: ClientComponents
+    { execute, contractComponents }: SetupNetworkResult
 ) {
 
   /**
@@ -31,17 +27,6 @@ export function createSystemCalls(
     action = 'interact',
     otherParams?: num.BigNumberish[]
   ) => {
-
-    // for optimistic rendering
-    const entityId = getEntityIdFromKeys([BigInt(position.x), BigInt(position.y)]) as EntityIndex
-    const pixelId = uuid()
-    Pixel.addOverride(pixelId, {
-      entity: entityId,
-      value: {
-        color
-      }
-    })
-
     try {
       const tx = await execute(
         signer,
@@ -82,11 +67,8 @@ export function createSystemCalls(
       setComponentsFromEvents(contractComponents, filteredEvents)
 
     } catch (e) {
-      Pixel.removeOverride(pixelId)
       console.error(e)
       throw e
-    } finally {
-      Pixel.removeOverride(pixelId)
     }
   }
 

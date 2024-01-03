@@ -1,6 +1,8 @@
 import useSubscribe from '@/hooks/utils/useSubscribe'
 import { parseEventData } from '@/hooks/events/utils'
 import { toast } from '@/components/ui/use-toast'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { getComponentValue } from '@latticexyz/recs'
 import { useDojo } from '@/DojoContext'
 import { getEntityIdFromKeys } from '@dojoengine/utils'

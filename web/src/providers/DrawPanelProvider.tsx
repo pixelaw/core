@@ -11,11 +11,12 @@ import {
 } from '@/global/states.ts'
 import {CANVAS_HEIGHT, CANVAS_WIDTH, MAX_CELL_SIZE, MAX_ROWS_COLS} from '@/global/constants.ts'
 import {useEntityQuery} from '@dojoengine/react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import {getComponentValue, Has} from '@latticexyz/recs'
 import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
-import { useInstructions } from '@/hooks/entities/useInstructions'
 
 type DrawPanelType = {
   gameMode: string,
@@ -36,11 +37,6 @@ type DrawPanelType = {
 }
 
 export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPanelType)
-
-const LoadInstructions = () => {
-  useInstructions()
-  return <></>
-}
 
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -90,9 +86,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   }, [gameMode])
 
 
-  //For instant coloring the pixel
-  const [ tempData, setTempData ] = React.useState<Record<`[${number},${number}]`, { color: string, text: string}>>({})
-
   //for notification
   const [ notificationData, ] = useAtom(notificationDataAtom)
 
@@ -103,6 +96,7 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
   const pixels = entityIds
     .map(entityId => getComponentValue(Pixel, entityId))
     .filter(entity => !!entity)
+    .filter(entity => entity?.color !== 0)
 
 
   pixels.forEach(pixel => {
@@ -114,7 +108,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
 
   const handleData = () => {
     const data = {
-      ...tempData,
       ...pixelData,
     }
     return Object.entries(data).map(([ key, value ]) => {
@@ -122,18 +115,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         coordinates: key.match(/\d+/g)?.map(Number) as [ number, number ],
         hexColor: value.color,
         text: value.text
-      }
-    })
-  }
-
-  const updatePixelData = (position: Coordinate, color: string) => {
-    setTempData(prev => {
-      return {
-        ...prev,
-        [`[${position[0]},${position[1]}]`]: {
-          text: prev[`[${position[0]},${position[1]}]`]?.text ?? '',
-          color
-        },
       }
     })
   }
@@ -148,9 +129,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
       .then()
       .catch(err => {
         console.error('reversing color because of: ', err)
-      })
-      .finally(() => {
-        setTempData({})
       })
 
     setOpenModal(false)
@@ -167,7 +145,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         pixel: pixel ? pixel.app : 'N/A'
       }
     })
-    updatePixelData(coordinate, selectedHexColor)
     if (hasParams) setOpenModal(true)
     else handleInteract()
   }
@@ -251,7 +228,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         open={openModal}
         onOpenChange={(open) => setOpenModal(open)}
       />
-      <LoadInstructions />
     </DrawPanelContext.Provider>
   )
 }

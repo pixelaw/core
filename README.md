@@ -278,6 +278,7 @@ scarb run upload_manifest <replace-with-webapp-url-followed-by-a-/manifests>
 | pixelaw      | 0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d | v0.0.45      | v0.4.1  | main   |
 | pixelaw1     | 0x662b50ea51bf4b9b4a72e48d189d11d4224456c06256f0d57d1756d2d909c47 | v0.0.30      | v0.3.15 | demo1  |
 | pixelaw-test | 0x2d409910fb90d701633d9e09139a2b37a13e1cbf1288fc4a9ae6ac09a59ff16 | v0.0.45      | v0.4.1  | test   |
+| pixelaw-demo | 0x51ee3a738cbe090c95eb8102427ffb31b796be7395968cdda70cbfdd675e65a | v0.0.61      | v0.4.1  | main   |
 
 
 ### How to create new Demo

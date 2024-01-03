@@ -136,3 +136,8 @@ export type Manifest = {
   contracts: Contract[],
   models: Model[]
 }
+
+export type Position = {
+  x: number,
+  y: number
+}
