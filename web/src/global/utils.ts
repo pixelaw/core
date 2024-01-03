@@ -36,8 +36,11 @@ export async function streamToString(readableStream: ReadableStream) {
   }
 }
 
-export const felt252ToString = (felt252: string | number) => {
-  if (felt252 === '0x0') return ''
+export const felt252ToString = (felt252: string | number | bigint) => {
+  if (typeof felt252 === 'bigint' || typeof felt252 === 'object') {
+    felt252 = `0x${felt252.toString(16)}`
+  }
+  if (felt252 === '0x0' || felt252 === '0') return ''
   if (typeof felt252 === 'string') {
     try {
       return shortString.decodeShortString(felt252)

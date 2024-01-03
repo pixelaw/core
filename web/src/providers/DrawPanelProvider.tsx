@@ -11,11 +11,12 @@ import {
 } from '@/global/states.ts'
 import {CANVAS_HEIGHT, CANVAS_WIDTH, MAX_CELL_SIZE, MAX_ROWS_COLS} from '@/global/constants.ts'
 import {useEntityQuery} from '@dojoengine/react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import {getComponentValue, Has} from '@latticexyz/recs'
 import { argbToHex } from '@/global/utils.ts'
 import useInteract from '@/hooks/systems/useInteract'
 import ParamPicker from '@/components/ParamPicker'
-import { useInstructions } from '@/hooks/entities/useInstructions'
 
 type DrawPanelType = {
   gameMode: string,
@@ -36,11 +37,6 @@ type DrawPanelType = {
 }
 
 export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPanelType)
-
-const LoadInstructions = () => {
-  useInstructions()
-  return <></>
-}
 
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -101,19 +97,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
     .map(entityId => getComponentValue(Pixel, entityId))
     .filter(entity => !!entity)
     .filter(entity => entity?.color !== 0)
-
-
-  // get overrides
-  for (const [key, color] of Pixel.values.color.entries()) {
-    if (color === 0 || key.toString().includes('Symbol')) continue
-    const x = Pixel.values.x.get(key)
-    const y = Pixel.values.y.get(key)
-    if (!x || !y) continue
-    pixelData[`[${x},${y}]`] = {
-      color: argbToHex(color),
-      text: Pixel.values.text.get(key)?.toString() ?? ''
-    }
-  }
 
 
   pixels.forEach(pixel => {
@@ -245,7 +228,6 @@ export default function DrawPanelProvider({ children }: { children: React.ReactN
         open={openModal}
         onOpenChange={(open) => setOpenModal(open)}
       />
-      <LoadInstructions />
     </DrawPanelContext.Provider>
   )
 }

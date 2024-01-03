@@ -309,7 +309,149 @@ export type InstructionWhereInput = {
   systemNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
 };
 
-export type ModelUnion = App | AppName | AppUser | CoreActionsAddress | Instruction | Permissions | Pixel | QueueItem | Snake | SnakeSegment;
+export type LastAttempt = {
+  __typename?: 'LastAttempt';
+  entity?: Maybe<World__Entity>;
+  player?: Maybe<Scalars['ContractAddress']['output']>;
+  timestamp?: Maybe<Scalars['u64']['output']>;
+};
+
+export type LastAttemptConnection = {
+  __typename?: 'LastAttemptConnection';
+  edges?: Maybe<Array<Maybe<LastAttemptEdge>>>;
+  pageInfo: World__PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type LastAttemptEdge = {
+  __typename?: 'LastAttemptEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<LastAttempt>;
+};
+
+export type LastAttemptOrder = {
+  direction: OrderDirection;
+  field: LastAttemptOrderField;
+};
+
+export enum LastAttemptOrderField {
+  Player = 'PLAYER',
+  Timestamp = 'TIMESTAMP'
+}
+
+export type LastAttemptWhereInput = {
+  player?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  timestamp?: InputMaybe<Scalars['u64']['input']>;
+  timestampEQ?: InputMaybe<Scalars['u64']['input']>;
+  timestampGT?: InputMaybe<Scalars['u64']['input']>;
+  timestampGTE?: InputMaybe<Scalars['u64']['input']>;
+  timestampLT?: InputMaybe<Scalars['u64']['input']>;
+  timestampLTE?: InputMaybe<Scalars['u64']['input']>;
+  timestampNEQ?: InputMaybe<Scalars['u64']['input']>;
+};
+
+export type MinesweeperGame = {
+  __typename?: 'MinesweeperGame';
+  creator?: Maybe<Scalars['ContractAddress']['output']>;
+  entity?: Maybe<World__Entity>;
+  id?: Maybe<Scalars['u32']['output']>;
+  mines_amount?: Maybe<Scalars['u32']['output']>;
+  size?: Maybe<Scalars['u32']['output']>;
+  started_timestamp?: Maybe<Scalars['u64']['output']>;
+  state?: Maybe<Scalars['Enum']['output']>;
+  x?: Maybe<Scalars['u32']['output']>;
+  y?: Maybe<Scalars['u32']['output']>;
+};
+
+export type MinesweeperGameConnection = {
+  __typename?: 'MinesweeperGameConnection';
+  edges?: Maybe<Array<Maybe<MinesweeperGameEdge>>>;
+  pageInfo: World__PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type MinesweeperGameEdge = {
+  __typename?: 'MinesweeperGameEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<MinesweeperGame>;
+};
+
+export type MinesweeperGameOrder = {
+  direction: OrderDirection;
+  field: MinesweeperGameOrderField;
+};
+
+export enum MinesweeperGameOrderField {
+  Creator = 'CREATOR',
+  Id = 'ID',
+  MinesAmount = 'MINES_AMOUNT',
+  Size = 'SIZE',
+  StartedTimestamp = 'STARTED_TIMESTAMP',
+  State = 'STATE',
+  X = 'X',
+  Y = 'Y'
+}
+
+export type MinesweeperGameWhereInput = {
+  creator?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  creatorNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  id?: InputMaybe<Scalars['u32']['input']>;
+  idEQ?: InputMaybe<Scalars['u32']['input']>;
+  idGT?: InputMaybe<Scalars['u32']['input']>;
+  idGTE?: InputMaybe<Scalars['u32']['input']>;
+  idLT?: InputMaybe<Scalars['u32']['input']>;
+  idLTE?: InputMaybe<Scalars['u32']['input']>;
+  idNEQ?: InputMaybe<Scalars['u32']['input']>;
+  mines_amount?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountEQ?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountGT?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountGTE?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountLT?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountLTE?: InputMaybe<Scalars['u32']['input']>;
+  mines_amountNEQ?: InputMaybe<Scalars['u32']['input']>;
+  size?: InputMaybe<Scalars['u32']['input']>;
+  sizeEQ?: InputMaybe<Scalars['u32']['input']>;
+  sizeGT?: InputMaybe<Scalars['u32']['input']>;
+  sizeGTE?: InputMaybe<Scalars['u32']['input']>;
+  sizeLT?: InputMaybe<Scalars['u32']['input']>;
+  sizeLTE?: InputMaybe<Scalars['u32']['input']>;
+  sizeNEQ?: InputMaybe<Scalars['u32']['input']>;
+  started_timestamp?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampEQ?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampGT?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampGTE?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampLT?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampLTE?: InputMaybe<Scalars['u64']['input']>;
+  started_timestampNEQ?: InputMaybe<Scalars['u64']['input']>;
+  state?: InputMaybe<Scalars['Enum']['input']>;
+  x?: InputMaybe<Scalars['u32']['input']>;
+  xEQ?: InputMaybe<Scalars['u32']['input']>;
+  xGT?: InputMaybe<Scalars['u32']['input']>;
+  xGTE?: InputMaybe<Scalars['u32']['input']>;
+  xLT?: InputMaybe<Scalars['u32']['input']>;
+  xLTE?: InputMaybe<Scalars['u32']['input']>;
+  xNEQ?: InputMaybe<Scalars['u32']['input']>;
+  y?: InputMaybe<Scalars['u32']['input']>;
+  yEQ?: InputMaybe<Scalars['u32']['input']>;
+  yGT?: InputMaybe<Scalars['u32']['input']>;
+  yGTE?: InputMaybe<Scalars['u32']['input']>;
+  yLT?: InputMaybe<Scalars['u32']['input']>;
+  yLTE?: InputMaybe<Scalars['u32']['input']>;
+  yNEQ?: InputMaybe<Scalars['u32']['input']>;
+};
+
+export type ModelUnion = App | AppName | AppUser | CoreActionsAddress | Instruction | LastAttempt | MinesweeperGame | Permissions | Pixel | QueueItem | Snake | SnakeSegment;
 
 export enum OrderDirection {
   Asc = 'ASC',
@@ -836,7 +978,9 @@ export type World__Query = {
   entity: World__Entity;
   events?: Maybe<World__EventConnection>;
   instructionModels?: Maybe<InstructionConnection>;
+  lastattemptModels?: Maybe<LastAttemptConnection>;
   metadatas?: Maybe<World__MetadataConnection>;
+  minesweepergameModels?: Maybe<MinesweeperGameConnection>;
   model: World__Model;
   models?: Maybe<World__ModelConnection>;
   permissionsModels?: Maybe<PermissionsConnection>;
@@ -936,6 +1080,18 @@ export type World__QueryInstructionModelsArgs = {
 };
 
 
+export type World__QueryLastattemptModelsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LastAttemptOrder>;
+  where?: InputMaybe<LastAttemptWhereInput>;
+};
+
+
 export type World__QueryMetadatasArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -943,6 +1099,18 @@ export type World__QueryMetadatasArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type World__QueryMinesweepergameModelsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<MinesweeperGameOrder>;
+  where?: InputMaybe<MinesweeperGameWhereInput>;
 };
 
 
@@ -1088,27 +1256,6 @@ export type World__TransactionEdge = {
   node?: Maybe<World__Transaction>;
 };
 
-export type GetEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetEntitiesQuery = { __typename?: 'World__Query', entities?: { __typename?: 'World__EntityConnection', edges?: Array<{ __typename?: 'World__EntityEdge', node?: { __typename?: 'World__Entity', keys?: Array<string | null> | null, models?: Array<{ __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | { __typename: 'AppName', name?: any | null, system?: any | null } | { __typename: 'AppUser', action?: any | null, player?: any | null, system?: any | null } | { __typename: 'CoreActionsAddress', key?: any | null, value?: any | null } | { __typename?: 'Instruction' } | { __typename: 'Permissions', allowing_app?: any | null, allowed_app?: any | null, permission?: { __typename: 'Permissions_Permission', app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | { __typename: 'QueueItem', id?: any | null, valid?: any | null } | { __typename?: 'Snake' } | { __typename?: 'SnakeSegment' } | null> | null } | null } | null> | null } | null };
-
-export type All_Filtered_EntitiesQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']['input']>;
-  xMin?: InputMaybe<Scalars['u32']['input']>;
-  xMax?: InputMaybe<Scalars['u32']['input']>;
-  yMin?: InputMaybe<Scalars['u32']['input']>;
-  yMax?: InputMaybe<Scalars['u32']['input']>;
-}>;
-
-
-export type All_Filtered_EntitiesQuery = { __typename?: 'World__Query', pixelModels?: { __typename?: 'PixelConnection', edges?: Array<{ __typename?: 'PixelEdge', node?: { __typename: 'Pixel', x?: any | null, y?: any | null, created_at?: any | null, updated_at?: any | null, app?: any | null, color?: any | null, owner?: any | null, text?: any | null, timestamp?: any | null, action?: any | null } | null } | null> | null } | null };
-
-export type AppsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AppsQuery = { __typename?: 'World__Query', appModels?: { __typename?: 'AppConnection', edges?: Array<{ __typename?: 'AppEdge', node?: { __typename: 'App', manifest?: any | null, icon?: any | null, action?: any | null, name?: any | null, system?: any | null } | null } | null> | null } | null };
-
 export type AlertsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -1116,123 +1263,7 @@ export type AlertsQueryVariables = Exact<{
 
 export type AlertsQuery = { __typename?: 'World__Query', events?: { __typename?: 'World__EventConnection', edges?: Array<{ __typename?: 'World__EventEdge', node?: { __typename?: 'World__Event', id?: string | null, keys?: Array<string | null> | null, data?: Array<string | null> | null, createdAt?: any | null, transactionHash?: string | null } | null } | null> | null } | null };
 
-export type InstructionsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']['input']>;
-}>;
 
-
-export type InstructionsQuery = { __typename?: 'World__Query', instructionModels?: { __typename?: 'InstructionConnection', edges?: Array<{ __typename?: 'InstructionEdge', node?: { __typename: 'Instruction', system?: any | null, selector?: any | null, instruction?: any | null } | null } | null> | null } | null };
-
-
-export const GetEntitiesDocument = gql`
-    query getEntities {
-  entities(keys: ["*"], first: 4096) {
-    edges {
-      node {
-        keys
-        models {
-          ... on App {
-            manifest
-            icon
-            action
-            name
-            system
-            __typename
-          }
-          ... on AppName {
-            name
-            system
-            __typename
-          }
-          ... on AppUser {
-            action
-            player
-            system
-            __typename
-          }
-          ... on CoreActionsAddress {
-            key
-            value
-            __typename
-          }
-          ... on Permissions {
-            allowing_app
-            allowed_app
-            permission {
-              app
-              color
-              owner
-              text
-              timestamp
-              action
-              __typename
-            }
-            __typename
-          }
-          ... on Pixel {
-            x
-            y
-            created_at
-            updated_at
-            app
-            color
-            owner
-            text
-            timestamp
-            action
-            __typename
-          }
-          ... on QueueItem {
-            id
-            valid
-            __typename
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-export const All_Filtered_EntitiesDocument = gql`
-    query all_filtered_entities($first: Int, $xMin: u32, $xMax: u32, $yMin: u32, $yMax: u32) {
-  pixelModels(
-    first: $first
-    where: {xGTE: $xMin, xLTE: $xMax, yGTE: $yMin, yLTE: $yMax}
-  ) {
-    edges {
-      node {
-        x
-        y
-        created_at
-        updated_at
-        app
-        color
-        owner
-        text
-        timestamp
-        action
-        __typename
-      }
-    }
-  }
-}
-    `;
-export const AppsDocument = gql`
-    query apps {
-  appModels {
-    edges {
-      node {
-        manifest
-        icon
-        action
-        name
-        system
-        __typename
-      }
-    }
-  }
-}
-    `;
 export const AlertsDocument = gql`
     query alerts($first: Int) {
   events(
@@ -1251,56 +1282,18 @@ export const AlertsDocument = gql`
   }
 }
     `;
-export const InstructionsDocument = gql`
-    query instructions($first: Int) {
-  instructionModels(first: $first) {
-    edges {
-      node {
-        system
-        selector
-        instruction
-        __typename
-      }
-    }
-  }
-}
-    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
 
 const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
-const GetEntitiesDocumentString = print(GetEntitiesDocument);
-const All_Filtered_EntitiesDocumentString = print(All_Filtered_EntitiesDocument);
-const AppsDocumentString = print(AppsDocument);
 const AlertsDocumentString = print(AlertsDocument);
-const InstructionsDocumentString = print(InstructionsDocument);
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-    getEntities(variables?: GetEntitiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: GetEntitiesQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
-      return withWrapper((wrappedRequestHeaders) => client.rawRequest<GetEntitiesQuery>(GetEntitiesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEntities', 'query');
-    },
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-    all_filtered_entities(variables?: All_Filtered_EntitiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: All_Filtered_EntitiesQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
-      return withWrapper((wrappedRequestHeaders) => client.rawRequest<All_Filtered_EntitiesQuery>(All_Filtered_EntitiesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'all_filtered_entities', 'query');
-    },
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-    apps(variables?: AppsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: AppsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
-      return withWrapper((wrappedRequestHeaders) => client.rawRequest<AppsQuery>(AppsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'apps', 'query');
-    },
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
     alerts(variables?: AlertsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: AlertsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
-      return withWrapper((wrappedRequestHeaders) => client.rawRequest<AlertsQuery>(AlertsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'alerts', 'query');
-    },
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-    instructions(variables?: InstructionsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: InstructionsQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
-      return withWrapper((wrappedRequestHeaders) => client.rawRequest<InstructionsQuery>(InstructionsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'instructions', 'query');
+        return withWrapper((wrappedRequestHeaders) => client.rawRequest<AlertsQuery>(AlertsDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'alerts', 'query');
     }
   };
 }
