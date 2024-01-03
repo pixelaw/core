@@ -40,13 +40,13 @@ subDomainName:
 
 dockerImage: ghcr.io/pixelaw/core:latest
 
-worldAddress: "0x51ee3a738cbe090c95eb8102427ffb31b796be7395968cdda70cbfdd675e65a"
+worldAddress: "0x34f94959ab0187227dd2d39e99b0650380e048e307392850e5c7aadb5e8de9f"
 
 webapp:
-  katanaUrl: "https://api.cartridge.gg/x/pixelaw-demo/katana"
-  toriiUrl: "https://api.cartridge.gg/x/pixelaw-demo/torii"
-  katanaSlotUrl: "https://api.cartridge.gg/x/pixelaw-demo/katana"
-  toriiSlotUrl: "https://api.cartridge.gg/x/pixelaw-demo/torii"
-  seed: "8094978241362242376"
+  katanaUrl: "https://api.cartridge.gg/x/pxlw-demo/katana"
+  toriiUrl: "https://api.cartridge.gg/x/pxlw-demo/torii"
+  katanaSlotUrl: "https://api.cartridge.gg/x/pxlw-demo/katana"
+  toriiSlotUrl: "https://api.cartridge.gg/x/pxlw-demo/torii"
+  seed: "2182859321355100297"
   totalAccounts: "4"
 
