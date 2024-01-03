@@ -6,7 +6,6 @@ import DrawPanelProvider from '@/providers/DrawPanelProvider.tsx'
 import { useAtom } from 'jotai'
 import { colorAtom } from '@/global/states.ts'
 import useAnnounceAlert from '@/hooks/events/useAnnounceAlert'
-import useUpdateComponent from '@/hooks/entities/useUpdateComponent'
 
 const Main = () => {
 
@@ -21,7 +20,6 @@ const Main = () => {
 
   // subscribe to torii messages to announce alerts and automatically update the components
   useAnnounceAlert()
-  useUpdateComponent()
 
   return (
       <React.Fragment>

@@ -10,16 +10,17 @@
     "codegen": "graphql-codegen",
     "fix-codegen": "node src/fixGeneratedGraphql.cjs",
     "postinstall": "patch-package",
-    "create-components": "npx @dojoengine/core ../contracts/target/dev/manifest.json src/dojo/contractComponents.ts http://localhost:5050 0x72025860d14238aa9fe95c5657e130155518d9d1e8eaef1e174ef4b40972720"
+    "create-components": "npx @dojoengine/core ../contracts/target/dev/manifest.json src/dojo/contractComponents.ts http://localhost:5050 0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
   },
   "dependencies": {
     "@dojoengine/core": "^0.2.9",
     "@dojoengine/create-burner": "^0.2.9",
     "@dojoengine/react": "^0.2.9",
     "@dojoengine/utils": "^0.2.9",
-    "@latticexyz/react": "^2.0.0-next.14",
-    "@latticexyz/recs": "^2.0.0-next.14",
-    "@latticexyz/utils": "^2.0.0-next.14",
+    "@dojoengine/recs": "0.1.35",
+    "@latticexyz/react": "^2.0.0-next.11",
+    "@latticexyz/recs": "^2.0.0-next.11",
+    "@latticexyz/utils": "^2.0.0-next.11",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",

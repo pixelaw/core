@@ -1,0 +1,19 @@
+query alerts(
+  $first: Int
+) {
+  events(
+    first: $first,
+    keys: [
+      "0x4f01980329bc5de8cd181e4fb67fefefe583bd41f04365fa472ba112e7e5ef"
+    ]) {
+    edges {
+      node {
+        id
+        keys
+        data
+        createdAt
+        transactionHash
+      }
+    }
+  }
+}
