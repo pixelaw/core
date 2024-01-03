@@ -6,7 +6,9 @@ import Footer from '@/components/Footer'
 import { gameModeAtom, positionWithAddressAndTypeAtom } from '@/global/states'
 import { useAtom, useAtomValue } from 'jotai'
 import { useComponentValue, useEntityQuery } from '@dojoengine/react'
-import { Has } from '@latticexyz/recs'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Has, getComponentValue } from '@latticexyz/recs'
 import { useDojo } from '@/DojoContext'
 import { felt252ToString, felt252ToUnicode } from '@/global/utils'
 import { getEntityIdFromKeys } from '@dojoengine/utils'

@@ -1,12 +1,16 @@
 import { useDojo } from '@/DojoContext'
 import { useMutation } from '@tanstack/react-query'
 import { convertToDecimal, felt252ToString } from '@/global/utils'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { EntityIndex, getComponentValue } from '@latticexyz/recs'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { num, selector, shortString } from 'starknet'
 import interpret, { isInstruction, ParamDefinitionType } from '@/lib/Instruction'
 import useManifest from '@/hooks/systems/useManifest'
 import { InterfaceType, Manifest } from '@/global/types'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { sleep, uuid } from '@latticexyz/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { useComponentValue } from '@dojoengine/react'
