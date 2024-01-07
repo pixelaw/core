@@ -57,7 +57,11 @@ const processUnlockables = async () => {
   if (!unlockables.length) return
 
   for (const unlockable of unlockables) {
-    await processQueue(unlockable.id, unlockable.timestamp, unlockable.called_system, unlockable.selector, unlockable.calldata)
+    try {
+      await processQueue(unlockable.id, unlockable.timestamp, unlockable.called_system, unlockable.selector, unlockable.calldata)
+    }catch(error){
+      console.error("Error while processing ", unlockable, error)
+    }
   }
 }
 
