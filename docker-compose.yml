@@ -12,6 +12,14 @@ services:
       - ./contracts:/keiko/contracts
     networks:
       - pixelaw
+    environment:
+      - PUBLIC_NODE_URL=https://api.cartridge.gg/x/pxlw-demo-01/katana
+      - PUBLIC_TORII=https://api.cartridge.gg/x/pxlw-demo-01/torii
+      - SLOT_KATANA=https://api.cartridge.gg/x/pxlw-demo-01/katana
+      - SLOT_TORII=https://api.cartridge.gg/x/pxlw-demo-01/torii
+      - SEED=8657283857928754357
+      - TOTAL_ACCOUNTS=4
+      - WORLD_ADDRESS=0x1a07a98f25210c7906fc09c44879e09b20b922ba4bf5e8ea5ae48db96f7f4bd
 
 networks:
   pixelaw:
