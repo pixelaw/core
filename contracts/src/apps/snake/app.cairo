@@ -42,7 +42,8 @@ struct SnakeSegment {
     x: u32,
     y: u32,
     pixel_original_color: u32,
-    pixel_original_text: felt252
+    pixel_original_text: felt252,
+    pixel_original_app: ContractAddress
 }
 
 
@@ -60,15 +61,17 @@ mod snake_actions {
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 
     use super::{Snake, SnakeSegment};
-    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters, starknet_keccak};
+    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters, starknet_keccak, get_core_actions_address};
     use super::next_position;
     use super::ISnakeActions;
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
+    use pixelaw::core::traits::IInteroperability;
 
     use dojo::database::introspect::Introspect;
+    use pixelaw::core::models::registry::App;
 
     use debug::PrintTrait;
     #[event]
@@ -100,6 +103,46 @@ mod snake_actions {
 
     /// BASE means using the server's default manifest.json handler
     const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
+
+    #[external(v0)]
+    impl ActionsInteroperability of IInteroperability<ContractState> {
+      fn on_pre_update(
+        self: @ContractState,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+      ) {
+        // do nothing
+      }
+
+      fn on_post_update(
+        self: @ContractState,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+      ){
+        let core_actions = get_core_actions(self.world_dispatcher.read());
+        let core_actions_address = get_core_actions_address(self.world_dispatcher.read());
+        assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
+
+        // when the snake is reverting
+        if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
+          let old_app = pixel_update.app.unwrap();
+          let world = self.world_dispatcher.read();
+          let old_app = get!(world, old_app, (App));
+          if old_app.name == 'paint' {
+            let mut calldata: Array<felt252> = ArrayTrait::new();
+            let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
+            calldata.append(pixel.owner.into());
+            calldata.append(old_app.system.into());
+            calldata.append(pixel_update.x.into());
+            calldata.append(pixel_update.y.into());
+            calldata.append(pixel_update.color.unwrap().into());
+            starknet::call_contract_syscall(old_app.system, 0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, calldata.span());
+          }
+        }
+      }
+    }
 
 
     #[external(v0)]
@@ -167,7 +210,8 @@ mod snake_actions {
                 x: position.x,
                 y: position.y,
                 pixel_original_color: pixel.color,
-                pixel_original_text: pixel.text
+                pixel_original_text: pixel.text,
+                pixel_original_app: pixel.app
             };
 
             // Store the dojo model for the Snake
@@ -184,7 +228,7 @@ mod snake_actions {
                         color: Option::Some(color),
                         timestamp: Option::None,
                         text: Option::Some(text),
-                        app: Option::None,
+                        app: Option::Some(get_contract_address()),
                         owner: Option::None,
                         action: Option::None  // Not using this feature for snake
                     }
@@ -248,7 +292,7 @@ mod snake_actions {
                             is_dying: false
                     }));
 
-                    // According to answer on 
+                    // According to answer on
                     // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
                     // This is the right approach, but it doesnt seem to work.
                     let snake_owner_felt: felt252 = snake.owner.into();
@@ -283,7 +327,7 @@ mod snake_actions {
                       color: Option::Some(snake.color),
                       timestamp: Option::None,
                       text: Option::Some(snake.text),
-                      app: Option::None,
+                      app: Option::Some(get_contract_address()),
                       owner: Option::None,
                       action: Option::None  // Not using this feature for snake
                     }
@@ -386,7 +430,7 @@ mod snake_actions {
                     color: Option::Some(last_segment.pixel_original_color),
                     timestamp: Option::None,
                     text: Option::Some(last_segment.pixel_original_text),
-                    app: Option::None,
+                    app: Option::Some(last_segment.pixel_original_app),
                     owner: Option::None,
                     action: Option::None  // Not using this feature for snake
                 }
@@ -428,7 +472,8 @@ mod snake_actions {
                 x: pixel.x,
                 y: pixel.y,
                 pixel_original_color: pixel.color,
-                pixel_original_text: pixel.text
+                pixel_original_text: pixel.text,
+                pixel_original_app: pixel.app
             }
         );
 
@@ -443,7 +488,7 @@ mod snake_actions {
                     color: Option::Some(snake.color),
                     timestamp: Option::None,
                     text: Option::Some(snake.text),
-                    app: Option::None,
+                    app: Option::Some(get_contract_address()),
                     owner: Option::None,
                     action: Option::None  // Not using this feature for snake
                 }
