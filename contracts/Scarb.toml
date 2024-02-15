@@ -8,7 +8,7 @@ homepage = "https://github.com/pixelaw/core"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.4.1" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.5.1" }
 
 [[target.dojo]]
 build-external-contracts = []
@@ -40,12 +40,12 @@ upload_manifest = "bash ./scripts/upload_manifest.sh"
 update_scarb = "bash ./scripts/update_scarb.sh"
 
 [tool.dojo.env]
-rpc_url = "http://localhost:5050/"
-world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
+#rpc_url = "https://api.cartridge.gg/x/pxlw-demo/katana"
+#world_address = "0x34f94959ab0187227dd2d39e99b0650380e048e307392850e5c7aadb5e8de9f"
 
 # Default account for katana with seed = 0
-account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
-private_key = "0x1800000000300000180000000000030000000000003006001800006600"
+account_address = "0x6618f45aa1fe17d32ccd6217ad5d6a1fb6f25d7252dbf7e4423149af32c8ccd"
+private_key = "0x313ae921cf6557b23a493d6b9ffa4be3ae93813bb59f8fa0effeb7be94b73f3"
 
 #keystore_password = "password"
 #keystore_path = "../keystore.json"
