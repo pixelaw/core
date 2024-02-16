@@ -58,7 +58,9 @@ function App() {
       queryFn: async() => {
         return setup(
           createDojoConfig({
-            manifest: checkManifests.data
+            manifest: checkManifests.data,
+            masterAddress: '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114',
+            masterPrivateKey: '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b'
           })
         )
       },

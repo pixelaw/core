@@ -5,8 +5,8 @@ import { getProvider } from './utils'
 import { queue } from './queue'
 import getCoreAddress from './getCoreAddress'
 
-let botPrivateKey = '0x14d6672dcb4b77ca36a887e9a11cd9d637d5012468175829e9c6e770c61642'
-let botAddress = '0xe29882a1fcba1e7e10cad46212257fea5c752a4f9b1b1ec683c503a2cf5c8a'
+let botPrivateKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b'
+let botAddress = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114'
 
 type AccountType = {
   address: string,
@@ -42,6 +42,7 @@ const processQueue = async (id: string, timestamp: bigint, called_system: string
   }
 
   const signer = new Account(getProvider(), botAddress, botPrivateKey)
+  console.log('check', signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
   return execute(signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
 }
 
