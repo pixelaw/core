@@ -681,29 +681,31 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@dojoengine/core@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/core/-/core-0.2.9.tgz#d9a7020e717aa5f61649e90f01d89ba459debbb0"
-  integrity sha512-5qXGi7ddCoP+cuaOFroz5U3Asb9fa4DiEApIGtJjMJWr3eVNzXhHYiwvNJjQOUgBXVhqnFBfIqilrPKekR9Svg==
+"@dojoengine/core@^0.5.0", "@dojoengine/core@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/core/-/core-0.5.8.tgz#ca75bccd9fca5dc295a03ceac238c7bba85b4d61"
+  integrity sha512-2VaZ4Ou6TKi/Y0pC9eH0CDx6/t0dgMm4x+DeCkikjBUyvd4R6y96tQrPJ321raoNXhuREo3Z75xvvOpnAReR4A==
 
-"@dojoengine/create-burner@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/create-burner/-/create-burner-0.2.9.tgz#00dcb2b978a2973e72a313469d97c62772c2e233"
-  integrity sha512-C4lEgAi4IjeDCcfZKBM+QrWxyut9Mio9WafSl/mit+GQB4D0vo542B97O7/tWAh4Bl2jDZ5PwWgfndRzUBYqSA==
+"@dojoengine/create-burner@^0.5.0":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/create-burner/-/create-burner-0.5.8.tgz#294129606e893169bde2d819f214ca5ea30079a7"
+  integrity sha512-aW0NL8NJielETAk00sG/mJ1EqfbxNeBUQ1a/Z3AWs7Z+yBX0qb9w57PUDCrlvRKGPg3VZ+cE9XE5lTLmZ9PaEg==
   dependencies:
+    "@dojoengine/core" "^0.5.8"
     "@starknet-react/core" "^1.0.3"
     encoding "^0.1.13"
     get-starknet-core "^3.2.0"
     js-cookie "^3.0.5"
 
-"@dojoengine/react@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/react/-/react-0.2.9.tgz#fe182a89ae507dabadae576339e5b1d3cabaf04d"
-  integrity sha512-6b7+vj/+sdPjj63fnXWYi83Z70wAhDpjlvswjQPhaPC2R7a9CCOAC7eCbyLvMfD5nhYYtB5LU7IpKo9TNEmrFQ==
+"@dojoengine/react@^0.5.0":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/react/-/react-0.5.8.tgz#9b393c340fcc4c5fb03922a0e3af8e47fb1c9450"
+  integrity sha512-dv0rZGUwIDQW7/iPW5xUsH+7vqXspOI7GqMaVOj4q6g0ZcH9uNnlwtOqjJQz9RgCkyqExzbbyuuWZeFw+yE5xA==
   dependencies:
     "@dojoengine/recs" "0.1.35"
-    "@dojoengine/torii-client" "^0.2.9"
-    "@dojoengine/utils" "^0.2.9"
+    "@dojoengine/state" "^0.5.8"
+    "@dojoengine/torii-client" "^0.5.8"
+    "@dojoengine/utils" "^0.5.8"
     "@latticexyz/utils" "^2.0.0-next.11"
     encoding "^0.1.13"
     fast-deep-equal "^3.1.3"
@@ -721,23 +723,32 @@
     mobx "^6.7.0"
     rxjs "7.5.5"
 
-"@dojoengine/torii-client@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/torii-client/-/torii-client-0.2.9.tgz#73f71165c579d0b49ad37d40a89babe4b6fca5e0"
-  integrity sha512-TRDb7L8Y6YtDdDfdsRUbW94M5s0xws+rnk/9t1ckw3qeK9phRVnMup+vgmU/Q2KTbsX5IxmSNzj7g71RXd5VJQ==
+"@dojoengine/state@^0.5.0", "@dojoengine/state@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/state/-/state-0.5.8.tgz#845d8a0106fa02e1901a3cfb3ba71d9c20be8ebb"
+  integrity sha512-OnMLhf/mEHp2DCoLLLNRpoZdAl9DybWag0Odw4mbkgNPSSIjcs6OC3RMwDswt0RL84K2WaT/IQMljL6nVwWKtw==
   dependencies:
-    "@dojoengine/torii-wasm" "^0.2.9"
+    "@dojoengine/recs" "0.1.35"
+    "@dojoengine/torii-client" "^0.5.8"
+    "@latticexyz/utils" "^2.0.0-next.11"
+
+"@dojoengine/torii-client@^0.5.0", "@dojoengine/torii-client@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/torii-client/-/torii-client-0.5.8.tgz#ca74b5e1d436da8fc6041ca687c21be7efe37382"
+  integrity sha512-+/9puN+weU8kHJnQhPBbqaAYhIoKyXvS/KTnLYWaqhkBfSyCl92rEGRBcFxrS8BaFi8NvLUvQAkhw+1JsvYFXg==
+  dependencies:
+    "@dojoengine/torii-wasm" "^0.5.8"
     typescript "^5.0.3"
 
-"@dojoengine/torii-wasm@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/torii-wasm/-/torii-wasm-0.2.9.tgz#cc6d10dcef51dd6818bc98ac60a4cdb8fea67707"
-  integrity sha512-mvCnWwxyM5LjQVCXVqHt56ySXUh3svrFStBRw/UCg3IlDp+FBbJfgEglaChL0pBzFHqH9o1hPE8vmPQWwK2tjQ==
+"@dojoengine/torii-wasm@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/torii-wasm/-/torii-wasm-0.5.8.tgz#7e43ba8ca5b7049b43848be9848b211b5479b3fe"
+  integrity sha512-/JZTE/Td79GDGPxGFJKbcf/NPqUXDQsaUIh4nz9J2qMXzEn68nlXB5lri5HDYPPD8RXMulvcDBYl7OMgX0pYHQ==
 
-"@dojoengine/utils@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@dojoengine/utils/-/utils-0.2.9.tgz#a7e327a735b125d23197f264a3f3254f5be73c8b"
-  integrity sha512-/KKeoOhE/sYBs/7tiEJ9YWPTaeWslF4uSLxVlWvnLa0XQbr29qww5a1109d651ozCTiDxficIDAt3npEEuY+pQ==
+"@dojoengine/utils@^0.5.0", "@dojoengine/utils@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@dojoengine/utils/-/utils-0.5.8.tgz#7dc4b49b428e0e37869cb661dfb7b43399611a4b"
+  integrity sha512-gOYYD/51KZ1qCqRq7vKaIsTpWO8lqRyMmjcW3Lvqc0SEuMP7ASeqGkGUtOpnzG0g6zBEnX/rwjPtmNY13yg92A==
   dependencies:
     "@dojoengine/recs" "0.1.35"
     "@latticexyz/utils" "^2.0.0-next.11"
@@ -1960,7 +1971,7 @@
     react "^18.2.0"
     rxjs "7.5.5"
 
-"@latticexyz/recs@2.0.0-snapshot-test-32d38619", "@latticexyz/recs@^2.0.0-next.11":
+"@latticexyz/recs@2.0.0-snapshot-test-32d38619":
   version "2.0.0-snapshot-test-32d38619"
   resolved "https://registry.yarnpkg.com/@latticexyz/recs/-/recs-2.0.0-snapshot-test-32d38619.tgz#18daf1727ef505dadbfe569eba7017d0fd1ccf7c"
   integrity sha512-7730rgGjVAzXvkAclghy3P65y/s7ELgCf6CnIkcujeNOwBjJjH7UPj718ddzdW1VEoJzzD5+9NHME+GBCR4llg==

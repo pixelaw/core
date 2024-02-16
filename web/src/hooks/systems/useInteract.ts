@@ -106,8 +106,8 @@ const useInteract = (
   const {
     setup: {
       systemCalls: {interact},
-      components: { Pixel, AppName, Instruction },
-      network: { switchManifest }
+      clientComponents: { Pixel, AppName, Instruction },
+      switchManifest
     },
     account: { account }
   } = useDojo()

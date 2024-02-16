@@ -41,7 +41,7 @@ const useAnnounceAlert = () => {
   const queryClient = useQueryClient();
   const {
     setup: {
-      components: { App },
+      clientComponents: { App },
     },
     account: {
       account

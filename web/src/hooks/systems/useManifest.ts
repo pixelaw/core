@@ -13,7 +13,7 @@ type PropsType = {
 const useManifest = ({name}: PropsType) => {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App, AppName
       }
     },

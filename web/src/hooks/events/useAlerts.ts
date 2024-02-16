@@ -7,9 +7,7 @@ const ALERTS_TO_GET = 1_000
 
 const useAlerts = () => {
   const {
-    setup: {
-      network: { graphSdk },
-    },
+    setup: { graphSdk },
     account: {
       account
     }

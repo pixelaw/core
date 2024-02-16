@@ -17,7 +17,7 @@ type PropsType = {
 export default function Footer(props: PropsType) {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App,
       },
     },

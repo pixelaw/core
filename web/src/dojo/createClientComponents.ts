@@ -1,13 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { overridableComponent } from "@latticexyz/recs";
-import { SetupNetworkResult } from "./setupNetwork";
+import { overridableComponent } from "@dojoengine/recs";
+import { ContractComponents } from "./contractComponents";
 
 export type ClientComponents = ReturnType<typeof createClientComponents>;
 
-export function createClientComponents({ contractComponents }: SetupNetworkResult) {
-    return {
-        ...contractComponents,
-      Pixel: overridableComponent(contractComponents.Pixel)
-    };
+export function createClientComponents({
+  contractComponents,
+}: {
+  contractComponents: ContractComponents;
+}) {
+  return {
+    ...contractComponents,
+    Pixel: overridableComponent(contractComponents.Pixel)
+  };
 }

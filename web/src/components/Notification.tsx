@@ -32,7 +32,7 @@ type AlertProp = AlertType & {
 const Alert: React.FC<AlertProp> = ({ position, caller, message, className, onAlertClick, id, read }) => {
   const {
     setup: {
-      components: { App },
+      clientComponents: { App },
     }
   } = useDojo()
 

@@ -9,6 +9,8 @@ import { DojoProvider } from './DojoContext';
 import Loading from '@/components/Loading'
 import { cn } from '@/lib/utils'
 import React from 'react'
+import { createDojoConfig } from '@dojoengine/core'
+import { streamToString } from '@/global/utils'
 
 const DO_NOT_EXCEED_MS = 30_000
 
@@ -39,7 +41,12 @@ function App() {
   const checkManifests = useQuery(
     {
       queryKey: ['coreManifest'],
-      queryFn: async () => await fetch('/manifests/core'),
+      queryFn: async () => {
+        const result = await fetch('/manifests/core')
+        if (!result.body) return {}
+        const string = await streamToString(result.body)
+        return JSON.parse(string)
+      },
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
       retry: 8,
       enabled: checkRpcUrl.isSuccess
@@ -49,7 +56,13 @@ function App() {
   const setupQuery = useQuery(
     {
       queryKey: ['setup'],
-      queryFn: setup,
+      queryFn: async() => {
+        return setup(
+          createDojoConfig({
+            manifest: checkManifests.data
+          })
+        )
+      },
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
       enabled: checkManifests.isSuccess
     }
@@ -92,6 +105,8 @@ function App() {
   }
 
   let errorMessage = ''
+
+  console.log({ setupQuery, checkManifests })
 
   if (checkRpcUrl.isError) {
     errorMessage = `PUBLIC_NODE_URL error: ${checkRpcUrl.error.message}. If this is happening in your local environment, Katana might not be up.`

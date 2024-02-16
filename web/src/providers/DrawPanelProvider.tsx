@@ -41,7 +41,7 @@ export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPan
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
     setup: {
-      components: {
+      clientComponents: {
         Pixel
       },
     },

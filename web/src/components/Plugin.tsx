@@ -25,7 +25,7 @@ type PluginButtonPropsType = {
 const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonPropsType) => {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App,
       },
     },
@@ -74,7 +74,7 @@ export default function Plugin() {
 
   const {
     setup: {
-      components: {
+      clientComponents: {
         App, AppName,
       },
     },
