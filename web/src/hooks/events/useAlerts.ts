@@ -1,4 +1,4 @@
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { useQuery } from '@tanstack/react-query'
 import { removeNullsFromArray } from '@/global/utils'
 import { parseEventData } from '@/hooks/events/utils'

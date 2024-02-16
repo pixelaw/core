@@ -1,6 +1,6 @@
 import React, {SetStateAction} from 'react'
 import {CellDatum, Coordinate} from '@/components/shared/DrawPanel.tsx'
-import {useDojo} from '@/DojoContext.tsx'
+import { useDojo } from '@/dojo/useDojo'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   colorAtom,

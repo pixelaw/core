@@ -111,7 +111,7 @@ mod paint_actions {
     }
 
     // impl: implement functions specified in trait
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
         /// Initialize the Paint App (TODO I think, do we need this??)
         fn init(self: @ContractState) {

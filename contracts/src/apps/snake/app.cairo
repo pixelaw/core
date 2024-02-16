@@ -145,7 +145,8 @@ mod snake_actions {
     }
 
 
-    #[external(v0)]
+    // impl: implement functions specified in trait
+    #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
         fn init(self: @ContractState) {
             let core_actions = get_core_actions(self.world_dispatcher.read());

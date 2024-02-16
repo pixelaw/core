@@ -3,15 +3,19 @@ services:
     image: ghcr.io/oostvoort/keiko:0.0.21
     container_name: keiko
     ports:
-      - "5050:5050"
       - "3000:3000"
-      - "8080:8080"
       - "50051"
     restart: unless-stopped
     volumes:
       - ./contracts:/keiko/contracts
     networks:
       - pixelaw
+    environment:
+      - PUBLIC_NODE_URL=http://localhost:5050
+      - SLOT_KATANA=http://localhost:5050
+      - WORLD_ADDRESS=0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d
+      - PUBLIC_TORII=http://localhost:8080
+      - SLOT_TORII=http://localhost:8080
 
 networks:
   pixelaw:

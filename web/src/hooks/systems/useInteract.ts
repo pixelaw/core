@@ -1,4 +1,4 @@
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { useMutation } from '@tanstack/react-query'
 import { convertToDecimal, felt252ToString } from '@/global/utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -107,7 +107,8 @@ mod actions {
     }
 
 
-    #[external(v0)]
+    // impl: implement functions specified in trait
+    #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         /// Initializes the Pixelaw actions model
         fn init(self: @ContractState) {

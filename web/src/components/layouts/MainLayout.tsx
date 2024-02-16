@@ -4,7 +4,7 @@ import Logo from "@/components/shared/Logo";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import {Active_Page, MainLayoutType} from "@/global/types";
 import ZoomControl from "@/components/ZoomControl";
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import WalletAddress from '@/components/WalletAddress'
 import Loading from '@/components/Loading'
 import { getUrlParam } from '@/global/utils'

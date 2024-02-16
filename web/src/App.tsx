@@ -3,7 +3,6 @@ import ScreenAtomRenderer from "@/components/ScreenAtomRenderer";
 import { Toaster } from '@/components/ui/toaster'
 import { useQuery } from '@tanstack/react-query'
 import { setup } from '@/dojo/setup'
-import setupAccounts from '@/dojo/setupAccounts'
 import { CORE_VERSION, PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
 import { DojoProvider } from './DojoContext';
 import Loading from '@/components/Loading'
@@ -68,15 +67,6 @@ function App() {
     }
   )
 
-  const masterAccountQuery = useQuery(
-    {
-      queryKey: ['masterAccounts'],
-      queryFn: setupAccounts,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
-      enabled: checkManifests.isSuccess
-    }
-  )
-
   if (checkRpcUrl.isLoading) {
     return <Loading>Loading Public Node URL</Loading>
   }
@@ -89,13 +79,13 @@ function App() {
     return <Loading>Core Manifest</Loading>
   }
 
-  if (setupQuery.isLoading || masterAccountQuery.isLoading) {
+  if (setupQuery.isLoading) {
     return <Loading />
   }
 
-  if (setupQuery.data && masterAccountQuery.data) {
+  if (setupQuery.data) {
     return (
-      <DojoProvider value={setupQuery.data} master={masterAccountQuery.data}>
+      <DojoProvider value={setupQuery.data}>
         <MainLayout>
           <ScreenAtomRenderer/>
           <Toaster />

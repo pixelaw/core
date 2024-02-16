@@ -32,19 +32,6 @@ export function createSystemCalls(
     otherParams?: num.BigNumberish[]
   ) => {
     try {
-      console.log('interact', {
-        account: signer,
-        contract_name: contractName,
-        call: action,
-        calldata: [
-          ZERO_ADDRESS,
-          ZERO_ADDRESS,
-          position.x,
-          position.y,
-          color,
-          ...(otherParams ?? [])
-        ]
-      })
 
       const tx = await client.actions.interact({
         account: signer,
@@ -59,8 +46,6 @@ export function createSystemCalls(
         ...(otherParams ?? [])
     ]
     });
-
-    console.log({ tx })
 
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 100})
 
