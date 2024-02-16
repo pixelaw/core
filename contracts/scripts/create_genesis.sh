@@ -11,10 +11,13 @@
 
 TARGET=${1:-"target/dev"}
 
+export STARKNET_RPC="http://localhost:5050/"
+
 
 GENESIS_TEMPLATE=genesis_template.json
-GENESIS_OUT=genesis_1.json
+GENESIS_OUT=genesis.json
 KATANA_LOG=katana.log
+MANIFEST=$TARGET/manifest.json
 
 # Clear the target
 rm -rf $TARGET
@@ -33,6 +36,49 @@ sozo build
 # Sozo migrate
 sozo migrate
 
+# Setup PixeLAW auth and init
+declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
+declare "CORE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::core::actions::actions") | .address')
+declare "PAINT_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::apps::paint::app::paint_actions") | .address')
+declare "SNAKE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::apps::snake::app::snake_actions") | .address')
+
+CORE_MODELS=("App" "AppName" "CoreActionsAddress" "Pixel" "Permissions" "QueueItem")
+SNAKE_MODELS=("Snake" "SnakeSegment")
+
+
+echo "Write permissions for CORE_ACTIONS"
+for model in ${CORE_MODELS[@]}; do
+    sleep 0.1
+    sozo auth writer $model $CORE_ACTIONS --rpc-url $STARKNET_RPC --world $WORLD
+done
+echo "Write permissions for CORE_ACTIONS: Done"
+
+echo "Write permissions for SNAKE_ACTIONS"
+for model in ${SNAKE_MODELS[@]}; do
+    sleep 0.1
+    sozo auth writer $model $SNAKE_ACTIONS --rpc-url $STARKNET_RPC --world $WORLD
+done
+echo "Write permissions for SNAKE_ACTIONS: Done"
+
+
+echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
+sleep 0.1
+sozo execute $CORE_ACTIONS init --rpc-url $STARKNET_RPC
+echo "Initialize CORE_ACTIONS: Done"
+
+echo "Initialize SNAKE_ACTIONS: Done"
+sleep 0.1
+sozo execute $SNAKE_ACTIONS init --rpc-url $STARKNET_RPC
+echo "Initialize SNAKE_ACTIONS: Done"
+
+echo "Initialize PAINT_ACTIONS: Done"
+sleep 0.1
+sozo execute $PAINT_ACTIONS init --rpc-url $STARKNET_RPC
+sleep 1
+echo "Initialize PAINT_ACTIONS: Done"
+
+# ---------------------------------------------------
+
 # Get the last block number from the katana log
 last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.message' | grep -oP '(\d+)' | head -n 1)
 echo $last_block_number
@@ -40,7 +86,6 @@ echo $last_block_number
 # Prep genesis out
 cat $GENESIS_TEMPLATE > $GENESIS_OUT
 
-export STARKNET_RPC="http://localhost:5050/"
 
 
 ## Contracts
@@ -48,7 +93,7 @@ for i in $(seq 1 $last_block_number)
 do
 
    output=$(starkli state-update $i)
-  echo $output
+
    # Process deployed_contracts
    length=$(echo $output | jq '.state_diff.deployed_contracts | length')
    for j in $(seq 0 $(($length-1)))
@@ -77,20 +122,20 @@ done
 
 ## Classes of Dojo contracts
 ## World
-read -r class_hash <<<$(jq -r '.world.class_hash' $TARGET/manifest.json)
+read -r class_hash <<<$(jq -r '.world.class_hash' $MANIFEST)
 jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::world::world.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 
 ## Base
-read -r class_hash <<<$(jq -r '.base.class_hash' $TARGET/manifest.json)
+read -r class_hash <<<$(jq -r '.base.class_hash' $MANIFEST)
 jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::base::base.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 
 ## Executor
-read -r class_hash <<<$(jq -r '.executor.class_hash' $TARGET/manifest.json)
+read -r class_hash <<<$(jq -r '.executor.class_hash' $MANIFEST)
 jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::executor::executor.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 
 
 ## Classes of Contracts
-for row in $(cat $TARGET/manifest.json | jq -r '.contracts[] | @base64'); do
+for row in $(cat $MANIFEST | jq -r '.contracts[] | @base64'); do
     _jq() {
      echo ${row} | base64 --decode | jq -r ${1}
     }
@@ -103,7 +148,7 @@ done
 
 
 ## Models
-for row in $(cat $TARGET/manifest.json | jq -r '.models[] | @base64'); do
+for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
     _jq() {
      echo ${row} | base64 --decode | jq -r ${1}
     }
