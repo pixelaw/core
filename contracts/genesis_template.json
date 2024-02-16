@@ -1,0 +1,44 @@
+{
+  "number": 0,
+  "parentHash": "0x999",
+  "timestamp": 5123512314,
+  "stateRoot": "0x99",
+  "sequencerAddress": "0x100",
+  "gasPrices": {
+    "ETH": 1111,
+    "STRK": 2222
+  },
+  "feeToken": {
+    "address": "0x55",
+    "name": "ETHER",
+    "symbol": "ETH",
+    "decimals": 18,
+    "storage": {
+      "0x111": "0x1",
+      "0x222": "0x2"
+    }
+  },
+  "universalDeployer": {
+    "address": "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf",
+    "storage": {
+      "0x10": "0x100"
+    }
+  },
+  "accounts": {
+    "0x6618f45aa1fe17d32ccd6217ad5d6a1fb6f25d7252dbf7e4423149af32c8ccd": {
+      "publicKey": "0x1",
+      "balance": "0xD3C21BCECCEDA1000000",
+      "nonce": "0x1",
+      "storage": {
+        "0x1": "0x1",
+        "0x2": "0x2"
+      }
+    }
+  },
+  "contracts": {
+
+  },
+  "classes": [
+
+  ]
+}
