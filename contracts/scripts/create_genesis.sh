@@ -18,9 +18,14 @@ GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json
 KATANA_LOG=katana.log
 MANIFEST=$TARGET/manifest.json
+TORII_DB=torii_db.sqlite
+TORII_LOG=torii.log
+
 
 # Clear the target
 rm -rf $TARGET
+
+
 
 # Start Katana
 katana \
@@ -81,7 +86,7 @@ echo "Initialize PAINT_ACTIONS: Done"
 
 # Get the last block number from the katana log
 last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.message' | grep -oP '(\d+)' | head -n 1)
-echo $last_block_number
+
 
 # Prep genesis out
 cat $GENESIS_TEMPLATE > $GENESIS_OUT
@@ -157,6 +162,25 @@ for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
    jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/$(_jq '.name').json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 done
 
+echo "Populating Torii db"
+# Wipe Torii DB
+rm -f $TORII_DB
+
+# Start Torii
+torii \
+  --world $WORLD \
+  --rpc $STARKNET_RPC \
+  --database $TORII_DB \
+ > $TORII_LOG 2>&1 &
+
+# Watch the torii log until the last block, then kill it
+
+tail -f $TORII_LOG | while read LOGLINE
+do
+   [[ "${LOGLINE}" == *"processed block: ${last_block_number}"* ]] && pkill -f "torii"
+done
 
 # Kill katana
 pkill -f katana
+
+echo "Done"
