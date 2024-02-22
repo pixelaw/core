@@ -27,7 +27,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.5 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.6 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV PUBLIC_NODE_URL=http://localhost:5050
