@@ -18,7 +18,7 @@ GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json
 KATANA_LOG=katana.log
 MANIFEST=$TARGET/manifest.json
-TORII_DB=torii_db.sqlite
+TORII_DB=torii.sqlite
 TORII_LOG=torii.log
 
 

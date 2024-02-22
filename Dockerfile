@@ -1,4 +1,4 @@
-FROM node:18-bookworm-slim as web_node_deps
+FROM node:20-bookworm-slim as web_node_deps
 
 WORKDIR /app
 COPY /web/patches ./patches
@@ -8,7 +8,7 @@ COPY --link /web/yarn.lock ./yarn.lock
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
-FROM node:18-bookworm-slim as bots_node_deps
+FROM node:20-bookworm-slim as bots_node_deps
 WORKDIR /app
 COPY --link /bots/package.json ./package.json
 COPY --link /bots/yarn.lock ./yarn.lock
@@ -17,7 +17,7 @@ COPY --link /bots/yarn.lock ./yarn.lock
 RUN yarn install --frozen-lockfile
 
 # Now copy all the sources so we can compile
-FROM node:18-bookworm-slim AS web_node_builder
+FROM node:20-bookworm-slim AS web_node_builder
 WORKDIR /app
 COPY /web .
 COPY --from=web_node_deps /app/node_modules ./node_modules
@@ -27,7 +27,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/oostvoort/keiko:0.0.21 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.5 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV PUBLIC_NODE_URL=http://localhost:5050
@@ -35,6 +35,19 @@ ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f
 ENV CORE_VERSION=VERSION
 
 HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localhost:5050) || exit 1
+
+WORKDIR /tmp/contracts
+COPY ./contracts /tmp/contracts
+RUN sozo build --manifest-path Scarb.toml && \
+    bash scripts/create_genesis.sh
+
+RUN mkdir /keiko/config && mkdir /keiko/storage && mkdir /keiko/log &&  \
+    mv genesis.json /keiko/config/genesis.json && \
+    mv target/dev/manifest.json /keiko/config/manifest.json && \
+    mv torii.sqlite /keiko/storage/torii.sqlite && \
+    touch /keiko/log/katana.log.json && touch /keiko/log/torii.log
+
+RUN rm -rf /tmp/contracts
 
 WORKDIR /keiko
 
@@ -47,10 +60,10 @@ COPY ./bots ./bots
 COPY --link ./bots/.env.production ./bots/.env
 COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
-COPY ./contracts ./contracts
+
+
 
 LABEL org.opencontainers.image.description = "PixeLAW core container"
 
-RUN sozo build --manifest-path ./contracts/Scarb.toml
 
 CMD ["bash", "./startup.sh"]

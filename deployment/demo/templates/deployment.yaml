@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}
   namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
   labels:
-    app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+    app: {{ .Values.projectName }}-{{ .Values.nameSpace }}
 spec:
   replicas: {{ .Values.replicaSet }}
   selector:
     matchLabels:
-      app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+      app: {{ .Values.projectName }}-{{ .Values.nameSpace }}
   template:
     metadata:
       labels:
-        app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+        app: {{ .Values.projectName }}-{{ .Values.nameSpace }}
     spec:
       containers:
-      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
+      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}
         image: {{ .Values.dockerImage }}
         imagePullPolicy: Always
         ports:
@@ -25,20 +25,7 @@ spec:
         env:
         - name: CORE_VERSION
           value: "{{ .Chart.AppVersion }}"
-        - name: PUBLIC_NODE_URL
-          value: "{{ .Values.webapp.katanaUrl }}"
-        - name: PUBLIC_TORII
-          value: "{{ .Values.webapp.toriiUrl }}"
-        - name: SLOT_KATANA
-          value: "{{ .Values.webapp.katanaSlotUrl }}"
-        - name: SLOT_TORII
-          value: "{{ .Values.webapp.toriiSlotUrl }}"
-        - name: SEED
-          value: "{{ .Values.webapp.seed }}"
-        - name: TOTAL_ACCOUNTS
-          value: "{{ .Values.webapp.totalAccounts }}"
-        - name: WORLD_ADDRESS
-          value: "{{ .Values.worldAddress }}"
+
 
         # resources:
         #   requests:
@@ -47,12 +34,13 @@ spec:
         #   limits:
         #     memory: "1Gi"
         #     cpu: "1000m"
+
         volumeMounts:
-        - name: keiko-manifests
-          mountPath: /keiko/manifests
+        - name: keiko-storage
+          mountPath: /keiko/storage
 
       volumes:
 
-      - name: keiko-manifests
+      - name: keiko-storage
         persistentVolumeClaim:
-          claimName: pixelaw-core-{{ .Values.nameSpace }}-pvc
+          claimName: {{ .Values.projectName }}-{{ .Values.nameSpace }}-pvc

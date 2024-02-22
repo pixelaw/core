@@ -25,14 +25,17 @@
     }
   },
   "accounts": {
-    "0x6618f45aa1fe17d32ccd6217ad5d6a1fb6f25d7252dbf7e4423149af32c8ccd": {
-      "publicKey": "0x1",
+    "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca": {
+      "publicKey": "0x640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea",
       "balance": "0xD3C21BCECCEDA1000000",
       "nonce": "0x1",
-      "storage": {
-        "0x1": "0x1",
-        "0x2": "0x2"
-      }
+      "storage": {}
+    },
+    "0xe29882a1fcba1e7e10cad46212257fea5c752a4f9b1b1ec683c503a2cf5c8a": {
+      "publicKey": "0x16e375df37a7653038bd9eccd767e780c2c4d4c66b4c85f455236a3fd75673a",
+      "balance": "0xD3C21BCECCEDA1000000",
+      "nonce": "0x1",
+      "storage": {}
     }
   },
   "contracts": {
