@@ -27,7 +27,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.6 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.7 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV PUBLIC_NODE_URL=http://localhost:5050
@@ -41,10 +41,11 @@ COPY ./contracts /tmp/contracts
 RUN sozo build --manifest-path Scarb.toml && \
     bash scripts/create_genesis.sh
 
-RUN mkdir /keiko/config && mkdir /keiko/storage && mkdir /keiko/log &&  \
-    mv genesis.json /keiko/config/genesis.json && \
-    mv target/dev/manifest.json /keiko/config/manifest.json && \
-    mv torii.sqlite /keiko/storage/torii.sqlite && \
+RUN mkdir /keiko/config && mkdir -p /keiko/storage/manifests && mkdir /keiko/log &&  \
+    cp genesis.json /keiko/config/genesis.json && \
+    cp target/dev/manifest.json /keiko/config/manifest.json && \
+    cp target/dev/manifest.json /keiko/storage/manifests/core.json && \
+    cp torii.sqlite /keiko/storage/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log
 
 RUN rm -rf /tmp/contracts
