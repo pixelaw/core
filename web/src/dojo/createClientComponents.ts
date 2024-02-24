@@ -1,3 +1,4 @@
+// @ts-ignore
 import { overridableComponent } from "@dojoengine/recs";
 import { ContractComponents } from "./contractComponents";
 
