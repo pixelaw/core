@@ -9,7 +9,7 @@ import { useComponentValue, useEntityQuery } from '@dojoengine/react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Has, getComponentValue } from '@latticexyz/recs'
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { felt252ToString, felt252ToUnicode } from '@/global/utils'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { shortString } from 'starknet'
@@ -25,7 +25,7 @@ type PluginButtonPropsType = {
 const PluginButton = ({ system, onSelect, expanded, selected }: PluginButtonPropsType) => {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App,
       },
     },
@@ -74,7 +74,7 @@ export default function Plugin() {
 
   const {
     setup: {
-      components: {
+      clientComponents: {
         App, AppName,
       },
     },

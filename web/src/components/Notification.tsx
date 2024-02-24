@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import Image from '@/components/ui/Image'
 import { useComponentValue } from '@dojoengine/react'
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { felt252ToString } from '@/global/utils'
 import { notificationDataAtom } from '@/global/states.ts'
 import { useSetAtom } from 'jotai'
@@ -32,7 +32,7 @@ type AlertProp = AlertType & {
 const Alert: React.FC<AlertProp> = ({ position, caller, message, className, onAlertClick, id, read }) => {
   const {
     setup: {
-      components: { App },
+      clientComponents: { App },
     }
   } = useDojo()
 

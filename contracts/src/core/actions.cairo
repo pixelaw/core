@@ -65,6 +65,7 @@ mod actions {
     use pixelaw::core::models::queue::{QueueItem};
     use pixelaw::core::utils::{get_core_actions_address, Position};
     use zeroable::Zeroable;
+    use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
 
 
     #[derive(Drop, starknet::Event)]
@@ -106,7 +107,8 @@ mod actions {
     }
 
 
-    #[external(v0)]
+    // impl: implement functions specified in trait
+    #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         /// Initializes the Pixelaw actions model
         fn init(self: @ContractState) {
@@ -305,6 +307,15 @@ mod actions {
                 self.has_write_access(for_player, for_system, pixel, pixel_update), 'No access!'
             );
 
+            let old_pixel_app = pixel.app;
+            old_pixel_app.print();
+
+            if !old_pixel_app.is_zero() {
+              let interoperable_app = IInteroperabilityDispatcher { contract_address: old_pixel_app };
+              let app_caller = get!(world, for_system, (App));
+              interoperable_app.on_pre_update(pixel_update, app_caller, for_player)
+            }
+
             // If the pixel has no owner set yet, do that now.
             if pixel.created_at == 0 {
                 let now = starknet::get_block_timestamp();
@@ -339,6 +350,13 @@ mod actions {
 
             // Set Pixel
             set!(world, (pixel));
+
+            if !old_pixel_app.is_zero() {
+              let interoperable_app = IInteroperabilityDispatcher { contract_address: old_pixel_app };
+              let app_caller = get!(world, for_system, (App));
+              interoperable_app.on_post_update(pixel_update, app_caller, for_player)
+            }
+
             'update_pixel DONE'.print();
         }
 

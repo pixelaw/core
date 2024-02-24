@@ -1,4 +1,4 @@
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { useQuery } from '@tanstack/react-query'
 import { removeNullsFromArray } from '@/global/utils'
 import { parseEventData } from '@/hooks/events/utils'
@@ -7,9 +7,7 @@ const ALERTS_TO_GET = 1_000
 
 const useAlerts = () => {
   const {
-    setup: {
-      network: { graphSdk },
-    },
+    setup: { graphSdk },
     account: {
       account
     }

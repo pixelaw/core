@@ -1,4 +1,4 @@
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { useQuery } from '@tanstack/react-query'
 
 const useCreateBurner = (accountIndex: number) => {
@@ -17,9 +17,9 @@ const useCreateBurner = (accountIndex: number) => {
         return selectedAccount
       }
       const accountsToCreate = accountIndex - accounts.length + 1
-      let account = { address: ''}
+      const account = { address: ''}
       for (let i = 0; i < accountsToCreate; i ++) {
-        account = await create()
+        await create()
       }
       return account.address
     },

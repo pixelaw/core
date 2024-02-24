@@ -4,7 +4,7 @@ import { gql } from 'graphql-tag'
 
 const QUERY_CORE_ADDRESS = gql`
   query coreActionsAddress {
-    coreactionsaddressModels {
+    coreActionsAddressModels {
       edges {
         node {
           key
@@ -17,7 +17,7 @@ const QUERY_CORE_ADDRESS = gql`
 
 type CoreActionsAddressType = {
   data: {
-    coreactionsaddressModels: {
+    coreActionsAddressModels: {
       edges: {
         node: {
           key: string,
@@ -30,7 +30,7 @@ type CoreActionsAddressType = {
 
 const getCoreAddress = async () => {
   const client = createClient(`${TORII_URI}/graphql`)
-  const { data: { coreactionsaddressModels: { edges: [{ node: { value }}]}}}: CoreActionsAddressType =  await client.query({
+  const { data: { coreActionsAddressModels: { edges: [{ node: { value }}]}}}: CoreActionsAddressType =  await client.query({
     query: QUERY_CORE_ADDRESS
   })
   if (!value) throw new Error('core actions has not been initialized')

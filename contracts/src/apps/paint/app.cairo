@@ -34,6 +34,8 @@ mod paint_actions {
     };
     use super::{APP_KEY, APP_ICON, APP_MANIFEST};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::models::registry::App;
 
     use debug::PrintTrait;
 
@@ -87,8 +89,29 @@ mod paint_actions {
     (r, g, b)
   }
 
-    // impl: implement functions specified in trait
     #[external(v0)]
+    impl ActionsInteroperability of IInteroperability<ContractState> {
+      fn on_pre_update(
+        self: @ContractState,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+      ) {
+       // do nothing
+      }
+
+      fn on_post_update(
+        self: @ContractState,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+      ){
+        // do nothing
+      }
+    }
+
+    // impl: implement functions specified in trait
+    #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
         /// Initialize the Paint App (TODO I think, do we need this??)
         fn init(self: @ContractState) {
@@ -102,7 +125,7 @@ mod paint_actions {
 
             core_actions.update_permission('snake',
               Permission {
-                app: false,
+                app: true,
                 color: true,
                 owner: false,
                 text: true,

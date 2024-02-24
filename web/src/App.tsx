@@ -3,12 +3,13 @@ import ScreenAtomRenderer from "@/components/ScreenAtomRenderer";
 import { Toaster } from '@/components/ui/toaster'
 import { useQuery } from '@tanstack/react-query'
 import { setup } from '@/dojo/setup'
-import setupAccounts from '@/dojo/setupAccounts'
 import { CORE_VERSION, PUBLIC_NODE_URL, PUBLIC_TORII } from '@/global/constants'
 import { DojoProvider } from './DojoContext';
 import Loading from '@/components/Loading'
 import { cn } from '@/lib/utils'
 import React from 'react'
+import { createDojoConfig } from '@dojoengine/core'
+import { streamToString } from '@/global/utils'
 
 const DO_NOT_EXCEED_MS = 30_000
 
@@ -39,7 +40,12 @@ function App() {
   const checkManifests = useQuery(
     {
       queryKey: ['coreManifest'],
-      queryFn: async () => await fetch('/manifests/core'),
+      queryFn: async () => {
+        const result = await fetch('/manifests/core')
+        if (!result.body) return {}
+        const string = await streamToString(result.body)
+        return JSON.parse(string)
+      },
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
       retry: 8,
       enabled: checkRpcUrl.isSuccess
@@ -49,16 +55,15 @@ function App() {
   const setupQuery = useQuery(
     {
       queryKey: ['setup'],
-      queryFn: setup,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
-      enabled: checkManifests.isSuccess
-    }
-  )
-
-  const masterAccountQuery = useQuery(
-    {
-      queryKey: ['masterAccounts'],
-      queryFn: setupAccounts,
+      queryFn: async() => {
+        return setup(
+          createDojoConfig({
+            manifest: checkManifests.data,
+            masterAddress: '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114',
+            masterPrivateKey: '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b'
+          })
+        )
+      },
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
       enabled: checkManifests.isSuccess
     }
@@ -76,13 +81,13 @@ function App() {
     return <Loading>Core Manifest</Loading>
   }
 
-  if (setupQuery.isLoading || masterAccountQuery.isLoading) {
+  if (setupQuery.isLoading) {
     return <Loading />
   }
 
-  if (setupQuery.data && masterAccountQuery.data) {
+  if (setupQuery.data) {
     return (
-      <DojoProvider value={setupQuery.data} master={masterAccountQuery.data}>
+      <DojoProvider value={setupQuery.data}>
         <MainLayout>
           <ScreenAtomRenderer/>
           <Toaster />
@@ -92,6 +97,8 @@ function App() {
   }
 
   let errorMessage = ''
+
+  console.log({ setupQuery, checkManifests })
 
   if (checkRpcUrl.isError) {
     errorMessage = `PUBLIC_NODE_URL error: ${checkRpcUrl.error.message}. If this is happening in your local environment, Katana might not be up.`

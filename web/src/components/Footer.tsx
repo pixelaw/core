@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { felt252ToString, formatAddress } from '@/global/utils.ts'
-import { useDojo } from '@/DojoContext.tsx'
+import { useDojo } from '@/dojo/useDojo'
 import { useComponentValue } from '@dojoengine/react'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 
@@ -17,7 +17,7 @@ type PropsType = {
 export default function Footer(props: PropsType) {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App,
       },
     },

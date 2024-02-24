@@ -1,4 +1,4 @@
-import { useDojo } from '@/DojoContext'
+import { useDojo } from '@/dojo/useDojo'
 import { useComponentValue } from '@dojoengine/react'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { shortString } from 'starknet'
@@ -13,7 +13,7 @@ type PropsType = {
 const useManifest = ({name}: PropsType) => {
   const {
     setup: {
-      components: {
+      clientComponents: {
         App, AppName
       }
     },

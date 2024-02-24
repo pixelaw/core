@@ -1,12 +1,16 @@
-import { SetupNetworkResult } from './setupNetwork'
 import { Account, Event, num, TransactionStatus } from 'starknet'
 import { getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
 import { ZERO_ADDRESS } from '@/global/constants'
+import { IWorld } from '@/dojo/generated'
+import { ContractComponents } from '@/dojo/contractComponents'
 
 const FAILURE_REASON_REGEX = /Failure reason: ".+"/;
 
+export type SystemCalls = ReturnType<typeof createSystemCalls>;
+
 export function createSystemCalls(
-    { execute, contractComponents }: SetupNetworkResult
+  { client }: { client: IWorld },
+  contractComponents: ContractComponents,
 ) {
 
   /**
@@ -28,19 +32,20 @@ export function createSystemCalls(
     otherParams?: num.BigNumberish[]
   ) => {
     try {
-      const tx = await execute(
-        signer,
-        contractName,
-        action,
-        [
+
+      const tx = await client.actions.interact({
+        account: signer,
+        contract_name: contractName,
+        call: action,
+        calldata: [
           ZERO_ADDRESS,
-          ZERO_ADDRESS,
-          position.x,
-          position.y,
-          color,
-          ...(otherParams ?? [])
-        ]
-      );
+        ZERO_ADDRESS,
+        position.x,
+        position.y,
+        color,
+        ...(otherParams ?? [])
+    ]
+    });
 
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 100})
 

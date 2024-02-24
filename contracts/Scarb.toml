@@ -40,8 +40,8 @@ upload_manifest = "bash ./scripts/upload_manifest.sh"
 update_scarb = "bash ./scripts/update_scarb.sh"
 
 [tool.dojo.env]
-#rpc_url = "https://api.cartridge.gg/x/pxlw-demo/katana"
-#world_address = "0x34f94959ab0187227dd2d39e99b0650380e048e307392850e5c7aadb5e8de9f"
+rpc_url = "http://localhost:5050/"
+world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
 
 # World Owner account
 account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"

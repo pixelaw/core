@@ -1,6 +1,6 @@
 import React, {SetStateAction} from 'react'
 import {CellDatum, Coordinate} from '@/components/shared/DrawPanel.tsx'
-import {useDojo} from '@/DojoContext.tsx'
+import { useDojo } from '@/dojo/useDojo'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   colorAtom,
@@ -41,7 +41,7 @@ export const DrawPanelContext = React.createContext<DrawPanelType>({} as DrawPan
 export default function DrawPanelProvider({ children }: { children: React.ReactNode }) {
   const {
     setup: {
-      components: {
+      clientComponents: {
         Pixel
       },
     },
