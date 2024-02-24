@@ -12,7 +12,7 @@
 TARGET=${1:-"target/dev"}
 
 export STARKNET_RPC="http://localhost:5050/"
-
+export DOJO_PRIVATE_KEY=$(cat /run/secrets/privatekey)
 
 GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json
@@ -39,7 +39,7 @@ katana \
 sozo build
 
 # Sozo migrate
-sozo migrate
+sozo migrate --
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')

@@ -11,7 +11,7 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     ImportMetaEnvPlugin.vite({
-      example: ".env.example",
+      example: ".env",
     }),
   ],
   server: {
