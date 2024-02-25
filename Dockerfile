@@ -27,10 +27,10 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.10 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.14 AS runtime
 
 #ENV PUBLIC_TORII=http://localhost:8080
-#ENV PUBLIC_NODE_URL=http://localhost:5050
+ENV STARKNET_RPC=http://localhost:5050
 #ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
 #ENV CORE_VERSION=VERSION
 
@@ -38,10 +38,11 @@ HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localho
 
 WORKDIR /tmp/contracts
 COPY ./contracts /tmp/contracts
-RUN sozo build --manifest-path Scarb.toml && \
+
+
+RUN --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD  \
     bash scripts/create_genesis.sh
 
-# TODO Read the world address from genesis.json (at "world.address") into $WORLD_ADDRESS
 
 RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
     mkdir /keiko/config && mkdir -p /keiko/storage_init/$WORLD_ADDRESS/manifests && mkdir /keiko/log &&  \
@@ -57,7 +58,7 @@ WORKDIR /keiko
 
 COPY --link ./startup.sh ./startup.sh
 COPY --from=web_node_builder /app/dist static/
-COPY --link ./web/.env .env.core
+COPY --link ./web/.env.development .env.core
 
 
 COPY ./bots ./bots

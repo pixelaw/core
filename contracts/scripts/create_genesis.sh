@@ -1,4 +1,5 @@
 #!/bin/bash
+set -uo pipefail
 
 ###########################################################
 # Prerequisites for running this script:
@@ -9,10 +10,11 @@
 #    - jq
 ###########################################################
 
-TARGET=${1:-"target/dev"}
-
+export TARGET=${1:-"target/dev"}
 export STARKNET_RPC="http://localhost:5050/"
-export DOJO_PRIVATE_KEY=$(cat /run/secrets/privatekey)
+#export DOJO_PRIVATE_KEY=$(cat /run/secrets/private_key)
+export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
+export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
 
 GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json
@@ -35,8 +37,14 @@ katana \
   --json-log \
  > $KATANA_LOG 2>&1 &
 
+
+
+
 # Sozo build
 sozo build
+
+#starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
+
 
 # Sozo migrate
 sozo migrate --
@@ -173,13 +181,15 @@ torii \
   --database $TORII_DB \
  > $TORII_LOG 2>&1 &
 
-# Watch the torii log until the last block, then kill it
 
+# Watch the torii log until the last block, then kill it
+echo "torii log"
 tail -f $TORII_LOG | while read LOGLINE
 do
    [[ "${LOGLINE}" == *"processed block: ${last_block_number}"* ]] && pkill -f "torii"
 done
 
+echo "killing katana"
 # Kill katana
 pkill -f katana
 

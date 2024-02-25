@@ -25,8 +25,8 @@
     }
   },
   "accounts": {
-    "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca": {
-      "publicKey": "0x640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea",
+    "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486": {
+      "publicKey": "0x0640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea",
       "balance": "0xD3C21BCECCEDA1000000",
       "nonce": "0x1",
       "storage": {}
