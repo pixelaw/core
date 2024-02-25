@@ -1,5 +1,5 @@
 REPO = ghcr.io/pixelaw/core
-CORE_VERSION = 0.1.4
+CORE_VERSION = 0.1.5
 KEIKO_VERSION = v0.1.5
 
 
