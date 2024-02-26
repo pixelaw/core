@@ -39,7 +39,10 @@ WORKDIR /tmp/contracts
 COPY ./contracts /tmp/contracts
 
 
-RUN --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD  \
+RUN \
+    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
+    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     bash scripts/create_genesis.sh
 
 

@@ -12,9 +12,6 @@ set -uo pipefail
 echo "1"
 export TARGET=${1:-"target/dev"}
 export STARKNET_RPC="http://localhost:5050/"
-#export DOJO_PRIVATE_KEY=$(cat /run/secrets/private_key)
-export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
-export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
 
 GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json

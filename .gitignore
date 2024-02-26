@@ -1,6 +1,7 @@
-target
-node_modules
+target/
+node_modules/
+keiko_data/
+.idea/
 .env
-.idea
 deployed.log
 last_deployed_world

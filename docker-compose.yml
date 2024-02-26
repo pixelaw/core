@@ -1,21 +1,23 @@
 services:
   keiko:
-    image: ghcr.io/pixelaw/keiko:0.1.3
+    image: ghcr.io/pixelaw/keiko:latest
     container_name: keiko
+    command: ["./keiko", "--disable-validate", "--disable-fee"]
     ports:
-      - "3000:3000"
-      - "50051"
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:5050:5050"
+      - "127.0.0.1:8080:8080"
     restart: unless-stopped
     volumes:
-      - ./contracts:/keiko/contracts
+      - ./contracts/genesis_template.json:/keiko/config/genesis.json
+      - ./contracts/target/dev/manifest.json:/keiko/config/manifest.json
+      - ./keiko_data/log:/keiko/log
+      - ./keiko_data/storage:/keiko/storage
     networks:
       - pixelaw
     environment:
       - PUBLIC_NODE_URL=http://localhost:5050
-      - SLOT_KATANA=http://localhost:5050
-      - WORLD_ADDRESS=0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d
       - PUBLIC_TORII=http://localhost:8080
-      - SLOT_TORII=http://localhost:8080
 
 networks:
   pixelaw:
