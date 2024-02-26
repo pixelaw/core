@@ -153,7 +153,6 @@ mod paint_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
             let player = core_actions.get_player_address( default_params.for_player);
-            let system = core_actions.get_system_address( default_params.for_system);
 
 
             // Load the Pixel

@@ -158,11 +158,7 @@ mod actions {
             'schedule_queue'.print();
             let world = self.world_dispatcher.read();
 
-            // The originator of the transaction
-            let caller_account = get_tx_info().unbox().account_contract_address;
-
-            // The address making this call. Has to be a registered App (?)
-            let caller_address = get_caller_address();
+            // TODO Review security
 
             // Retrieve the caller system from the address.
             // This prevents non-system addresses to schedule queue
@@ -220,7 +216,7 @@ mod actions {
             assert(calculated_id == id, 'Invalid Id');
 
             // Make the call itself
-            starknet::call_contract_syscall(called_system, selector, calldata);
+            let _result = starknet::call_contract_syscall(called_system, selector, calldata);
 
             // Tell the offchain schedulers that this one is done
             emit!(world, QueueProcessed { id });
@@ -363,7 +359,7 @@ mod actions {
         fn get_player_address(
             self: @ContractState, for_player: ContractAddress
         ) -> ContractAddress {
-            let world = self.world_dispatcher.read();
+            let _world = self.world_dispatcher.read();
             if for_player.is_zero() {
                 'get_player_address.zero'.print();
                 let result = get_tx_info().unbox().account_contract_address;
@@ -383,7 +379,7 @@ mod actions {
         fn get_system_address(
             self: @ContractState, for_system: ContractAddress
         ) -> ContractAddress {
-            let world = self.world_dispatcher.read();
+
             if !for_system.is_zero() {
                 // TODO
                 // Check that the caller is the CoreActions contract

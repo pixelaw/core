@@ -121,7 +121,7 @@ mod snake_actions {
         app_caller: App,
         player_caller: ContractAddress
       ){
-        let core_actions = get_core_actions(self.world_dispatcher.read());
+
         let core_actions_address = get_core_actions_address(self.world_dispatcher.read());
         assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
 
@@ -138,7 +138,7 @@ mod snake_actions {
             calldata.append(pixel_update.x.into());
             calldata.append(pixel_update.y.into());
             calldata.append(pixel_update.color.unwrap().into());
-            starknet::call_contract_syscall(old_app.system, 0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, calldata.span());
+            let _result = starknet::call_contract_syscall(old_app.system, 0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, calldata.span());
           }
         }
       }
@@ -304,9 +304,6 @@ mod snake_actions {
                 }
 
             }
-
-            // Load the current pixel
-            let mut current_pixel = get!(world, (first_segment.x, first_segment.y), Pixel);
 
             // Determine next pixel the head will move to
             let next_move = next_position(first_segment.x, first_segment.y, snake.direction);
