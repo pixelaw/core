@@ -28,10 +28,10 @@ RUN yarn build --mode production
 
 FROM ghcr.io/pixelaw/keiko:0.1.14 AS runtime
 
-#ENV PUBLIC_TORII=http://localhost:8080
+ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
-#ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
-#ENV CORE_VERSION=VERSION
+ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
+ENV CORE_VERSION=VERSION
 
 HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localhost:5050) || exit 1
 
@@ -57,7 +57,7 @@ WORKDIR /keiko
 
 COPY --link ./startup.sh ./startup.sh
 COPY --from=web_node_builder /app/dist static/
-COPY --link ./web/.env.development .env.core
+COPY --link ./web/.env.example .env.core
 
 
 COPY ./bots ./bots

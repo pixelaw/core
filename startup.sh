@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function buildWebApp() {
-  npx import-meta-env -x .env.core.example -p static/index.html
+  npx import-meta-env -x .env.core -p static/index.html
 }
 
 # Define the first function (thread)

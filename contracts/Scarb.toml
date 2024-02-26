@@ -40,8 +40,8 @@ upload_manifest = "bash ./scripts/upload_manifest.sh"
 update_scarb = "bash ./scripts/update_scarb.sh"
 
 [tool.dojo.env]
-rpc_url = "http://localhost:5050/"
-world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
+#rpc_url = "http://localhost:5050/"
+#world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
 
 # World Owner account
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
