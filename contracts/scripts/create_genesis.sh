@@ -9,7 +9,7 @@ set -uo pipefail
 #    - starkli
 #    - jq
 ###########################################################
-
+echo "1"
 export TARGET=${1:-"target/dev"}
 export STARKNET_RPC="http://localhost:5050/"
 #export DOJO_PRIVATE_KEY=$(cat /run/secrets/private_key)
@@ -142,9 +142,9 @@ jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::world::world.json" '.c
 read -r class_hash <<<$(jq -r '.base.class_hash' $MANIFEST)
 jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::base::base.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 
-## Executor
-read -r class_hash <<<$(jq -r '.executor.class_hash' $MANIFEST)
-jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::executor::executor.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
+## resource_metadata
+read -r class_hash <<<$(jq -r '.resource_metadata.class_hash' $MANIFEST)
+jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/dojo::resource_metadata::resource_metadata.json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 
 
 ## Classes of Contracts
