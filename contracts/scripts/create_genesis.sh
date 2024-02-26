@@ -37,7 +37,10 @@ katana \
   --json-log \
  > $KATANA_LOG 2>&1 &
 
-
+# Wait for logfile to exist and not be empty
+while ! test -s $KATANA_LOG; do
+  sleep 1
+done
 
 
 # Sozo build
