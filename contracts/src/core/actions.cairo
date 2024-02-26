@@ -59,7 +59,6 @@ mod actions {
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use dojo::executor::{IExecutorDispatcher, IExecutorDispatcherTrait};
     use debug::PrintTrait;
     use poseidon::poseidon_hash_span;
     use pixelaw::core::models::queue::{QueueItem};

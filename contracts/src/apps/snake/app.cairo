@@ -104,7 +104,7 @@ mod snake_actions {
     /// BASE means using the server's default manifest.json handler
     const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
       fn on_pre_update(
         self: @ContractState,

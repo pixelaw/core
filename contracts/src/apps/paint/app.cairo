@@ -89,7 +89,7 @@ mod paint_actions {
     (r, g, b)
   }
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
       fn on_pre_update(
         self: @ContractState,

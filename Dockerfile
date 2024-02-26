@@ -1,7 +1,6 @@
 FROM node:20-bookworm-slim as web_node_deps
 
 WORKDIR /app
-COPY /web/patches ./patches
 COPY --link /web/package.json ./package.json
 COPY --link /web/yarn.lock ./yarn.lock
 

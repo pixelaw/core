@@ -25,14 +25,14 @@ SNAKE_MODELS=("Snake" "SnakeSegment")
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
     sleep 0.1
-    sozo auth writer $model $CORE_ACTIONS --rpc-url $RPC_URL
+    sozo auth writer $model,$CORE_ACTIONS --rpc-url $RPC_URL
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
     sleep 0.1
-    sozo auth writer $model $SNAKE_ACTIONS --rpc-url $RPC_URL
+    sozo auth writer $model,$SNAKE_ACTIONS --rpc-url $RPC_URL
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
