@@ -50,7 +50,7 @@ jobs:
           context: .
           push: true
           secrets: |
-            MIGRATOR_PRIVATE_KEY=${{ secrets.MIGRATOR_PRIVATE_KEY }}
+            DOJO_KEYSTORE_PASSWORD=${{ secrets.DOJO_KEYSTORE_PASSWORD }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
