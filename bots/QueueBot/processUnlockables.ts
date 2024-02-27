@@ -5,8 +5,8 @@ import { getProvider } from './utils'
 import { queue } from './queue'
 import getCoreAddress from './getCoreAddress'
 
-let botPrivateKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b'
-let botAddress = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114'
+let botPrivateKey = '0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a'
+let botAddress = '0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486'
 
 type AccountType = {
   address: string,

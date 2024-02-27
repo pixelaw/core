@@ -59,11 +59,12 @@ function App() {
         return setup(
           createDojoConfig({
             manifest: checkManifests.data,
-            masterAddress: '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114',
-            masterPrivateKey: '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b'
+            masterAddress: '0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486',
+            masterPrivateKey: '0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a'
           })
         )
       },
+      retry: false,
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, DO_NOT_EXCEED_MS),
       enabled: checkManifests.isSuccess
     }
@@ -82,7 +83,7 @@ function App() {
   }
 
   if (setupQuery.isLoading) {
-    return <Loading />
+    return <Loading >Loading setupQuery</Loading>
   }
 
   if (setupQuery.data) {
@@ -99,6 +100,7 @@ function App() {
   let errorMessage = ''
 
   console.log({ setupQuery, checkManifests })
+  if(setupQuery.error) console.error(setupQuery.error)
 
   if (checkRpcUrl.isError) {
     errorMessage = `PUBLIC_NODE_URL error: ${checkRpcUrl.error.message}. If this is happening in your local environment, Katana might not be up.`

@@ -6,6 +6,18 @@ pushd $(dirname "$0")/..
 # Now using a copy until that is fixed
 cp target/dev/manifest.json target/dev/manifest.copy.json
 
+export TARGET=${1:-"target/dev"}
+export STARKNET_RPC="http://localhost:5050/"
+
+GENESIS_TEMPLATE=genesis_template.json
+GENESIS_OUT=genesis.json
+KATANA_LOG=katana.log
+MANIFEST=$TARGET/manifest.json
+TORII_DB=torii.sqlite
+TORII_LOG=torii.log
+
+declare "WORLD_ADDRESS"=$(cat $MANIFEST | jq -r '.world.address')
+
 source scripts/update_contracts.sh
 
 # Set RPC_URL with default value

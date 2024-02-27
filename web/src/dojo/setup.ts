@@ -15,6 +15,7 @@ import { PUBLIC_TORII } from '@/global/constants'
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
 export async function setup({ ...config }: DojoConfig) {
+  console.log("setup: createClient")
   // torii client
   const toriiClient = await torii.createClient([], {
     rpcUrl: config.rpcUrl,
@@ -22,17 +23,26 @@ export async function setup({ ...config }: DojoConfig) {
     worldAddress: config.manifest.world.address || "",
   });
 
+  console.log("setup: defineContractComponents")
+
   // create contract components
   const contractComponents = defineContractComponents(world);
+
+  console.log("setup: createClientComponents")
 
   // create client components
   const clientComponents = createClientComponents({ contractComponents });
 
+  console.log("getting entities")
   // fetch all existing entities from torii
   await getSyncEntities(toriiClient, contractComponents as any);
 
+  console.log("getting entities: new DojoProvider")
+
   // create dojo provider
   const dojoProvider = new DojoProvider(config.manifest, config.rpcUrl);
+
+  console.log("getting entities: setupWorld")
 
   // setup world
   const client = await setupWorld(dojoProvider);

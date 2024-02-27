@@ -1,5 +1,4 @@
-import { Account, Event, num, TransactionStatus } from 'starknet'
-import { getEvents, hexToAscii, setComponentsFromEvents } from '@dojoengine/utils'
+import { Account, num, TransactionStatus } from 'starknet'
 import { ZERO_ADDRESS } from '@/global/constants'
 import { IWorld } from '@/dojo/generated'
 import { ContractComponents } from '@/dojo/contractComponents'
@@ -61,15 +60,6 @@ export function createSystemCalls(
         else throw new Error('transaction rejected')
       }
 
-      // these events could contain custom components not just core components so filtering out non-core components
-      const events: Event[] = getEvents(receipt)
-      const filteredEvents = events.filter(event => {
-        const componentName = hexToAscii(event.data?.[0] ?? '0x0')
-        const component = contractComponents[componentName as keyof typeof contractComponents]
-        return !!component
-      })
-
-      setComponentsFromEvents(contractComponents, filteredEvents)
 
     } catch (e) {
       console.error(e)

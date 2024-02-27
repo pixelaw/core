@@ -6,6 +6,9 @@ import wasm from 'vite-plugin-wasm'
 import topLevelAwait from "vite-plugin-top-level-await";
 
 export default defineConfig({
+  build: {
+    sourcemap: true
+  },
   plugins: [
     react(),
     wasm(),
@@ -35,4 +38,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
 })

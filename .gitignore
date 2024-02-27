@@ -5,3 +5,4 @@ keiko_data/
 .env
 deployed.log
 last_deployed_world
+web/public/assets/placeholder/pixel-state.png

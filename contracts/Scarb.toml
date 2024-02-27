@@ -41,7 +41,7 @@ update_scarb = "bash ./scripts/update_scarb.sh"
 
 [tool.dojo.env]
 #rpc_url = "http://localhost:5050/"
-#world_address = "0x47864d08a1b86cf0dd52ea2785f8bc93b5f48edca8380bbb3057d158521e12d"
+world_address = "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
 
 # World Owner account
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
@@ -49,3 +49,4 @@ account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff5
 #private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
 
 keystore_path = "dev-keystore.json"
+keystore_password = "hellopixelaw"
