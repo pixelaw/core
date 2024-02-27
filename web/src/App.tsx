@@ -98,9 +98,10 @@ function App() {
   }
 
   let errorMessage = ''
-
+  if(setupQuery.isError){
+    errorMessage = `setupQuery Error: ${setupQuery.error}`
+  }
   console.log({ setupQuery, checkManifests })
-  if(setupQuery.error) console.error(setupQuery.error)
 
   if (checkRpcUrl.isError) {
     errorMessage = `PUBLIC_NODE_URL error: ${checkRpcUrl.error.message}. If this is happening in your local environment, Katana might not be up.`

@@ -15,7 +15,9 @@ import { PUBLIC_TORII } from '@/global/constants'
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
 export async function setup({ ...config }: DojoConfig) {
-  console.log("setup: createClient")
+  console.group('setup');
+
+  console.log("torii.createClient")
   // torii client
   const toriiClient = await torii.createClient([], {
     rpcUrl: config.rpcUrl,
@@ -23,30 +25,31 @@ export async function setup({ ...config }: DojoConfig) {
     worldAddress: config.manifest.world.address || "",
   });
 
-  console.log("setup: defineContractComponents")
+  console.log("defineContractComponents")
 
   // create contract components
   const contractComponents = defineContractComponents(world);
 
-  console.log("setup: createClientComponents")
+  console.log("createClientComponents")
 
   // create client components
   const clientComponents = createClientComponents({ contractComponents });
 
-  console.log("getting entities")
+  console.log("getSyncEntities")
   // fetch all existing entities from torii
   await getSyncEntities(toriiClient, contractComponents as any);
 
-  console.log("getting entities: new DojoProvider")
+  console.log("new DojoProvider")
 
   // create dojo provider
   const dojoProvider = new DojoProvider(config.manifest, config.rpcUrl);
 
-  console.log("getting entities: setupWorld")
+  console.log("setupWorld")
 
   // setup world
   const client = await setupWorld(dojoProvider);
 
+  console.log("new BurnerManager")
   // create burner manager
   const burnerManager = new BurnerManager({
     masterAccount: new Account(
@@ -65,6 +68,7 @@ export async function setup({ ...config }: DojoConfig) {
       console.error(e);
     }
   }
+  console.log("burnerManager.init()")
 
   await burnerManager.init();
 
@@ -72,7 +76,7 @@ export async function setup({ ...config }: DojoConfig) {
   // Add in new queries or subscriptions in src/graphql/schema.graphql
   // then generate them using the codegen and fix-codegen commands in package.json
   const createGraphSdk = () => getSdk(new GraphQLClient(`${PUBLIC_TORII}/graphql`));
-
+  console.groupEnd();
   return {
     client,
     clientComponents,
@@ -80,8 +84,7 @@ export async function setup({ ...config }: DojoConfig) {
     // Define the graph SDK instance.
     graphSdk: createGraphSdk(),
     systemCalls: createSystemCalls(
-      { client },
-      contractComponents
+      { client }
     ),
     config,
     dojoProvider,

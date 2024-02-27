@@ -1,7 +1,6 @@
 import { Account, num, TransactionStatus } from 'starknet'
 import { ZERO_ADDRESS } from '@/global/constants'
 import { IWorld } from '@/dojo/generated'
-import { ContractComponents } from '@/dojo/contractComponents'
 
 const FAILURE_REASON_REGEX = /Failure reason: ".+"/;
 
@@ -9,7 +8,6 @@ export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
   { client }: { client: IWorld },
-  contractComponents: ContractComponents,
 ) {
 
   /**
