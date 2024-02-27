@@ -51,6 +51,8 @@ RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
     cp genesis.json /keiko/config/genesis.json && \
     cp target/dev/manifest.json /keiko/config/manifest.json && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/core.json && \
+    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/snake.json && \
+    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/paint.json && \
     cp torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log
 
