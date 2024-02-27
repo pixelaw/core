@@ -2,6 +2,7 @@
   "name": "pixelaw-core-web",
   "private": false,
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "PUBLIC_NODE_URL=http://localhost:5050 PUBLIC_TORII=http://localhost:8080 vite",
     "build": "tsc && vite build",
