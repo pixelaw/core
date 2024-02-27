@@ -26,7 +26,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.17 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.18 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
