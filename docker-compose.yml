@@ -1,6 +1,6 @@
 services:
   keiko:
-    image: ghcr.io/pixelaw/keiko:latest
+    image: ghcr.io/pixelaw/keiko:0.1.17
     container_name: keiko
     command: ["./keiko", "--disable-validate", "--disable-fee"]
     ports:
