@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "PUBLIC_NODE_URL=http://localhost:5050 PUBLIC_TORII=http://localhost:8080 vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
