@@ -76,4 +76,4 @@ COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
 LABEL org.opencontainers.image.description = "PixeLAW core container"
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["bash", "./startup.sh"]
