@@ -72,10 +72,6 @@ COPY ./bots ./bots
 COPY --link ./bots/.env.production ./bots/.env
 COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
-
-
-
 LABEL org.opencontainers.image.description = "PixeLAW core container"
-
 
 CMD ["bash", "./startup.sh"]
