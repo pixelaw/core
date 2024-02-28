@@ -24,7 +24,8 @@ TORII_LOG=torii.log
 # Clear the target
 rm -rf $TARGET
 
-
+pkill -f katana
+pkill -f torii
 
 # Start Katana
 katana \
@@ -62,31 +63,31 @@ SNAKE_MODELS=("Snake" "SnakeSegment")
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
     sleep 0.1
-    sozo auth writer $model,$CORE_ACTIONS --rpc-url $STARKNET_RPC --world $WORLD
+    sozo auth grant writer $model,$CORE_ACTIONS
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
     sleep 0.1
-    sozo auth writer $model,$SNAKE_ACTIONS --rpc-url $STARKNET_RPC --world $WORLD
+    sozo auth grant writer $model,$SNAKE_ACTIONS
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
 sleep 0.1
-sozo execute $CORE_ACTIONS init --rpc-url $STARKNET_RPC
+sozo execute $CORE_ACTIONS init
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
 sleep 0.1
-sozo execute $SNAKE_ACTIONS init --rpc-url $STARKNET_RPC
+sozo execute $SNAKE_ACTIONS init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
 sleep 0.1
-sozo execute $PAINT_ACTIONS init --rpc-url $STARKNET_RPC
+sozo execute $PAINT_ACTIONS init
 sleep 1
 echo "Initialize PAINT_ACTIONS: Done"
 
@@ -95,12 +96,12 @@ echo "Initialize PAINT_ACTIONS: Done"
 # Get the last block number from the katana log
 last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.message' | grep -oP '(\d+)' | head -n 1)
 
-
+echo "Generating $GENESIS_OUT"
 # Prep genesis out
 cat $GENESIS_TEMPLATE > $GENESIS_OUT
 
 
-
+echo "Generating contracts in genesis from katana txns"
 ## Contracts
 for i in $(seq 1 $last_block_number)
 do
@@ -132,6 +133,18 @@ do
       done
    done
 done
+
+echo "Genesis for the last block number"
+output=$(starkli block $last_block_number)
+
+jq \
+  --arg parent_hash "$(echo $output | jq -r '.parent_hash')" \
+  --arg timestamp "$(echo $output | jq -r '.timestamp')" \
+  '.parentHash = $parent_hash | .timestamp = ($timestamp  | tonumber)' \
+  genesis.json > temp.json \
+  && mv temp.json genesis.json
+
+
 
 ## Classes of Dojo contracts
 ## World
@@ -189,8 +202,11 @@ do
    [[ "${LOGLINE}" == *"processed block: ${last_block_number}"* ]] && pkill -f "torii"
 done
 
-echo "killing katana"
-# Kill katana
-pkill -f katana
+# Patch the torii DB
+sqlite3 torii.sqlite  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+
+#echo "killing katana"
+## Kill katana
+#pkill -f katana
 
 echo "Done"

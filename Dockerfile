@@ -26,7 +26,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.20 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.22 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
@@ -37,6 +37,8 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
                 curl --fail http://localhost:5050 && \
                 curl --fail http://localhost:8080 || \
                 exit 1
+
+RUN apt install sqlite3 -y
 
 WORKDIR /tmp/contracts
 COPY ./contracts /tmp/contracts
@@ -57,7 +59,7 @@ RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/snake.json && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/paint.json && \
     cp torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite && \
-    touch /keiko/log/katana.log.json && touch /keiko/log/torii.log
+    touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
 RUN rm -rf /tmp/contracts
 
@@ -74,4 +76,4 @@ COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
 
 LABEL org.opencontainers.image.description = "PixeLAW core container"
 
-CMD ["bash", "./startup.sh"]
+CMD ["tail", "-f", "/dev/null"]
