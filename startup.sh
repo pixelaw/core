@@ -6,7 +6,7 @@ function buildWebApp() {
 
 # Define the first function (thread)
 function thread1() {
-    cd bots && npm run dev;
+    cd bots && npm run dev > ./log/bots.log 2>&1;
 }
 
 # Define the second function (thread)
