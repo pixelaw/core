@@ -41,6 +41,5 @@ subDomainName:
 dockerImage: ghcr.io/pixelaw/core:latest
 
 webapp:
-  genesis: ""
-  torii-db: ""
+
 
