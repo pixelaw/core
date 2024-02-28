@@ -49,7 +49,8 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64,linux/arm64
+#          FIXME: Currently arm64 is failing on node-gyp compilation
+#          platforms: linux/amd64,linux/arm64
           secrets: |
             DOJO_KEYSTORE_PASSWORD=${{ secrets.DOJO_KEYSTORE_PASSWORD }}
           tags: ${{ steps.meta.outputs.tags }}
