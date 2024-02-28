@@ -14,7 +14,7 @@ function thread2() {
    ./keiko
 }
 
-buildWebApp &
+buildWebApp
 
 # Start the first thread in the background
 thread1 &
