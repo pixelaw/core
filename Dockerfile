@@ -26,7 +26,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.23 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.24 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
@@ -52,9 +52,9 @@ RUN \
 
 
 RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
-    mkdir /keiko/config && mkdir -p /keiko/storage_init/$WORLD_ADDRESS/manifests && mkdir /keiko/log &&  \
-    cp genesis.json /keiko/config/genesis.json && \
-    cp target/dev/manifest.json /keiko/config/manifest.json && \
+    mkdir -p /keiko/storage_init/$WORLD_ADDRESS/config && mkdir -p /keiko/storage_init/$WORLD_ADDRESS/manifests && mkdir /keiko/log &&  \
+    cp genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
+    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/config/manifest.json && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/core.json && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/snake.json && \
     cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/paint.json && \
