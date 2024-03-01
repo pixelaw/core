@@ -16,7 +16,7 @@ source = "git+https://github.com/dojoengine/dojo?tag=v0.3.11#1e651b5d4d3b79b14a7
 
 [[package]]
 name = "pixelaw"
-version = "0.1.25"
+version = "0.1.26"
 dependencies = [
  "dojo",
 ]

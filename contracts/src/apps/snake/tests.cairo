@@ -30,7 +30,7 @@ mod tests {
     fn deploy_world() -> (
         IWorldDispatcher, IActionsDispatcher, ISnakeActionsDispatcher, IPaintActionsDispatcher
     ) {
-        let player1 = starknet::contract_address_const::<0x1337>();
+        let _player1 = starknet::contract_address_const::<0x1337>();
 
         // Deploy World and models
         let world = spawn_test_world(
@@ -150,7 +150,7 @@ mod tests {
         // Let player2 paint 6,1 so the snake will die
         //
         // The Snake is now 2 long, on 4,1 and 5,1
-        // It will die in 3 moves: 
+        // It will die in 3 moves:
         //  1: hit the other pixel
         //  2: shrink
         //  3: shrink / delete

@@ -39,14 +39,20 @@ update_accounts = "./scripts/update_accounts.sh"
 upload_manifest = "bash ./scripts/upload_manifest.sh"
 update_scarb = "bash ./scripts/update_scarb.sh"
 
-[tool.dojo.env]
-#rpc_url = "http://localhost:5050/"
+# Local development
+[profile.dev.tool.dojo.env]
+rpc_url = "http://localhost:5050/"
+account_address = "0x01b70dbbbcc7af7ada881c80577618256bb17232e0d574a2f542b1821f610f8b"
+keystore_path = "owner.keystore.json"
+keystore_password = "xXELSPqtNQ9jckjXFmwVD4Yg5LN79q"
 world_address = "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
 
-# World Owner account
-account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
-#account_pubkey = "0x640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea"
-#private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
 
-keystore_path = "dev-keystore.json"
-keystore_password = "hellopixelaw"
+# demo.pixelaw.xyz
+[profile.demo.tool.dojo.env]
+rpc_url = "https://katana.demo.pixelaw.xyz/"
+account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
+private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
+world_address= "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
+
+
