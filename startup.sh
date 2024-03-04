@@ -16,10 +16,13 @@ function thread2() {
 
 buildWebApp
 
-# Populate the storage folder only if its empty
-if [ -d "storage" ] && [ "$(ls -A storage)" == "" ]; then
-    cp -r storage_init/* storage/
+# Populate the storage folder only if it does not exist or is empty
+if [ ! -d "storage/$WORLD_ADDRESS" ] || [ -z "$(ls -A storage/$WORLD_ADDRESS)" ]; then
+    mkdir -p storage/$WORLD_ADDRESS
+    cp -r storage_init/* storage/$WORLD_ADDRESS/
 fi
+
+
 
 # Start the first thread in the background
 thread1 &

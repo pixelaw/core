@@ -52,13 +52,13 @@ RUN \
 
 
 RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
-    mkdir -p /keiko/storage_init/$WORLD_ADDRESS/config && mkdir -p /keiko/storage_init/$WORLD_ADDRESS/manifests && mkdir /keiko/log &&  \
-    cp genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/config/manifest.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/core.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/snake.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/paint.json && \
-    cp torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite && \
+    mkdir -p /keiko/storage_init/config && mkdir -p /keiko/storage_init/manifests && mkdir /keiko/log &&  \
+    cp genesis.json /keiko/storage_init/config/genesis.json && \
+    cp target/dev/manifest.json /keiko/storage_init/config/manifest.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/core.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/snake.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/paint.json && \
+    cp torii.sqlite /keiko/storage_init/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
 RUN rm -rf /tmp/contracts
