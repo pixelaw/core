@@ -3,8 +3,8 @@ include .account
 export
 
 REPO = ghcr.io/pixelaw/core
-CORE_VERSION = 0.1.28
-KEIKO_VERSION = v0.1.5
+CORE_VERSION = 0.1.29
+KEIKO_VERSION = v0.1.25
 
 
 docker_build:
@@ -24,7 +24,7 @@ build:
 #	cp web/src/output.ts web/src/dojo/contractComponents.ts
 
 shell:
-	docker run -it --rm --name temp-container pixelaw/core:latest bash
+	docker compose exec keiko bash
 
 
 test:
@@ -57,4 +57,10 @@ deploy:
 		echo "$$WORLD_ADDR" > ../last_deployed_world && \
 		echo "$$SOZO_OUT" > ../deployed.log; \
 	WORLD_ADDR=$$(tail -n1 ../last_deployed_world); \
+
+log_katana:
+	docker compose exec keiko tail -f /keiko/log/katana.log.json
+
+log_torii:
+	docker compose exec keiko tail -f /keiko/log/torii.log -n 200
 

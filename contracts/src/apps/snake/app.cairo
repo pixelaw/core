@@ -293,13 +293,15 @@ mod snake_actions {
                             is_dying: false
                     }));
 
-                    // According to answer on
-                    // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
-                    // This is the right approach, but it doesnt seem to work.
-                    let snake_owner_felt: felt252 = snake.owner.into();
-                    let mut layout = array![];
-                    Introspect::<Snake>::layout(ref layout);
-                    world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
+                    // // According to answer on
+                    // // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
+                    // // This is the right approach, but it doesnt seem to work.
+                    // let snake_owner_felt: felt252 = snake.owner.into();
+                    // let mut layout = array![];
+                    // Introspect::<Snake>::layout(ref layout);
+                    // world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
+
+                    delete!(world, (snake));
                     return;
                 }
 
@@ -436,10 +438,12 @@ mod snake_actions {
 
         let result = last_segment.previous_id;
 
-        let segment_id_felt: felt252 = snake.last_segment_id.into();
-        let mut layout = array![];
-        Introspect::<SnakeSegment>::layout(ref layout);
-        world.delete_entity('SnakeSegment'.into(), array![segment_id_felt.into()].span(), layout.span());
+        delete!(world, (last_segment));
+
+        // let segment_id_felt: felt252 = snake.last_segment_id.into();
+        // let mut layout = array![];
+        // Introspect::<SnakeSegment>::layout(ref layout);
+        // world.delete_entity('SnakeSegment'.into(), array![segment_id_felt.into()].span(), layout.span());
 
         // Return the new last_segment_id for the snake
         result

@@ -2,7 +2,7 @@ import PixelBoardBot from './PixelBoardBot'
 import QueueBot from './QueueBot'
 
 function startBots() {
-  PixelBoardBot().then()
+  // PixelBoardBot().then()
   QueueBot().then()
 }
 
