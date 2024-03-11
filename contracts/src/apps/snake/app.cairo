@@ -300,8 +300,6 @@ mod snake_actions {
                     // let mut layout = array![];
                     // Introspect::<Snake>::layout(ref layout);
                     // world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
-
-                    delete!(world, (snake));
                     return;
                 }
 
@@ -438,12 +436,20 @@ mod snake_actions {
 
         let result = last_segment.previous_id;
 
-        delete!(world, (last_segment));
-
-        // let segment_id_felt: felt252 = snake.last_segment_id.into();
-        // let mut layout = array![];
-        // Introspect::<SnakeSegment>::layout(ref layout);
-        // world.delete_entity('SnakeSegment'.into(), array![segment_id_felt.into()].span(), layout.span());
+        set!(
+          world, (
+            SnakeSegment {
+                id: snake.last_segment_id,
+                previous_id: 0,
+                next_id: 0,
+                x: 0,
+                y: 0,
+                pixel_original_color: 0,
+                pixel_original_text: 0,
+                pixel_original_app: starknet::contract_address_const::<0x0>()
+            }
+          )
+        );
 
         // Return the new last_segment_id for the snake
         result
