@@ -9,6 +9,9 @@ RUN yarn install --frozen-lockfile
 
 FROM node:20-bookworm-slim as bots_node_deps
 WORKDIR /app
+
+RUN apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
 COPY --link /bots/package.json ./package.json
 COPY --link /bots/yarn.lock ./yarn.lock
 
