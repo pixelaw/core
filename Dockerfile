@@ -9,6 +9,9 @@ RUN yarn install --frozen-lockfile
 
 FROM node:20-bookworm-slim as bots_node_deps
 WORKDIR /app
+
+RUN apt update && apt install -y build-essential python3
+
 COPY --link /bots/package.json ./package.json
 COPY --link /bots/yarn.lock ./yarn.lock
 
@@ -26,7 +29,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.23 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.26 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
@@ -52,13 +55,13 @@ RUN \
 
 
 RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
-    mkdir /keiko/config && mkdir -p /keiko/storage_init/$WORLD_ADDRESS/manifests && mkdir /keiko/log &&  \
-    cp genesis.json /keiko/config/genesis.json && \
-    cp target/dev/manifest.json /keiko/config/manifest.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/core.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/snake.json && \
-    cp target/dev/manifest.json /keiko/storage_init/$WORLD_ADDRESS/manifests/paint.json && \
-    cp torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite && \
+    mkdir -p /keiko/storage_init/config && mkdir -p /keiko/storage_init/manifests && mkdir /keiko/log &&  \
+    cp genesis.json /keiko/storage_init/config/genesis.json && \
+    cp target/dev/manifest.json /keiko/storage_init/config/manifest.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/core.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/snake.json && \
+    cp target/dev/manifest.json /keiko/storage_init/manifests/paint.json && \
+    cp torii.sqlite /keiko/storage_init/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
 RUN rm -rf /tmp/contracts

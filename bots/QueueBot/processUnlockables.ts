@@ -42,8 +42,9 @@ const processQueue = async (id: string, timestamp: bigint, called_system: string
   }
 
   const signer = new Account(getProvider(), botAddress, botPrivateKey)
-  console.log('check', signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
-  return execute(signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
+  // console.log('check', signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
+  let result = await execute(signer, coreActionsAddress, CORE_ACTIONS_SELECTOR, callData)
+  return result
 }
 
 // actual queue processing
