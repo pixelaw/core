@@ -1,6 +1,6 @@
 services:
   keiko:
-    image: ghcr.io/pixelaw/keiko:0.1.17
+    image: ghcr.io/pixelaw/keiko:0.1.25
     container_name: keiko
     command: ["./keiko", "--disable-validate", "--disable-fee"]
     ports:
@@ -9,14 +9,17 @@ services:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:9090:9090/tcp"
       - "127.0.0.1:9090:9090/udp"
-      - "127.0.0.1:9091:9091/tcp"
-      - "127.0.0.1:9091:9091/udp"
     restart: unless-stopped
     volumes:
-      - ./contracts/genesis_template.json:/keiko/config/genesis.json
-      - ./contracts/target/dev/manifest.json:/keiko/config/manifest.json
-      - ./keiko_data/log:/keiko/log
-      - ./keiko_data/storage:/keiko/storage
+      - ./contracts/genesis_template.json:/keiko/storage_init/config/genesis.json
+      - ./contracts/target/dev/manifest.json:/keiko/storage_init/config/manifest.json
+      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/core.json
+      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/paint.json
+      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/snake.json
+      - log:/keiko/log
+      - storage:/keiko/storage
+#      - ./keiko_data/log:/keiko/log
+#      - ./keiko_data/storage:/keiko/storage
     networks:
       - pixelaw
     environment:
@@ -25,6 +28,12 @@ services:
       - RUST_LOG=info
       - DISABLE_VALIDATE=true
       - DISABLE_FEE=true
+      - CHAIN_ID=KATANA_LOCAL
+      - WORLD_ADDRESS=0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf
+volumes:
+  storage:
+  log:
+
 networks:
   pixelaw:
     driver: bridge

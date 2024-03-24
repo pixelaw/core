@@ -189,7 +189,7 @@ mod actions {
             called_system: ContractAddress,
             selector: felt252,
             calldata: Span<felt252>
-        ) {
+        )  {
             'process_queue'.print();
             let world = self.world_dispatcher.read();
             // A quick check on the timestamp so we know its not too early for this one
@@ -201,6 +201,8 @@ mod actions {
             // And we could add some rate limiting to prevent griefing?
             //
             // The only way i can think of doing "authentication" of a QueueItem would be to store the ID (hash) onchain, but that gets expensive soon?
+
+            // TODO processQueue should never revert.
 
             // Recreate the id to check the integrity
             let calculated_id = poseidon_hash_span(

@@ -3,7 +3,7 @@ import { Account, num } from 'starknet'
 const execute = async (account: Account, system: string, selector: string, calldata: num.BigNumberish[]) => {
   try {
     const nonce = await account?.getNonce()
-    return await account?.execute(
+    const { transaction_hash } = await account?.execute(
       {
         contractAddress: system,
         entrypoint: selector,
@@ -15,6 +15,8 @@ const execute = async (account: Account, system: string, selector: string, calld
         maxFee: 0 // TODO: Update
       }
     );
+    const result = await account.waitForTransaction(transaction_hash);
+    console.log({result});
   } catch (error) {
     console.error('could not execute:', error)
     throw error;
