@@ -47,7 +47,7 @@ struct SnakeSegment {
 }
 
 
-#[starknet::interface]
+#[dojo::interface]
 trait ISnakeActions<TContractState> {
     fn init(self: @TContractState);
     fn interact(self: @TContractState, default_params: DefaultParameters, direction: Direction) -> u32;
@@ -272,7 +272,7 @@ mod snake_actions {
             // If the snake is dying, handle that
             if snake.is_dying {
                 'snake shrinks due to dying'.print();
-                snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                snake.last_segment_id = remove_last_segment(self, core_actions, snake);
                 snake.length -= 1;
 
                 if snake.length == 0 {
@@ -338,8 +338,8 @@ mod snake_actions {
                     // Add a new segment on the next pixel and update the snake
                     snake
                         .first_segment_id =
-                            create_new_segment(world, core_actions, next_pixel, snake, first_segment);
-                    snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                            create_new_segment(self, core_actions, next_pixel, snake, first_segment);
+                    snake.last_segment_id = remove_last_segment(self, core_actions, snake);
 
                 } else if !has_write_access {
                   'snake will die'.print();
@@ -352,12 +352,12 @@ mod snake_actions {
                     // Add a new segment
                     snake
                         .first_segment_id =
-                            create_new_segment(world, core_actions, next_pixel, snake, first_segment);
+                            create_new_segment(self, core_actions, next_pixel, snake, first_segment);
 
                     // No growth if max length was reached
                     if snake.length >= SNAKE_MAX_LENGTH {
                         // Revert last segment pixel
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
                     } else {
                         snake.length = snake.length + 1;
                     }
@@ -371,13 +371,13 @@ mod snake_actions {
                         snake.is_dying = true;
                     } else {
                         // Add a new segment
-                        create_new_segment(world, core_actions, next_pixel, snake, first_segment);
+                        create_new_segment(self, core_actions, next_pixel, snake, first_segment);
 
                         // Remove last segment (this is normal for "moving")
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
 
                         // Remove another last segment (for shrinking)
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
                     }
                 }
             } else {
@@ -412,8 +412,9 @@ mod snake_actions {
 
     // Removes the last segment of the snake and reverts the pixel
     fn remove_last_segment(
-        world: IWorldDispatcher, core_actions: ICoreActionsDispatcher, snake: Snake
+         core_actions: ICoreActionsDispatcher, snake: Snake
     ) -> u32 {
+        let world = self.world_dispatcher.read();
         let last_segment = get!(world, (snake.last_segment_id), SnakeSegment);
         let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
 
@@ -457,12 +458,12 @@ mod snake_actions {
 
     // Creates a new Segment on the given pixel
     fn create_new_segment(
-        world: IWorldDispatcher,
         core_actions: ICoreActionsDispatcher,
         pixel: Pixel,
         snake: Snake,
         mut existing_segment: SnakeSegment
     ) -> u32 {
+        let world = self.world_dispatcher.read();
         let id = world.uuid();
 
         // Update the existing Segment

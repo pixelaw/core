@@ -4,7 +4,7 @@ use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParamet
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 
-#[starknet::interface]
+#[dojo::interface]
 trait IPaintActions<TContractState> {
     fn init(self: @TContractState);
     fn interact(self: @TContractState, default_params: DefaultParameters);
@@ -18,26 +18,9 @@ const APP_ICON: felt252 = 'U+1F58C';
 /// BASE means using the server's default manifest.json handler
 const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
-#[dojo::contract]
-mod paint_actions {
-    use starknet::{
-        get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress
-    };
-
-    use super::IPaintActions;
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-
-    use pixelaw::core::models::permissions::{Permission};
-    use pixelaw::core::actions::{
-        IActionsDispatcher as ICoreActionsDispatcher,
-        IActionsDispatcherTrait as ICoreActionsDispatcherTrait
-    };
-    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
-    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
-    use pixelaw::core::traits::IInteroperability;
-    use pixelaw::core::models::registry::App;
-
+mod paint_utils {
     use debug::PrintTrait;
+
 
     fn subu8(nr: u8, sub: u8) -> u8 {
         if nr >= sub {
@@ -88,6 +71,29 @@ mod paint_actions {
 
     (r, g, b)
   }
+}
+
+#[dojo::contract]
+mod paint_actions {
+    use starknet::{
+        get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress
+    };
+
+    use super::IPaintActions;
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+
+    use pixelaw::core::models::permissions::{Permission};
+    use pixelaw::core::actions::{
+        IActionsDispatcher as ICoreActionsDispatcher,
+        IActionsDispatcherTrait as ICoreActionsDispatcherTrait
+    };
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
+    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::models::registry::App;
+    use super::paint_utils::{decode_color, encode_color,subu8};
+    use debug::PrintTrait;
+
 
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {

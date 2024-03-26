@@ -3,12 +3,15 @@ cairo-version = "2.4.0"
 name = "pixelaw"
 version = "0.1.38"
 homepage = "https://github.com/pixelaw/core"
+# Use the prelude with the less imports as possible
+# from corelib.
+#edition = "2023_10"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.0-alpha.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.0-alpha.8" }
 
 [[target.dojo]]
 build-external-contracts = []
