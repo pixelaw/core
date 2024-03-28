@@ -5,7 +5,7 @@ export const colorAtom = atom('#FFFFFF')
 
 export const gameModeAtom = atom<string>("paint")
 
-export const zoomLevelAtom = atom<number>(50)
+export const zoomLevelAtom = atom<number>(25)
 
 export const positionWithAddressAndTypeAtom = atom<PositionWithAddressAndType>({
   x: 0,
