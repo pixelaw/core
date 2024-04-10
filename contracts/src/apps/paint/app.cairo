@@ -6,10 +6,10 @@ use starknet::{get_caller_address, get_contract_address, get_execution_info, Con
 
 #[dojo::interface]
 trait IPaintActions<TContractState> {
-    fn init(self: @TContractState);
-    fn interact(self: @TContractState, default_params: DefaultParameters);
-    fn put_color(self: @TContractState, default_params: DefaultParameters);
-    fn fade(self: @TContractState, default_params: DefaultParameters);
+    fn init();
+    fn interact(default_params: DefaultParameters);
+    fn put_color(default_params: DefaultParameters);
+    fn fade(default_params: DefaultParameters);
 }
 
 const APP_KEY: felt252 = 'paint';
@@ -98,21 +98,23 @@ mod paint_actions {
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
       fn on_pre_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ) {
        // do nothing
+       let _world = world;
       }
 
       fn on_post_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ){
         // do nothing
+       let _world = world;
       }
     }
 
@@ -120,8 +122,8 @@ mod paint_actions {
     #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
         /// Initialize the Paint App (TODO I think, do we need this??)
-        fn init(self: @ContractState) {
-            let world = self.world_dispatcher.read();
+        fn init(world: IWorldDispatcher) {
+
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
@@ -149,13 +151,13 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn interact(
-            self: @ContractState,
+            world: IWorldDispatcher,
             default_params: DefaultParameters
         ) {
             'interact'.print();
 
             // Load important variables
-            let world = self.world_dispatcher.read();
+
             let core_actions = get_core_actions(world);
             let position = default_params.position;
             let player = core_actions.get_player_address( default_params.for_player);
@@ -187,13 +189,13 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn put_color(
-          self: @ContractState,
+          world: IWorldDispatcher,
           default_params: DefaultParameters
         ) {
           'put_color'.print();
 
           // Load important variables
-          let world = self.world_dispatcher.read();
+
           let core_actions = get_core_actions(world);
           let position = default_params.position;
           let player = core_actions.get_player_address( default_params.for_player);
@@ -243,12 +245,12 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn fade(
-            self: @ContractState,
+            world: IWorldDispatcher,
             default_params: DefaultParameters
         ) {
             'fade'.print();
 
-            let world = self.world_dispatcher.read();
+
             let core_actions = get_core_actions(world);
             let position = default_params.position;
             let player = core_actions.get_player_address( default_params.for_player);

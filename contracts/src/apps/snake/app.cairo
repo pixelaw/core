@@ -49,9 +49,9 @@ struct SnakeSegment {
 
 #[dojo::interface]
 trait ISnakeActions<TContractState> {
-    fn init(self: @TContractState);
-    fn interact(self: @TContractState, default_params: DefaultParameters, direction: Direction) -> u32;
-    fn move(self: @TContractState, owner: ContractAddress);
+    fn init();
+    fn interact(default_params: DefaultParameters, direction: Direction) -> u32;
+    fn move(owner: ContractAddress);
 }
 
 
@@ -107,28 +107,28 @@ mod snake_actions {
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
       fn on_pre_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ) {
         // do nothing
+       let _world = world;
       }
 
       fn on_post_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ){
 
-        let core_actions_address = get_core_actions_address(self.world_dispatcher.read());
+        let core_actions_address = get_core_actions_address(world);
         assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
 
         // when the snake is reverting
         if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
           let old_app = pixel_update.app.unwrap();
-          let world = self.world_dispatcher.read();
           let old_app = get!(world, old_app, (App));
           if old_app.name == 'paint' {
             let mut calldata: Array<felt252> = ArrayTrait::new();
@@ -148,8 +148,8 @@ mod snake_actions {
     // impl: implement functions specified in trait
     #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
-        fn init(self: @ContractState) {
-            let core_actions = get_core_actions(self.world_dispatcher.read());
+        fn init(world: IWorldDispatcher) {
+            let core_actions = get_core_actions(world);
 
             core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
 
@@ -161,9 +161,9 @@ mod snake_actions {
 
 
         // A new snake starts
-        fn interact(self: @ContractState, default_params: DefaultParameters, direction: Direction) -> u32 {
+        fn interact(world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction) -> u32 {
             'snake: interact'.print();
-            let world = self.world_dispatcher.read();
+
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
@@ -258,10 +258,10 @@ mod snake_actions {
             id
         }
 
-        fn move(self: @ContractState, owner: ContractAddress) {
+        fn move(world: IWorldDispatcher, owner: ContractAddress) {
             'snake: move'.print();
-            let world = self.world_dispatcher.read();
-            let core_actions = get_core_actions(self.world_dispatcher.read());
+
+            let core_actions = get_core_actions(world);
 
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));
@@ -272,7 +272,7 @@ mod snake_actions {
             // If the snake is dying, handle that
             if snake.is_dying {
                 'snake shrinks due to dying'.print();
-                snake.last_segment_id = remove_last_segment(self, core_actions, snake);
+                snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
 
                 if snake.length == 0 {
@@ -338,8 +338,8 @@ mod snake_actions {
                     // Add a new segment on the next pixel and update the snake
                     snake
                         .first_segment_id =
-                            create_new_segment(self, core_actions, next_pixel, snake, first_segment);
-                    snake.last_segment_id = remove_last_segment(self, core_actions, snake);
+                            create_new_segment(world, core_actions, next_pixel, snake, first_segment);
+                    snake.last_segment_id = remove_last_segment(world, core_actions, snake);
 
                 } else if !has_write_access {
                   'snake will die'.print();
@@ -352,12 +352,12 @@ mod snake_actions {
                     // Add a new segment
                     snake
                         .first_segment_id =
-                            create_new_segment(self, core_actions, next_pixel, snake, first_segment);
+                            create_new_segment(world, core_actions, next_pixel, snake, first_segment);
 
                     // No growth if max length was reached
                     if snake.length >= SNAKE_MAX_LENGTH {
                         // Revert last segment pixel
-                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                     } else {
                         snake.length = snake.length + 1;
                     }
@@ -371,13 +371,13 @@ mod snake_actions {
                         snake.is_dying = true;
                     } else {
                         // Add a new segment
-                        create_new_segment(self, core_actions, next_pixel, snake, first_segment);
+                        create_new_segment(world, core_actions, next_pixel, snake, first_segment);
 
                         // Remove last segment (this is normal for "moving")
-                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
 
                         // Remove another last segment (for shrinking)
-                        snake.last_segment_id = remove_last_segment(self, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                     }
                 }
             } else {
@@ -412,9 +412,10 @@ mod snake_actions {
 
     // Removes the last segment of the snake and reverts the pixel
     fn remove_last_segment(
+        world: IWorldDispatcher,
          core_actions: ICoreActionsDispatcher, snake: Snake
     ) -> u32 {
-        let world = self.world_dispatcher.read();
+
         let last_segment = get!(world, (snake.last_segment_id), SnakeSegment);
         let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
 
@@ -458,12 +459,12 @@ mod snake_actions {
 
     // Creates a new Segment on the given pixel
     fn create_new_segment(
+        world: IWorldDispatcher,
         core_actions: ICoreActionsDispatcher,
         pixel: Pixel,
         snake: Snake,
         mut existing_segment: SnakeSegment
     ) -> u32 {
-        let world = self.world_dispatcher.read();
         let id = world.uuid();
 
         // Update the existing Segment
