@@ -1,0 +1,20 @@
+kind = "DojoModel"
+class_hash = "0x51773284c3ae4efb8c10e3c375b7a77cbbf6993f6b7057ba3f395dd3d970a3d"
+original_class_hash = "0x51773284c3ae4efb8c10e3c375b7a77cbbf6993f6b7057ba3f395dd3d970a3d"
+abi = "manifests/dev/abis/base/models/pixelaw_core_models_registry_instruction.json"
+name = "pixelaw::core::models::registry::instruction"
+
+[[members]]
+name = "system"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "selector"
+type = "felt252"
+key = true
+
+[[members]]
+name = "instruction"
+type = "felt252"
+key = false

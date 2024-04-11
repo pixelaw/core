@@ -1,0 +1,20 @@
+kind = "DojoModel"
+class_hash = "0x7114aa9a9209e2404dc623280a3319d079df23bd4572389eb53bd2303e33f3f"
+original_class_hash = "0x7114aa9a9209e2404dc623280a3319d079df23bd4572389eb53bd2303e33f3f"
+abi = "manifests/dev/abis/base/models/pixelaw_core_models_permissions_permissions.json"
+name = "pixelaw::core::models::permissions::permissions"
+
+[[members]]
+name = "allowing_app"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "allowed_app"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "permission"
+type = "Permission"
+key = false

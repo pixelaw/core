@@ -1,0 +1,45 @@
+kind = "DojoModel"
+class_hash = "0x3811cc28357e6e278e209c39057035e661ce450ed72b726cd036d1bbb3f5abd"
+original_class_hash = "0x3811cc28357e6e278e209c39057035e661ce450ed72b726cd036d1bbb3f5abd"
+abi = "manifests/dev/abis/base/models/pixelaw_apps_snake_app_snake.json"
+name = "pixelaw::apps::snake::app::snake"
+
+[[members]]
+name = "owner"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "length"
+type = "u8"
+key = false
+
+[[members]]
+name = "first_segment_id"
+type = "u32"
+key = false
+
+[[members]]
+name = "last_segment_id"
+type = "u32"
+key = false
+
+[[members]]
+name = "direction"
+type = "Direction"
+key = false
+
+[[members]]
+name = "color"
+type = "u32"
+key = false
+
+[[members]]
+name = "text"
+type = "felt252"
+key = false
+
+[[members]]
+name = "is_dying"
+type = "bool"
+key = false

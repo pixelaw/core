@@ -1,0 +1,15 @@
+kind = "DojoModel"
+class_hash = "0x2aae4d0d1f8bfa226a43ef15f435dbbc234dcac20ebaa8bbc23be240a831897"
+original_class_hash = "0x2aae4d0d1f8bfa226a43ef15f435dbbc234dcac20ebaa8bbc23be240a831897"
+abi = "manifests/dev/abis/base/models/pixelaw_core_models_registry_core_actions_address.json"
+name = "pixelaw::core::models::registry::core_actions_address"
+
+[[members]]
+name = "key"
+type = "felt252"
+key = true
+
+[[members]]
+name = "value"
+type = "ContractAddress"
+key = false
