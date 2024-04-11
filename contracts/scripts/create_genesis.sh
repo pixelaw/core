@@ -16,7 +16,7 @@ export STARKNET_RPC="http://localhost:5050/"
 GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT=genesis.json
 KATANA_LOG=katana.log
-MANIFEST=$TARGET/manifest.json
+MANIFEST=manifests/dev/manifest.json
 TORII_DB=torii.sqlite
 TORII_LOG=torii.log
 
@@ -48,7 +48,8 @@ sozo build
 
 
 # Sozo migrate
-sozo migrate --
+sozo migrate plan
+sozo migrate apply
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
@@ -199,7 +200,7 @@ torii \
 echo "torii log"
 tail -f $TORII_LOG | while read LOGLINE
 do
-   [[ "${LOGLINE}" == *"processed block: ${last_block_number}"* ]] && pkill -f "torii"
+   [[ "${LOGLINE}" =~ "Processed block. [3mblock_number[0m[2m=[0m${last_block_number}" ]] && pkill -f "torii"
 done
 
 # Patch the torii DB
