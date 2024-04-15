@@ -68,6 +68,9 @@ mod snake_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait
     };
+  use pixelaw::apps::paint::app::{
+    IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+  };
     use pixelaw::core::traits::IInteroperability;
 
     use dojo::database::introspect::Introspect;
@@ -131,14 +134,15 @@ mod snake_actions {
           let world = self.world_dispatcher.read();
           let old_app = get!(world, old_app, (App));
           if old_app.name == 'paint' {
-            let mut calldata: Array<felt252> = ArrayTrait::new();
             let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
-            calldata.append(pixel.owner.into());
-            calldata.append(old_app.system.into());
-            calldata.append(pixel_update.x.into());
-            calldata.append(pixel_update.y.into());
-            calldata.append(pixel_update.color.unwrap().into());
-            let _result = starknet::call_contract_syscall(old_app.system, 0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, calldata.span());
+            let paint_actions = IPaintActionsDispatcher { contract_address: old_app.system };
+            let params = DefaultParameters {
+              for_player: pixel.owner,
+              for_system: old_app.system,
+              position: Position { x: pixel_update.x, y: pixel_update.y },
+              color: pixel_update.color.unwrap()
+            };
+            paint_actions.fade(params);
           }
         }
       }
