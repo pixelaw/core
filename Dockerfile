@@ -29,7 +29,7 @@ RUN yarn build --mode production
 
 
 
-FROM ghcr.io/pixelaw/keiko:0.1.28 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.1.30 AS runtime
 
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
@@ -54,13 +54,13 @@ RUN \
     bash scripts/create_genesis.sh
 
 
-RUN WORLD_ADDRESS=$(jq -r '.world.address' target/dev/manifest.json) && \
+RUN WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
     mkdir -p /keiko/storage_init/config && mkdir -p /keiko/storage_init/manifests && mkdir /keiko/log &&  \
     cp genesis.json /keiko/storage_init/config/genesis.json && \
-    cp target/dev/manifest.json /keiko/storage_init/config/manifest.json && \
-    cp target/dev/manifest.json /keiko/storage_init/manifests/core.json && \
-    cp target/dev/manifest.json /keiko/storage_init/manifests/snake.json && \
-    cp target/dev/manifest.json /keiko/storage_init/manifests/paint.json && \
+    cp manifests/dev/manifest.json /keiko/storage_init/config/manifest.json && \
+    cp manifests/dev/manifest.json /keiko/storage_init/manifests/core.json && \
+    cp manifests/dev/manifest.json /keiko/storage_init/manifests/snake.json && \
+    cp manifests/dev/manifest.json /keiko/storage_init/manifests/paint.json && \
     cp torii.sqlite /keiko/storage_init/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
