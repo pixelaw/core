@@ -58,13 +58,16 @@ const processUnlockables = async () => {
 
   if (!unlockables.length) return
 
-  for (const unlockable of unlockables) {
-    try {
-      await processQueue(unlockable.id, unlockable.timestamp, unlockable.called_system, unlockable.selector, unlockable.calldata)
-    }catch(error){
-      console.error("Error while processing ", unlockable, error)
-    }
-  }
+  const promises = unlockables.map(unlockable => {
+    return processQueue(unlockable.id, unlockable.timestamp, unlockable.called_system, unlockable.selector, unlockable.calldata)
+  })
+
+  const result = await Promise.allSettled(promises)
+  const failedResults = result.filter(res => res.status === "rejected") as PromiseRejectedResult[]
+  failedResults.forEach(failedResult => {
+    console.error("Error while processing ", failedResult.reason)
+  })
+
 }
 
 export default processUnlockables
