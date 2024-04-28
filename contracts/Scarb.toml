@@ -1,5 +1,5 @@
 [package]
-cairo-version = "2.4.0"
+cairo-version = "2.5.4"
 name = "pixelaw"
 version = "0.1.38"
 homepage = "https://github.com/pixelaw/core"
@@ -11,7 +11,7 @@ homepage = "https://github.com/pixelaw/core"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.0" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.1-alpha.4" }
 
 [[target.dojo]]
 build-external-contracts = []

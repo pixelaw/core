@@ -3,8 +3,8 @@ include .account
 export
 
 REPO = ghcr.io/pixelaw/core
-CORE_VERSION = 0.1.38
-KEIKO_VERSION = v0.1.25
+CORE_VERSION = v0.2.0
+KEIKO_VERSION = v0.2.0
 
 
 docker_build:

@@ -95,7 +95,9 @@ echo "Initialize PAINT_ACTIONS: Done"
 # ---------------------------------------------------
 
 # Get the last block number from the katana log
-last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.message' | grep -oP '(\d+)' | head -n 1)
+last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.block_number')
+
+echo "Last block number: ${last_block_number}"
 
 echo "Generating $GENESIS_OUT"
 # Prep genesis out
@@ -189,11 +191,12 @@ echo "Populating Torii db"
 rm -f $TORII_DB
 
 # Start Torii
-torii \
+unset LS_COLORS && torii \
   --world $WORLD \
   --rpc $STARKNET_RPC \
   --database $TORII_DB \
  > $TORII_LOG 2>&1 &
+
 
 
 # Watch the torii log until the last block, then kill it
@@ -208,6 +211,6 @@ sqlite3 torii.sqlite  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
 
 #echo "killing katana"
 ## Kill katana
-#pkill -f katana
+pkill -f katana
 
 echo "Done"

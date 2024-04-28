@@ -1,13 +1,17 @@
 [world]
-kind = "Contract"
+kind = "WorldContract"
 class_hash = "0x799bc4e9da10bfb3dd88e6f223c9cfbf7745435cd14f5d69675ea448e578cd"
 original_class_hash = "0x799bc4e9da10bfb3dd88e6f223c9cfbf7745435cd14f5d69675ea448e578cd"
 abi = "abis/deployments/dojo_world_world.json"
 address = "0xfea84b178ab1dc982ef9e369246f8c4d53aea52ea7af08879911f436313e4e"
-transaction_hash = "0x4b888ff62d3f792d9eb9646d7584e2f2631f4ca79d4ec66594167b25e0a05bd"
+transaction_hash = "0x3e46e344742d63abc8c926d143891f65f40f001de26480f6601cb10c7d2f9b2"
 block_number = 3
 seed = "pixelaw"
 name = "dojo::world::world"
+
+[world.metadata]
+profile_name = "dev"
+rpc_url = "http://localhost:5050/"
 
 [base]
 kind = "Class"
