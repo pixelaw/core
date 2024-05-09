@@ -4,7 +4,7 @@ export
 
 REPO = ghcr.io/pixelaw/core
 CORE_VERSION = v0.2.0
-KEIKO_VERSION = v0.2.0
+KEIKO_VERSION = v0.2.2
 
 
 docker_build:
@@ -15,7 +15,7 @@ docker_build:
 	--progress=plain .
 
 docker_run:
-	docker run -p 3000:3000 -p 5050:5050 -p 8080:8080 $(REPO):$(CORE_VERSION)
+	docker run -ti -p 3000:3000 -p 5050:5050 -p 8080:8080 $(REPO):$(CORE_VERSION)
 
 build:
 	cd contracts;sozo build;

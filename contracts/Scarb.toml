@@ -1,5 +1,5 @@
 [package]
-cairo-version = "2.5.4"
+cairo-version = "2.6.3"
 name = "pixelaw"
 version = "0.2.3"
 homepage = "https://github.com/pixelaw/core"
@@ -11,7 +11,7 @@ homepage = "https://github.com/pixelaw/core"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.1-alpha.4" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.1" }
 
 [[target.dojo]]
 build-external-contracts = []
@@ -47,7 +47,7 @@ update_scarb = "bash ./scripts/update_scarb.sh"
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0xfea84b178ab1dc982ef9e369246f8c4d53aea52ea7af08879911f436313e4e"
+world_address= "0x308cf899b99ecd34b86ceed1d7ee1c1567cec44cff625bb732732a44c41a1b8"
 #account_address = "0x01b70dbbbcc7af7ada881c80577618256bb17232e0d574a2f542b1821f610f8b"
 #keystore_path = "owner.keystore.json"
 #keystore_password = "xXELSPqtNQ9jckjXFmwVD4Yg5LN79q"

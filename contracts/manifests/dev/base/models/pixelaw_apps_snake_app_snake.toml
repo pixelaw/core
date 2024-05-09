@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x3811cc28357e6e278e209c39057035e661ce450ed72b726cd036d1bbb3f5abd"
-original_class_hash = "0x3811cc28357e6e278e209c39057035e661ce450ed72b726cd036d1bbb3f5abd"
+class_hash = "0x6ad2fad00fbb98d63faa81e4a4d3289919296e643edd09244e359b19a9f0304"
+original_class_hash = "0x6ad2fad00fbb98d63faa81e4a4d3289919296e643edd09244e359b19a9f0304"
 abi = "manifests/dev/abis/base/models/pixelaw_apps_snake_app_snake.json"
 name = "pixelaw::apps::snake::app::snake"
 

@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x7346556d7c1f2737dc6a328798d8461a7a7c7dd9d37051e19ad8f2dcaa2d6c3"
-original_class_hash = "0x7346556d7c1f2737dc6a328798d8461a7a7c7dd9d37051e19ad8f2dcaa2d6c3"
+class_hash = "0x4a448f9e37c98cc9af18ed6b5f0e144af59dc7ebb28fd553ee27e06d1e11d1c"
+original_class_hash = "0x4a448f9e37c98cc9af18ed6b5f0e144af59dc7ebb28fd553ee27e06d1e11d1c"
 abi = "manifests/dev/abis/base/models/pixelaw_core_models_queue_queue_item.json"
 name = "pixelaw::core::models::queue::queue_item"
 

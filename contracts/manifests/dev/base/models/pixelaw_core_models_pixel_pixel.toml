@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x38efdcd6ae82129f9cda845ae0d989de2f0b9096a1719a36bd5f4117b0d5b84"
-original_class_hash = "0x38efdcd6ae82129f9cda845ae0d989de2f0b9096a1719a36bd5f4117b0d5b84"
+class_hash = "0x19bf5119a6b23d3f098888ea27e5639d5b89ccf046d22e00c767cd4d3f78d9d"
+original_class_hash = "0x19bf5119a6b23d3f098888ea27e5639d5b89ccf046d22e00c767cd4d3f78d9d"
 abi = "manifests/dev/abis/base/models/pixelaw_core_models_pixel_pixel.json"
 name = "pixelaw::core::models::pixel::pixel"
 

@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x7114aa9a9209e2404dc623280a3319d079df23bd4572389eb53bd2303e33f3f"
-original_class_hash = "0x7114aa9a9209e2404dc623280a3319d079df23bd4572389eb53bd2303e33f3f"
+class_hash = "0x55935fbd47fb70609ca521bbafaa69a03919f77c45bb8ad0e221af4658a9a6b"
+original_class_hash = "0x55935fbd47fb70609ca521bbafaa69a03919f77c45bb8ad0e221af4658a9a6b"
 abi = "manifests/dev/abis/base/models/pixelaw_core_models_permissions_permissions.json"
 name = "pixelaw::core::models::permissions::permissions"
 

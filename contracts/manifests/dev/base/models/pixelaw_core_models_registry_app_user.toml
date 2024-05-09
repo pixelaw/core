@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x1222a58865d73a2c24877be8d31de954c98299f88aea23de68fab05749f2b60"
-original_class_hash = "0x1222a58865d73a2c24877be8d31de954c98299f88aea23de68fab05749f2b60"
+class_hash = "0x21694db3f07ef20ac056336fd80757d8883bae2a2329ca9ade1d681fe9ae883"
+original_class_hash = "0x21694db3f07ef20ac056336fd80757d8883bae2a2329ca9ade1d681fe9ae883"
 abi = "manifests/dev/abis/base/models/pixelaw_core_models_registry_app_user.json"
 name = "pixelaw::core::models::registry::app_user"
 
