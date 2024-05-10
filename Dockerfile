@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y build-essential python3 && \
     yarn install --frozen-lockfile
 
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.2.15 AS web_node_builder
+FROM ghcr.io/pixelaw/web:0.2.16 AS web_node_builder
 
 
 # Stage 4: Setup runtime
