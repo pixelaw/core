@@ -12,7 +12,7 @@ FROM ghcr.io/pixelaw/web:0.2.16 AS web_node_builder
 
 
 # Stage 4: Setup runtime
-FROM ghcr.io/pixelaw/keiko:0.2.4 AS runtime
+FROM ghcr.io/pixelaw/keiko:0.2.5 AS runtime
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
 ENV CORE_VERSION=VERSION
