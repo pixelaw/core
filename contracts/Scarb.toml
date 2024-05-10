@@ -1,7 +1,7 @@
 [package]
 cairo-version = "2.6.3"
 name = "pixelaw"
-version = "0.2.10"
+version = "0.2.11"
 homepage = "https://github.com/pixelaw/core"
 # Use the prelude with the less imports as possible
 # from corelib.
