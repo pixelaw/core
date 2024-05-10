@@ -3,7 +3,7 @@ include .account
 export
 
 REPO = ghcr.io/pixelaw/core
-CORE_VERSION = 0.2.5
+CORE_VERSION = 0.2.6
 KEIKO_VERSION = v0.2.2
 
 
