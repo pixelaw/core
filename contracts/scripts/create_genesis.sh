@@ -11,14 +11,14 @@ set -uo pipefail
 ###########################################################
 echo "1"
 export TARGET=${1:-"target/dev"}
-export STARKNET_RPC="http://localhost:5050/"
+export STARKNET_RPC="http://127.0.0.1:5050/"
 
 GENESIS_TEMPLATE=genesis_template.json
-GENESIS_OUT=genesis.json
-KATANA_LOG=katana.log
+GENESIS_OUT=tmp/genesis.json
+KATANA_LOG=tmp/katana.log
 MANIFEST=manifests/dev/manifest.json
-TORII_DB=torii.sqlite
-TORII_LOG=torii.log
+TORII_DB=tmp/torii.sqlite
+TORII_LOG=tmp/torii.log
 
 
 # Clear the target
@@ -42,14 +42,14 @@ done
 
 
 # Sozo build
-sozo build
+sozo --offline build
 
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
 
 # Sozo migrate
-sozo migrate plan
-sozo migrate apply
+sozo --offline migrate plan
+sozo --offline migrate apply
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
@@ -199,18 +199,14 @@ unset LS_COLORS && torii \
 
 
 
-# Watch the torii log until the last block, then kill it
-echo "torii log"
-tail -f $TORII_LOG | while read LOGLINE
-do
-   [[ "${LOGLINE}" =~ "Processed block. [3mblock_number[0m[2m=[0m${last_block_number}" ]] && pkill -f "torii"
-done
+# Wait for 5 seconds so torii can process the katana events
+sleep 5
 
 # Patch the torii DB
 sqlite3 torii.sqlite  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
 
 #echo "killing katana"
 ## Kill katana
-pkill -f katana
+#pkill -f katana
 
 echo "Done"

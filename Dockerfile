@@ -40,12 +40,12 @@ RUN \
 
 RUN WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
     mkdir -p /keiko/storage_init/config && mkdir -p /keiko/storage_init/manifests &&  \
-    cp genesis.json /keiko/storage_init/config/genesis.json && \
+    cp tmp/genesis.json /keiko/storage_init/config/genesis.json && \
     cp manifests/dev/manifest.json /keiko/storage_init/config/manifest.json && \
     cp manifests/dev/manifest.json /keiko/storage_init/manifests/core.json && \
     cp manifests/dev/manifest.json /keiko/storage_init/manifests/snake.json && \
     cp manifests/dev/manifest.json /keiko/storage_init/manifests/paint.json && \
-    cp torii.sqlite /keiko/storage_init/torii.sqlite && \
+    cp tmp/torii.sqlite /keiko/storage_init/torii.sqlite && \
     touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
 RUN rm -rf /tmp/contracts
