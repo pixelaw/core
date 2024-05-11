@@ -12,7 +12,7 @@ set -uo pipefail
 
 
 export PROFILE=${1:-"dev"}
-export TARGET=${1:-"target/${PROFILE}"}
+export TARGET="target/${PROFILE}"
 export STARKNET_RPC="http://127.0.0.1:5050/"
 
 OUT="out/$PROFILE"
@@ -85,31 +85,31 @@ SNAKE_MODELS=("Snake" "SnakeSegment")
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
     sleep 0.1
-    sozo auth grant writer $model,$CORE_ACTIONS
+    sozo --profile $PROFILE auth grant writer $model,$CORE_ACTIONS
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
     sleep 0.1
-    sozo auth grant writer $model,$SNAKE_ACTIONS
+    sozo --profile $PROFILE auth grant writer $model,$SNAKE_ACTIONS
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
 sleep 0.1
-sozo execute $CORE_ACTIONS init
+sozo --profile $PROFILE execute $CORE_ACTIONS init
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
 sleep 0.1
-sozo execute $SNAKE_ACTIONS init
+sozo --profile $PROFILE execute $SNAKE_ACTIONS init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
 sleep 0.1
-sozo execute $PAINT_ACTIONS init
+sozo --profile $PROFILE execute $PAINT_ACTIONS init
 sleep 1
 echo "Initialize PAINT_ACTIONS: Done"
 

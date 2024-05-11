@@ -44,8 +44,23 @@ RUN \
 RUN \
     WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
     mkdir -p /keiko/storage_init/$WORLD_ADDRESS/config && \
-    cp out_dev/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
-    cp out_dev/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
+    echo $WORLD_ADDRESS && \
+    cp out/dev/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
+    cp out/dev/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
+
+
+RUN \
+    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
+    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    bash scripts/create_genesis.sh dev-pop
+
+RUN \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/manifest.json) && \
+    mkdir -p /keiko/storage_init/$WORLD_ADDRESS/config && \
+    echo $WORLD_ADDRESS && \
+    cp out/dev-pop/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
+    cp out/dev-pop/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
 
 RUN rm -rf /tmp/contracts
 
