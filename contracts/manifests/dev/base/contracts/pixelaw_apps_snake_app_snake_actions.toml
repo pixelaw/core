@@ -1,9 +1,0 @@
-kind = "DojoContract"
-class_hash = "0x3d84c2382ce7e904475309ecb893a4e83596f8ab0965c74d48e8de0d5ddc72a"
-original_class_hash = "0x3d84c2382ce7e904475309ecb893a4e83596f8ab0965c74d48e8de0d5ddc72a"
-base_class_hash = "0x0"
-abi = "manifests/dev/abis/base/contracts/pixelaw_apps_snake_app_snake_actions.json"
-reads = []
-writes = []
-computed = []
-name = "pixelaw::apps::snake::app::snake_actions"
