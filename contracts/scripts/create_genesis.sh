@@ -15,7 +15,7 @@ export PROFILE=${1:-"dev"}
 export TARGET=${1:-"target/${PROFILE}"}
 export STARKNET_RPC="http://127.0.0.1:5050/"
 
-OUT="out_$PROFILE"
+OUT="out/$PROFILE"
 GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT="$OUT/genesis.json"
 KATANA_LOG="$OUT/katana.log"
