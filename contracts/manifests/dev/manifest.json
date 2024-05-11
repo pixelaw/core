@@ -869,10 +869,10 @@
         ]
       }
     ],
-    "address": "0x308cf899b99ecd34b86ceed1d7ee1c1567cec44cff625bb732732a44c41a1b8",
-    "transaction_hash": "0x4cf8192fd2dcb340c74a5f01e046f4e237b5615e1277b6862675d393eea1be3",
+    "address": "0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2",
+    "transaction_hash": "0x427679de7092bfdf6cb0fae6f21f50a3ab19b1369fcfad12217e6eb284dc349",
     "block_number": 3,
-    "seed": "pixelaw",
+    "seed": "dev",
     "metadata": {
       "profile_name": "dev",
       "rpc_url": "http://localhost:5050/"
@@ -889,7 +889,7 @@
   "contracts": [
     {
       "kind": "DojoContract",
-      "address": "0x33742974313ef2d4ac120e3d1e3ff7fe69cb623a81b6ff3ee090a9a1c0b9db5",
+      "address": "0x6718831126e0b2da930598baf8b3ddc2ca70ed0b5270f21843b3efea9150106",
       "class_hash": "0x3f2ac17ac1baf4eafe396e99e81bfef2b6c7d1ce97ec1db01b5085247e9bdd",
       "original_class_hash": "0x3f2ac17ac1baf4eafe396e99e81bfef2b6c7d1ce97ec1db01b5085247e9bdd",
       "base_class_hash": "0x22f3e55b61d86c2ac5239fa3b3b8761f26b9a5c0b5f61ddbd5d756ced498b46",
@@ -1276,7 +1276,7 @@
     },
     {
       "kind": "DojoContract",
-      "address": "0x1e081329d88918dee10cc7018fabec2b33ff19ee8447df623995e9e2889d2aa",
+      "address": "0x30b3bbc42cb5ccc76cd196171d53d681c0019645dca1c1d8bf6c81121e3b336",
       "class_hash": "0x3d84c2382ce7e904475309ecb893a4e83596f8ab0965c74d48e8de0d5ddc72a",
       "original_class_hash": "0x3d84c2382ce7e904475309ecb893a4e83596f8ab0965c74d48e8de0d5ddc72a",
       "base_class_hash": "0x22f3e55b61d86c2ac5239fa3b3b8761f26b9a5c0b5f61ddbd5d756ced498b46",
@@ -1734,7 +1734,7 @@
     },
     {
       "kind": "DojoContract",
-      "address": "0xfeca45f53ef44137f86c109c1d2e32890acc45d0e2830e839c656f7d89789d",
+      "address": "0x2149981b1e5222d2f9521fa9d3d449f044f3178600cac2b8af258b2abd71a85",
       "class_hash": "0x7b2fbc3d6f7c2088c293f04fcc2edec2ff7b8506e76ec80388f4b5b25137206",
       "original_class_hash": "0x7b2fbc3d6f7c2088c293f04fcc2edec2ff7b8506e76ec80388f4b5b25137206",
       "base_class_hash": "0x22f3e55b61d86c2ac5239fa3b3b8761f26b9a5c0b5f61ddbd5d756ced498b46",
