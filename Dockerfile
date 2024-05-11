@@ -26,25 +26,26 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
 RUN apt-get install sqlite3 -y && \
     mkdir -p storage_init/config storage_init/manifests log && \
     touch log/katana.log.json log/torii.log log/bots.log && \
-    mkdir -p /tmp/contracts
+    mkdir -p /tmp/contracts && \
+    mkdir -p /keiko/storage_init/config && \
+    touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
 
 COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts
 
+
 RUN \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    mkdir tmp && \
-    bash scripts/create_genesis.sh
+    bash scripts/create_genesis.sh dev
 
-RUN WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
-    mkdir -p /keiko/storage_init/config && \
-    mkdir -p /keiko/storage_init/manifests &&  \
-    cp tmp/genesis.json /keiko/storage_init/config/genesis.json && \
-    cp tmp/torii.sqlite /keiko/storage_init/torii.sqlite && \
-    touch /keiko/log/katana.log.json && touch /keiko/log/torii.log && touch /keiko/log/bots.log
+RUN \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
+    mkdir -p /keiko/storage_init/$WORLD_ADDRESS/config && \
+    cp out_dev/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
+    cp out_dev/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
 
 RUN rm -rf /tmp/contracts
 

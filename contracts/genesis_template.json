@@ -34,7 +34,7 @@
     "0x01b70dbbbcc7af7ada881c80577618256bb17232e0d574a2f542b1821f610f8b": {
       "publicKey": "0x04a405e8d7eab7a9d726001926817801fc77ef3c733cdcdc8481aa30368b8138",
       "balance": "0xD3C21BCECCEDA1000000",
-      "nonce": "0x1",
+      "nonce": "0x0",
       "storage": {}
     }
   },

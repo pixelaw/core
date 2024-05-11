@@ -8,4 +8,4 @@ last_deployed_world
 web/public/assets/placeholder/pixel-state.png
 **/**/*.log
 **/**/*.sqlite
-contracts/tmp
+contracts/out_*

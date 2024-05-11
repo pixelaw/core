@@ -9,23 +9,31 @@ set -uo pipefail
 #    - starkli
 #    - jq
 ###########################################################
-echo "1"
-export TARGET=${1:-"target/dev"}
+
+
+export PROFILE=${1:-"dev"}
+export TARGET=${1:-"target/${PROFILE}"}
 export STARKNET_RPC="http://127.0.0.1:5050/"
 
+OUT="out_$PROFILE"
 GENESIS_TEMPLATE=genesis_template.json
-GENESIS_OUT=tmp/genesis.json
-KATANA_LOG=tmp/katana.log
-MANIFEST=manifests/dev/manifest.json
-TORII_DB=tmp/torii.sqlite
-TORII_LOG=tmp/torii.log
+GENESIS_OUT="$OUT/genesis.json"
+KATANA_LOG="$OUT/katana.log"
+MANIFEST="manifests/$PROFILE/manifest.json"
+TORII_DB="$OUT/torii.sqlite"
+TORII_LOG="$OUT/torii.log"
 
+# Stop existing katana/torii
+pkill -f katana
+pkill -f torii
+
+# Ensure a clean output dir exist
+rm -rf $OUT
+mkdir -p $OUT
 
 # Clear the target
 rm -rf $TARGET
 
-pkill -f katana
-pkill -f torii
 
 # Start Katana
 katana \
@@ -42,14 +50,27 @@ done
 
 
 # Sozo build
-sozo --offline build
+sozo \
+  --offline \
+  --profile $PROFILE \
+   build
 
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
 
 # Sozo migrate
-sozo --offline migrate plan
-sozo --offline migrate apply
+sozo \
+  --profile $PROFILE \
+  --offline \
+  migrate plan \
+  --name $PROFILE
+
+sozo \
+  --profile $PROFILE \
+  --offline \
+  migrate apply \
+  --name $PROFILE
+
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
@@ -144,8 +165,8 @@ jq \
   --arg parent_hash "$(echo $output | jq -r '.parent_hash')" \
   --arg timestamp "$(echo $output | jq -r '.timestamp')" \
   '.parentHash = $parent_hash | .timestamp = ($timestamp  | tonumber)' \
-  genesis.json > temp.json \
-  && mv temp.json genesis.json
+  $GENESIS_OUT > temp.json \
+  && mv temp.json $GENESIS_OUT
 
 
 
@@ -187,8 +208,6 @@ for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
 done
 
 echo "Populating Torii db"
-# Wipe Torii DB
-rm -f $TORII_DB
 
 # Start Torii
 unset LS_COLORS && torii \
@@ -200,13 +219,17 @@ unset LS_COLORS && torii \
 
 
 # Wait for 5 seconds so torii can process the katana events
+echo "Waiting for Torii db to update"
 sleep 5
 
-# Patch the torii DB
-sqlite3 torii.sqlite  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+echo "Stopping katana and torii"
+pkill -f torii
+pkill -f katana
 
-#echo "killing katana"
-## Kill katana
-#pkill -f katana
+
+# Patch the torii DB
+echo "Patching Torii db"
+sqlite3 $TORII_DB  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+
 
 echo "Done"
