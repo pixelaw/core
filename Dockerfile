@@ -34,7 +34,7 @@ COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts
 
-
+# Generate genesis.json for EMPTY core
 RUN \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
@@ -48,7 +48,7 @@ RUN \
     cp out/dev/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
     cp out/dev/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
 
-
+# Generate genesis.json for POPULATED core
 RUN \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
@@ -62,6 +62,7 @@ RUN \
     cp out/dev-pop/genesis.json /keiko/storage_init/$WORLD_ADDRESS/config/genesis.json && \
     cp out/dev-pop/torii.sqlite /keiko/storage_init/$WORLD_ADDRESS/torii.sqlite
 
+# Wipe temporary contracts folder
 RUN rm -rf /tmp/contracts
 
 WORKDIR /keiko

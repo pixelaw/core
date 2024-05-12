@@ -41,6 +41,7 @@ katana \
   --disable-fee \
   --disable-validate \
   --json-log \
+  --allowed-origins "*" \
  > $KATANA_LOG 2>&1 &
 
 # Wait for logfile to exist and not be empty
@@ -207,6 +208,11 @@ for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
    jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/$(_jq '.name').json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 done
 
+## Painting "HELLO"
+if [ "$PROFILE" == "dev-pop" ]; then
+    ./scripts/paint.sh
+fi
+
 echo "Populating Torii db"
 
 # Start Torii
@@ -214,6 +220,7 @@ unset LS_COLORS && torii \
   --world $WORLD \
   --rpc $STARKNET_RPC \
   --database $TORII_DB \
+  --allowed-origins "*" \
  > $TORII_LOG 2>&1 &
 
 
@@ -223,8 +230,8 @@ echo "Waiting for Torii db to update"
 sleep 5
 
 echo "Stopping katana and torii"
-pkill -f torii
-pkill -f katana
+#pkill -f torii
+#pkill -f katana
 
 
 # Patch the torii DB
