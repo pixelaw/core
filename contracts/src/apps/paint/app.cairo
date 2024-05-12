@@ -143,7 +143,6 @@ mod paint_actions {
             );
         }
 
-
         /// Put color on a certain position
         ///
         /// # Arguments
@@ -172,11 +171,11 @@ mod paint_actions {
 
             // Check if 5 seconds have passed or if the sender is the owner
             // TODO error message confusing, have to split this
-            assert(
-                pixel.owner.is_zero() || (pixel.owner) == player || starknet::get_block_timestamp()
-                    - pixel.timestamp < COOLDOWN_SECS,
-                'Cooldown not over'
-            );
+            // assert(
+            //     pixel.owner.is_zero() || (pixel.owner) == player || starknet::get_block_timestamp()
+            //         - pixel.timestamp < COOLDOWN_SECS,
+            //     'Cooldown not over'
+            // );
 
             if pixel.color == default_params.color {self.fade(default_params);}
             else { self.put_color(default_params); }
@@ -196,7 +195,7 @@ mod paint_actions {
 
           // Load important variables
 
-          let core_actions = get_core_actions(world);
+          let core_actions = get_core_actions(world); 
           let position = default_params.position;
           let player = core_actions.get_player_address( default_params.for_player);
           let system = core_actions.get_system_address( default_params.for_system);
