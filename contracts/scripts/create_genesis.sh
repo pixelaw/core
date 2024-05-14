@@ -38,6 +38,7 @@ rm -rf $TARGET
 # Start Katana
 katana \
   --genesis $GENESIS_TEMPLATE \
+  --invoke-max-steps 4294967295 \
   --disable-fee \
   --disable-validate \
   --json-log \
@@ -208,10 +209,10 @@ for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
    jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/$(_jq '.name').json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 done
 
-## Painting "HELLO"
-if [ "$PROFILE" == "dev-pop" ]; then
-    ./scripts/paint.sh
-fi
+### Painting "HELLO"
+#if [ "$PROFILE" == "dev-pop" ]; then
+#    ./scripts/paint.sh
+#fi
 
 echo "Populating Torii db"
 
