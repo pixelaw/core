@@ -10,17 +10,15 @@ trait IPaintActions<TContractState> {
     fn interact(default_params: DefaultParameters);
     fn put_color(default_params: DefaultParameters);
     fn fade(default_params: DefaultParameters);
-    fn image(
+    fn pixel_row(
         default_params: DefaultParameters,
-        image_width: u32,
-        image_height: u32,
         image_data: Span<felt252>
     );
 }
 
 const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
-const PIXELS_PER_FELT: u8 = 7;
+const PIXELS_PER_FELT: u32 = 7;
 
 /// BASE means using the server's default manifest.json handler
 const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
@@ -169,7 +167,7 @@ mod paint_actions {
 
             // Load important variables
 
-            let core_actions = get_core_actions(world);
+            // let core_actions = get_core_actions(world);
             let position = default_params.position;
             // let player = core_actions.get_player_address(default_params.for_player);
 
@@ -247,14 +245,14 @@ mod paint_actions {
         }
 
 
-        fn image(
-            world: IWorldDispatcher,
-            default_params: DefaultParameters,
-            image_width: u32,
-            image_height: u32,
-            image_data: Span<felt252>
+        fn pixel_row(
+            world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
         ) {
+            // row_length determines how many pixels are in a row
+            // row_offset determines how far to the right the position started. next row will continue (x - offset) to the left
+
             if (image_data.is_empty()) {
+                'image_data empty'.print();
                 return;
             }
             let core_actions = get_core_actions(world);
@@ -265,62 +263,48 @@ mod paint_actions {
             let mut felt_index = 0;
             let mut pixel_index = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
-            let mut y_offset = 0;
             let mut stop = false;
-'first felt'.print();            
+'first felt'.print();
 felt.print();
-            // Outer loop: process the rows
-            while y_offset < image_height && !stop {
-
-                let mut x_offset = 0;
-
-                // Inner loop: process the columns
-                while x_offset < image_width {
-                    // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits are 0 padded.
-                    // TODO this can be optimized, maybe use the leftmost byte for processing instructions?
-                    // We unpack 4 bytes at a time and use them
-
-                    core_actions
-                        .update_pixel(
-                            player,
-                            system,
-                            PixelUpdate {
-                                x: position.x + x_offset,
-                                y: position.y + y_offset,
-                                color: Option::Some(extract(felt.into(), pixel_index)),
-                                timestamp: Option::None,
-                                text: Option::None,
-                                app: Option::Some(system),
-                                owner: Option::Some(player),
-                                action: Option::None // Not using this feature for paint
-                            }
-                        );
-
-                    pixel_index += 1;
-
-                    // Get a new felt if we processed all pixels
-                    if pixel_index == PIXELS_PER_FELT {
-                        pixel_index = 0;
-                        if felt_index == image_data.len() {
-                            // Break if we processed all the image data
-                            stop = true;
-                            break;
-                        } else {
-                            felt_index += 1;
-                            if felt_index < image_data.len() {
-                                felt = (*image_data.at(felt_index)).into();
-                            } else {
-                                stop = true;
-                                break;
-                            }
+            while !stop {
+                // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits are 0 padded.
+                // TODO this can be optimized, maybe use the leftmost byte for processing instructions?
+                // We unpack 4 bytes at a time and use them
+    
+                core_actions
+                    .update_pixel(
+                        player,
+                        system,
+                        PixelUpdate {
+                            x: position.x + pixel_index,
+                            y: position.y,
+                            color: Option::Some(extract(felt.into(), pixel_index % PIXELS_PER_FELT)),
+                            timestamp: Option::None,
+                            text: Option::None,
+                            app: Option::Some(system),
+                            owner: Option::Some(player),
+                            action: Option::None // Not using this feature for paint
                         }
-                    }
+                    );
+    
+                pixel_index += 1;
 
-                    x_offset += 1;
-                };
-                y_offset += 1;
-            };
+                // Get a new felt if we processed all pixels
+                if pixel_index % PIXELS_PER_FELT == 0 {
+
+                    felt_index += 1;
+
+                    if felt_index == image_data.len() {
+                        // Break if we processed all the image data
+                        stop = true;
+                        break;
+                    } else {
+                        felt = (*image_data.at(felt_index)).into();
+                    }
+                }
+            }
         }
+
 
         /// Put color on a certain position
         ///
@@ -415,23 +399,25 @@ felt.print();
     const TWO_POW_192: u256 = 0x1000000000000000000000000000000000000000000000000;
     const TWO_POW_224: u256 = 0x100000000000000000000000000000000000000000000000000000000;
 
-    fn extract(felt: u256, index: u8) -> u32 {
+    fn extract(felt: u256, index: u32) -> u32 {
         let mut result: u32 = 0;
         if index == 0 {
-          result = (felt / TWO_POW_192).try_into().unwrap();
+            result = (felt / TWO_POW_192).try_into().unwrap();
         } else if index == 1 {
             result = ((felt / TWO_POW_160) & MASK_32).try_into().unwrap();
         } else if index == 2 {
-          result = ((felt / TWO_POW_128) & MASK_32).try_into().unwrap();
+            result = ((felt / TWO_POW_128) & MASK_32).try_into().unwrap();
         } else if index == 3 {
-          result = ((felt / TWO_POW_096) & MASK_32).try_into().unwrap();
+            result = ((felt / TWO_POW_096) & MASK_32).try_into().unwrap();
         } else if index == 4 {
-          result = ((felt / TWO_POW_064) & MASK_32).try_into().unwrap();
+            result = ((felt / TWO_POW_064) & MASK_32).try_into().unwrap();
         } else if index == 5 {
-          result = ((felt / TWO_POW_032) & MASK_32).try_into().unwrap();
+            result = ((felt / TWO_POW_032) & MASK_32).try_into().unwrap();
         } else if index == 6 {
-          result = (felt  & MASK_32).try_into().unwrap();
+            result = (felt & MASK_32).try_into().unwrap();
         }
+        result.print();
         result
     }
+
 }
