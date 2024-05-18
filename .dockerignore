@@ -2,5 +2,7 @@
 ./web/node_modules
 ./web/.env
 ./contracts/target
+./contracts/out
+./contracts/manifests
 ./bots/.env
 ./bots/node_modules

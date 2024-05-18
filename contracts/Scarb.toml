@@ -1,14 +1,17 @@
 [package]
-cairo-version = "2.4.0"
+cairo-version = "2.6.3"
 name = "pixelaw"
-version = "0.1.39"
+version = "0.2.20"
 homepage = "https://github.com/pixelaw/core"
+# Use the prelude with the less imports as possible
+# from corelib.
+#edition = "2023_10"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.6.0-alpha.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.2" }
 
 [[target.dojo]]
 build-external-contracts = []
@@ -20,42 +23,29 @@ initializer_class_hash = "0xbeef"
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"
-slot_post_deploy = "./scripts/update_scarb.sh &&  ./scripts/init_auth.sh"
-slot_deploy = "bash ./scripts/slot_deploy.sh"
-post_deploy = "./scripts/update_scarb.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh && bash ./scripts/upload_manifest.sh"
-post_deploy_mac = "./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh &&  ./scripts/init_auth.sh"
-deploy = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
-deploy_mac = "sozo build &&  sozo migrate --name pixelaw && ./scripts/update_scarb_mac.sh && ./scripts/update_accounts.sh && ./scripts/init_auth.sh"
-spawn_pixel_1 = "./scripts/spawn_pixel_1.sh"
-put_color_1 = "./scripts/put_color_1.sh"
-spawn_rps_1 = "./scripts/spawn_rps_1.sh"
-put_rps_1 = "./scripts/put_rps_1.sh"
-simple_test = "./scripts/simple_test.sh"
-get_2 = "./scripts/get_2.sh"
-spawn_pixel_2 = "./scripts/spawn_pixel_2.sh"
-put_color_2 = "./scripts/put_color_2.sh"
-spawn_rps_2 = "./scripts/spawn_rps_2.sh"
-update_accounts = "./scripts/update_accounts.sh"
-upload_manifest = "bash ./scripts/upload_manifest.sh"
-update_scarb = "bash ./scripts/update_scarb.sh"
 
-# Local development
+# The "Empty" world
+# ----------------------------------------------------------------------------
+[profile.dev.tool.dojo.world]
+description = "Empty PixeLAW world"
+name = "empty"
+
 [profile.dev.tool.dojo.env]
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
-#account_address = "0x01b70dbbbcc7af7ada881c80577618256bb17232e0d574a2f542b1821f610f8b"
-#keystore_path = "owner.keystore.json"
-#keystore_password = "xXELSPqtNQ9jckjXFmwVD4Yg5LN79q"
-#world_address = "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
+world_address= "0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2"
 
+# The "Populated" world
+# ----------------------------------------------------------------------------
+[profile.dev-pop.tool.dojo.world]
+description = "Populated PixeLAW world"
+name = "dev-pop"
 
-# demo.pixelaw.xyz
-[profile.demo.tool.dojo.env]
-rpc_url = "https://katana.demo.pixelaw.xyz/"
+[profile.dev-pop.tool.dojo.env]
+rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf"
+world_address = "0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a"
 
 

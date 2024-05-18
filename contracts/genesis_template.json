@@ -28,13 +28,13 @@
     "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486": {
       "publicKey": "0x0640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea",
       "balance": "0xD3C21BCECCEDA1000000",
-      "nonce": "0x1e",
+      "nonce": "0x0",
       "storage": {}
     },
     "0x01b70dbbbcc7af7ada881c80577618256bb17232e0d574a2f542b1821f610f8b": {
       "publicKey": "0x04a405e8d7eab7a9d726001926817801fc77ef3c733cdcdc8481aa30368b8138",
       "balance": "0xD3C21BCECCEDA1000000",
-      "nonce": "0x1",
+      "nonce": "0x0",
       "storage": {}
     }
   },

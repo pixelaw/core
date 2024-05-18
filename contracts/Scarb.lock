@@ -3,8 +3,8 @@ version = 1
 
 [[package]]
 name = "dojo"
-version = "0.5.1"
-source = "git+https://github.com/dojoengine/dojo?tag=v0.6.0-alpha.2#db0c4d783c3626a8d69d5035e2ae352595d86763"
+version = "0.6.0"
+source = "git+https://github.com/dojoengine/dojo?tag=v0.7.0-alpha.2#f648e870fc48d004e770559ab61a3a8537e4624c"
 dependencies = [
  "dojo_plugin",
 ]
@@ -16,7 +16,7 @@ source = "git+https://github.com/dojoengine/dojo?tag=v0.3.11#1e651b5d4d3b79b14a7
 
 [[package]]
 name = "pixelaw"
-version = "0.1.30"
+version = "0.2.20"
 dependencies = [
  "dojo",
 ]

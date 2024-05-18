@@ -9,30 +9,42 @@ set -uo pipefail
 #    - starkli
 #    - jq
 ###########################################################
-echo "1"
-export TARGET=${1:-"target/dev"}
-export STARKNET_RPC="http://localhost:5050/"
 
+
+export PROFILE=${1:-"dev"}
+export TARGET="target/${PROFILE}"
+export STARKNET_RPC="http://127.0.0.1:5050/"
+
+OUT="out/$PROFILE"
 GENESIS_TEMPLATE=genesis_template.json
-GENESIS_OUT=genesis.json
-KATANA_LOG=katana.log
-MANIFEST=$TARGET/manifest.json
-TORII_DB=torii.sqlite
-TORII_LOG=torii.log
+GENESIS_OUT="$OUT/genesis.json"
+KATANA_LOG="$OUT/katana.log"
+KATANA_DB="$OUT/katana_db"
+MANIFEST="manifests/$PROFILE/manifest.json"
+TORII_DB="$OUT/torii.sqlite"
+TORII_LOG="$OUT/torii.log"
 
+# Stop existing katana/torii
+pkill -f katana
+pkill -f torii
+
+# Ensure a clean output dir exist
+rm -rf $OUT
+mkdir -p $OUT
 
 # Clear the target
 rm -rf $TARGET
 
-pkill -f katana
-pkill -f torii
 
 # Start Katana
 katana \
   --genesis $GENESIS_TEMPLATE \
+  --invoke-max-steps 4294967295 \
   --disable-fee \
   --disable-validate \
   --json-log \
+  --db-dir $KATANA_DB \
+  --allowed-origins "*" \
  > $KATANA_LOG 2>&1 &
 
 # Wait for logfile to exist and not be empty
@@ -42,13 +54,27 @@ done
 
 
 # Sozo build
-sozo build
+sozo \
+  --offline \
+  --profile $PROFILE \
+   build
 
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
 
 # Sozo migrate
-sozo migrate --
+sozo \
+  --profile $PROFILE \
+  --offline \
+  migrate plan \
+  --name $PROFILE
+
+sozo \
+  --profile $PROFILE \
+  --offline \
+  migrate apply \
+  --name $PROFILE
+
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
@@ -63,76 +89,91 @@ SNAKE_MODELS=("Snake" "SnakeSegment")
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
     sleep 0.1
-    sozo auth grant writer $model,$CORE_ACTIONS
+    sozo --profile $PROFILE auth grant writer $model,$CORE_ACTIONS
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
     sleep 0.1
-    sozo auth grant writer $model,$SNAKE_ACTIONS
+    sozo --profile $PROFILE auth grant writer $model,$SNAKE_ACTIONS
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
 sleep 0.1
-sozo execute $CORE_ACTIONS init
+sozo --profile $PROFILE execute $CORE_ACTIONS init
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
 sleep 0.1
-sozo execute $SNAKE_ACTIONS init
+sozo --profile $PROFILE execute $SNAKE_ACTIONS init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
 sleep 0.1
-sozo execute $PAINT_ACTIONS init
+sozo --profile $PROFILE execute $PAINT_ACTIONS init
 sleep 1
 echo "Initialize PAINT_ACTIONS: Done"
+
+
+## Populating
+if [ "$PROFILE" == "dev-pop" ]; then
+   echo "Drawing an image"
+    ./scripts/populate.sh
+    sleep 1
+fi
 
 # ---------------------------------------------------
 
 # Get the last block number from the katana log
-last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.message' | grep -oP '(\d+)' | head -n 1)
+echo "Get the last block number from the katana log"
+last_block_number=$(tail -n 1 $KATANA_LOG | jq -r '.fields.block_number')
+
+echo "Last block number: ${last_block_number}"
 
 echo "Generating $GENESIS_OUT"
 # Prep genesis out
 cat $GENESIS_TEMPLATE > $GENESIS_OUT
 
+#
+#echo "Generating contracts in genesis from katana txns"
+### Contracts
+#for i in $(seq 1 $last_block_number)
+#do
+#
+#   output=$(starkli state-update $i)
+#
+#   echo "Process deployed_contracts"
+#   # Process deployed_contracts
+#   length=$(echo $output | jq '.state_diff.deployed_contracts | length')
+#   for j in $(seq 0 $(($length-1)))
+#   do
+#      address=$(echo $output | jq -r ".state_diff.deployed_contracts[$j].address")
+#      class_hash=$(echo $output | jq -r ".state_diff.deployed_contracts[$j].class_hash")
+#      jq --arg addr "$address" --arg class "$class_hash" \
+#         '.contracts[$addr] = {"class": $class}' $GENESIS_OUT > tmp.json && mv tmp.json $GENESIS_OUT
+#   done
+#
+#   # Process storage_diffs
+#   echo "Process storage_diffs"
+#   length=$(echo $output | jq '.state_diff.storage_diffs | length')
+#   for j in $(seq 0 $(($length-1)))
+#   do
+#      address=$(echo $output | jq -r ".state_diff.storage_diffs[$j].address")
+#      entries_length=$(echo $output | jq ".state_diff.storage_diffs[$j].storage_entries | length")
+#      for k in $(seq 0 $(($entries_length-1)))
+#      do
+#         key=$(echo $output | jq -r ".state_diff.storage_diffs[$j].storage_entries[$k].key")
+#         value=$(echo $output | jq -r ".state_diff.storage_diffs[$j].storage_entries[$k].value")
+#         jq --arg addr "$address" --arg key "$key" --arg val "$value" \
+#            '.contracts[$addr].storage[$key] = $val' $GENESIS_OUT > tmp.json && mv tmp.json $GENESIS_OUT
+#      done
+#   done
+#done
 
-echo "Generating contracts in genesis from katana txns"
-## Contracts
-for i in $(seq 1 $last_block_number)
-do
 
-   output=$(starkli state-update $i)
-
-   # Process deployed_contracts
-   length=$(echo $output | jq '.state_diff.deployed_contracts | length')
-   for j in $(seq 0 $(($length-1)))
-   do
-      address=$(echo $output | jq -r ".state_diff.deployed_contracts[$j].address")
-      class_hash=$(echo $output | jq -r ".state_diff.deployed_contracts[$j].class_hash")
-      jq --arg addr "$address" --arg class "$class_hash" \
-         '.contracts[$addr] = {"class": $class}' $GENESIS_OUT > tmp.json && mv tmp.json $GENESIS_OUT
-   done
-
-   # Process storage_diffs
-   length=$(echo $output | jq '.state_diff.storage_diffs | length')
-   for j in $(seq 0 $(($length-1)))
-   do
-      address=$(echo $output | jq -r ".state_diff.storage_diffs[$j].address")
-      entries_length=$(echo $output | jq ".state_diff.storage_diffs[$j].storage_entries | length")
-      for k in $(seq 0 $(($entries_length-1)))
-      do
-         key=$(echo $output | jq -r ".state_diff.storage_diffs[$j].storage_entries[$k].key")
-         value=$(echo $output | jq -r ".state_diff.storage_diffs[$j].storage_entries[$k].value")
-         jq --arg addr "$address" --arg key "$key" --arg val "$value" \
-            '.contracts[$addr].storage[$key] = $val' $GENESIS_OUT > tmp.json && mv tmp.json $GENESIS_OUT
-      done
-   done
-done
 
 echo "Genesis for the last block number"
 output=$(starkli block $last_block_number)
@@ -141,8 +182,8 @@ jq \
   --arg parent_hash "$(echo $output | jq -r '.parent_hash')" \
   --arg timestamp "$(echo $output | jq -r '.timestamp')" \
   '.parentHash = $parent_hash | .timestamp = ($timestamp  | tonumber)' \
-  genesis.json > temp.json \
-  && mv temp.json genesis.json
+  $GENESIS_OUT > temp.json \
+  && mv temp.json $GENESIS_OUT
 
 
 
@@ -183,30 +224,39 @@ for row in $(cat $MANIFEST | jq -r '.models[] | @base64'); do
    jq --arg ch "$class_hash" --slurpfile cc "${TARGET}/$(_jq '.name').json" '.classes += [{"class_hash": $ch, "class": $cc[0]}]' $GENESIS_OUT > $GENESIS_OUT.tmp && mv $GENESIS_OUT.tmp $GENESIS_OUT
 done
 
+
 echo "Populating Torii db"
-# Wipe Torii DB
-rm -f $TORII_DB
 
 # Start Torii
-torii \
+unset LS_COLORS && torii \
   --world $WORLD \
   --rpc $STARKNET_RPC \
   --database $TORII_DB \
+  --events-chunk-size 10000 \
+  --allowed-origins "*" \
  > $TORII_LOG 2>&1 &
 
 
-# Watch the torii log until the last block, then kill it
-echo "torii log"
-tail -f $TORII_LOG | while read LOGLINE
-do
-   [[ "${LOGLINE}" == *"processed block: ${last_block_number}"* ]] && pkill -f "torii"
-done
+
+
+# Wait for 5 seconds so torii can process the katana events
+echo "Waiting for Torii db to update"
+sleep 10
+if [ "$PROFILE" == "dev-pop" ]; then
+    sleep 60
+fi
+
+# TODO properly wait for torii db to be unlocked
+
+
+echo "Stopping katana and torii"
+#pkill -f torii
+#pkill -f katana
+
 
 # Patch the torii DB
-sqlite3 torii.sqlite  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+echo "Patching Torii db"
+sqlite3 $TORII_DB  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
 
-#echo "killing katana"
-## Kill katana
-#pkill -f katana
 
 echo "Done"

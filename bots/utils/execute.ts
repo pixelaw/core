@@ -1,22 +1,30 @@
 // based on dojo execute command
-import { Account, num } from 'starknet'
-const execute = async (account: Account, system: string, selector: string, calldata: num.BigNumberish[]) => {
+import { Account, AllowArray, Call, num } from 'starknet'
+
+let nonce = -1
+const execute = async (account: Account, calls: AllowArray<Call>) => {
   try {
-    const nonce = await account?.getNonce()
-    const { transaction_hash } = await account?.execute(
-      {
-        contractAddress: system,
-        entrypoint: selector,
-        calldata
-      },
+    if (nonce === -1) {
+      nonce = Number(BigInt(await account?.getNonce()))
+    }
+
+
+    // TODO this fails?
+    const {suggestedMaxFee: estimatedFee1} = await account.estimateInvokeFee(
+      calls
+    );
+
+    const {transaction_hash} = await account?.execute(
+      calls,
       undefined,
       {
-        nonce: nonce,
+        nonce: nonce++,
         maxFee: 0 // TODO: Update
       }
     );
-    const result = await account.waitForTransaction(transaction_hash);
-    console.log({result});
+
+    // const result = await account.waitForTransaction(transaction_hash);
+
   } catch (error) {
     console.error('could not execute:', error)
     throw error;

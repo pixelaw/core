@@ -2,11 +2,7 @@
 set -euo pipefail
 pushd $(dirname "$0")/..
 
-# Due to a bug in sozo migrate it now wipes contract addresses in manifest.json when using sozo migrate dev
-# Now using a copy until that is fixed
-cp target/dev/manifest.json target/dev/manifest.copy.json
-
-export TARGET=${1:-"target/dev"}
+export TARGET=${1:-"manifests/dev"}
 export STARKNET_RPC="http://localhost:5050/"
 
 GENESIS_TEMPLATE=genesis_template.json

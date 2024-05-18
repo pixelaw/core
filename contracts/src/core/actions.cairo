@@ -8,7 +8,7 @@ use starknet::{ContractAddress, ClassHash};
 
 const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
-#[starknet::interface]
+#[dojo::interface]
 trait IActions<TContractState> {
     fn init(self: @TContractState);
     fn update_permission(self: @TContractState, for_system: felt252, permission: Permission);
@@ -110,8 +110,8 @@ mod actions {
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         /// Initializes the Pixelaw actions model
-        fn init(self: @ContractState) {
-            let world = self.world_dispatcher.read();
+        fn init(world: IWorldDispatcher) {
+
 
             set!(
                 world,
@@ -121,8 +121,8 @@ mod actions {
 
         /// not performing checks because it's only granting permissions to a system by the caller
         /// it is in the app's responsibility to handle update_permission responsibly
-        fn update_permission(self: @ContractState, for_system: felt252, permission: Permission) {
-            let world = self.world_dispatcher.read();
+        fn update_permission(world: IWorldDispatcher, for_system: felt252, permission: Permission) {
+
             let caller_address = get_caller_address();
 
             // Retrieve the App of the for_system
@@ -140,8 +140,8 @@ mod actions {
         /// * `name` - The new name of the app
         /// * `icon` - unicode hex of the icon of the app
         /// * `manifest` - url to the system's manifest.json
-        fn update_app(self: @ContractState, name: felt252, icon: felt252, manifest: felt252) {
-            let world = self.world_dispatcher.read();
+        fn update_app(world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252) {
+
             let system = get_caller_address();
             let app = self.new_app(system, name, icon, manifest);
             emit!(world, AppNameUpdated { app, caller: system.into() });
@@ -149,14 +149,14 @@ mod actions {
 
 
         fn schedule_queue(
-            self: @ContractState,
+            world: IWorldDispatcher,
             timestamp: u64,
             called_system: ContractAddress,
             selector: felt252,
             calldata: Span<felt252>
         ) {
             'schedule_queue'.print();
-            let world = self.world_dispatcher.read();
+
 
             // TODO Review security
 
@@ -183,7 +183,7 @@ mod actions {
 
 
         fn process_queue(
-            self: @ContractState,
+            world: IWorldDispatcher,
             id: felt252,
             timestamp: u64,
             called_system: ContractAddress,
@@ -191,7 +191,7 @@ mod actions {
             calldata: Span<felt252>
         )  {
             'process_queue'.print();
-            let world = self.world_dispatcher.read();
+
             // A quick check on the timestamp so we know its not too early for this one
             assert(timestamp <= starknet::get_block_timestamp(), 'timestamp still in the future');
 
@@ -226,13 +226,13 @@ mod actions {
         }
 
         fn has_write_access(
-            self: @ContractState,
+            world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel: Pixel,
             pixel_update: PixelUpdate
         ) -> bool {
-            let world = self.world_dispatcher.read();
+
 
             // The originator of the transaction
             let caller_account = get_tx_info().unbox().account_contract_address;
@@ -291,13 +291,13 @@ mod actions {
 
 
         fn update_pixel(
-            self: @ContractState,
+            world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel_update: PixelUpdate
         ) {
             'update_pixel'.print();
-            let world = self.world_dispatcher.read();
+
             let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
             assert(
@@ -359,9 +359,8 @@ mod actions {
 
 
         fn get_player_address(
-            self: @ContractState, for_player: ContractAddress
+            for_player: ContractAddress
         ) -> ContractAddress {
-            let _world = self.world_dispatcher.read();
             if for_player.is_zero() {
                 'get_player_address.zero'.print();
                 let result = get_tx_info().unbox().account_contract_address;
@@ -379,7 +378,7 @@ mod actions {
 
 
         fn get_system_address(
-            self: @ContractState, for_system: ContractAddress
+            for_system: ContractAddress
         ) -> ContractAddress {
 
             if !for_system.is_zero() {
@@ -407,8 +406,8 @@ mod actions {
         /// # Returns
         ///
         /// * `App` - Struct with contractaddress and name fields
-        fn new_app(self: @ContractState, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App {
-            let world = self.world_dispatcher.read();
+        fn new_app(world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App {
+
             // Load app
             let mut app = get!(world, system, (App));
 
@@ -439,16 +438,16 @@ mod actions {
             app
         }
 
-        fn alert_player(self: @ContractState, position: Position, player: ContractAddress, message: felt252) {
-          let world = self.world_dispatcher.read();
+        fn alert_player(world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252) {
+
           let caller = get_caller_address();
           let app = get!(world, caller, (App));
           assert(app.name != '', 'cannot be called by a non-app');
           emit!(world, Alert { position, caller, player, message, timestamp: starknet::get_block_timestamp() });
         }
 
-        fn set_instruction(self: @ContractState, selector: felt252, instruction: felt252) {
-          let world = self.world_dispatcher.read();
+        fn set_instruction(world: IWorldDispatcher, selector: felt252, instruction: felt252) {
+
           let system = get_caller_address();
           let app = get!(world, system, (App));
           assert(app.name != '', 'cannot be called by a non-app');

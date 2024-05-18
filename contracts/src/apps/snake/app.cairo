@@ -47,11 +47,11 @@ struct SnakeSegment {
 }
 
 
-#[starknet::interface]
+#[dojo::interface]
 trait ISnakeActions<TContractState> {
-    fn init(self: @TContractState);
-    fn interact(self: @TContractState, default_params: DefaultParameters, direction: Direction) -> u32;
-    fn move(self: @TContractState, owner: ContractAddress);
+    fn init();
+    fn interact(default_params: DefaultParameters, direction: Direction) -> u32;
+    fn move(owner: ContractAddress);
 }
 
 
@@ -110,28 +110,28 @@ mod snake_actions {
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
       fn on_pre_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ) {
         // do nothing
+       let _world = world;
       }
 
       fn on_post_update(
-        self: @ContractState,
+        world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
       ){
 
-        let core_actions_address = get_core_actions_address(self.world_dispatcher.read());
+        let core_actions_address = get_core_actions_address(world);
         assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
 
         // when the snake is reverting
         if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
           let old_app = pixel_update.app.unwrap();
-          let world = self.world_dispatcher.read();
           let old_app = get!(world, old_app, (App));
           if old_app.name == 'paint' {
             let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
@@ -152,8 +152,8 @@ mod snake_actions {
     // impl: implement functions specified in trait
     #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
-        fn init(self: @ContractState) {
-            let core_actions = get_core_actions(self.world_dispatcher.read());
+        fn init(world: IWorldDispatcher) {
+            let core_actions = get_core_actions(world);
 
             core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
 
@@ -165,9 +165,9 @@ mod snake_actions {
 
 
         // A new snake starts
-        fn interact(self: @ContractState, default_params: DefaultParameters, direction: Direction) -> u32 {
+        fn interact(world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction) -> u32 {
             'snake: interact'.print();
-            let world = self.world_dispatcher.read();
+
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
@@ -262,10 +262,10 @@ mod snake_actions {
             id
         }
 
-        fn move(self: @ContractState, owner: ContractAddress) {
+        fn move(world: IWorldDispatcher, owner: ContractAddress) {
             'snake: move'.print();
-            let world = self.world_dispatcher.read();
-            let core_actions = get_core_actions(self.world_dispatcher.read());
+
+            let core_actions = get_core_actions(world);
 
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));
@@ -416,8 +416,10 @@ mod snake_actions {
 
     // Removes the last segment of the snake and reverts the pixel
     fn remove_last_segment(
-        world: IWorldDispatcher, core_actions: ICoreActionsDispatcher, snake: Snake
+        world: IWorldDispatcher,
+         core_actions: ICoreActionsDispatcher, snake: Snake
     ) -> u32 {
+
         let last_segment = get!(world, (snake.last_segment_id), SnakeSegment);
         let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
 

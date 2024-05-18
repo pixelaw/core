@@ -3,19 +3,26 @@ include .account
 export
 
 REPO = ghcr.io/pixelaw/core
-CORE_VERSION = 0.1.39
-KEIKO_VERSION = v0.1.25
+CORE_VERSION = $(shell cat VERSION)
+DOJO_VERSION = $(shell cat DOJO_VERSION)
 
 
 docker_build:
 	echo $$private_key && \
 	docker build -t $(REPO):$(CORE_VERSION) -t $(REPO):latest \
-	--build-arg KEIKO_VERSION=$(KEIKO_VERSION) \
+	--build-arg DOJO_VERSION=$(DOJO_VERSION) \
 	--secret id=DOJO_KEYSTORE_PASSWORD \
+  --network=host \
 	--progress=plain .
 
 docker_run:
-	docker run -p 3000:3000 -p 5050:5050 -p 8080:8080 $(REPO):$(CORE_VERSION)
+	docker run \
+		--name pixelaw \
+		--rm \
+		-ti \
+		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
+		-e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
+		$(REPO):$(CORE_VERSION)
 
 build:
 	cd contracts;sozo build;
