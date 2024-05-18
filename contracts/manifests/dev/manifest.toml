@@ -22,8 +22,8 @@ name = "dojo::base::base"
 [[contracts]]
 kind = "DojoContract"
 address = "0x6718831126e0b2da930598baf8b3ddc2ca70ed0b5270f21843b3efea9150106"
-class_hash = "0x3f2ac17ac1baf4eafe396e99e81bfef2b6c7d1ce97ec1db01b5085247e9bdd"
-original_class_hash = "0x3f2ac17ac1baf4eafe396e99e81bfef2b6c7d1ce97ec1db01b5085247e9bdd"
+class_hash = "0x704b81c74c4dc917a6696bda8d42a3543cc899e1a230eb187c5399ff90d3859"
+original_class_hash = "0x704b81c74c4dc917a6696bda8d42a3543cc899e1a230eb187c5399ff90d3859"
 base_class_hash = "0x22f3e55b61d86c2ac5239fa3b3b8761f26b9a5c0b5f61ddbd5d756ced498b46"
 abi = "manifests/dev/abis/deployments/contracts/pixelaw_apps_paint_app_paint_actions.json"
 reads = []

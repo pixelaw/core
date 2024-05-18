@@ -21,7 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      - name: Retrieve DOJO_VERSION
+        run: |
+          echo DOJO_VERSION=$(cat DOJO_VERSION) >> "$GITHUB_ENV"
       - name: Set up Depot CLI
         uses: depot/setup-action@v1
 
@@ -48,6 +50,7 @@ jobs:
       - uses: depot/build-push-action@v1
         with:
           context: .
+          build-args: DOJO_VERSION=${{ env.DOJO_VERSION }}
           push: true
 #          FIXME: Currently arm64 is failing on node-gyp compilation
           platforms: linux/amd64,linux/arm64/v8
