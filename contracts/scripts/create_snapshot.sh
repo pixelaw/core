@@ -97,32 +97,28 @@ unset LS_COLORS && torii \
 
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant writer $model,$CORE_ACTIONS
-    sleep 0.2
+    sozo --profile $PROFILE auth grant --wait writer $model,$CORE_ACTIONS
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant writer $model,$SNAKE_ACTIONS
-    sleep 0.2
+    sozo --profile $PROFILE auth grant --wait writer $model,$SNAKE_ACTIONS
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
-sozo --profile $PROFILE execute $CORE_ACTIONS init
-sleep 0.2
+sozo --profile $PROFILE execute --wait $CORE_ACTIONS init
+
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
-sozo --profile $PROFILE execute $SNAKE_ACTIONS init
-sleep 0.2
+sozo --profile $PROFILE execute --wait $SNAKE_ACTIONS init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
-sozo --profile $PROFILE execute $PAINT_ACTIONS init
-sleep 0.2
+sozo --profile $PROFILE execute --wait $PAINT_ACTIONS init
 
 echo "Initialize PAINT_ACTIONS: Done"
 

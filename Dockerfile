@@ -1,20 +1,22 @@
 
 # Stage 4: Install runtime
-FROM node:20-bookworm as dojo
+FROM node:22-bookworm-slim as dojo
 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \
     jq \
-    git-all \
-    build-essential \
+    git \
+    procps \
+#    git-all \
+#    build-essential \
     nano \
     net-tools \
     cargo \
     sqlite3 \
-    zip
-
-RUN apt-get autoremove && apt-get clean
+    curl \
+    zip  && \
+    apt-get autoremove && apt-get clean
 
 #Install Scarb
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh --output install.sh
@@ -66,18 +68,18 @@ COPY ./contracts /tmp/contracts
 WORKDIR /tmp/contracts
 
 ## Generate genesis.json for EMPTY core
-RUN \
-    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
-    echo $WORLD_ADDRESS && \
-    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-    cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-    cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-    cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-    rm -rf out/dev
+#RUN \
+#    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
+#    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+#    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+#    bash scripts/create_snapshot.sh dev && \
+#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
+#    echo $WORLD_ADDRESS && \
+#    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
+#    cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
+#    cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
+#    cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
+#    rm -rf out/dev
 
 
 ## Generate genesis.json for POPULATED core
