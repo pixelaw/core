@@ -1,6 +1,5 @@
 target/
 node_modules/
-keiko_data/
 .idea/
 .env
 deployed.log
@@ -10,3 +9,4 @@ web/public/assets/placeholder/pixel-state.png
 **/**/*.sqlite
 contracts/out
 contracts/manifests
+contracts/target
