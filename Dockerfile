@@ -8,8 +8,6 @@ RUN apt-get update && \
     jq \
     git \
     procps \
-#    git-all \
-#    build-essential \
     nano \
     net-tools \
     cargo \
@@ -97,28 +95,18 @@ RUN \
     rm -rf out/dev-pop
 
 
-
-# Stage 1: Install bots_node_deps
-FROM node:20-bookworm-slim as bots_node_deps
-WORKDIR /app
-COPY /bots/package.json ./package.json
-COPY /bots/yarn.lock ./yarn.lock
-RUN apt-get update && apt-get install -y build-essential python3 && \
-    yarn install --frozen-lockfile
-
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.2.16 AS web_node_builder
+FROM ghcr.io/pixelaw/web:0.3.1 AS web
+
+FROM ghcr.io/pixelaw/server:0.3.2 AS server
 
 
 FROM dojo as runner
 
 WORKDIR /pixelaw
-COPY --from=web_node_builder /app/dist static/
+COPY --from=web /app/dist static/
+COPY --from=server /app server/
 COPY ./startup.sh ./startup.sh
-COPY ./bots ./bots
-COPY ./bots/.env.production ./bots/.env
-COPY --from=bots_node_deps /app/node_modules ./bots/node_modules
-
 COPY --from=builder /pixelaw .
 
 
