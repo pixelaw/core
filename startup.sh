@@ -3,7 +3,7 @@
 # Define the first function (thread)
 function run_bot() {
   mkdir -p log
-  cd bots && npm run dev > ../log/bots.log 2>&1;
+  cd server && npm run dev > ../log/server.log 2>&1;
 }
 
 # Define the second function (thread)
