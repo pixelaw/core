@@ -32,7 +32,6 @@ function run_katana_torii() {
 
   fi
 
-  echo "ready"
   RUST_BACKTRACE=1
 
   echo "Starting Katana"
@@ -56,19 +55,18 @@ function run_katana_torii() {
    > $TORII_LOG 2>&1 &
 
 
+  echo "ready"
 #  tail -f $KATANA_LOG
 
 }
-# expecting
-# 0x38937c85771a65ee96dd2fcd37f28a159b7c9f553c17807fd30feae68506a67,
 
 run_bot &
 
 run_katana_torii
 
 
-wait
-#/bin/bash
+#wait
+/bin/bash
 
 
 

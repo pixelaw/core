@@ -22,7 +22,8 @@ docker_run:
 		-ti \
 		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
 		-e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
-		$(REPO):$(CORE_VERSION)
+		$(REPO):$(CORE_VERSION) \
+		/bin/bash
 
 build:
 	cd contracts;sozo build;
