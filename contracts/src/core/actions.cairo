@@ -144,7 +144,11 @@ mod actions {
 
             let system = get_caller_address();
             let app = self.new_app(system, name, icon, manifest);
-            emit!(world, AppNameUpdated { app, caller: system.into() });
+            emit!(world, (
+                Event::AppNameUpdated(
+                AppNameUpdated { app, caller: system.into() }
+                ))
+            );
         }
 
 
@@ -176,7 +180,11 @@ mod actions {
 
             // Emit the event, so an external scheduler can pick it up
             emit!(
-                world, QueueScheduled { id, timestamp, called_system, selector, calldata: calldata }
+                world,
+                (
+                Event::QueueScheduled(
+                  QueueScheduled { id, timestamp, called_system, selector, calldata: calldata }
+                ))
             );
             'schedule_queue DONE'.print();
         }
@@ -221,7 +229,11 @@ mod actions {
             let _result = starknet::call_contract_syscall(called_system, selector, calldata);
 
             // Tell the offchain schedulers that this one is done
-            emit!(world, QueueProcessed { id });
+            emit!(world, (
+                Event::QueueProcessed(
+                QueueProcessed { id }
+                ))
+            );
             'process_queue DONE'.print();
         }
 
@@ -443,7 +455,11 @@ mod actions {
           let caller = get_caller_address();
           let app = get!(world, caller, (App));
           assert(app.name != '', 'cannot be called by a non-app');
-          emit!(world, Alert { position, caller, player, message, timestamp: starknet::get_block_timestamp() });
+          emit!(world, (
+            Event::Alert(
+            Alert { position, caller, player, message, timestamp: starknet::get_block_timestamp() }
+            ))
+        );
         }
 
         fn set_instruction(world: IWorldDispatcher, selector: felt252, instruction: felt252) {
