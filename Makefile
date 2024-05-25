@@ -21,14 +21,21 @@ docker_run:
 		--rm \
 		-ti \
 		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
-		-e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
+		-e WORLD_ADDRESS=0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2 \
 		$(REPO):$(CORE_VERSION)
+
+docker_bash:
+	docker run \
+		--name pixelaw \
+		--rm \
+		-ti \
+		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
+		-e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
+		$(REPO):$(CORE_VERSION) \
+		/bin/bash
 
 build:
 	cd contracts;sozo build;
-#	cp contracts/target/dev/manifest.json web/src/dojo/manifest.json;
-#	node web/src/generateComponents.cjs;
-#	cp web/src/output.ts web/src/dojo/contractComponents.ts
 
 shell:
 	docker compose exec keiko bash
@@ -36,38 +43,4 @@ shell:
 
 test:
 	cd contracts; sozo test
-
-prep_web:
-	cd web; cp .env.example .env
-
-start_keiko: stop_keiko
-	make build
-	docker compose up -d
-
-restart_keiko: build
-	docker compose down -v && docker compose up -d && docker compose logs -f
-
-stop_keiko:
-	docker compose down
-
-
-redeploy:
-	@cd contracts; \
-	WORLD_ADDR=$$(tail -n1 ../last_deployed_world); \
-	sozo migrate --world $$WORLD_ADDR;
-
-deploy:
-	@cd contracts; \
-	SOZO_OUT="$$(sozo migrate)"; echo "$$SOZO_OUT"; \
-	WORLD_ADDR="$$(echo "$$SOZO_OUT" | grep "Successfully migrated World at address" | rev | cut -d " " -f 1 | rev)"; \
-	[ -n "$$WORLD_ADDR" ] && \
-		echo "$$WORLD_ADDR" > ../last_deployed_world && \
-		echo "$$SOZO_OUT" > ../deployed.log; \
-	WORLD_ADDR=$$(tail -n1 ../last_deployed_world); \
-
-log_katana:
-	docker compose exec keiko tail -f /keiko/log/katana.log.json
-
-log_torii:
-	docker compose exec keiko tail -f /keiko/log/torii.log -n 200
 

@@ -357,7 +357,7 @@ felt.print();
                     }
                 );
 
-            let FADE_SECONDS = 0;
+            let FADE_SECONDS = 4;
 
             // We implement fading by scheduling a new put_fading_color
             let queue_timestamp = starknet::get_block_timestamp() + FADE_SECONDS;
