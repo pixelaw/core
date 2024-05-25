@@ -98,15 +98,18 @@ RUN \
 # Stage 2: Put the webapp files in place
 FROM ghcr.io/pixelaw/web:0.3.1 AS web
 
-FROM ghcr.io/pixelaw/server:0.3.2 AS server
+FROM ghcr.io/pixelaw/server:0.3.7 AS server
 
 
 FROM dojo as runner
+
+RUN yarn global add ts-node
 
 WORKDIR /pixelaw
 COPY --from=web /app/dist static/
 COPY --from=server /app server/
 COPY ./startup.sh ./startup.sh
+COPY ./scripts/.bashrc /root/
 COPY --from=builder /pixelaw .
 
 

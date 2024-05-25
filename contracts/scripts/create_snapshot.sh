@@ -12,6 +12,7 @@ set -uo pipefail
 
 
 export PROFILE=${1:-"dev"}
+export NO_PACKING=${2:-"0"}
 export TARGET="target/${PROFILE}"
 export STARKNET_RPC="http://127.0.0.1:5050/"
 
@@ -43,7 +44,6 @@ katana \
   --genesis $GENESIS_TEMPLATE \
   --invoke-max-steps 4294967295 \
   --disable-fee \
-  --disable-validate \
   --json-log \
   --db-dir $KATANA_DB \
   --allowed-origins "*" \
@@ -150,7 +150,7 @@ jq \
 
 
 
-# ---------------------------------------------------
+
 
 
 # Wait for 5 seconds so torii can process the katana events
@@ -168,6 +168,7 @@ while true; do
     fi
 done
 
+
 sleep 3
 
 echo "Stopping katana and torii"
@@ -178,6 +179,35 @@ pkill -f katana
 # Patch the torii DB
 echo "Patching Torii db"
 sqlite3 $TORII_DB  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+
+
+# ---------------------------------------------------
+if [ "$NO_PACKING" == "1" ]; then
+   echo "Running in dev mode.. not zipping but keeping everything running"
+   # Stop existing katana/torii
+   pkill -f katana
+   pkill -f torii
+
+  katana \
+    --genesis $GENESIS_OUT \
+    --invoke-max-steps 4294967295 \
+    --disable-fee \
+    --block-time 2000 \
+    --json-log \
+    --db-dir $KATANA_DB \
+    --allowed-origins "*" \
+   > $KATANA_LOG 2>&1 &
+
+  unset LS_COLORS && torii \
+    --world $WORLD \
+    --rpc $STARKNET_RPC \
+    --database $TORII_DB \
+    --events-chunk-size 10000 \
+    --allowed-origins "*" \
+   > $TORII_LOG 2>&1 &
+
+   exit
+fi
 
 cd $OUT
 
