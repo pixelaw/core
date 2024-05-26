@@ -54,8 +54,8 @@ yarn --cwd /pixelaw/server server > $SERVER_LOG 2>&1 &
 
 echo "ready"
 
-#wait
-/bin/bash
+wait
+#/bin/bash
 
 
 
