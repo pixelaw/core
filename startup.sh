@@ -1,6 +1,8 @@
 #!/bin/bash
 
  echo $WORLD_ADDRESS
+ echo $SERVER_PORT
+
  export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
  export LOG_DIR="$STORAGE_DIR/log"
  export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
@@ -52,7 +54,8 @@ yarn --cwd /pixelaw/server server > $SERVER_LOG 2>&1 &
 
 echo "ready"
 
-wait
+#wait
+/bin/bash
 
 
 

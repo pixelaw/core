@@ -98,7 +98,7 @@ RUN \
 # Stage 2: Put the webapp files in place
 FROM ghcr.io/pixelaw/web:0.3.1 AS web
 
-FROM ghcr.io/pixelaw/server:0.3.7 AS server
+FROM ghcr.io/pixelaw/server:0.3.10 AS server
 
 
 FROM dojo as runner
