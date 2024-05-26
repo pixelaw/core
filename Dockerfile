@@ -106,11 +106,13 @@ FROM dojo as runner
 RUN yarn global add ts-node
 
 WORKDIR /pixelaw
+COPY --from=builder /root/ /root/
+COPY --from=builder /pixelaw .
 COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
 COPY ./startup.sh ./startup.sh
 COPY ./scripts/.bashrc /root/
-COPY --from=builder /pixelaw .
+COPY ./tools/ /pixelaw/tools/
 
 
 LABEL org.opencontainers.image.description = "PixeLAW core container"
