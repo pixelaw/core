@@ -106,7 +106,7 @@ FROM dojo as runner
 RUN yarn global add ts-node
 
 WORKDIR /pixelaw
-COPY --from=web /app/dist static/
+COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
 COPY ./startup.sh ./startup.sh
 COPY ./scripts/.bashrc /root/
