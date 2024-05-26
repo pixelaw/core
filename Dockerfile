@@ -13,8 +13,11 @@ RUN apt-get update && \
     cargo \
     sqlite3 \
     curl \
+    supervisor \
     zip  && \
     apt-get autoremove && apt-get clean
+
+RUN yarn global add ts-node
 
 #Install Scarb
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh --output install.sh
@@ -103,18 +106,24 @@ FROM ghcr.io/pixelaw/server:0.3.10 AS server
 
 FROM dojo as runner
 
-RUN yarn global add ts-node
-
 WORKDIR /pixelaw
 COPY --from=builder /root/ /root/
 COPY --from=builder /pixelaw .
 COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
+
 COPY ./startup.sh ./startup.sh
+COPY ./supervisord.conf ./supervisord.conf
 COPY ./scripts/.bashrc /root/
 COPY ./tools/ /pixelaw/tools/
 
+RUN mkdir /pixelaw/log
 
 LABEL org.opencontainers.image.description = "PixeLAW core container"
+
+EXPOSE 5050
+EXPOSE 8080
+EXPOSE 3000
+
 CMD ["bash", "./startup.sh"]
 
