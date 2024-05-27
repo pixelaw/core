@@ -64,6 +64,7 @@ COPY ./contracts/Scarb.toml /tmp/dojo_init
 # Run build separately to cache the dojo/scarb dependencies
 RUN cd /tmp/dojo_init && sozo build
 RUN mkdir -p /tmp/contracts
+
 COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts

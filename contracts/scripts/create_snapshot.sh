@@ -11,6 +11,8 @@ set -uo pipefail
 ###########################################################
 
 
+
+
 export PROFILE=${1:-"dev"}
 export NO_PACKING=${2:-"0"}
 export TARGET="target/${PROFILE}"
@@ -30,6 +32,8 @@ TORII_LOG="$OUT/torii.log"
 # Stop existing katana/torii
 pkill -f katana
 pkill -f torii
+
+# TODO Ensure katana and torii are really stopped
 
 # Ensure a clean last_block dir exist
 rm -rf $OUT

@@ -4,5 +4,6 @@
 ./contracts/target
 ./contracts/out
 ./contracts/manifests
-./bots/.env
-./bots/node_modules
+./contracts/.vscode
+
+
