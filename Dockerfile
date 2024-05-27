@@ -85,20 +85,20 @@ RUN \
     rm -rf out/dev
 
 
-### Generate genesis.json for POPULATED core
-#RUN \
-#    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-#    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-#    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-#    bash scripts/create_snapshot.sh dev-pop && \
-#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/manifest.json) && \
-#    echo $WORLD_ADDRESS && \
-#    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-#    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-#    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-#    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-#    rm -rf out/dev-pop
-#
+## Generate genesis.json for POPULATED core
+RUN \
+    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
+    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    bash scripts/create_snapshot.sh dev-pop && \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/manifest.json) && \
+    echo $WORLD_ADDRESS && \
+    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
+    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
+    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
+    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
+    rm -rf out/dev-pop
+
 
 # Stage 2: Put the webapp files in place
 FROM ghcr.io/pixelaw/web:0.3.1 AS web
