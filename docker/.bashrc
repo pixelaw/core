@@ -1,9 +1,4 @@
-#!/bin/bash
 
-echo "World address: $WORLD_ADDRESS"
-echo "Server port: $SERVER_PORT"
-
-cat << EOF >> /root/.bashrc
 export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
 export LOG_DIR="$STORAGE_DIR/log"
 export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
@@ -17,33 +12,14 @@ export SERVER_LOG="$LOG_DIR/server.log"
 export GENESIS="$STORAGE_DIR/genesis.json"
 export STARKNET_RPC="http://localhost:5050"
 export WEB_DIR="/pixelaw/web"
-EOF
 
-source /root/.bashrc
+alias katana_start="/pixelaw/scripts/katana_start.sh"
+alias torii_start="/pixelaw/scripts/torii_start.sh"
+alias server_start="/pixelaw/scripts/server_start.sh"
 
-if [ ! -f "$GENESIS" ]; then
-  mkdir -p $LOG_DIR
-  touch $KATANA_LOG && touch $TORII_LOG
-  unzip $KATANA_DB_ZIP -d $STORAGE_DIR
-  unzip $TORII_DB_ZIP -d $STORAGE_DIR
+alias klog="tail -f $KATANA_LOG"
+alias tlog="tail -f $TORII_LOG"
+alias slog="tail -f $SERVER_LOG"
 
-  cp "$STORAGE_INIT_DIR/genesis.json" $GENESIS
-
-fi
-
-supervisord -c /pixelaw/supervisord.conf
-
-echo "ready"
-
-# If there is no param, wait. Otherwise, it's a devcontainer that will take control.
-if [ -z "$1" ]; then
-  wait
-fi
-
-
-
-
-
-
-
-
+echo "World Address: $WORLD_ADDRESS"
+echo "View logs with klog, tlog and slog commands"
