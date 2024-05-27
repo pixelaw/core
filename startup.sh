@@ -3,23 +3,23 @@
 echo "World address: $WORLD_ADDRESS"
 echo "Server port: $SERVER_PORT"
 
-cat << EOF >> ~/.bashrc
- export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
- export LOG_DIR="$STORAGE_DIR/log"
- export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
- export KATANA_DB_ZIP="$STORAGE_INIT_DIR/katana_db.zip"
- export TORII_DB_ZIP="$STORAGE_INIT_DIR/torii.sqlite.zip"
- export KATANA_DB="$STORAGE_DIR/katana_db"
- export TORII_DB="$STORAGE_DIR/torii.sqlite"
- export KATANA_LOG="$LOG_DIR/katana.log.json"
- export TORII_LOG="$LOG_DIR/torii.log"
- export SERVER_LOG="$LOG_DIR/server.log"
- export GENESIS="$STORAGE_DIR/genesis.json"
- export STARKNET_RPC="http://localhost:5050"
- export WEB_DIR="/pixelaw/web"
+cat << EOF >> /root/.bashrc
+export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
+export LOG_DIR="$STORAGE_DIR/log"
+export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
+export KATANA_DB_ZIP="$STORAGE_INIT_DIR/katana_db.zip"
+export TORII_DB_ZIP="$STORAGE_INIT_DIR/torii.sqlite.zip"
+export KATANA_DB="$STORAGE_DIR/katana_db"
+export TORII_DB="$STORAGE_DIR/torii.sqlite"
+export KATANA_LOG="$LOG_DIR/katana.log.json"
+export TORII_LOG="$LOG_DIR/torii.log"
+export SERVER_LOG="$LOG_DIR/server.log"
+export GENESIS="$STORAGE_DIR/genesis.json"
+export STARKNET_RPC="http://localhost:5050"
+export WEB_DIR="/pixelaw/web"
 EOF
 
-source ~/.bashrc
+source /root/.bashrc
 
 if [ ! -f "$GENESIS" ]; then
   mkdir -p $LOG_DIR
