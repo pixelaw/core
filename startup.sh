@@ -1,8 +1,9 @@
 #!/bin/bash
 
- echo $WORLD_ADDRESS
- echo $SERVER_PORT
+echo "World address: $WORLD_ADDRESS"
+echo "Server port: $SERVER_PORT"
 
+cat << EOF >> ~/.bashrc
  export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
  export LOG_DIR="$STORAGE_DIR/log"
  export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
@@ -14,8 +15,11 @@
  export TORII_LOG="$LOG_DIR/torii.log"
  export SERVER_LOG="$LOG_DIR/server.log"
  export GENESIS="$STORAGE_DIR/genesis.json"
- export STARKNET_RPC="http://0.0.0.0:5050/"
+ export STARKNET_RPC="http://localhost:5050"
  export WEB_DIR="/pixelaw/web"
+EOF
+
+source ~/.bashrc
 
 if [ ! -f "$GENESIS" ]; then
   mkdir -p $LOG_DIR
@@ -27,16 +31,15 @@ if [ ! -f "$GENESIS" ]; then
 
 fi
 
-RUST_BACKTRACE=1
-
 supervisord -c /pixelaw/supervisord.conf
 
 echo "ready"
 
+# If there is no param, wait. Otherwise, it's a devcontainer that will take control.
 if [ -z "$1" ]; then
   wait
 fi
-#/bin/bash
+
 
 
 
