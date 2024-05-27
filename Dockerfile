@@ -114,9 +114,9 @@ COPY --from=builder /pixelaw .
 COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
 
-COPY ./startup.sh ./startup.sh
-COPY ./supervisord.conf ./supervisord.conf
-COPY ./scripts/.bashrc /root/
+COPY docker/scripts/ /pixelaw/scripts/
+COPY docker/supervisord.conf ./supervisord.conf
+COPY docker/.bashrc /root/
 COPY ./tools/ /pixelaw/tools/
 
 RUN mkdir /pixelaw/log
@@ -127,5 +127,5 @@ EXPOSE 5050
 EXPOSE 8080
 EXPOSE 3000
 
-CMD ["bash", "./startup.sh"]
+CMD ["bash", "./scripts/startup.sh"]
 
