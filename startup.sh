@@ -14,7 +14,7 @@
  export TORII_LOG="$LOG_DIR/torii.log"
  export SERVER_LOG="$LOG_DIR/server.log"
  export GENESIS="$STORAGE_DIR/genesis.json"
- export STARKNET_RPC="http://127.0.0.1:5050/"
+ export STARKNET_RPC="http://0.0.0.0:5050/"
  export WEB_DIR="/pixelaw/web"
 
 if [ ! -f "$GENESIS" ]; then
@@ -30,30 +30,6 @@ fi
 RUST_BACKTRACE=1
 
 supervisord -c /pixelaw/supervisord.conf
-#
-#echo "Starting Katana"
-#nohup katana \
-#  --genesis $GENESIS \
-#  --invoke-max-steps 4294967295 \
-#  --disable-fee \
-#  --disable-validate \
-#  --json-log \
-#  --block-time 2000 \
-#  --db-dir $KATANA_DB \
-#  --allowed-origins "*" \
-# > $KATANA_LOG 2>&1 &
-#
-#echo "Starting Torii"
-#unset LS_COLORS && nohup torii \
-#  --world $WORLD_ADDRESS \
-#  --rpc $STARKNET_RPC \
-#  --database $TORII_DB \
-#  --events-chunk-size 10000 \
-#  --allowed-origins "*" \
-# > $TORII_LOG 2>&1 &
-#
-#echo "Starting server"
-#nohup yarn --cwd /pixelaw/server server > $SERVER_LOG 2>&1 &
 
 echo "ready"
 
