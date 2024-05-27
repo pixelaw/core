@@ -15,6 +15,7 @@
  export SERVER_LOG="$LOG_DIR/server.log"
  export GENESIS="$STORAGE_DIR/genesis.json"
  export STARKNET_RPC="http://127.0.0.1:5050/"
+ export WEB_DIR="/pixelaw/web"
 
 if [ ! -f "$GENESIS" ]; then
   mkdir -p $LOG_DIR
