@@ -17,9 +17,9 @@ alias katana_start="/pixelaw/scripts/katana_start.sh"
 alias torii_start="/pixelaw/scripts/torii_start.sh"
 alias server_start="/pixelaw/scripts/server_start.sh"
 
-alias klog="tail -f $KATANA_LOG"
-alias tlog="tail -f $TORII_LOG"
-alias slog="tail -f $SERVER_LOG"
+alias klog="tail -f $KATANA_LOG -n 50"
+alias tlog="tail -f $TORII_LOG -n 50"
+alias slog="tail -f $SERVER_LOG -n 50"
 
 echo "World Address: $WORLD_ADDRESS"
 echo "View logs with klog, tlog and slog commands"
