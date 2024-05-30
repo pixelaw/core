@@ -1,6 +1,6 @@
 echo "Localdeploy"
 
-BASEDIR="/mounted/"
+BASEDIR="./"
 
 APP_NAME=$(grep '^name =' $BASEDIR/Scarb.toml | awk -F'"' '{print $2}')
 PROFILE=dev

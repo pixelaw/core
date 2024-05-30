@@ -17,6 +17,8 @@ alias katana_start="/pixelaw/scripts/katana_start.sh"
 alias torii_start="/pixelaw/scripts/torii_start.sh"
 alias server_start="/pixelaw/scripts/server_start.sh"
 
+alias deploy_local="/pixelaw/tools/local_deploy.sh"
+
 alias klog="tail -f $KATANA_LOG -n 50"
 alias tlog="tail -f $TORII_LOG -n 50"
 alias slog="tail -f $SERVER_LOG -n 50"
