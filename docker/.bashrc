@@ -1,6 +1,6 @@
 
 export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
-export LOG_DIR="$STORAGE_DIR/log"
+export LOG_DIR="/pixelaw/log"
 export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
 export KATANA_DB_ZIP="$STORAGE_INIT_DIR/katana_db.zip"
 export TORII_DB_ZIP="$STORAGE_INIT_DIR/torii.sqlite.zip"
@@ -22,6 +22,8 @@ alias deploy_local="/pixelaw/tools/local_deploy.sh"
 alias klog="tail -f $KATANA_LOG -n 50"
 alias tlog="tail -f $TORII_LOG -n 50"
 alias slog="tail -f $SERVER_LOG -n 50"
+
+alias ll="ls -lah"
 
 echo "World Address: $WORLD_ADDRESS"
 echo "View logs with klog, tlog and slog commands"

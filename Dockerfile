@@ -13,11 +13,10 @@ RUN apt-get update && \
     cargo \
     sqlite3 \
     curl \
-    supervisor \
     zip  && \
     apt-get autoremove && apt-get clean
 
-RUN yarn global add ts-node
+RUN yarn global add ts-node pm2
 
 #Install Scarb
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh --output install.sh
@@ -115,7 +114,7 @@ COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
 
 COPY docker/scripts/ /pixelaw/scripts/
-COPY docker/supervisord.conf ./supervisord.conf
+COPY docker/ecosystem.config.js /pixelaw/core/docker/
 COPY docker/.bashrc /root/
 COPY ./tools/ /pixelaw/tools/
 

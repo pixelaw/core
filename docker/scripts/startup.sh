@@ -10,6 +10,7 @@ sleep 2
 
 if [ ! -f "$GENESIS" ]; then
   mkdir -p $LOG_DIR
+  mkdir -p $STORAGE_DIR
   touch $KATANA_LOG && touch $TORII_LOG
   unzip $KATANA_DB_ZIP -d $STORAGE_DIR
   unzip $TORII_DB_ZIP -d $STORAGE_DIR
@@ -18,14 +19,13 @@ if [ ! -f "$GENESIS" ]; then
 
 fi
 
-supervisord -c /pixelaw/supervisord.conf
+# Start all applications defined in ecosystem.config.js with PM2
+pm2 start /pixelaw/core/docker/ecosystem.config.js
 
 echo "ready"
 
-# If there is no param, wait. Otherwise, it's a devcontainer that will take control.
-if [ -z "$1" ]; then
-  wait
-fi
+# Keep the container running
+tail -f /dev/null
 
 
 
