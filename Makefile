@@ -13,6 +13,7 @@ docker_build:
 	--build-arg DOJO_VERSION=$(DOJO_VERSION) \
 	--secret id=DOJO_KEYSTORE_PASSWORD \
   --network=host \
+   --pull=false \
 	--progress=plain .
 
 docker_run:

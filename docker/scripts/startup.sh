@@ -19,6 +19,8 @@ if [ ! -f "$GENESIS" ]; then
 
 fi
 
+pushd /pixelaw/web && sh vite-envs.sh && popd
+
 # Start all applications defined in ecosystem.config.js with PM2
 pm2 start /pixelaw/core/docker/ecosystem.config.js
 
