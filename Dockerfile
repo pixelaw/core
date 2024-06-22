@@ -13,6 +13,8 @@ RUN apt-get update && \
     cargo \
     sqlite3 \
     curl \
+    build-essential \
+    make \
     zip  && \
     apt-get autoremove && apt-get clean
 
