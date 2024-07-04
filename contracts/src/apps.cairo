@@ -1,2 +1,2 @@
-//mod paint;
-//mod snake;
+mod paint;
+mod snake;

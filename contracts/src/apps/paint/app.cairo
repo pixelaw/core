@@ -6,11 +6,12 @@ use starknet::{get_caller_address, get_contract_address, get_execution_info, Con
 
 #[dojo::interface]
 trait IPaintActions<TContractState> {
-    fn init();
-    fn interact(default_params: DefaultParameters);
-    fn put_color(default_params: DefaultParameters);
-    fn fade(default_params: DefaultParameters);
+    fn init(ref world: IWorldDispatcher);
+    fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters);
+    fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters);
+    fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters);
     fn pixel_row(
+        ref world: IWorldDispatcher,
         default_params: DefaultParameters,
         image_data: Span<felt252>
     );
@@ -111,7 +112,7 @@ mod paint_actions {
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
         fn on_pre_update(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress
@@ -121,7 +122,7 @@ mod paint_actions {
         }
 
         fn on_post_update(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress
@@ -135,7 +136,7 @@ mod paint_actions {
     #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
         /// Initialize the Paint App (TODO I think, do we need this??)
-        fn init(world: IWorldDispatcher) {
+        fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
@@ -162,7 +163,7 @@ mod paint_actions {
         ///
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
-        fn interact(world: IWorldDispatcher, default_params: DefaultParameters) {
+        fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             'interact'.print();
 
             // Load important variables
@@ -199,7 +200,7 @@ mod paint_actions {
         ///
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
-        fn put_color(world: IWorldDispatcher, default_params: DefaultParameters) {
+        fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             'put_color'.print();
 
             // Load important variables
@@ -246,7 +247,7 @@ mod paint_actions {
 
 
         fn pixel_row(
-            world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
+            ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
         ) {
             // row_length determines how many pixels are in a row
             // row_offset determines how far to the right the position started. next row will continue (x - offset) to the left
@@ -270,7 +271,7 @@ felt.print();
                 // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits are 0 padded.
                 // TODO this can be optimized, maybe use the leftmost byte for processing instructions?
                 // We unpack 4 bytes at a time and use them
-    
+
                 core_actions
                     .update_pixel(
                         player,
@@ -286,7 +287,7 @@ felt.print();
                             action: Option::None // Not using this feature for paint
                         }
                     );
-    
+
                 pixel_index += 1;
 
                 // Get a new felt if we processed all pixels
@@ -312,7 +313,7 @@ felt.print();
         ///
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
-        fn fade(world: IWorldDispatcher, default_params: DefaultParameters) {
+        fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             'fade'.print();
 
             let core_actions = get_core_actions(world);
