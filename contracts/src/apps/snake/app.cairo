@@ -112,47 +112,47 @@ mod snake_actions {
     /// BASE means using the server's default manifest.json handler
     const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
 
-    // #[abi(embed_v0)]
-    // impl ActionsInteroperability of IInteroperability<ContractState> {
-    //     fn on_pre_update(
-    //         ref world: IWorldDispatcher,
-    //         pixel_update: PixelUpdate,
-    //         app_caller: App,
-    //         player_caller: ContractAddress
-    //     ) {
-    //         // do nothing
-    //         let _world = world;
-    //     }
+    #[abi(embed_v0)]
+    impl ActionsInteroperability of IInteroperability<ContractState> {
+        fn on_pre_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress
+        ) {
+            // do nothing
+            let _world = world;
+        }
 
-    //     fn on_post_update(
-    //         ref world: IWorldDispatcher,
-    //         pixel_update: PixelUpdate,
-    //         app_caller: App,
-    //         player_caller: ContractAddress
-    //     ) {
-    //         let core_actions_address = get_core_actions_address(world);
-    //         assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
+        fn on_post_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress
+        ) {
+            let core_actions_address = get_core_actions_address(world);
+            assert(core_actions_address == get_caller_address(), 'caller is not core_actions');
 
-    //         // when the snake is reverting
-    //         if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
-    //             let old_app = pixel_update.app.unwrap();
-    //             let old_app = get!(world, old_app, (App));
-    //             if old_app.name == 'paint' {
-    //                 let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
-    //                 let paint_actions = IPaintActionsDispatcher {
-    //                     contract_address: old_app.system
-    //                 };
-    //                 let params = DefaultParameters {
-    //                     for_player: pixel.owner,
-    //                     for_system: old_app.system,
-    //                     position: Position { x: pixel_update.x, y: pixel_update.y },
-    //                     color: pixel_update.color.unwrap()
-    //                 };
-    //                 paint_actions.fade(params);
-    //             }
-    //         }
-    //     }
-    // }
+            // when the snake is reverting
+            if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
+                let old_app = pixel_update.app.unwrap();
+                let old_app = get!(world, old_app, (App));
+                if old_app.name == 'paint' {
+                    let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
+                    let paint_actions = IPaintActionsDispatcher {
+                        contract_address: old_app.system
+                    };
+                    let params = DefaultParameters {
+                        for_player: pixel.owner,
+                        for_system: old_app.system,
+                        position: Position { x: pixel_update.x, y: pixel_update.y },
+                        color: pixel_update.color.unwrap()
+                    };
+                    paint_actions.fade(params);
+                }
+            }
+        }
+    }
 
 
     // impl: implement functions specified in trait
