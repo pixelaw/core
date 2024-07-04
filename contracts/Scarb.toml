@@ -11,7 +11,7 @@ homepage = "https://github.com/pixelaw/core"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.3" }
 
 [[target.dojo]]
 build-external-contracts = []

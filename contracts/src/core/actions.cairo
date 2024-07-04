@@ -10,18 +10,18 @@ const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[dojo::interface]
 trait IActions<TContractState> {
-    fn init(self: @TContractState);
-    fn update_permission(self: @TContractState, for_system: felt252, permission: Permission);
-    fn update_app(self: @TContractState, name: felt252, icon: felt252, manifest: felt252);
+    fn init(ref world: IWorldDispatcher);
+    fn update_permission(ref world: IWorldDispatcher, for_system: felt252, permission: Permission);
+    fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
     fn has_write_access(
-        self: @TContractState,
+        ref world: IWorldDispatcher,
         for_player: ContractAddress,
         for_system: ContractAddress,
         pixel: Pixel,
         pixel_update: PixelUpdate,
     ) -> bool;
     fn process_queue(
-        self: @TContractState,
+        ref world: IWorldDispatcher,
         id: felt252,
         timestamp: u64,
         called_system: ContractAddress,
@@ -29,23 +29,23 @@ trait IActions<TContractState> {
         calldata: Span<felt252>
     );
     fn schedule_queue(
-        self: @TContractState,
+        ref world: IWorldDispatcher,
         timestamp: u64,
         called_system: ContractAddress,
         selector: felt252,
         calldata: Span<felt252>
     );
     fn update_pixel(
-        self: @TContractState,
+        ref world: IWorldDispatcher,
         for_player: ContractAddress,
         for_system: ContractAddress,
         pixel_update: PixelUpdate
     );
-    fn new_app(self: @TContractState, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App;
-    fn get_system_address(self: @TContractState, for_system: ContractAddress) -> ContractAddress;
-    fn get_player_address(self: @TContractState, for_player: ContractAddress) -> ContractAddress;
-    fn alert_player(self: @TContractState, position: Position, player: ContractAddress, message: felt252);
-    fn set_instruction(self: @TContractState, selector: felt252, instruction: felt252);
+    fn new_app(ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App;
+    fn get_system_address(for_system: ContractAddress) -> ContractAddress;
+    fn get_player_address(for_player: ContractAddress) -> ContractAddress;
+    fn alert_player(ref world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252);
+    fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 }
 
 
@@ -110,9 +110,7 @@ mod actions {
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         /// Initializes the Pixelaw actions model
-        fn init(world: IWorldDispatcher) {
-
-
+        fn init(ref world: IWorldDispatcher) {
             set!(
                 world,
                 (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
@@ -121,7 +119,7 @@ mod actions {
 
         /// not performing checks because it's only granting permissions to a system by the caller
         /// it is in the app's responsibility to handle update_permission responsibly
-        fn update_permission(world: IWorldDispatcher, for_system: felt252, permission: Permission) {
+        fn update_permission(ref world: IWorldDispatcher, for_system: felt252, permission: Permission) {
 
             let caller_address = get_caller_address();
 
@@ -140,7 +138,7 @@ mod actions {
         /// * `name` - The new name of the app
         /// * `icon` - unicode hex of the icon of the app
         /// * `manifest` - url to the system's manifest.json
-        fn update_app(world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252) {
+        fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252) {
 
             let system = get_caller_address();
             let app = self.new_app(system, name, icon, manifest);
@@ -153,7 +151,7 @@ mod actions {
 
 
         fn schedule_queue(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             timestamp: u64,
             called_system: ContractAddress,
             selector: felt252,
@@ -191,7 +189,7 @@ mod actions {
 
 
         fn process_queue(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             id: felt252,
             timestamp: u64,
             called_system: ContractAddress,
@@ -238,7 +236,7 @@ mod actions {
         }
 
         fn has_write_access(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel: Pixel,
@@ -303,7 +301,7 @@ mod actions {
 
 
         fn update_pixel(
-            world: IWorldDispatcher,
+            ref world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel_update: PixelUpdate
@@ -418,7 +416,7 @@ mod actions {
         /// # Returns
         ///
         /// * `App` - Struct with contractaddress and name fields
-        fn new_app(world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App {
+        fn new_app(ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252, manifest: felt252) -> App {
 
             // Load app
             let mut app = get!(world, system, (App));
@@ -450,7 +448,7 @@ mod actions {
             app
         }
 
-        fn alert_player(world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252) {
+        fn alert_player(ref world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252) {
 
           let caller = get_caller_address();
           let app = get!(world, caller, (App));
@@ -462,7 +460,7 @@ mod actions {
         );
         }
 
-        fn set_instruction(world: IWorldDispatcher, selector: felt252, instruction: felt252) {
+        fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252) {
 
           let system = get_caller_address();
           let app = get!(world, system, (App));

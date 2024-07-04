@@ -11,7 +11,8 @@ struct Permission {
     action: bool
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct Permissions {
     #[key]
     allowing_app: ContractAddress,

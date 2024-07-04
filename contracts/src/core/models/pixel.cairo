@@ -12,7 +12,8 @@ struct PixelUpdate {
     action: Option<felt252>
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct Pixel {
     // System properties
     #[key]

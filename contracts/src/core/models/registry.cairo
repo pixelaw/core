@@ -6,7 +6,8 @@ use pixelaw::core::actions::{
     IActionsDispatcherTrait as ICoreActionsDispatcherTrait
 };
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct App {
     #[key]
     system: ContractAddress,
@@ -18,7 +19,8 @@ struct App {
     action: felt252
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct AppUser {
     #[key]
     system: ContractAddress,
@@ -29,21 +31,24 @@ struct AppUser {
     // TODO maybe other generic App/User specific settings can go here.
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct AppName {
     #[key]
     name: felt252,
     system: ContractAddress
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct CoreActionsAddress {
     #[key]
     key: felt252,
     value: ContractAddress
 }
 
-#[derive(Model, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct Instruction {
   #[key]
   system: ContractAddress,
