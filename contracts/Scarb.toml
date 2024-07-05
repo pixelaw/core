@@ -34,7 +34,7 @@ name = "empty"
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2"
+world_address= "0x00a712727a27defbf77122fae30c91e90ec62bba8f09a2a396eddc29b768386b"
 
 # The "Populated" world
 # ----------------------------------------------------------------------------
@@ -46,6 +46,6 @@ name = "dev-pop"
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address = "0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a"
+world_address = "0x00a712727a27defbf77122fae30c91e90ec62bba8f09a2a396eddc29b768386b"
 
 
