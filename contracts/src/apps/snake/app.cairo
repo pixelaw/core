@@ -298,19 +298,19 @@ mod snake_actions {
                     );
 
                     // TODO Properly use the delete functionality of Dojo.
-                    set!(
-                        world,
-                        (Snake {
-                            owner: snake.owner,
-                            length: 0,
-                            first_segment_id: 0,
-                            last_segment_id: 0,
-                            direction: Direction::None,
-                            color: 0,
-                            text: Zeroable::zero(),
-                            is_dying: false
-                        })
-                    );
+                    // set!(
+                    //     world,
+                    //     (Snake {
+                    //         owner: snake.owner,
+                    //         length: 0,
+                    //         first_segment_id: 0,
+                    //         last_segment_id: 0,
+                    //         direction: Direction::None,
+                    //         color: 0x000000FF,
+                    //         text: Zeroable::zero(),
+                    //         is_dying: false
+                    //     })
+                    // );
 
                     // // According to answer on
                     // // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
@@ -319,6 +319,7 @@ mod snake_actions {
                     // let mut layout = array![];
                     // Introspect::<Snake>::layout(ref layout);
                     // world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
+                    delete!(world, (snake));
                     return;
                 }
             }
@@ -422,7 +423,7 @@ mod snake_actions {
             // Schedule the next move
             core_actions
                 .schedule_queue(
-                    queue_timestamp, // When to fade next
+                    queue_timestamp, // When to move next
                     THIS_CONTRACT_ADDRESS, // This contract address
                     get_execution_info().unbox().entry_point_selector, // This selector
                     calldata.span() // The calldata prepared
@@ -457,19 +458,21 @@ mod snake_actions {
 
         let result = last_segment.previous_id;
 
-        set!(
-            world,
-            (SnakeSegment {
-                id: snake.last_segment_id,
-                previous_id: 0,
-                next_id: 0,
-                x: 0,
-                y: 0,
-                pixel_original_color: 0,
-                pixel_original_text: 0,
-                pixel_original_app: starknet::contract_address_const::<0x0>()
-            })
-        );
+        delete!(world, (last_segment));
+
+        // set!(
+        //     world,
+        //     (SnakeSegment {
+        //         id: snake.last_segment_id,
+        //         previous_id: 0,
+        //         next_id: 0,
+        //         x: 0,
+        //         y: 0,
+        //         pixel_original_color: 0,
+        //         pixel_original_text: 0,
+        //         pixel_original_app: starknet::contract_address_const::<0x0>()
+        //     })
+        // );
 
         // Return the new last_segment_id for the snake
         result

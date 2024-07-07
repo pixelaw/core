@@ -32,7 +32,7 @@ mod paint_utils {
         if nr >= sub {
             return nr - sub;
         } else {
-            return 0;
+            return 0x000000FF;
         }
     }
 
@@ -74,7 +74,7 @@ mod paint_utils {
 
         let a: u8 = match a {
             Option::Some(a) => a,
-            Option::None => 0,
+            Option::None => 0xFF,
         };
 
         'rgba'.print();
@@ -329,7 +329,7 @@ felt.print();
             // If the color is 0,0,0 , let's stop the process, fading is done.
             if r == 0 && g == 0 && b == 0 {
                 'fading is done'.print();
-
+                delete!(world, (pixel));
                 return;
             }
 
