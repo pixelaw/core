@@ -11,7 +11,7 @@ homepage = "https://github.com/pixelaw/core"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.3" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.0" }
 
 [[target.dojo]]
 build-external-contracts = []
@@ -29,12 +29,15 @@ init_auth = "./scripts/init_auth.sh"
 [profile.dev.tool.dojo.world]
 description = "Empty PixeLAW world"
 name = "empty"
+seed="pixelaw"
+namespace="pixelaw"
 
 [profile.dev.tool.dojo.env]
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x00a712727a27defbf77122fae30c91e90ec62bba8f09a2a396eddc29b768386b"
+world_address= "0x5fab2851a72986222973489f6d448993451d026467c5f5d766db5f3b03598d9"
+
 
 # The "Populated" world
 # ----------------------------------------------------------------------------
