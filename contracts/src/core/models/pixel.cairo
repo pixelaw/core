@@ -20,14 +20,14 @@ struct Pixel {
     x: u32,
     #[key]
     y: u32,
-    created_at: u64,
-    updated_at: u64,
     // User-changeable properties
     app: ContractAddress,
     color: u32,
+    created_at: u64,
+    updated_at: u64,
+    timestamp: u64,
     owner: ContractAddress,
     text: felt252,
-    timestamp: u64,
     action: felt252
 }
 

@@ -84,7 +84,7 @@ RUN \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     bash scripts/create_snapshot.sh dev && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
     echo $WORLD_ADDRESS && \
     mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
     cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
@@ -99,7 +99,7 @@ RUN \
 #    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
 #    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
 #    bash scripts/create_snapshot.sh dev-pop && \
-#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/manifest.json) && \
+#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
 #    echo $WORLD_ADDRESS && \
 #    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
 #    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
