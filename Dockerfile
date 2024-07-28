@@ -88,6 +88,7 @@ RUN \
     echo $WORLD_ADDRESS && \
     mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
     cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
+    cp manifests/dev/deployment/manifest.json /pixelaw/storage_init/$WORLD_ADDRESS/manifest.json && \
     cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
     cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
     rm -rf out/dev
@@ -109,7 +110,7 @@ RUN \
 
 
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.3.9 AS web
+FROM ghcr.io/pixelaw/web:0.3.10 AS web
 
 FROM ghcr.io/pixelaw/server:0.3.19 AS server
 
