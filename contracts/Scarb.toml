@@ -5,18 +5,18 @@ version = "0.0.0"
 homepage = "https://github.com/pixelaw/core"
 # Use the prelude with the less imports as possible
 # from corelib.
-#edition = "2023_10"
+#edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.3" }
 
 [[target.dojo]]
 build-external-contracts = []
 
-[lib]
+#[lib]
 
 [tool.dojo]
 initializer_class_hash = "0xbeef"
@@ -40,7 +40,7 @@ mappings = { }
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x2e87629387c112107273456c087ddb23b1b79b5c91e96e6d8b0a700d845106b"
+world_address= "0x34ca7d43da9ce764e849ca5b4e69134236e32c06944ad409170247a37934509"
 
 
 ## The "Populated" world

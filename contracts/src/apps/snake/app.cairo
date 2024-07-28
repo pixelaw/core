@@ -78,7 +78,7 @@ mod snake_actions {
     use pixelaw::apps::paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait};
     use pixelaw::core::traits::IInteroperability;
 
-    use dojo::database::introspect::Introspect;
+    use dojo::model::introspect::Introspect;
     use pixelaw::core::models::registry::App;
 
     use debug::PrintTrait;
