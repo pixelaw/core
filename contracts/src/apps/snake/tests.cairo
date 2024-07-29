@@ -47,18 +47,18 @@ mod tests {
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
+            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Snake actions
         let snake_actions_address = world
-            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
+            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
         let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
         // Deploy Paint actions
         let paint_actions = IPaintActionsDispatcher {
             contract_address: world
-                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap())
+                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span())
         };
 
         // Setup dojo auth

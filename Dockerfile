@@ -1,6 +1,6 @@
 
 # Stage 4: Install runtime
-FROM node:22-bookworm-slim as dojo
+FROM node:22-bookworm-slim AS dojo
 
 # Install dependencies
 RUN apt-get update && \
@@ -10,7 +10,6 @@ RUN apt-get update && \
     procps \
     nano \
     net-tools \
-    cargo \
     sqlite3 \
     curl \
     build-essential \
@@ -20,12 +19,9 @@ RUN apt-get update && \
 
 RUN yarn global add ts-node pm2
 
-#Install Scarb
-RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh --output install.sh
-RUN chmod +x ./install.sh
-RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
-RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
-ENV PATH="/root/.local/bin:${PATH}"
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 
 ARG DOJO_VERSION
 RUN if [ -z "$DOJO_VERSION" ]; then echo "DOJO_VERSION argument is required" && exit 1; fi
@@ -46,6 +42,12 @@ RUN source ~/.bashrc
 ENV PATH="/root/.starkli/bin:${PATH}"
 RUN starkliup -v 0.1.6
 
+#Install Scarb
+RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.6.4
+#RUN chmod +x ./install.sh
+#RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
+RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
+ENV PATH="/root/.local/bin:${PATH}"
 
 
 
@@ -62,9 +64,13 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
 
 COPY ./dojo_init /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
+COPY ./contracts/Scarb.lock /tmp/dojo_init
 
 # Run build separately to cache the dojo/scarb dependencies
-RUN cd /tmp/dojo_init && sozo build
+
+RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
+    cargo --version && \
+    cd /tmp/dojo_init && sozo build
 RUN mkdir -p /tmp/contracts
 
 COPY ./contracts /tmp/contracts
@@ -73,14 +79,16 @@ WORKDIR /tmp/contracts
 
 ## Generate genesis.json for EMPTY core
 RUN \
+    --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     bash scripts/create_snapshot.sh dev && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/manifest.json) && \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
     echo $WORLD_ADDRESS && \
     mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
     cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
+    cp manifests/dev/deployment/manifest.json /pixelaw/storage_init/$WORLD_ADDRESS/manifest.json && \
     cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
     cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
     rm -rf out/dev
@@ -92,7 +100,7 @@ RUN \
 #    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
 #    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
 #    bash scripts/create_snapshot.sh dev-pop && \
-#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/manifest.json) && \
+#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
 #    echo $WORLD_ADDRESS && \
 #    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
 #    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
@@ -102,12 +110,12 @@ RUN \
 
 
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.3.7 AS web
+FROM ghcr.io/pixelaw/web:0.3.10 AS web
 
-FROM ghcr.io/pixelaw/server:0.3.18 AS server
+FROM ghcr.io/pixelaw/server:0.3.19 AS server
 
 
-FROM dojo as runner
+FROM dojo AS runner
 
 WORKDIR /pixelaw
 COPY --from=builder /root/ /root/
@@ -123,7 +131,7 @@ COPY ./tools/ /pixelaw/tools/
 
 RUN mkdir /pixelaw/log
 
-LABEL org.opencontainers.image.description = "PixeLAW core container"
+LABEL org.opencontainers.image.description="PixeLAW core container"
 
 EXPOSE 5050
 EXPOSE 8080

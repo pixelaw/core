@@ -48,7 +48,7 @@ mod tests {
         let class_hash: ClassHash = actions::TEST_CLASS_HASH.try_into().unwrap();
 
         // deploy systems contract
-        let contract_address = world.deploy_contract(0, class_hash);
+        let contract_address = world.deploy_contract(0, class_hash, array![].span());
 
         let actions_system = IActionsDispatcher { contract_address };
         let id = 0;

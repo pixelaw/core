@@ -24,7 +24,7 @@ GENESIS_OUT="$OUT/genesis.json"
 KATANA_LOG="$OUT/katana.log"
 KATANA_DB="$OUT/katana_db"
 KATANA_DB_ZIP="$OUT/katana_db.zip"
-MANIFEST="manifests/$PROFILE/manifest.json"
+MANIFEST="manifests/$PROFILE/deployment/manifest.json"
 TORII_DB="$OUT/torii.sqlite"
 TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
@@ -59,6 +59,7 @@ while ! test -s $KATANA_LOG; do
 done
 
 
+sozo clean
 # Sozo build
 sozo \
   --profile $PROFILE \
@@ -66,25 +67,19 @@ sozo \
 
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
-
 # Sozo migrate
 sozo \
   --profile $PROFILE \
-  migrate plan \
-  --name $PROFILE
+  migrate plan
 
 sozo \
   --profile $PROFILE \
-  migrate apply \
-  --name $PROFILE
+  migrate apply
 
 sleep 1
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
-declare "CORE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::core::actions::actions") | .address')
-declare "PAINT_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::apps::paint::app::paint_actions") | .address')
-declare "SNAKE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.name=="pixelaw::apps::snake::app::snake_actions") | .address')
 
 CORE_MODELS=("App" "AppName" "CoreActionsAddress" "Pixel" "Permissions" "QueueItem")
 SNAKE_MODELS=("Snake" "SnakeSegment")
@@ -99,30 +94,39 @@ unset LS_COLORS && torii \
  > $TORII_LOG 2>&1 &
 
 
+#Usage: sozo auth grant owner [OPTIONS] <resource,owner_address>...
+#
+#Arguments:
+#  <resource,owner_address>...
+#          A list of resources and owners to grant ownership to.
+#          Comma separated values to indicate resource identifier and owner address.
+#          A resource identifier must use the following format: <contract|c|namespace|ns|model|m>:<tag_or_name>.
+#
+
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant --wait writer $model,$CORE_ACTIONS
+    sozo --profile $PROFILE auth grant --wait writer model:$model,pixelaw-actions
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant --wait writer $model,$SNAKE_ACTIONS
+    sozo --profile $PROFILE auth grant --wait writer model:$model,pixelaw-snake_actions
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
-echo "Initialize CORE_ACTIONS : $CORE_ACTIONS"
-sozo --profile $PROFILE execute --wait $CORE_ACTIONS init
+echo "Initialize CORE_ACTIONS"
+sozo --profile $PROFILE execute --wait pixelaw-actions init
 
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
-sozo --profile $PROFILE execute --wait $SNAKE_ACTIONS init
+sozo --profile $PROFILE execute --wait pixelaw-snake_actions init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
-sozo --profile $PROFILE execute --wait $PAINT_ACTIONS init
+sozo --profile $PROFILE execute --wait pixelaw-paint_actions init
 
 echo "Initialize PAINT_ACTIONS: Done"
 

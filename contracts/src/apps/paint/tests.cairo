@@ -4,9 +4,7 @@ mod tests {
     use debug::PrintTrait;
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use pixelaw::core::models::registry::{
-        app, app_name, core_actions_address
-    };
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
@@ -39,24 +37,26 @@ mod tests {
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
+            .deploy_contract(
+                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Paint actions
         let paint_actions_address = world
-            .deploy_contract('salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
+            .deploy_contract(
+                'salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
         // Setup dojo auth
-        world.grant_writer('Pixel',core_actions_address);
-        world.grant_writer('App',core_actions_address);
-        world.grant_writer('AppName',core_actions_address);
-        world.grant_writer('CoreActionsAddress',core_actions_address);
-        world.grant_writer('Permissions',core_actions_address);
+        world.grant_writer('Pixel', core_actions_address);
+        world.grant_writer('App', core_actions_address);
+        world.grant_writer('AppName', core_actions_address);
+        world.grant_writer('CoreActionsAddress', core_actions_address);
+        world.grant_writer('Permissions', core_actions_address);
 
-        world.grant_writer('Game',paint_actions_address);
-        world.grant_writer('Player',paint_actions_address);
-
+        world.grant_writer('QueueItem', paint_actions_address);
 
         (world, core_actions, paint_actions)
     }
@@ -84,7 +84,7 @@ mod tests {
                     color: color
                 },
             );
-        
+
         let pixel_1_1 = get!(world, (1, 1), (Pixel));
         assert(pixel_1_1.color == color, 'should be the color');
 

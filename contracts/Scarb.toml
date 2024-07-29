@@ -1,22 +1,22 @@
 [package]
-cairo-version = "2.6.3"
+cairo-version = "=2.7.0-rc.3"
 name = "pixelaw"
 version = "0.0.0"
 homepage = "https://github.com/pixelaw/core"
 # Use the prelude with the less imports as possible
 # from corelib.
-#edition = "2023_10"
+#edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.3" }
 
 [[target.dojo]]
 build-external-contracts = []
 
-[lib]
+#[lib]
 
 [tool.dojo]
 initializer_class_hash = "0xbeef"
@@ -26,26 +26,33 @@ init_auth = "./scripts/init_auth.sh"
 
 # The "Empty" world
 # ----------------------------------------------------------------------------
-[profile.dev.tool.dojo.world]
+[tool.dojo.world]
 description = "Empty PixeLAW world"
-name = "empty"
+name = "pixelaw"
+seed="pixelaw"
 
-[profile.dev.tool.dojo.env]
+[tool.dojo.world.namespace]
+default = "pixelaw"
+mappings = { }
+
+
+[tool.dojo.env]
 rpc_url = "http://localhost:5050/"
 account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address= "0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2"
-
-# The "Populated" world
-# ----------------------------------------------------------------------------
-[profile.dev-pop.tool.dojo.world]
-description = "Populated PixeLAW world"
-name = "dev-pop"
-
-[profile.dev-pop.tool.dojo.env]
-rpc_url = "http://localhost:5050/"
-account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
-private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address = "0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a"
+world_address= "0x34ca7d43da9ce764e849ca5b4e69134236e32c06944ad409170247a37934509"
 
 
+## The "Populated" world
+## ----------------------------------------------------------------------------
+#[profile.dev-pop.tool.dojo.world]
+#description = "Populated PixeLAW world"
+#name = "dev-pop"
+#
+#[profile.dev-pop.tool.dojo.env]
+#rpc_url = "http://localhost:5050/"
+#account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
+#private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
+#world_address = "0x00a712727a27defbf77122fae30c91e90ec62bba8f09a2a396eddc29b768386b"
+#
+#

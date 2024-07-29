@@ -10,14 +10,14 @@ enum Direction {
     Down: (),
 }
 
-#[derive(Copy, Drop, Serde, SerdeLen)]
+#[derive(Copy, Drop, Serde)]
 struct Position {
     x: u32,
     y: u32
 }
 
 
-#[derive(Copy, Drop, Serde, SerdeLen)]
+#[derive(Copy, Drop, Serde)]
 struct DefaultParameters {
     for_player: ContractAddress,
     for_system: ContractAddress,
