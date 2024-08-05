@@ -1,7 +1,7 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::Position;
 
 use starknet::{ContractAddress, ClassHash};

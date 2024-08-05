@@ -21,5 +21,3 @@ struct Permissions {
     // The permissions
     permission: Permission
 }
-
-
