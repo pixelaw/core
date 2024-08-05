@@ -11,7 +11,7 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
 
-    use dojo::test_utils::{spawn_test_world, deploy_contract};
+    use dojo::utils::test::{spawn_test_world, deploy_contract};
 
     use pixelaw::apps::snake::app::{
         snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
@@ -34,6 +34,7 @@ mod tests {
 
         // Deploy World and models
         let world = spawn_test_world(
+            "pixelaw",
             array![
                 pixel::TEST_CLASS_HASH,
                 app::TEST_CLASS_HASH,

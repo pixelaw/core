@@ -12,7 +12,7 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
 
-    use dojo::test_utils::{spawn_test_world, deploy_contract};
+    use dojo::utils::test::{spawn_test_world, deploy_contract};
 
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
@@ -24,6 +24,7 @@ mod tests {
     fn deploy_world() -> (IWorldDispatcher, IActionsDispatcher, IPaintActionsDispatcher) {
         // Deploy World and models
         let world = spawn_test_world(
+            "pixelaw",
             array![
                 pixel::TEST_CLASS_HASH,
                 // game::TEST_CLASS_HASH,
