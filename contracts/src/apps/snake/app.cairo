@@ -158,7 +158,6 @@ mod snake_actions {
     // impl: implement functions specified in trait
     #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
-
         fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
@@ -313,12 +312,14 @@ mod snake_actions {
                     // );
 
                     // // According to answer on
-                    // // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
+                    // //
+                    // https://discord.com/channels/1062934010722005042/1062934060898459678/1182202590260363344
                     // // This is the right approach, but it doesnt seem to work.
                     // let snake_owner_felt: felt252 = snake.owner.into();
                     // let mut layout = array![];
                     // Introspect::<Snake>::layout(ref layout);
-                    // world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(), layout.span());
+                    // world.delete_entity('Snake'.into(), array![snake_owner_felt.into()].span(),
+                    // layout.span());
                     delete!(world, (snake));
                     return;
                 }
@@ -383,7 +384,7 @@ mod snake_actions {
                     } else {
                         snake.length = snake.length + 1;
                     }
-                // We leave the tail as is
+                    // We leave the tail as is
 
                 } else {
                     'snake shrinks'.print();

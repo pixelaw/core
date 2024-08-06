@@ -48,18 +48,24 @@ mod tests {
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
+            .deploy_contract(
+                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Snake actions
         let snake_actions_address = world
-            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
+            .deploy_contract(
+                'salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
         // Deploy Paint actions
         let paint_actions = IPaintActionsDispatcher {
             contract_address: world
-                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span())
+                .deploy_contract(
+                    'salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+                )
         };
 
         // Setup dojo auth
@@ -216,7 +222,6 @@ mod tests {
         // Move up to 4,0
         snake_actions.move(player1);
 
-
         // Ran into 4,! - it should die
         snake_actions.move(player1);
 
@@ -232,7 +237,5 @@ mod tests {
 
         assert(get!(world, (4, 0), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,0');
         assert(get!(world, (4, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,1');
-
-
     }
 }
