@@ -28,17 +28,11 @@ jobs:
           scarb-version: "2.7.0"
       - run: |
           scarb fmt --check
-  dojo-core-test:
+  core-test:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/dojoengine/dojo-dev:e1c9597
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dojo-bins
-          path: /tmp/bins
       - uses: actions/checkout@v3
+      - uses: asdf-vm/actions/plugins-add@v3
       - run: |
-          chmod +x /tmp/bins/sozo
-          /tmp/bins/sozo build
-          /tmp/bins/sozo test
+          asdf global dojo 1.0.0-alpha.4
+          sozo test
