@@ -30,4 +30,3 @@ struct Pixel {
     text: felt252,
     action: felt252
 }
-

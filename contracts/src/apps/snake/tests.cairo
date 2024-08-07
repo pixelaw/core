@@ -11,7 +11,7 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
 
-    use dojo::test_utils::{spawn_test_world, deploy_contract};
+    use dojo::utils::test::{spawn_test_world, deploy_contract};
 
     use pixelaw::apps::snake::app::{
         snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
@@ -34,6 +34,7 @@ mod tests {
 
         // Deploy World and models
         let world = spawn_test_world(
+            "pixelaw",
             array![
                 pixel::TEST_CLASS_HASH,
                 app::TEST_CLASS_HASH,
@@ -47,18 +48,24 @@ mod tests {
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
+            .deploy_contract(
+                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Snake actions
         let snake_actions_address = world
-            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span());
+            .deploy_contract(
+                'salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
         let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
         // Deploy Paint actions
         let paint_actions = IPaintActionsDispatcher {
             contract_address: world
-                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span())
+                .deploy_contract(
+                    'salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+                )
         };
 
         // Setup dojo auth
@@ -215,7 +222,6 @@ mod tests {
         // Move up to 4,0
         snake_actions.move(player1);
 
-
         // Ran into 4,! - it should die
         snake_actions.move(player1);
 
@@ -231,7 +237,5 @@ mod tests {
 
         assert(get!(world, (4, 0), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,0');
         assert(get!(world, (4, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 4,1');
-
-
     }
 }

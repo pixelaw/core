@@ -96,8 +96,8 @@ fn get_position(direction: Direction, position: Position) -> Position {
     }
 }
 
-use pixelaw::core::actions::{IActionsDispatcher,IActionsDispatcherTrait, CORE_ACTIONS_KEY};
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};
+use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 /// Returns the PixeLAW Core actions as Dispatcher, ready to use
 fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
     let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
@@ -105,6 +105,6 @@ fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
 }
 
 fn get_core_actions(world: IWorldDispatcher) -> IActionsDispatcher {
-  let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
-  IActionsDispatcher { contract_address: address.value }
+    let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
+    IActionsDispatcher { contract_address: address.value }
 }

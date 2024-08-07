@@ -4,7 +4,7 @@ mod tests {
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-    use dojo::test_utils::{spawn_test_world, deploy_contract};
+    use dojo::utils::test::{spawn_test_world, deploy_contract};
 
     use pixelaw::core::models::app::{app, app_name};
     use pixelaw::core::models::color::color;
@@ -43,7 +43,7 @@ mod tests {
             color::TEST_CLASS_HASH,
         ];
         // deploy world with models
-        let world = spawn_test_world(models);
+        let world = spawn_test_world("pixelaw", models);
 
         let class_hash: ClassHash = actions::TEST_CLASS_HASH.try_into().unwrap();
 

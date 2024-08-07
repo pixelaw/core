@@ -11,9 +11,7 @@ trait IPaintActions<TContractState> {
     fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters);
     fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters);
     fn pixel_row(
-        ref world: IWorldDispatcher,
-        default_params: DefaultParameters,
-        image_data: Span<felt252>
+        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
     );
 }
 
@@ -182,7 +180,8 @@ mod paint_actions {
             // Check if 5 seconds have passed or if the sender is the owner
             // TODO error message confusing, have to split this
             // assert(
-            //     pixel.owner.is_zero() || (pixel.owner) == player || starknet::get_block_timestamp()
+            //     pixel.owner.is_zero() || (pixel.owner) == player ||
+            //     starknet::get_block_timestamp()
             //         - pixel.timestamp < COOLDOWN_SECS,
             //     'Cooldown not over'
             // );
@@ -247,10 +246,13 @@ mod paint_actions {
 
 
         fn pixel_row(
-            ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
+            ref world: IWorldDispatcher,
+            default_params: DefaultParameters,
+            image_data: Span<felt252>
         ) {
             // row_length determines how many pixels are in a row
-            // row_offset determines how far to the right the position started. next row will continue (x - offset) to the left
+            // row_offset determines how far to the right the position started. next row will
+            // continue (x - offset) to the left
 
             if (image_data.is_empty()) {
                 'image_data empty'.print();
@@ -265,11 +267,13 @@ mod paint_actions {
             let mut pixel_index = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
             let mut stop = false;
-'first felt'.print();
-felt.print();
+            'first felt'.print();
+            felt.print();
             while !stop {
-                // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits are 0 padded.
-                // TODO this can be optimized, maybe use the leftmost byte for processing instructions?
+                // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits
+                // are 0 padded.
+                // TODO this can be optimized, maybe use the leftmost byte for processing
+                // instructions?
                 // We unpack 4 bytes at a time and use them
 
                 core_actions
@@ -279,7 +283,9 @@ felt.print();
                         PixelUpdate {
                             x: position.x + pixel_index,
                             y: position.y,
-                            color: Option::Some(extract(felt.into(), pixel_index % PIXELS_PER_FELT)),
+                            color: Option::Some(
+                                extract(felt.into(), pixel_index % PIXELS_PER_FELT)
+                            ),
                             timestamp: Option::None,
                             text: Option::None,
                             app: Option::Some(system),
@@ -292,7 +298,6 @@ felt.print();
 
                 // Get a new felt if we processed all pixels
                 if pixel_index % PIXELS_PER_FELT == 0 {
-
                     felt_index += 1;
 
                     if felt_index == image_data.len() {
@@ -420,5 +425,4 @@ felt.print();
         result.print();
         result
     }
-
 }

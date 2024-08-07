@@ -7,5 +7,3 @@ struct QueueItem {
     id: felt252,
     valid: bool
 }
-
-

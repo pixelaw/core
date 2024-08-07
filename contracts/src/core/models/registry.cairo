@@ -50,13 +50,9 @@ struct CoreActionsAddress {
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 struct Instruction {
-  #[key]
-  system: ContractAddress,
-  #[key]
-  selector: felt252,
-  instruction: felt252
+    #[key]
+    system: ContractAddress,
+    #[key]
+    selector: felt252,
+    instruction: felt252
 }
-
-
-
-
