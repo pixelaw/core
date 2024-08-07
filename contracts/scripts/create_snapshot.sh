@@ -61,20 +61,27 @@ done
 
 sozo clean
 # Sozo build
+echo "sozo build"
+
 sozo \
   --profile $PROFILE \
+  --manifest-path Scarb_deploy.toml \
    build
-
+echo "sozo migrate plan"
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
-# Sozo migrate
+## Sozo migrate
 sozo \
   --profile $PROFILE \
-  migrate plan
+  --manifest-path Scarb_deploy.toml \
+  migrate \
+  plan
 
 sozo \
   --profile $PROFILE \
-  migrate apply
+  --manifest-path Scarb_deploy.toml \
+  migrate \
+  apply
 
 sleep 1
 
