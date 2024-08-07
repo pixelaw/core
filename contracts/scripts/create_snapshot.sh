@@ -28,6 +28,7 @@ MANIFEST="manifests/$PROFILE/deployment/manifest.json"
 TORII_DB="$OUT/torii.sqlite"
 TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
+DEPLOY_SCARB="Scarb_deploy.toml"
 
 # Stop existing katana/torii
 pkill -f katana
@@ -65,7 +66,7 @@ echo "sozo build"
 
 sozo \
   --profile $PROFILE \
-  --manifest-path Scarb_deploy.toml \
+  --manifest-path $DEPLOY_SCARB \
    build
 echo "sozo migrate plan"
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
@@ -73,13 +74,13 @@ echo "sozo migrate plan"
 ## Sozo migrate
 sozo \
   --profile $PROFILE \
-  --manifest-path Scarb_deploy.toml \
+  --manifest-path $DEPLOY_SCARB \
   migrate \
   plan
 
 sozo \
   --profile $PROFILE \
-  --manifest-path Scarb_deploy.toml \
+  --manifest-path $DEPLOY_SCARB \
   migrate \
   apply
 
@@ -112,28 +113,28 @@ unset LS_COLORS && torii \
 
 echo "Write permissions for CORE_ACTIONS"
 for model in ${CORE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant --wait writer model:$model,pixelaw-actions
+    sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE auth grant --wait writer model:$model,pixelaw-actions
 done
 echo "Write permissions for CORE_ACTIONS: Done"
 
 echo "Write permissions for SNAKE_ACTIONS"
 for model in ${SNAKE_MODELS[@]}; do
-    sozo --profile $PROFILE auth grant --wait writer model:$model,pixelaw-snake_actions
+    sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE auth grant --wait writer model:$model,pixelaw-snake_actions
 done
 echo "Write permissions for SNAKE_ACTIONS: Done"
 
 
 echo "Initialize CORE_ACTIONS"
-sozo --profile $PROFILE execute --wait pixelaw-actions init
+sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait pixelaw-actions init
 
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
-sozo --profile $PROFILE execute --wait pixelaw-snake_actions init
+sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait pixelaw-snake_actions init
 echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
-sozo --profile $PROFILE execute --wait pixelaw-paint_actions init
+sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait pixelaw-paint_actions init
 
 echo "Initialize PAINT_ACTIONS: Done"
 
