@@ -1,0 +1,32 @@
+name: ci-contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "contracts/**"
+
+defaults:
+  run:
+    working-directory: contracts
+
+jobs:
+  sozo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: curl -L https://install.dojoengine.org | bash
+      - run: /home/runner/.config/.dojo/bin/dojoup -v v0.7.0-alpha.4
+      - run: |
+          scarb fmt --check
+          /home/runner/.config/.dojo/bin/sozo test
+          /home/runner/.config/.dojo/bin/sozo build
+          if [[ `git status --porcelain` ]]; then
+            echo The git repo is dirty
+            echo "Make sure to run \"sozo build\" after changing Scarb.toml"
+            exit 1
+          fi

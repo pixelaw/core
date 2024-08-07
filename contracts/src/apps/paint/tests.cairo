@@ -47,8 +47,9 @@ mod tests {
         let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
         let namespace: ByteArray = "pixelaw";
-        let pixelByteArray:ByteArray = "Pixel";
-        world.grant_writer(selector_from_names(@namespace, @pixelByteArray), core_actions_address);
+        let pixel_model_name: ByteArray = "Pixel";
+        world
+            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
 
         (world, core_actions, paint_actions)
     }

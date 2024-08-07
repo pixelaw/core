@@ -74,9 +74,16 @@ mod tests {
         let snake_model_name: ByteArray = "Snake";
         let snake_segment_model_name: ByteArray = "SnakeSegment";
 
-        world.grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
-        world.grant_writer(selector_from_names(@namespace, @snake_model_name), snake_actions_address);
-        world.grant_writer(selector_from_names(@namespace, @snake_segment_model_name), snake_actions_address);
+        world
+            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
+        world
+            .grant_writer(
+                selector_from_names(@namespace, @snake_model_name), snake_actions_address
+            );
+        world
+            .grant_writer(
+                selector_from_names(@namespace, @snake_segment_model_name), snake_actions_address
+            );
 
         (world, core_actions, snake_actions, paint_actions)
     }
