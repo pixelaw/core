@@ -15,6 +15,15 @@ defaults:
     working-directory: contracts
 
 jobs:
+  cairofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.7.0"
+      - run: |
+          scarb fmt --check
   sozo-test:
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +31,6 @@ jobs:
       - run: curl -L https://install.dojoengine.org | bash
       - run: /home/runner/.config/.dojo/bin/dojoup -v v0.7.0-alpha.4
       - run: |
-          /home/runner/.config/.dojo/bin/scarb fmt --check
           /home/runner/.config/.dojo/bin/sozo test
           /home/runner/.config/.dojo/bin/sozo build
           if [[ `git status --porcelain` ]]; then
