@@ -14,6 +14,10 @@ defaults:
   run:
     working-directory: contracts
 
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.79.0
+
 jobs:
   cairofmt:
     runs-on: ubuntu-latest
