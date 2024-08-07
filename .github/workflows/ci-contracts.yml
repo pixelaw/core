@@ -28,23 +28,7 @@ jobs:
           scarb-version: "2.7.0"
       - run: |
           scarb fmt --check
-  build:
-    runs-on: ubuntu-latest-4-cores
-    steps:
-      - uses: actions/checkout@v3
-      - uses: Swatinem/rust-cache@v2
-      - run: |
-          cargo build -r --bin katana
-          cargo build -r --bin sozo
-          mkdir -p bins
-          cp ./target/release/katana bins/
-          cp ./target/release/sozo bins/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dojo-bins
-          path: bins
   dojo-core-test:
-    needs: build
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/dojoengine/dojo-dev:e1c9597
@@ -56,4 +40,5 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           chmod +x /tmp/bins/sozo
-          /tmp/bins/sozo --manifest-path crates/dojo-core/Scarb.toml test
+          /tmp/bins/sozo build
+          /tmp/bins/sozo test
