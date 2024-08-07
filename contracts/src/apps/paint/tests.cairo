@@ -11,8 +11,8 @@ mod tests {
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-
     use dojo::utils::test::{spawn_test_world, deploy_contract};
+    use dojo::utils::{selector_from_names};
 
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
@@ -23,18 +23,14 @@ mod tests {
     // Helper function: deploys world and actions
     fn deploy_world() -> (IWorldDispatcher, IActionsDispatcher, IPaintActionsDispatcher) {
         // Deploy World and models
-        let world = spawn_test_world(
-            "pixelaw",
-            array![
-                pixel::TEST_CLASS_HASH,
-                // game::TEST_CLASS_HASH,
-                // player::TEST_CLASS_HASH,
-                app::TEST_CLASS_HASH,
-                app_name::TEST_CLASS_HASH,
-                core_actions_address::TEST_CLASS_HASH,
-                permissions::TEST_CLASS_HASH,
-            ]
-        );
+        let mut models = array![
+            pixel::TEST_CLASS_HASH,
+            app::TEST_CLASS_HASH,
+            app_name::TEST_CLASS_HASH,
+            core_actions_address::TEST_CLASS_HASH,
+            permissions::TEST_CLASS_HASH,
+        ];
+        let world = spawn_test_world("pixelaw", models);
 
         // Deploy Core actions
         let core_actions_address = world
@@ -50,14 +46,9 @@ mod tests {
             );
         let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
-        // Setup dojo auth
-        world.grant_writer('Pixel', core_actions_address);
-        world.grant_writer('App', core_actions_address);
-        world.grant_writer('AppName', core_actions_address);
-        world.grant_writer('CoreActionsAddress', core_actions_address);
-        world.grant_writer('Permissions', core_actions_address);
-
-        world.grant_writer('QueueItem', paint_actions_address);
+        let namespace: ByteArray = "pixelaw";
+        let pixelByteArray:ByteArray = "Pixel";
+        world.grant_writer(selector_from_names(@namespace, @pixelByteArray), core_actions_address);
 
         (world, core_actions, paint_actions)
     }

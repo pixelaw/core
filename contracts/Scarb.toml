@@ -17,8 +17,8 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.4" }
 name = "pixelaw"
 path = "src/lib.cairo"
 
-[[target.dojo]]
-build-external-contracts = [  ]
+# [[target.dojo]]
+# build-external-contracts = [  ]
 
 
 [tool.dojo]
