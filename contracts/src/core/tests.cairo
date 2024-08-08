@@ -4,23 +4,16 @@ mod tests {
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{pixel};
+    use pixelaw::core::models::permissions::{permissions};
+    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+    use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use dojo::utils::test::{spawn_test_world, deploy_contract};
-
-    use pixelaw::core::models::app::{app, app_name};
-    use pixelaw::core::models::color::color;
-    use pixelaw::core::models::actions_model::actions_model;
-    use pixelaw::core::models::alert::alert;
-    use pixelaw::core::models::owner::owner;
-    use pixelaw::core::models::owner::Owner;
-    use pixelaw::core::models::permission::permission;
-    use pixelaw::core::models::app::app;
-    use pixelaw::core::models::app::PixelType;
-    use pixelaw::core::models::position::Position;
-    use pixelaw::core::models::text::text;
-    use pixelaw::core::models::timestamp::timestamp;
-    use pixelaw::core::models::timestamp::Timestamp;
-
-    use super::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use dojo::utils::{selector_from_names};
+    use poseidon::poseidon_hash_span;
 
     const SPAWN_PIXEL_ENTRYPOINT: felt252 =
         0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
@@ -28,30 +21,21 @@ mod tests {
     #[test]
     #[available_gas(30000000)]
     fn test_process_queue() {
-        let caller = starknet::contract_address_const::<0x0>();
-
-        // models
         let mut models = array![
+            pixel::TEST_CLASS_HASH,
             app::TEST_CLASS_HASH,
             app_name::TEST_CLASS_HASH,
-            actions_model::TEST_CLASS_HASH,
-            owner::TEST_CLASS_HASH,
-            permission::TEST_CLASS_HASH,
-            app::TEST_CLASS_HASH,
-            timestamp::TEST_CLASS_HASH,
-            text::TEST_CLASS_HASH,
-            color::TEST_CLASS_HASH,
+            core_actions_address::TEST_CLASS_HASH,
+            permissions::TEST_CLASS_HASH,
         ];
-        // deploy world with models
         let world = spawn_test_world("pixelaw", models);
 
-        let class_hash: ClassHash = actions::TEST_CLASS_HASH.try_into().unwrap();
+        let core_actions_address = world
+            .deploy_contract(
+                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+            );
 
-        // deploy systems contract
-        let contract_address = world.deploy_contract(0, class_hash, array![].span());
-
-        let actions_system = IActionsDispatcher { contract_address };
-        let id = 0;
+        let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         let position = Position { x: 0, y: 0 };
 
@@ -60,21 +44,29 @@ mod tests {
         position.serialize(ref calldata);
         calldata.append('snake');
         calldata.append(0);
+        let id = poseidon_hash_span(
+            array![
+                0.into(),
+                core_actions_address.into(),
+                SPAWN_PIXEL_ENTRYPOINT.into(),
+                poseidon_hash_span(calldata.span())
+            ]
+                .span()
+        );
 
-        actions_system.process_queue(id, contract_address, SPAWN_PIXEL_ENTRYPOINT, calldata.span());
+        core_actions
+            .process_queue(id, 0, core_actions_address, SPAWN_PIXEL_ENTRYPOINT, calldata.span());
 
-        let (owner, app, timestamp) = get!(world, (position).into(), (Owner, PixelType, Timestamp));
+        let pixel = get!(world, (position).into(), (Pixel));
 
         // check timestamp
         assert(
-            timestamp.created_at == starknet::get_block_timestamp(),
-            'incorrect timestamp.created_at'
+            pixel.created_at == starknet::get_block_timestamp(), 'incorrect timestamp.created_at'
         );
         assert(
-            timestamp.updated_at == starknet::get_block_timestamp(),
-            'incorrect timestamp.updated_at'
+            pixel.updated_at == starknet::get_block_timestamp(), 'incorrect timestamp.updated_at'
         );
-        assert(timestamp.x == position.x, 'incorrect timestamp.x');
-        assert(timestamp.y == position.y, 'incorrect timestamp.y');
+        assert(pixel.x == position.x, 'incorrect timestamp.x');
+        assert(pixel.y == position.y, 'incorrect timestamp.y');
     }
 }

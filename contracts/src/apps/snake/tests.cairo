@@ -3,7 +3,7 @@ mod tests {
     use starknet::class_hash::Felt252TryIntoClassHash;
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
@@ -12,6 +12,7 @@ mod tests {
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
 
     use dojo::utils::test::{spawn_test_world, deploy_contract};
+    use dojo::utils::{selector_from_names};
 
     use pixelaw::apps::snake::app::{
         snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
@@ -33,18 +34,17 @@ mod tests {
         let _player1 = starknet::contract_address_const::<0x1337>();
 
         // Deploy World and models
-        let world = spawn_test_world(
-            "pixelaw",
-            array![
-                pixel::TEST_CLASS_HASH,
-                app::TEST_CLASS_HASH,
-                app_name::TEST_CLASS_HASH,
-                core_actions_address::TEST_CLASS_HASH,
-                permissions::TEST_CLASS_HASH,
-                snake::TEST_CLASS_HASH,
-                snake_segment::TEST_CLASS_HASH,
-            ]
-        );
+        let mut models = array![
+            pixel::TEST_CLASS_HASH,
+            app::TEST_CLASS_HASH,
+            app_name::TEST_CLASS_HASH,
+            core_actions_address::TEST_CLASS_HASH,
+            permissions::TEST_CLASS_HASH,
+            snake::TEST_CLASS_HASH,
+            snake_segment::TEST_CLASS_HASH,
+            instruction::TEST_CLASS_HASH,
+        ];
+        let world = spawn_test_world("pixelaw", models);
 
         // Deploy Core actions
         let core_actions_address = world
@@ -69,14 +69,21 @@ mod tests {
         };
 
         // Setup dojo auth
-        world.grant_writer('Pixel', core_actions_address);
-        world.grant_writer('App', core_actions_address);
-        world.grant_writer('AppName', core_actions_address);
-        world.grant_writer('CoreActionsAddress', core_actions_address);
-        world.grant_writer('Permissions', core_actions_address);
+        let namespace: ByteArray = "pixelaw";
+        let pixel_model_name: ByteArray = "Pixel";
+        let snake_model_name: ByteArray = "Snake";
+        let snake_segment_model_name: ByteArray = "SnakeSegment";
 
-        world.grant_writer('Snake', snake_actions_address);
-        world.grant_writer('SnakeSegment', snake_actions_address);
+        world
+            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
+        world
+            .grant_writer(
+                selector_from_names(@namespace, @snake_model_name), snake_actions_address
+            );
+        world
+            .grant_writer(
+                selector_from_names(@namespace, @snake_segment_model_name), snake_actions_address
+            );
 
         (world, core_actions, snake_actions, paint_actions)
     }

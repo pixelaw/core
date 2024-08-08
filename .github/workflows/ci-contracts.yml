@@ -1,0 +1,40 @@
+name: ci-contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "contracts/**"
+
+defaults:
+  run:
+    working-directory: contracts
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.79.0
+
+jobs:
+  cairofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.7.0"
+      - run: |
+          scarb fmt --check
+  core-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: asdf-vm/actions/setup@v3
+      - run: |
+          asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
+          asdf install dojo 1.0.0-alpha.4
+          asdf global dojo 1.0.0-alpha.4
+          sozo test
