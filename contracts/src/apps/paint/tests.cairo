@@ -11,11 +11,10 @@ mod tests {
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-    use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
+    use dojo::utils::test::{spawn_test_world};
 
     use pixelaw::apps::paint::app::{
-        actions as paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
 
     use zeroable::Zeroable;

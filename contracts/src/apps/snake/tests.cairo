@@ -13,15 +13,13 @@ mod tests {
         actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
     };
 
-    use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
+    use dojo::utils::test::{spawn_test_world};
 
     use pixelaw::apps::snake::app::{
-        actions as snake_actions, snake, snake_segment, ISnakeActionsDispatcher,
-        ISnakeActionsDispatcherTrait
+        snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
     };
     use pixelaw::apps::paint::app::{
-        actions as paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::apps::snake::app::{Snake};
 
@@ -89,7 +87,6 @@ mod tests {
 
         core_actions.init();
         snake_actions.init();
-        paint_actions.init();
 
         // Setup players
         let player1 = starknet::contract_address_const::<0x1337>();
@@ -191,6 +188,8 @@ mod tests {
         // snake_actions.move(player1);
 
         // Spawn the snake again at 3,1 so it grows from the paint at 4,1
+        println!("====== BEFORE ======");
+        get!(world, (3, 1), Pixel).color.print();
         snake_actions
             .interact(
                 DefaultParameters {
@@ -201,6 +200,8 @@ mod tests {
                 },
                 Direction::Right
             );
+        println!("====== AFTER ======");
+        get!(world, (3, 1), Pixel).color.print();
         assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 3,1');
 
         // Moved to 4,1, it should now grow

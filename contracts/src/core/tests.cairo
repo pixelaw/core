@@ -12,7 +12,6 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
     use poseidon::poseidon_hash_span;
 
     const SPAWN_PIXEL_ENTRYPOINT: felt252 =
