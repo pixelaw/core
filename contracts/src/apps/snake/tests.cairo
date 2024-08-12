@@ -9,7 +9,9 @@ mod tests {
     use pixelaw::core::models::pixel::{pixel};
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
-    use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use pixelaw::core::actions::{
+        actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
+    };
 
     use dojo::utils::test::{spawn_test_world, deploy_contract};
     use dojo::utils::{selector_from_names};
@@ -50,7 +52,7 @@ mod tests {
         // Deploy Core actions
         let core_actions_address = world
             .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
+                'salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
             );
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
@@ -70,21 +72,9 @@ mod tests {
         };
 
         // Setup dojo auth
-        let namespace: ByteArray = "pixelaw";
-        let pixel_model_name: ByteArray = "Pixel";
-        let snake_model_name: ByteArray = "Snake";
-        let snake_segment_model_name: ByteArray = "SnakeSegment";
-
-        world
-            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
-        world
-            .grant_writer(
-                selector_from_names(@namespace, @snake_model_name), snake_actions_address
-            );
-        world
-            .grant_writer(
-                selector_from_names(@namespace, @snake_segment_model_name), snake_actions_address
-            );
+        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
 
         (world, core_actions, snake_actions, paint_actions)
     }
@@ -99,6 +89,7 @@ mod tests {
 
         core_actions.init();
         snake_actions.init();
+        paint_actions.init();
 
         // Setup players
         let player1 = starknet::contract_address_const::<0x1337>();
