@@ -15,7 +15,7 @@ mod tests {
     use dojo::utils::{selector_from_names};
 
     use pixelaw::apps::paint::app::{
-        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+        actions as paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
 
     use zeroable::Zeroable;

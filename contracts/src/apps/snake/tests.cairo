@@ -15,10 +15,11 @@ mod tests {
     use dojo::utils::{selector_from_names};
 
     use pixelaw::apps::snake::app::{
-        snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
+        actions as snake_actions, snake, snake_segment, ISnakeActionsDispatcher,
+        ISnakeActionsDispatcherTrait
     };
     use pixelaw::apps::paint::app::{
-        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+        actions as paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::apps::snake::app::{Snake};
 

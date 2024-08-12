@@ -85,8 +85,8 @@ mod paint_utils {
     }
 }
 
-#[dojo::contract]
-mod paint_actions {
+#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+mod actions {
     use starknet::{
         get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress
     };

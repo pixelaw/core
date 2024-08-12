@@ -13,7 +13,7 @@ struct PixelUpdate {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
 struct Pixel {
     // System properties
     #[key]

@@ -1,7 +1,7 @@
 use starknet::{ContractAddress, ClassHash};
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
 struct QueueItem {
     #[key]
     id: felt252,

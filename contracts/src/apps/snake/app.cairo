@@ -21,7 +21,7 @@ fn next_position(x: u32, y: u32, direction: Direction) -> Option<(u32, u32)> {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
 struct Snake {
     #[key]
     owner: ContractAddress,
@@ -35,7 +35,7 @@ struct Snake {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
 struct SnakeSegment {
     #[key]
     id: u32,
@@ -59,8 +59,8 @@ trait ISnakeActions<TContractState> {
 }
 
 
-#[dojo::contract]
-mod snake_actions {
+#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+mod actions {
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_execution_info};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 

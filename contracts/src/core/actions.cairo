@@ -57,7 +57,7 @@ trait IActions<TContractState> {
 }
 
 
-#[dojo::contract]
+#[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod actions {
     use starknet::{
         ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info

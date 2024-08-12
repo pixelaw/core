@@ -12,7 +12,7 @@ struct Permission {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
 struct Permissions {
     #[key]
     allowing_app: ContractAddress,
