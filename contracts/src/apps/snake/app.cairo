@@ -61,7 +61,10 @@ trait ISnakeActions<TContractState> {
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod snake_actions {
-    use starknet::{ContractAddress, get_caller_address, get_contract_address, get_execution_info, contract_address_const};
+    use starknet::{
+        ContractAddress, get_caller_address, get_contract_address, get_execution_info,
+        contract_address_const
+    };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 
     use super::{Snake, SnakeSegment};
