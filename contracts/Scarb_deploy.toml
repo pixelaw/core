@@ -3,9 +3,7 @@ cairo-version = "=2.7.0"
 name = "pixelaw"
 version = "0.3.36"
 homepage = "https://github.com/pixelaw/core"
-# Use the prelude with the less imports as possible
-# from corelib.
-# edition = "2024_07"
+edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
@@ -17,9 +15,6 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.5" }
 [[target.dojo]]
 build-external-contracts = [  ]
 path = "../contracts/src/lib.cairo"
-
-[tool.dojo]
-initializer_class_hash = "0xbeef"
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"

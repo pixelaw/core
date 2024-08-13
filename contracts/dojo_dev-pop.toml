@@ -1,6 +1,7 @@
 [world]
 description = "Populated PixeLAW world"
 name = "dev-pop"
+seed = 'dev-pop'
 
 [namespace]
 default = "pixelaw"
