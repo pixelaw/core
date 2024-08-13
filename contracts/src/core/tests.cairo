@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::{ClassHash, Felt252TryIntoClassHash};
+  use starknet::class_hash::{ClassHash, Felt252TryIntoClassHash};
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
@@ -12,7 +12,7 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use poseidon::poseidon_hash_span;
+    use core::poseidon::poseidon_hash_span;
 
     const SPAWN_PIXEL_ENTRYPOINT: felt252 =
         0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;

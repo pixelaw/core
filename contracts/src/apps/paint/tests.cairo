@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use starknet::class_hash::Felt252TryIntoClassHash;
-    use debug::PrintTrait;
+    use core::debug::PrintTrait;
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address};
@@ -17,7 +17,8 @@ mod tests {
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
 
-    use zeroable::Zeroable;
+    use core::zeroable::Zeroable;
+
 
     // Helper function: deploys world and actions
     fn deploy_world() -> (IWorldDispatcher, IActionsDispatcher, IPaintActionsDispatcher) {

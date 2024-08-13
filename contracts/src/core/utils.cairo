@@ -12,17 +12,17 @@ pub enum Direction {
 
 #[derive(Copy, Drop, Serde)]
 pub struct Position {
-    x: u32,
-    y: u32
+    pub x: u32,
+    pub y: u32
 }
 
 
 #[derive(Copy, Drop, Serde)]
 pub struct DefaultParameters {
-    for_player: ContractAddress,
-    for_system: ContractAddress,
-    position: Position,
-    color: u32
+    pub for_player: ContractAddress,
+    pub for_system: ContractAddress,
+    pub position: Position,
+    pub color: u32
 }
 
 
@@ -41,7 +41,7 @@ const U32_MAX: u32 = 0xFFFFFFFF;
 
 
 /// Computes the starknet keccak to have a hash that fits in one felt.
-fn starknet_keccak(data: Span<felt252>) -> felt252 {
+pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
     let mut u256_data: Array<u256> = array![];
 
     let mut i = 0_usize;
@@ -62,7 +62,7 @@ fn starknet_keccak(data: Span<felt252>) -> felt252 {
 }
 
 
-fn get_position(direction: Direction, position: Position) -> Position {
+pub fn get_position(direction: Direction, position: Position) -> Position {
     match direction {
         Direction::None => { position },
         Direction::Left => {
@@ -99,12 +99,12 @@ fn get_position(direction: Direction, position: Position) -> Position {
 use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 /// Returns the PixeLAW Core actions as Dispatcher, ready to use
-fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
+pub fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
     let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
     address.value
 }
 
-fn get_core_actions(world: IWorldDispatcher) -> IActionsDispatcher {
+pub fn get_core_actions(world: IWorldDispatcher) -> IActionsDispatcher {
     let address = get_core_actions_address(world);
     IActionsDispatcher { contract_address: address }
 }

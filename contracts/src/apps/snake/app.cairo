@@ -22,30 +22,30 @@ fn next_position(x: u32, y: u32, direction: Direction) -> Option<(u32, u32)> {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct Snake {
+pub struct Snake {
     #[key]
-    owner: ContractAddress,
-    length: u8,
-    first_segment_id: u32,
-    last_segment_id: u32,
-    direction: Direction,
-    color: u32,
-    text: felt252,
-    is_dying: bool
+    pub owner: ContractAddress,
+    pub length: u8,
+    pub first_segment_id: u32,
+    pub last_segment_id: u32,
+    pub direction: Direction,
+    pub color: u32,
+    pub text: felt252,
+    pub is_dying: bool
 }
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct SnakeSegment {
+pub struct SnakeSegment {
     #[key]
-    id: u32,
-    previous_id: u32,
-    next_id: u32,
-    x: u32,
-    y: u32,
-    pixel_original_color: u32,
-    pixel_original_text: felt252,
-    pixel_original_app: ContractAddress
+    pub id: u32,
+    pub previous_id: u32,
+    pub next_id: u32,
+    pub x: u32,
+    pub y: u32,
+    pub pixel_original_color: u32,
+    pub pixel_original_text: felt252,
+    pub pixel_original_app: ContractAddress
 }
 
 

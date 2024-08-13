@@ -23,9 +23,8 @@ mod tests {
     };
     use pixelaw::apps::snake::app::{Snake};
 
-    use debug::PrintTrait;
-
-    use zeroable::Zeroable;
+    use core::debug::PrintTrait;
+    use core::zeroable::Zeroable;
 
 
     // Helper function: deploys world and actions

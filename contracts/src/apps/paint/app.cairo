@@ -23,8 +23,7 @@ const PIXELS_PER_FELT: u32 = 7;
 const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
 mod paint_utils {
-    use debug::PrintTrait;
-
+    use core::debug::PrintTrait;
 
     fn subu8(nr: u8, sub: u8) -> u8 {
         if nr >= sub {

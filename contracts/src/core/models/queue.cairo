@@ -4,6 +4,6 @@ use starknet::{ContractAddress, ClassHash};
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
 pub struct QueueItem {
     #[key]
-    id: felt252,
-    valid: bool
+    pub id: felt252,
+    pub valid: bool
 }
