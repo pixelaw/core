@@ -8,7 +8,7 @@ use pixelaw::core::actions::{
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct App {
+pub struct App {
     #[key]
     system: ContractAddress,
     name: felt252,
@@ -21,7 +21,7 @@ struct App {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct AppUser {
+pub struct AppUser {
     #[key]
     system: ContractAddress,
     #[key]
@@ -33,7 +33,7 @@ struct AppUser {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct AppName {
+pub struct AppName {
     #[key]
     name: felt252,
     system: ContractAddress
@@ -41,7 +41,7 @@ struct AppName {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct CoreActionsAddress {
+pub struct CoreActionsAddress {
     #[key]
     key: felt252,
     value: ContractAddress
@@ -49,7 +49,7 @@ struct CoreActionsAddress {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct Instruction {
+pub struct Instruction {
     #[key]
     system: ContractAddress,
     #[key]

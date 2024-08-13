@@ -6,10 +6,10 @@ use pixelaw::core::utils::Position;
 
 use starknet::{ContractAddress, ClassHash};
 
-const CORE_ACTIONS_KEY: felt252 = 'core_actions';
+pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[dojo::interface]
-trait IActions<TContractState> {
+pub trait IActions<TContractState> {
     fn init(ref world: IWorldDispatcher);
     fn update_permission(ref world: IWorldDispatcher, for_system: felt252, permission: Permission);
     fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
@@ -58,7 +58,7 @@ trait IActions<TContractState> {
 
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
-mod actions {
+pub mod actions {
     use starknet::{
         ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info
     };

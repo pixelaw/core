@@ -1,4 +1,4 @@
-mod permissions;
-mod registry;
-mod pixel;
-mod queue;
+pub mod permissions;
+pub mod registry;
+pub mod pixel;
+pub mod queue;

@@ -4,7 +4,7 @@ use pixelaw::core::models::registry::App;
 use starknet::ContractAddress;
 
 #[dojo::interface]
-trait IInteroperability<TContractState> {
+pub trait IInteroperability<TContractState> {
     fn on_pre_update(
         ref world: IWorldDispatcher,
         pixel_update: PixelUpdate,

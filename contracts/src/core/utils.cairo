@@ -2,7 +2,7 @@ use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_addr
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 #[derive(Serde, Copy, Drop, Introspect)]
-enum Direction {
+pub enum Direction {
     None: (),
     Left: (),
     Right: (),
@@ -11,14 +11,14 @@ enum Direction {
 }
 
 #[derive(Copy, Drop, Serde)]
-struct Position {
+pub struct Position {
     x: u32,
     y: u32
 }
 
 
 #[derive(Copy, Drop, Serde)]
-struct DefaultParameters {
+pub struct DefaultParameters {
     for_player: ContractAddress,
     for_system: ContractAddress,
     position: Position,
@@ -53,9 +53,9 @@ fn starknet_keccak(data: Span<felt252>) -> felt252 {
         i += 1;
     };
 
-    let mut hash = keccak::keccak_u256s_be_inputs(u256_data.span());
-    let low = integer::u128_byte_reverse(hash.high);
-    let high = integer::u128_byte_reverse(hash.low);
+    let mut hash = core::keccak::keccak_u256s_be_inputs(u256_data.span());
+    let low = core::integer::u128_byte_reverse(hash.high);
+    let high = core::integer::u128_byte_reverse(hash.low);
     hash = u256 { low, high };
     hash = hash & 0x03ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff_u256;
     hash.try_into().expect('starknet keccak overflow')
@@ -105,6 +105,6 @@ fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
 }
 
 fn get_core_actions(world: IWorldDispatcher) -> IActionsDispatcher {
-    let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
-    IActionsDispatcher { contract_address: address.value }
+    let address = get_core_actions_address(world);
+    IActionsDispatcher { contract_address: address }
 }

@@ -1,7 +1,7 @@
 use starknet::{ContractAddress, ClassHash};
 
 #[derive(Copy, Drop, Serde)]
-struct PixelUpdate {
+pub struct PixelUpdate {
     x: u32,
     y: u32,
     color: Option<u32>,
@@ -14,7 +14,7 @@ struct PixelUpdate {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
-struct Pixel {
+pub struct Pixel {
     // System properties
     #[key]
     x: u32,

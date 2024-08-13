@@ -1,2 +1,2 @@
-mod paint;
-mod snake;
+pub mod paint;
+pub mod snake;

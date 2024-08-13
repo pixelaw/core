@@ -33,19 +33,19 @@ mod tests {
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Paint actions
         let paint_actions_address = world
-            .deploy_contract(
-                'salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
         let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
         world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
 
         (world, core_actions, paint_actions)
     }

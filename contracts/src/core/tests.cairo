@@ -30,9 +30,7 @@ mod tests {
         let world = spawn_test_world("pixelaw", models);
 
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
 
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 

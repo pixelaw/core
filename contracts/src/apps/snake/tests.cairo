@@ -41,36 +41,35 @@ mod tests {
             app_name::TEST_CLASS_HASH,
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
+            instruction::TEST_CLASS_HASH,
             snake::TEST_CLASS_HASH,
             snake_segment::TEST_CLASS_HASH,
-            instruction::TEST_CLASS_HASH,
         ];
         let world = spawn_test_world("pixelaw", models);
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap());
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Snake actions
         let snake_actions_address = world
-            .deploy_contract(
-                'salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
         let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
         // Deploy Paint actions
         let paint_actions = IPaintActionsDispatcher {
             contract_address: world
-                .deploy_contract(
-                    'salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-                )
+                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap())
         };
 
         // Setup dojo auth
         world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
         world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
         world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
 
@@ -188,8 +187,6 @@ mod tests {
         // snake_actions.move(player1);
 
         // Spawn the snake again at 3,1 so it grows from the paint at 4,1
-        println!("====== BEFORE ======");
-        get!(world, (3, 1), Pixel).color.print();
         snake_actions
             .interact(
                 DefaultParameters {
@@ -200,8 +197,7 @@ mod tests {
                 },
                 Direction::Right
             );
-        println!("====== AFTER ======");
-        get!(world, (3, 1), Pixel).color.print();
+
         assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 3,1');
 
         // Moved to 4,1, it should now grow
