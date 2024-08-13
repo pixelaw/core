@@ -1,8 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::Felt252TryIntoClassHash;
-    use core::debug::PrintTrait;
-
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address};
 
@@ -17,7 +14,7 @@ mod tests {
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
 
-    use core::zeroable::Zeroable;
+    use core::traits::TryInto;
 
 
     // Helper function: deploys world and actions
@@ -68,8 +65,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 1, y: 1 },
                     color: color
                 },
@@ -78,7 +75,7 @@ mod tests {
         let pixel_1_1 = get!(world, (1, 1), (Pixel));
         assert(pixel_1_1.color == color, 'should be the color');
 
-        'Passed test'.print();
+        println!("Passed test");
     }
 
     fn encode_color(r: u8, g: u8, b: u8) -> u32 {

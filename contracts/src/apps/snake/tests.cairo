@@ -1,7 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::Felt252TryIntoClassHash;
-
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
 
@@ -22,9 +20,6 @@ mod tests {
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::apps::snake::app::{Snake};
-
-    use core::debug::PrintTrait;
-    use core::zeroable::Zeroable;
 
 
     // Helper function: deploys world and actions
@@ -99,8 +94,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -132,8 +127,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -159,8 +154,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -189,8 +184,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -206,8 +201,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: 0.try_into().unwrap(),
+                    for_system: 0.try_into().unwrap(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },

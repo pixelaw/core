@@ -3,7 +3,7 @@ cairo-version = "=2.7.0"
 name = "pixelaw"
 version = "0.3.35"
 homepage = "https://github.com/pixelaw/core"
-# edition = "2024_07"
+edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true

@@ -4,8 +4,7 @@ use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::Position;
 
-use starknet::{ContractAddress, ClassHash};
-
+use starknet::{ContractAddress, ClassHash, contract_address_const};
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[dojo::interface]
@@ -60,18 +59,16 @@ pub trait IActions<TContractState> {
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 pub mod actions {
     use starknet::{
-        ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info
+        ContractAddress, get_caller_address, get_contract_address, get_tx_info,
+        contract_address_const, syscalls::{call_contract_syscall}
     };
-    use starknet::info::TxInfo;
     use super::IActions;
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use debug::PrintTrait;
-    use poseidon::poseidon_hash_span;
+    use core::poseidon::poseidon_hash_span;
     use pixelaw::core::models::queue::{QueueItem};
     use pixelaw::core::utils::{get_core_actions_address, Position};
-    use zeroable::Zeroable;
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
 
 
@@ -163,7 +160,7 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>
         ) {
-            'schedule_queue'.print();
+            println!("schedule_queue");
 
             // TODO Review security
 
@@ -188,7 +185,7 @@ pub mod actions {
                     QueueScheduled { id, timestamp, called_system, selector, calldata: calldata }
                 ))
             );
-            'schedule_queue DONE'.print();
+            println!("schedule_queue DONE");
         }
 
 
@@ -200,7 +197,7 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>
         ) {
-            'process_queue'.print();
+            println!("process_queue");
 
             // A quick check on the timestamp so we know its not too early for this one
             assert(timestamp <= starknet::get_block_timestamp(), 'timestamp still in the future');
@@ -232,11 +229,11 @@ pub mod actions {
             assert(calculated_id == id, 'Invalid Id');
 
             // Make the call itself
-            let _result = starknet::call_contract_syscall(called_system, selector, calldata);
+            let _result = call_contract_syscall(called_system, selector, calldata);
 
             // Tell the offchain schedulers that this one is done
             emit!(world, (Event::QueueProcessed(QueueProcessed { id })));
-            'process_queue DONE'.print();
+            println!("process_queue DONE");
         }
 
         fn has_write_access(
@@ -254,7 +251,7 @@ pub mod actions {
 
             // First check: Can we grant based on ownership?
             // If caller is owner or not owned by anyone, allow
-            if pixel.owner == caller_account || pixel.owner.is_zero() {
+            if pixel.owner == caller_account || pixel.owner == contract_address_const::<0>() {
                 return true;
             } else if caller_account == caller_address {
                 // The caller is not a System, and not owner, so no reason to keep looking.
@@ -308,7 +305,7 @@ pub mod actions {
             for_system: ContractAddress,
             pixel_update: PixelUpdate
         ) {
-            'update_pixel'.print();
+            println!("update_pixel");
 
             let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
@@ -317,9 +314,9 @@ pub mod actions {
             );
 
             let old_pixel_app = pixel.app;
-            old_pixel_app.print();
+            println!("{:?}", old_pixel_app);
 
-            if !old_pixel_app.is_zero() {
+            if old_pixel_app != contract_address_const::<0>() {
                 let interoperable_app = IInteroperabilityDispatcher {
                     contract_address: old_pixel_app
                 };
@@ -362,7 +359,7 @@ pub mod actions {
             // Set Pixel
             set!(world, (pixel));
 
-            if !old_pixel_app.is_zero() {
+            if old_pixel_app != contract_address_const::<0>() {
                 let interoperable_app = IInteroperabilityDispatcher {
                     contract_address: old_pixel_app
                 };
@@ -370,19 +367,19 @@ pub mod actions {
                 interoperable_app.on_post_update(pixel_update, app_caller, for_player)
             }
 
-            'update_pixel DONE'.print();
+            println!("update_pixel DONE");
         }
 
 
         fn get_player_address(for_player: ContractAddress) -> ContractAddress {
-            if for_player.is_zero() {
-                'get_player_address.zero'.print();
+            if for_player == contract_address_const::<0>() {
+                println!("get_player_address.zero");
                 let result = get_tx_info().unbox().account_contract_address;
-                result.print();
+                println!("{:?}", result);
                 // Return the caller account from the transaction (the end user)
                 return result;
             } else {
-                'get_player_address.nonzero'.print();
+                println!("get_player_address.nonzero");
                 // TODO: check if getter is a system or the core actions contract
 
                 // Return the for_player
@@ -392,7 +389,7 @@ pub mod actions {
 
 
         fn get_system_address(for_system: ContractAddress) -> ContractAddress {
-            if !for_system.is_zero() {
+            if for_system != contract_address_const::<0>() {
                 // TODO
                 // Check that the caller is the CoreActions contract
                 // Otherwise, it should be 0 (if caller not core_actions)
@@ -432,8 +429,7 @@ pub mod actions {
 
             // Ensure neither contract nor name have been registered
             assert(
-                app.name == 0 && app_name.system == starknet::contract_address_const::<0x0>(),
-                'app already set'
+                app.name == 0 && app_name.system == contract_address_const::<0>(), 'app already set'
             );
 
             // Associate system with name

@@ -22,10 +22,8 @@ const PIXELS_PER_FELT: u32 = 7;
 /// BASE means using the server's default manifest.json handler
 const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
-mod paint_utils {
-    use core::debug::PrintTrait;
-
-    fn subu8(nr: u8, sub: u8) -> u8 {
+pub mod paint_utils {
+    pub fn subu8(nr: u8, sub: u8) -> u8 {
         if nr >= sub {
             return nr - sub;
         } else {
@@ -39,11 +37,11 @@ mod paint_utils {
     // empty: 0x 00 00 00 00
     // normal color (opaque): 0x FF FF FF FF
 
-    fn encode_color(r: u8, g: u8, b: u8, a: u8) -> u32 {
+    pub fn encode_color(r: u8, g: u8, b: u8, a: u8) -> u32 {
         (r.into() * 0x1000000) + (g.into() * 0x10000) + (b.into() * 0x100) + a.into()
     }
 
-    fn decode_color(color: u32) -> (u8, u8, u8, u8) {
+    pub fn decode_color(color: u32) -> (u8, u8, u8, u8) {
         let r: u32 = (color / 0x1000000);
         let g: u32 = (color / 0x10000) & 0xff;
         let b: u32 = (color / 0x100) & 0xff;
@@ -74,11 +72,8 @@ mod paint_utils {
             Option::None => 0xFF,
         };
 
-        'rgba'.print();
-        r.print();
-        g.print();
-        b.print();
-        a.print();
+        println!("rgba");
+        println!("{}, {}, {}, {}", r, g, b, a);
 
         (r, g, b, a)
     }
@@ -87,7 +82,8 @@ mod paint_utils {
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod paint_actions {
     use starknet::{
-        get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress
+        get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
+        contract_address_const
     };
 
     use super::IPaintActions;
@@ -103,7 +99,6 @@ mod paint_actions {
     use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::models::registry::App;
     use super::paint_utils::{decode_color, encode_color, subu8};
-    use debug::PrintTrait;
 
 
     #[abi(embed_v0)]
@@ -161,7 +156,7 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            'interact'.print();
+            println!("interact");
 
             // Load important variables
 
@@ -179,7 +174,7 @@ mod paint_actions {
             // Check if 5 seconds have passed or if the sender is the owner
             // TODO error message confusing, have to split this
             // assert(
-            //     pixel.owner.is_zero() || (pixel.owner) == player ||
+            //     pixel.owner == ContractAddress(Felt::ZERO) || (pixel.owner) == player ||
             //     starknet::get_block_timestamp()
             //         - pixel.timestamp < COOLDOWN_SECS,
             //     'Cooldown not over'
@@ -199,7 +194,7 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            'put_color'.print();
+            println!("put_color");
 
             // Load important variables
 
@@ -218,7 +213,9 @@ mod paint_actions {
             // Check if 5 seconds have passed or if the sender is the owner
             // TODO error message confusing, have to split this
             assert(
-                pixel.owner.is_zero() || (pixel.owner) == player || starknet::get_block_timestamp()
+                pixel.owner == contract_address_const::<0>()
+                    || (pixel.owner) == player
+                    || starknet::get_block_timestamp()
                     - pixel.timestamp < COOLDOWN_SECS,
                 'Cooldown not over'
             );
@@ -240,7 +237,7 @@ mod paint_actions {
                     }
                 );
 
-            'put_color DONE'.print();
+            println!("put_color DONE");
         }
 
 
@@ -254,7 +251,7 @@ mod paint_actions {
             // continue (x - offset) to the left
 
             if (image_data.is_empty()) {
-                'image_data empty'.print();
+                println!("image_data empty");
                 return;
             }
             let core_actions = get_core_actions(world);
@@ -266,8 +263,7 @@ mod paint_actions {
             let mut pixel_index = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
             let mut stop = false;
-            'first felt'.print();
-            felt.print();
+            println!("first felt: {}", felt);
             while !stop {
                 // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits
                 // are 0 padded.
@@ -318,7 +314,7 @@ mod paint_actions {
         /// * `position` - Position of the pixel.
         /// * `new_color` - Color to set the pixel to.
         fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            'fade'.print();
+            println!("fade");
 
             let core_actions = get_core_actions(world);
             let position = default_params.position;
@@ -326,13 +322,13 @@ mod paint_actions {
             let system = core_actions.get_system_address(default_params.for_system);
             let pixel = get!(world, (position.x, position.y), Pixel);
 
-            'decode_color'.print();
+            println!("decode_color");
 
             let (r, g, b, a) = decode_color(pixel.color);
 
             // If the color is 0,0,0 , let's stop the process, fading is done.
             if r == 0 && g == 0 && b == 0 {
-                'fading is done'.print();
+                println!("fading is done");
                 delete!(world, (pixel));
                 return;
             }
@@ -340,7 +336,7 @@ mod paint_actions {
             // Fade the color
             let FADE_STEP = 5;
 
-            'encode_color'.print();
+            println!("encode_color");
             let new_color = encode_color(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a
             );
@@ -390,7 +386,7 @@ mod paint_actions {
                     0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // This selector
                     calldata.span() // The calldata prepared
                 );
-            'put_fading_color DONE'.print();
+            println!("put_fading_color DONE");
         }
     }
 
@@ -421,7 +417,7 @@ mod paint_actions {
         } else if index == 6 {
             result = (felt & MASK_32).try_into().unwrap();
         }
-        result.print();
+        println!("{}", result);
         result
     }
 }
