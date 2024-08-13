@@ -12,16 +12,6 @@ sierra-replace-ids = true
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.5" }
 
 [lib]
-name = "pixelaw"
-path = "src/lib.cairo"
-
-
-# [[target.dojo]]
-# build-external-contracts = [  ]
-
-
-[tool.dojo]
-initializer_class_hash = "0xbeef"
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"

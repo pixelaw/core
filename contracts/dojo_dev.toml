@@ -9,6 +9,6 @@ mappings = {  }
 
 [env]
 rpc_url = "http://localhost:5050/"
-account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
+account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"
 private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address = "0xd4136ca2b9f1b08c6d6857b0f19da3dc8d136105ec46459787a6de0fd92bf8"
+world_address = "0x10bbde7919b063a353fc2c6148555434cd8a7be8d5cbfdcd06ef63787b58838"
