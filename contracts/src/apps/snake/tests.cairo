@@ -20,7 +20,7 @@ mod tests {
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::apps::snake::app::{Snake};
-
+    use starknet::{contract_address_const, testing::set_account_contract_address};
 
     // Helper function: deploys world and actions
     fn deploy_world() -> (
@@ -82,11 +82,11 @@ mod tests {
         snake_actions.init();
 
         // Setup players
-        let player1 = starknet::contract_address_const::<0x1337>();
-        let player2 = starknet::contract_address_const::<0x42>();
+        let player1 = contract_address_const::<0x1337>();
+        let player2 = contract_address_const::<0x42>();
 
         // Impersonate player1
-        starknet::testing::set_account_contract_address(player1);
+        set_account_contract_address(player1);
 
         assert(get!(world, (1, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 1,1');
 
@@ -94,8 +94,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -127,8 +127,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -150,18 +150,18 @@ mod tests {
         //  1: hit the other pixel
         //  2: shrink
         //  3: shrink / delete
-        starknet::testing::set_account_contract_address(player2);
+        set_account_contract_address(player2);
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
             );
 
-        starknet::testing::set_account_contract_address(player1);
+        set_account_contract_address(player1);
 
         // Hit the pixel
         snake_actions.move(player1);
@@ -184,8 +184,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -201,8 +201,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },

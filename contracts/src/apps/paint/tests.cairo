@@ -13,6 +13,7 @@ mod tests {
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
+    use starknet::{contract_address_const, testing::set_account_contract_address};
 
     use core::traits::TryInto;
 
@@ -57,16 +58,16 @@ mod tests {
         core_actions.init();
         paint_actions.init();
 
-        let player1 = starknet::contract_address_const::<0x1337>();
-        starknet::testing::set_account_contract_address(player1);
+        let player1 = contract_address_const::<0x1337>();
+        set_account_contract_address(player1);
 
         let color = encode_color(1, 1, 1);
 
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: 0.try_into().unwrap(),
-                    for_system: 0.try_into().unwrap(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 1, y: 1 },
                     color: color
                 },
