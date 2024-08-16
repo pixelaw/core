@@ -9,9 +9,12 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.5" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 
 [lib]
 
+
 [scripts]
 init_auth = "./scripts/init_auth.sh"
+
+[profile.dev-pop]

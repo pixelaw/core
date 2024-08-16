@@ -9,12 +9,14 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.5" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 
 
 [[target.dojo]]
-build-external-contracts = [  ]
+build-external-contracts = []
 path = "../contracts/src/lib.cairo"
+
+[profile.dev-pop]
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"
