@@ -39,7 +39,7 @@ mod tests {
             snake::TEST_CLASS_HASH,
             snake_segment::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         // Deploy Core actions
         let core_actions_address = world

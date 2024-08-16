@@ -28,7 +28,7 @@ mod tests {
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         // Deploy Core actions
         let core_actions_address = world

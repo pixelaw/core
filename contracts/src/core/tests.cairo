@@ -30,7 +30,7 @@ mod tests {
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         let core_actions_address = world
             .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
