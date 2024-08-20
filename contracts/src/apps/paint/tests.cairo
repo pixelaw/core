@@ -1,8 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::Felt252TryIntoClassHash;
-    use debug::PrintTrait;
-
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address};
 
@@ -11,14 +8,15 @@ mod tests {
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-    use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
+    use dojo::utils::test::{spawn_test_world};
 
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
+    use starknet::{contract_address_const, testing::set_account_contract_address};
 
-    use zeroable::Zeroable;
+    use core::traits::TryInto;
+
 
     // Helper function: deploys world and actions
     fn deploy_world() -> (IWorldDispatcher, IActionsDispatcher, IPaintActionsDispatcher) {
@@ -30,26 +28,23 @@ mod tests {
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Paint actions
         let paint_actions_address = world
-            .deploy_contract(
-                'salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
         let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
-        let namespace: ByteArray = "pixelaw";
-        let pixel_model_name: ByteArray = "Pixel";
-        world
-            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
 
         (world, core_actions, paint_actions)
     }
@@ -63,16 +58,16 @@ mod tests {
         core_actions.init();
         paint_actions.init();
 
-        let player1 = starknet::contract_address_const::<0x1337>();
-        starknet::testing::set_account_contract_address(player1);
+        let player1 = contract_address_const::<0x1337>();
+        set_account_contract_address(player1);
 
         let color = encode_color(1, 1, 1);
 
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 1, y: 1 },
                     color: color
                 },
@@ -81,7 +76,7 @@ mod tests {
         let pixel_1_1 = get!(world, (1, 1), (Pixel));
         assert(pixel_1_1.color == color, 'should be the color');
 
-        'Passed test'.print();
+        println!("Passed test");
     }
 
     fn encode_color(r: u8, g: u8, b: u8) -> u32 {

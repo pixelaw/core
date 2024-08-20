@@ -2,22 +2,22 @@ use starknet::{ContractAddress, ClassHash};
 
 // TODO is this using packing? If not, try to use bitmasking approach
 #[derive(Copy, Drop, Serde, Introspect)]
-struct Permission {
-    app: bool,
-    color: bool,
-    owner: bool,
-    text: bool,
-    timestamp: bool,
-    action: bool
+pub struct Permission {
+    pub app: bool,
+    pub color: bool,
+    pub owner: bool,
+    pub text: bool,
+    pub timestamp: bool,
+    pub action: bool
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model]
-struct Permissions {
+#[dojo::model(namespace: "pixelaw", nomapping: true)]
+pub struct Permissions {
     #[key]
-    allowing_app: ContractAddress,
+    pub allowing_app: ContractAddress,
     #[key]
-    allowed_app: ContractAddress,
+    pub allowed_app: ContractAddress,
     // The permissions
-    permission: Permission
+    pub permission: Permission
 }

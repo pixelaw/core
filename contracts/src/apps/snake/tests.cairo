@@ -1,7 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::Felt252TryIntoClassHash;
-
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
 
@@ -9,10 +7,11 @@ mod tests {
     use pixelaw::core::models::pixel::{pixel};
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
-    use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use pixelaw::core::actions::{
+        actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
+    };
 
-    use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
+    use dojo::utils::test::{spawn_test_world};
 
     use pixelaw::apps::snake::app::{
         snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
@@ -21,11 +20,7 @@ mod tests {
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::apps::snake::app::{Snake};
-
-    use debug::PrintTrait;
-
-    use zeroable::Zeroable;
-
+    use starknet::{contract_address_const, testing::set_account_contract_address};
 
     // Helper function: deploys world and actions
     fn deploy_world() -> (
@@ -40,50 +35,37 @@ mod tests {
             app_name::TEST_CLASS_HASH,
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
+            instruction::TEST_CLASS_HASH,
             snake::TEST_CLASS_HASH,
             snake_segment::TEST_CLASS_HASH,
-            instruction::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         // Deploy Core actions
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap());
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
         // Deploy Snake actions
         let snake_actions_address = world
-            .deploy_contract(
-                'salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
         let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
         // Deploy Paint actions
         let paint_actions = IPaintActionsDispatcher {
             contract_address: world
-                .deploy_contract(
-                    'salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-                )
+                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap())
         };
 
         // Setup dojo auth
-        let namespace: ByteArray = "pixelaw";
-        let pixel_model_name: ByteArray = "Pixel";
-        let snake_model_name: ByteArray = "Snake";
-        let snake_segment_model_name: ByteArray = "SnakeSegment";
-
-        world
-            .grant_writer(selector_from_names(@namespace, @pixel_model_name), core_actions_address);
-        world
-            .grant_writer(
-                selector_from_names(@namespace, @snake_model_name), snake_actions_address
-            );
-        world
-            .grant_writer(
-                selector_from_names(@namespace, @snake_segment_model_name), snake_actions_address
-            );
+        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
+        world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
 
         (world, core_actions, snake_actions, paint_actions)
     }
@@ -100,11 +82,11 @@ mod tests {
         snake_actions.init();
 
         // Setup players
-        let player1 = starknet::contract_address_const::<0x1337>();
-        let player2 = starknet::contract_address_const::<0x42>();
+        let player1 = contract_address_const::<0x1337>();
+        let player2 = contract_address_const::<0x42>();
 
         // Impersonate player1
-        starknet::testing::set_account_contract_address(player1);
+        set_account_contract_address(player1);
 
         assert(get!(world, (1, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 1,1');
 
@@ -112,8 +94,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -145,8 +127,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -168,18 +150,18 @@ mod tests {
         //  1: hit the other pixel
         //  2: shrink
         //  3: shrink / delete
-        starknet::testing::set_account_contract_address(player2);
+        set_account_contract_address(player2);
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
             );
 
-        starknet::testing::set_account_contract_address(player1);
+        set_account_contract_address(player1);
 
         // Hit the pixel
         snake_actions.move(player1);
@@ -202,13 +184,14 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
                 Direction::Right
             );
+
         assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color for 3,1');
 
         // Moved to 4,1, it should now grow
@@ -218,8 +201,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: Zeroable::zero(),
-                    for_system: Zeroable::zero(),
+                    for_player: contract_address_const::<0>(),
+                    for_system: contract_address_const::<0>(),
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
