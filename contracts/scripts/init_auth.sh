@@ -28,7 +28,6 @@ fi
 
 # make sure all components/systems are deployed
 CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-Permissions" "pixelaw-QueueItem" "pixelaw-Snake" "pixelaw-Instruction")
-
 SNAKE_MODELS=("pixelaw-Snake" "pixelaw-SnakeSegment")
 
 echo "Write permissions for CORE_ACTIONS"

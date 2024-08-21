@@ -89,8 +89,8 @@ sleep 1
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
 
-CORE_MODELS=("App" "AppName" "CoreActionsAddress" "Pixel" "Permissions" "QueueItem")
-SNAKE_MODELS=("Snake" "SnakeSegment")
+CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-Permissions" "pixelaw-QueueItem" "pixelaw-Snake" "pixelaw-Instruction")
+SNAKE_MODELS=("pixelaw-Snake" "pixelaw-SnakeSegment")
 
 echo "Start Torii"
 unset LS_COLORS && torii \
@@ -126,7 +126,6 @@ echo "Write permissions for SNAKE_ACTIONS: Done"
 
 echo "Initialize CORE_ACTIONS"
 sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait pixelaw-actions init
-
 echo "Initialize CORE_ACTIONS: Done"
 
 echo "Initialize SNAKE_ACTIONS: Done"
@@ -135,7 +134,6 @@ echo "Initialize SNAKE_ACTIONS: Done"
 
 echo "Initialize PAINT_ACTIONS: Done"
 sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait pixelaw-paint_actions init
-
 echo "Initialize PAINT_ACTIONS: Done"
 
 

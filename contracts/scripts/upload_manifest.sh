@@ -2,7 +2,7 @@
 
 SYSTEMS=("core" "paint" "snake")
 DEFAULT_BASE_URL="http://localhost:3000/manifests"
-JSON_FILE="./target/dev/manifest.json"
+JSON_FILE="./manifests/dev/deployment/manifest.json"
 
 # Check if a command line argument is provided
 if [ "$#" -ne 0 ]; then
