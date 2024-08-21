@@ -89,7 +89,7 @@ sleep 1
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
 
-CORE_MODELS=("App" "AppName" "CoreActionsAddress" "Pixel" "Permissions" "QueueItem")
+CORE_MODELS=("App" "AppName" "CoreActionsAddress" "Pixel" "Permissions" "QueueItem" "Instruction")
 SNAKE_MODELS=("Snake" "SnakeSegment")
 
 echo "Start Torii"

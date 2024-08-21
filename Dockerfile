@@ -43,7 +43,7 @@ ENV PATH="/root/.starkli/bin:${PATH}"
 RUN starkliup -v 0.1.6
 
 #Install Scarb
-RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.6.4
+RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.7.0
 #RUN chmod +x ./install.sh
 #RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
 RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
@@ -63,6 +63,7 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
                 exit 1
 
 COPY ./dojo_init /tmp/dojo_init
+COPY ./contracts/dojo_dev.toml /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
 COPY ./contracts/Scarb.lock /tmp/dojo_init
 
