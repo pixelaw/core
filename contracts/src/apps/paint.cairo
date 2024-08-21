@@ -1,2 +1,2 @@
-mod app;
+pub mod app;
 mod tests;

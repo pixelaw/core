@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use starknet::class_hash::{ClassHash, Felt252TryIntoClassHash};
+    use starknet::class_hash::{ClassHash};
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
@@ -12,8 +12,10 @@ mod tests {
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use dojo::utils::test::{spawn_test_world, deploy_contract};
-    use dojo::utils::{selector_from_names};
-    use poseidon::poseidon_hash_span;
+    use core::poseidon::poseidon_hash_span;
+
+    use core::traits::TryInto;
+
 
     const SPAWN_PIXEL_ENTRYPOINT: felt252 =
         0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
@@ -28,12 +30,10 @@ mod tests {
             core_actions_address::TEST_CLASS_HASH,
             permissions::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world("pixelaw", models);
+        let world = spawn_test_world(["pixelaw"].span(), models.span());
 
         let core_actions_address = world
-            .deploy_contract(
-                'salt1', actions::TEST_CLASS_HASH.try_into().unwrap(), array![].span()
-            );
+            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
 
         let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 

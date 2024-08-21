@@ -20,7 +20,7 @@ GENESIS_TEMPLATE=genesis_template.json
 GENESIS_OUT="$OUT/genesis.json"
 KATANA_LOG="$OUT/katana.log"
 KATANA_DB="$OUT/katana_db"
-MANIFEST="manifests/$PROFILE/manifest.json"
+MANIFEST="manifests/$PROFILE/deployment/manifest.json"
 TORII_DB="$OUT/torii.sqlite"
 TORII_LOG="$OUT/torii.log"
 
