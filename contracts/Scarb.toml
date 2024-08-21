@@ -11,10 +11,13 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 
-[lib]
+# [lib]
 
+[[target.dojo]]
+build-external-contracts = []
+
+
+[profile.dev-pop]
 
 [scripts]
 init_auth = "./scripts/init_auth.sh"
-
-[profile.dev-pop]
