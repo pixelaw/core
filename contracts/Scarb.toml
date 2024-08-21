@@ -11,10 +11,7 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 
-# [lib]
-
-[[target.dojo]]
-build-external-contracts = []
+[lib]
 
 
 [profile.dev-pop]
