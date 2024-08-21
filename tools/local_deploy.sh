@@ -4,7 +4,7 @@ BASEDIR="./"
 
 APP_NAME=$(grep '^name =' $BASEDIR/Scarb.toml | awk -F'"' '{print $2}')
 PROFILE=dev
-MANIFEST="$BASEDIR/manifests/$PROFILE/manifest.json"
+MANIFEST="$BASEDIR/manifests/$PROFILE/deployment/manifest.json"
 
 cd $BASEDIR
 
@@ -47,4 +47,3 @@ sozo --profile $PROFILE execute --wait -v $ACTIONS_ADDRESS init
 echo "Initialize ACTIONS: Done"
 
 echo "Default authorizations have been successfully set."
-

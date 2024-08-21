@@ -17,6 +17,3 @@ build-external-contracts = []
 path = "../contracts/src/lib.cairo"
 
 [profile.dev-pop]
-
-[scripts]
-init_auth = "./scripts/init_auth.sh"

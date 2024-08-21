@@ -5,6 +5,7 @@ mod tests {
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
+    use pixelaw::apps::paint::app::paint_utils::{encode_color, decode_color};
     use pixelaw::core::models::permissions::{permissions};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
@@ -61,7 +62,7 @@ mod tests {
         let player1 = contract_address_const::<0x1337>();
         set_account_contract_address(player1);
 
-        let color = encode_color(1, 1, 1);
+        let color = encode_color(1, 0, 0, 1);
 
         paint_actions
             .interact(
@@ -77,17 +78,5 @@ mod tests {
         assert(pixel_1_1.color == color, 'should be the color');
 
         println!("Passed test");
-    }
-
-    fn encode_color(r: u8, g: u8, b: u8) -> u32 {
-        (r.into() * 0x10000) + (g.into() * 0x100) + b.into()
-    }
-
-    fn decode_color(color: u32) -> (u8, u8, u8) {
-        let r = (color / 0x10000);
-        let g = (color / 0x100) & 0xff;
-        let b = color & 0xff;
-
-        (r.try_into().unwrap(), g.try_into().unwrap(), b.try_into().unwrap())
     }
 }

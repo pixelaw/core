@@ -72,9 +72,6 @@ pub mod paint_utils {
             Option::None => 0xFF,
         };
 
-        println!("rgba");
-        println!("{}, {}, {}, {}", r, g, b, a);
-
         (r, g, b, a)
     }
 }
@@ -157,8 +154,6 @@ mod paint_actions {
         /// * `new_color` - Color to set the pixel to.
         fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             println!("interact");
-
-            // Load important variables
 
             // let core_actions = get_core_actions(world);
             let position = default_params.position;

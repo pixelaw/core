@@ -3,6 +3,6 @@ set -euo pipefail
 pushd $(dirname "$0")/..
 
 
-declare "CORE_ACTIONS"=$(cat manifests/dev/manifest.json | jq -r '.contracts[] | select(.name=="pixelaw::core::actions::actions") | .address')
-declare "PAINT_ACTIONS"=$(cat manifests/dev/manifest.json | jq -r '.contracts[] | select(.name=="pixelaw::apps::paint::app::paint_actions") | .address')
-declare "SNAKE_ACTIONS"=$(cat manifests/dev/manifest.json | jq -r '.contracts[] | select(.name=="pixelaw::apps::snake::app::snake_actions") | .address')
+declare "CORE_ACTIONS"=$(cat manifests/dev/deployment/manifest.json | jq -r '.contracts[] | select(.tag=="pixelaw-actions") | .address')
+declare "PAINT_ACTIONS"=$(cat manifests/dev/deployment/manifest.json | jq -r '.contracts[] | select(.tag=="pixelaw-paint_actions") | .address')
+declare "SNAKE_ACTIONS"=$(cat manifests/dev/deployment/manifest.json | jq -r '.contracts[] | select(.tag=="pixelaw-snake_actions") | .address')

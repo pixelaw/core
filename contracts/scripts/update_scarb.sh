@@ -3,7 +3,7 @@ set -euo pipefail
 pushd $(dirname "$0")/..
 
 # Get world address from manifest
-WORLD_ADDRESS=$(cat target/dev/manifest.json | jq '.world.address')
+WORLD_ADDRESS=$(cat manifests/dev/deployment/manifest.json | jq '.world.address')
 
 # Check if WORLD_ADDRESS is not "null"
 if [ "$WORLD_ADDRESS" != "null" ]; then

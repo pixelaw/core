@@ -14,7 +14,7 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 [lib]
 
 
+[profile.dev-pop]
+
 [scripts]
 init_auth = "./scripts/init_auth.sh"
-
-[profile.dev-pop]
