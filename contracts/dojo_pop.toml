@@ -1,0 +1,19 @@
+
+
+# The "Populated" world
+# ----------------------------------------------------------------------------
+[world]
+description = "Empty PixeLAW world"
+name = "pixelaw"
+seed="pixelaw"
+
+[namespace]
+default = "pixelaw"
+mappings = { }
+
+
+[env]
+rpc_url = "http://localhost:5050/"
+account_address = "0x003c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
+private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
+world_address= "0x00a712727a27defbf77122fae30c91e90ec62bba8f09a2a396eddc29b768386b"

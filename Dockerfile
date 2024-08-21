@@ -63,6 +63,7 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
                 exit 1
 
 COPY ./dojo_init /tmp/dojo_init
+COPY ./contracts/dojo_dev.toml /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
 COPY ./contracts/Scarb.lock /tmp/dojo_init
 
