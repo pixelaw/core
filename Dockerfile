@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.7.0"
-ARG DOJO_VERSION="1.0.0-alpha.6"
+ARG DOJO_VERSION="1.0.0-alpha.7"
 ARG STARKLI_VERSION="0.1.6"
 
 # Install dependencies
@@ -46,7 +46,7 @@ RUN \
     asdf global scarb ${SCARB_VERSION}
 
 RUN \
-    asdf plugin add dojo https://github.com/dojoengine/asdf-dojo && \
+    asdf plugin add dojo https://github.com/pixelaw/asdf-dojo && \
     asdf install dojo ${DOJO_VERSION} && \
     asdf global dojo ${DOJO_VERSION}
 
