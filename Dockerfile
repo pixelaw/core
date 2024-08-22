@@ -2,6 +2,13 @@
 # Stage 4: Install runtime
 FROM node:22-bookworm-slim AS dojo
 
+SHELL ["/bin/bash", "-c"]
+
+ARG ASDF_VERSION="v0.14.1"
+ARG SCARB_VERSION="2.7.0"
+ARG DOJO_VERSION="1.0.0-alpha.6"
+ARG STARKLI_VERSION="0.1.6"
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -17,22 +24,32 @@ RUN apt-get update && \
     zip  && \
     apt-get autoremove && apt-get clean
 
+
 RUN yarn global add ts-node pm2
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 
-ARG DOJO_VERSION
-RUN if [ -z "$DOJO_VERSION" ]; then echo "DOJO_VERSION argument is required" && exit 1; fi
+#RUN if [ -z "$DOJO_VERSION" ]; then echo "DOJO_VERSION argument is required" && exit 1; fi
+RUN \
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
+    chmod +x $HOME/.asdf/asdf.sh && \
+    echo "$HOME/.asdf/asdf.sh" >> ~/.bashrc && \
+    source ~/.bashrc
 
+ENV PATH="/root/.asdf/bin:/root/.asdf/shims:${PATH}"
 
-# Install dojo
-SHELL ["/bin/bash", "-c"]
-RUN curl -L https://install.dojoengine.org | bash
-RUN source ~/.bashrc
-ENV PATH="/root/.dojo/bin:${PATH}"
-RUN dojoup -v $DOJO_VERSION
+RUN \
+    asdf plugin add scarb && \
+    asdf install scarb ${SCARB_VERSION} && \
+    asdf global scarb ${SCARB_VERSION}
+
+RUN \
+    asdf plugin add dojo https://github.com/dojoengine/asdf-dojo && \
+    asdf install dojo ${DOJO_VERSION} && \
+    asdf global dojo ${DOJO_VERSION}
+
 
 # Install starkli
 # TODO right now getting 0.1.6 because newer seems not to be compatible with katana's JSON-RPC
@@ -40,19 +57,20 @@ SHELL ["/bin/bash", "-c"]
 RUN curl https://get.starkli.sh | bash
 RUN source ~/.bashrc
 ENV PATH="/root/.starkli/bin:${PATH}"
-RUN starkliup -v 0.1.6
+RUN starkliup -v ${STARKLI_VERSION}
 
-#Install Scarb
-RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.7.0
-#RUN chmod +x ./install.sh
-#RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
-RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
-ENV PATH="/root/.local/bin:${PATH}"
+##Install Scarb
+#RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.7.0
+##RUN chmod +x ./install.sh
+##RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
+#RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
+#ENV PATH="/root/.local/bin:${PATH}"
 
 
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
+ENV DOJO_VERSION="v1.0.0-alpha.6"
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
 ENV CORE_VERSION=VERSION
@@ -70,8 +88,8 @@ COPY ./contracts/Scarb.lock /tmp/dojo_init
 # Run build separately to cache the dojo/scarb dependencies
 
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
-    cargo --version && \
     cd /tmp/dojo_init && sozo build
+
 RUN mkdir -p /tmp/contracts
 
 COPY ./contracts /tmp/contracts
@@ -84,7 +102,7 @@ RUN \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev && \
+    bash scripts/create_snapshot.sh dev && cat out/dev/katana.log && \
     WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
     echo $WORLD_ADDRESS && \
     mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
