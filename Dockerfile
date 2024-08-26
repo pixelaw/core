@@ -70,7 +70,7 @@ RUN starkliup -v ${STARKLI_VERSION}
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
-ENV DOJO_VERSION="v1.0.0-alpha.6"
+
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
 ENV CORE_VERSION=VERSION
