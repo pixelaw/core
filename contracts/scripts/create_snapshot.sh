@@ -84,6 +84,12 @@ sozo \
   migrate \
   apply
 
+sozo \
+  build \
+  --typescript \
+  --manifest-path $DEPLOY_SCARB \
+  --bindings-output $OUT
+
 sleep 1
 
 # Setup PixeLAW auth and init

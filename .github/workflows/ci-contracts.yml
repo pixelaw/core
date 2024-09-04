@@ -16,7 +16,7 @@ defaults:
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_VERSION: 1.79.0
+  RUST_VERSION: 1.80.1
 
 jobs:
   cairofmt:
@@ -35,6 +35,6 @@ jobs:
       - uses: asdf-vm/actions/setup@v3
       - run: |
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
-          asdf install dojo 1.0.0-alpha.6
-          asdf global dojo 1.0.0-alpha.6
+          asdf install dojo 1.0.0-alpha.7
+          asdf global dojo 1.0.0-alpha.7
           sozo test

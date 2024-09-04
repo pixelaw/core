@@ -70,7 +70,7 @@ RUN starkliup -v ${STARKLI_VERSION}
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
-ENV DOJO_VERSION="v1.0.0-alpha.6"
+
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
 ENV CORE_VERSION=VERSION
@@ -113,23 +113,24 @@ RUN \
     rm -rf out/dev
 
 
-### Generate genesis.json for POPULATED core
-#RUN \
-#    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-#    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-#    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-#    bash scripts/create_snapshot.sh dev-pop && \
-#    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
-#    echo $WORLD_ADDRESS && \
-#    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-#    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-#    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-#    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-#    rm -rf out/dev-pop
+## Generate genesis.json for POPULATED core
+RUN \
+    --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
+    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
+    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
+    bash scripts/create_snapshot.sh dev-pop && \
+    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
+    echo $WORLD_ADDRESS && \
+    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
+    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
+    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
+    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
+    rm -rf out/dev-pop
 
 
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.3.10 AS web
+FROM ghcr.io/pixelaw/web:0.3.11 AS web
 
 FROM ghcr.io/pixelaw/server:0.3.19 AS server
 
