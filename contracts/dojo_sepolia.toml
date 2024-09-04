@@ -1,0 +1,18 @@
+[world]
+description = "PixeLAW world"
+name = "pixelaw"
+seed = "pixelaw"
+
+[world.socials]
+x = "https://x.com/0xPixeLAW"
+github = "https://github.com/pixelaw"
+
+
+[namespace]
+default = "pixelaw"
+mappings = {}
+
+[env]
+rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+account_address = ""
+private_key = ""
