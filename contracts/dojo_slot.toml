@@ -1,0 +1,18 @@
+[world]
+description = "PixeLAW world"
+name = "pixelaw"
+seed = "pixelaw"
+
+[world.socials]
+x = "https://x.com/pixelaw"
+github = "https://github.com/pixelaw"
+
+[namespace]
+default = "pixelaw"
+mappings = {}
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/pixelaw-dev/katana/"
+account_address = "0x5233cfca86bfa18af0bdef2fd09ac4c1d7c8da71303eb7fc9997fc6d0914d0d"
+private_key = "0xf0e37335d0c020789dd02c0460d99637ac23bd2df3d1d25002fd15621542d"
+world_address = "0x99b8dbc71926673405f5dfff9e4900ee4d9249798cc5e7ac6f3c3a07907399"
