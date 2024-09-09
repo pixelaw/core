@@ -303,7 +303,7 @@ pub mod actions {
             for_system: ContractAddress,
             pixel_update: PixelUpdate
         ) {
-            println!("update_pixel");
+            println!("update_pixel 1");
 
             let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
@@ -312,16 +312,17 @@ pub mod actions {
             );
 
             let old_pixel_app = pixel.app;
-            println!("{:?}", old_pixel_app);
+            println!("old_pixel_app {:?}", old_pixel_app);
 
             if old_pixel_app != contract_address_const::<0>() {
+              println!("changing pixel_app");
                 let interoperable_app = IInteroperabilityDispatcher {
                     contract_address: old_pixel_app
                 };
                 let app_caller = get!(world, for_system, (App));
                 interoperable_app.on_pre_update(pixel_update, app_caller, for_player)
             }
-
+            println!("update_pixel 2");
             // If the pixel has no owner set yet, do that now.
             if pixel.created_at == 0 {
                 let now = starknet::get_block_timestamp();
@@ -330,6 +331,7 @@ pub mod actions {
                 pixel.updated_at = now;
             }
 
+            println!("update_pixel 3");
             if pixel_update.app.is_some() {
                 pixel.app = pixel_update.app.unwrap();
             }
@@ -354,15 +356,19 @@ pub mod actions {
                 pixel.action = pixel_update.action.unwrap()
             }
 
+            println!("update_pixel 4");
             // Set Pixel
             set!(world, (pixel));
 
+            println!("update_pixel 5");
             if old_pixel_app != contract_address_const::<0>() {
                 let interoperable_app = IInteroperabilityDispatcher {
                     contract_address: old_pixel_app
                 };
+                println!("interop 1");
                 let app_caller = get!(world, for_system, (App));
                 interoperable_app.on_post_update(pixel_update, app_caller, for_player)
+                println!("interop 2");
             }
 
             println!("update_pixel DONE");
