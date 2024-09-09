@@ -1,10 +1,10 @@
+use starknet::{ContractAddress, ClassHash, contract_address_const};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::Position;
 
-use starknet::{ContractAddress, ClassHash, contract_address_const};
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[dojo::interface]
@@ -58,15 +58,17 @@ pub trait IActions<TContractState> {
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 pub mod actions {
+    use core::poseidon::poseidon_hash_span;
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_tx_info,
         contract_address_const, syscalls::{call_contract_syscall}
     };
+
     use super::IActions;
+
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use core::poseidon::poseidon_hash_span;
     use pixelaw::core::models::queue::{QueueItem};
     use pixelaw::core::utils::{get_core_actions_address, Position};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
@@ -136,7 +138,6 @@ pub mod actions {
             set!(world, Permissions { allowing_app: caller_address, allowed_app, permission });
         }
 
-
         /// Updates the name of an app in the registry
         ///
         /// # Arguments
@@ -151,7 +152,6 @@ pub mod actions {
             let app = self.new_app(system, name, icon, manifest);
             emit!(world, (Event::AppNameUpdated(AppNameUpdated { app, caller: system.into() })));
         }
-
 
         fn schedule_queue(
             ref world: IWorldDispatcher,
@@ -187,7 +187,6 @@ pub mod actions {
             );
             println!("schedule_queue DONE");
         }
-
 
         fn process_queue(
             ref world: IWorldDispatcher,
@@ -298,7 +297,6 @@ pub mod actions {
             true
         }
 
-
         fn update_pixel(
             ref world: IWorldDispatcher,
             for_player: ContractAddress,
@@ -370,7 +368,6 @@ pub mod actions {
             println!("update_pixel DONE");
         }
 
-
         fn get_player_address(for_player: ContractAddress) -> ContractAddress {
             if for_player == contract_address_const::<0>() {
                 println!("get_player_address.zero");
@@ -386,7 +383,6 @@ pub mod actions {
                 return for_player;
             }
         }
-
 
         fn get_system_address(for_system: ContractAddress) -> ContractAddress {
             if for_system != contract_address_const::<0>() {
