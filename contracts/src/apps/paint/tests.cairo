@@ -1,22 +1,23 @@
 #[cfg(test)]
 mod tests {
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+    use core::traits::TryInto;
 
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use pixelaw::core::models::pixel::{pixel};
-    use pixelaw::apps::paint::app::paint_utils::{encode_color, decode_color};
-    use pixelaw::core::models::permissions::{permissions};
-    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
-    use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use starknet::{contract_address_const, testing::set_account_contract_address};
+
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo::utils::test::{spawn_test_world};
 
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{pixel};
+    use pixelaw::core::models::permissions::{permissions};
+    use pixelaw::core::utils::{
+        get_core_actions, encode_color, decode_color, Direction, Position, DefaultParameters
+    };
+    use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
-    use starknet::{contract_address_const, testing::set_account_contract_address};
-
-    use core::traits::TryInto;
 
 
     // Helper function: deploys world and actions
