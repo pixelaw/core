@@ -15,7 +15,7 @@ trait IPaintActions<TContractState> {
     );
 }
 
-const APP_KEY: felt252 = 'paint';
+pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u32 = 7;
 

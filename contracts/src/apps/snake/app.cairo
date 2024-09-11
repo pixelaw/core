@@ -48,6 +48,9 @@ pub struct SnakeSegment {
     pub pixel_original_app: ContractAddress
 }
 
+pub const APP_KEY: felt252 = 'snake';
+pub const APP_ICON: felt252 = 'U+1F40D';
+const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
 
 #[dojo::interface]
 trait ISnakeActions<TContractState> {
@@ -67,6 +70,7 @@ mod snake_actions {
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 
+    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
     use super::{Snake, SnakeSegment};
     use pixelaw::core::utils::{
         get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
@@ -108,11 +112,7 @@ mod snake_actions {
     }
 
     const SNAKE_MAX_LENGTH: u8 = 255;
-    const APP_KEY: felt252 = 'snake';
-    const APP_ICON: felt252 = 'U+1F40D';
 
-    /// BASE means using the server's default manifest.json handler
-    const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
 
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
