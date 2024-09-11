@@ -198,7 +198,7 @@ pkill -f katana
 
 # Patch the torii DB
 echo "Patching Torii db"
-sqlite3 $TORII_DB  "UPDATE indexers SET head = 0 WHERE rowid = 1;"
+sqlite3 $TORII_DB  "UPDATE contracts SET head = 0;"
 
 
 # ---------------------------------------------------
