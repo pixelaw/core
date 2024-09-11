@@ -163,7 +163,7 @@ mod snake_actions {
         fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON, APP_MANIFEST);
 
             // TODO should use something like: starknet_keccak(array!['interact'].span())
             let INTERACT_SELECTOR =

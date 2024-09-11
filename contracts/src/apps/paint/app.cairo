@@ -68,14 +68,14 @@ mod paint_actions {
         }
     }
 
-    // impl: implement functions specified in trait
+
     #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
-        /// Initialize the Paint App (TODO I think, do we need this??)
+        /// Initialize the Paint App
         fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.update_app(APP_KEY, APP_ICON, APP_MANIFEST);
+            core_actions.new_app(contract_address_const::<0>(),APP_KEY, APP_ICON, APP_MANIFEST);
 
             // TODO: replace this with proper granting of permission
 

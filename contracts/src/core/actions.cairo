@@ -11,7 +11,7 @@ pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 pub trait IActions<TContractState> {
     fn init(ref world: IWorldDispatcher);
     fn update_permission(ref world: IWorldDispatcher, for_system: felt252, permission: Permission);
-    fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
+    // fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
     fn has_write_access(
         ref world: IWorldDispatcher,
         for_player: ContractAddress,
@@ -117,6 +117,7 @@ pub mod actions {
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         /// Initializes the Pixelaw actions model
+        /// One World has one CoreActions model that can be discovered by anyone
         fn init(ref world: IWorldDispatcher) {
             set!(
                 world,
@@ -138,20 +139,21 @@ pub mod actions {
             set!(world, Permissions { allowing_app: caller_address, allowed_app, permission });
         }
 
-        /// Updates the name of an app in the registry
-        ///
-        /// # Arguments
-        ///
-        /// * `name` - The new name of the app
-        /// * `icon` - unicode hex of the icon of the app
-        /// * `manifest` - url to the system's manifest.json
-        fn update_app(
-            ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252
-        ) {
-            let system = get_caller_address();
-            let app = self.new_app(system, name, icon, manifest);
-            emit!(world, (Event::AppNameUpdated(AppNameUpdated { app, caller: system.into() })));
-        }
+        // FIXME Disabled update_app, it's not implemented as it should, and seems unused
+        // /// Updates the name of an app in the registry
+        // ///
+        // /// # Arguments
+        // ///
+        // /// * `name` - The new name of the app
+        // /// * `icon` - unicode hex of the icon of the app
+        // /// * `manifest` - url to the system's manifest.json
+        // fn update_app(
+        //     ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252
+        // ) {
+        //     let system = get_caller_address();
+        //     let app = self.new_app(system, name, icon, manifest);
+        //     emit!(world, (Event::AppNameUpdated(AppNameUpdated { app, caller: system.into() })));
+        // }
 
         fn schedule_queue(
             ref world: IWorldDispatcher,
@@ -402,7 +404,7 @@ pub mod actions {
         ///
         /// # Arguments
         ///
-        /// * `system` - Contract address of the app's systems
+        /// * `system` - Contract address of the app's systems or 0 to use caller
         /// * `name` - Name of the app
         /// * `icon` - unicode hex of the icon of the app
         /// * `manifest` - url to the system's manifest.json
@@ -417,8 +419,16 @@ pub mod actions {
             icon: felt252,
             manifest: felt252
         ) -> App {
+
+            let mut app_system = system;
+            // If the system is not given, use the caller for this.
+            // This is expected to be called from the app.init() function
+            if system == contract_address_const::<0>() {
+                app_system = get_caller_address();
+            }
+
             // Load app
-            let mut app = get!(world, system, (App));
+            let mut app = get!(world, app_system, (App));
 
             // Load app_name
             let mut app_name = get!(world, name, (AppName));

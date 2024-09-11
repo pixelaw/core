@@ -12,11 +12,18 @@ use dojo::{
 
 use pixelaw::core::{
     models::{
-        registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},
+        registry::{app, app_name, core_actions_address, CoreActionsAddress}, pixel::{Pixel, PixelUpdate, pixel},
         permissions::{permissions}
     },
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
-    utils::{get_core_actions, Direction, Position, DefaultParameters},
+    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
+    utils::{get_core_actions, Direction, Position, DefaultParameters}
+};
+
+use pixelaw::{
+    apps::{
+        paint::app::{paint_actions, IPaintActionsDispatcher},
+        snake::app::{snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher}
+    }
 };
 
 pub fn setup() -> (
@@ -36,8 +43,15 @@ pub fn setup() -> (
 
     let core_actions_address = world
         .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
-
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
+
+    // Setup permissions
+    world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+
+
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -45,4 +59,28 @@ pub fn setup() -> (
 
 
     (world, core_actions, player_1, player_2)
+}
+
+pub fn setup_apps(world: IWorldDispatcher) -> (
+    IPaintActionsDispatcher,
+    ISnakeActionsDispatcher
+) {
+    let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
+
+    world.register_model((snake::TEST_CLASS_HASH).try_into().unwrap());
+    world.register_model((snake_segment::TEST_CLASS_HASH).try_into().unwrap());
+
+    let paint_actions_address = world
+        .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
+    let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
+
+    let snake_actions_address = world
+        .deploy_contract('salt4', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
+    let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
+
+    // Setup permissions
+    world.grant_writer(selector_from_tag!("pixelaw-Snake"), core_address.value);
+    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), core_address.value);
+
+    (paint_actions, snake_actions)
 }
