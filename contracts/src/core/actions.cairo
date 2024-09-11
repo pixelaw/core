@@ -319,7 +319,7 @@ pub mod actions {
                     contract_address: old_pixel_app
                 };
                 let app_caller = get!(world, for_system, (App));
-                interoperable_app.on_pre_update(pixel_update, app_caller, for_player)
+                interoperable_app.on_pre_update(pixel_update, app_caller, for_player);
             }
 
             // If the pixel has no owner set yet, do that now.
@@ -362,7 +362,7 @@ pub mod actions {
                     contract_address: old_pixel_app
                 };
                 let app_caller = get!(world, for_system, (App));
-                interoperable_app.on_post_update(pixel_update, app_caller, for_player)
+                interoperable_app.on_post_update(pixel_update, app_caller, for_player);
             }
 
             println!("update_pixel DONE");
