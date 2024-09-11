@@ -22,13 +22,20 @@ use pixelaw::core::{
 
 use pixelaw::{
     apps::{
-        paint::app::{paint_actions, IPaintActionsDispatcher, APP_KEY as PAINT_APP_KEY},
-        snake::app::{snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher, APP_KEY as SNAKE_APP_KEY}
+        paint::app::{paint_actions, IPaintActionsDispatcher,IPaintActionsDispatcherTrait, APP_KEY as PAINT_APP_KEY},
+        snake::app::{
+            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait,
+            APP_KEY as SNAKE_APP_KEY
+        }
     }
 };
 
+const TEST_POSITION: Position = Position { x: 1, y: 1 };
+const WHITE_COLOR: u32 = 0xFFFFFFFF;
+const RED_COLOR: u32 = 0xFF0000FF;
+
 #[test]
-#[available_gas(30000000)]
+#[available_gas(999_999_999)]
 fn test_core() {
     let ZERO_ADDRESS: ContractAddress = contract_address_const::<0>();
 
@@ -43,7 +50,6 @@ fn test_core() {
 
     let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
     assert(core_address.value != ZERO_ADDRESS, 'should not be 0');
-
 
     // new_app
     let mock_app1_system = contract_address_const::<0xBEEF>();
@@ -63,6 +69,8 @@ fn test_core() {
     let paint_appname = get!(world, PAINT_APP_KEY, (AppName));
     assert(paint_appname.system == ZERO_ADDRESS, 'still empty');
 
+    // Setting up paint with "new_app".
+    // Normally this happens inside of paint_actions.init
     core_actions.new_app(paint_actions.contract_address, PAINT_APP_KEY, '', '');
     let paint_appname = get!(world, PAINT_APP_KEY, (AppName));
     let paint_app = get!(world, paint_appname.system, (App));
@@ -70,18 +78,25 @@ fn test_core() {
     assert(paint_app.name == PAINT_APP_KEY, 'appname set');
 
 
+    // Test if paint works now
+    paint_actions.interact(DefaultParameters{
+        for_player: ZERO_ADDRESS, // Leave this 0 if not processing the Queue
+        for_system: ZERO_ADDRESS, // Leave this 0 if not processing the Queue
+        position: TEST_POSITION,
+        color: WHITE_COLOR
+    });
+
+
     // update_permission
 
-
-
     // has_write_access
-    // update_pixel 
-    // get_system_address 
+    // update_pixel
+    // get_system_address
     // get_player_address
 
     // alert_player
-    // set_instruction
+// set_instruction
 
-    // process_queue 
-    // schedule_queue
+    // process_queue
+// schedule_queue
 }
