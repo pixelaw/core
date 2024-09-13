@@ -1,7 +1,7 @@
 use starknet::{ContractAddress, ClassHash};
 
 // TODO is this using packing? If not, try to use bitmasking approach
-#[derive(Copy, Drop, Serde, Introspect)]
+#[derive(Copy, Drop, Serde, Introspect, PartialEq)]
 pub struct Permission {
     pub app: bool,
     pub color: bool,
