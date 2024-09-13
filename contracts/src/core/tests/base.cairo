@@ -190,7 +190,6 @@ fn test_update_pixel(
     let timestamp: u64 = 123123;
     let action = 'myaction';
 
-
     let empty_pixel = Pixel {
         x,
         y,
@@ -205,16 +204,7 @@ fn test_update_pixel(
     };
 
     let mut changed_pixel = Pixel {
-        x,
-        y,
-        color,
-        app,
-        owner,
-        text,
-        timestamp,
-        action,
-        created_at: 0,
-        updated_at: 0
+        x, y, color, app, owner, text, timestamp, action, created_at: 0, updated_at: 0
     };
 
     let pixel_update = PixelUpdate {
@@ -232,7 +222,7 @@ fn test_update_pixel(
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
-    core_actions.update_pixel(ZERO_ADDRESS(),ZERO_ADDRESS(),pixel_update);
+    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update);
 
     let pixel = get!(world, (x, y), Pixel);
 
