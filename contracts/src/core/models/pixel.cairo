@@ -12,7 +12,7 @@ pub struct PixelUpdate {
     pub action: Option<felt252>
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde, PartialEq)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
 pub struct Pixel {
     // System properties

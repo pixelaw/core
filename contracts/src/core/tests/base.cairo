@@ -176,11 +176,72 @@ fn test_has_write_access(
     assert(has_access == true, 'should have access');
 }
 
-// fn update_pixel(world: IWorldDispatcher, core_actions: IActionsDispatcher, position: Position,
-// color: u32) {
-//     let pixel = Pixel { position, color };
-//     core_actions.update_pixel(world, pixel);
-// }
+fn test_update_pixel(
+    world: IWorldDispatcher, core_actions: IActionsDispatcher, player_1: ContractAddress
+) {
+    set_caller(player_1);
+
+    let x = 22;
+    let y = 23;
+    let color: u32 = 0xFF00FFFF;
+    let app = contract_address_const::<0xBEEFDEAD>();
+    let owner = player_1;
+    let text = 'mytext';
+    let timestamp: u64 = 123123;
+    let action = 'myaction';
+
+
+    let empty_pixel = Pixel {
+        x,
+        y,
+        color: 0,
+        app: ZERO_ADDRESS(),
+        owner: ZERO_ADDRESS(),
+        text: 0,
+        timestamp: 0,
+        action: 0,
+        created_at: 0,
+        updated_at: 0
+    };
+
+    let mut changed_pixel = Pixel {
+        x,
+        y,
+        color,
+        app,
+        owner,
+        text,
+        timestamp,
+        action,
+        created_at: 0,
+        updated_at: 0
+    };
+
+    let pixel_update = PixelUpdate {
+        x,
+        y,
+        color: Option::Some(color),
+        owner: Option::Some(owner),
+        app: Option::Some(app),
+        text: Option::Some(text),
+        timestamp: Option::Some(timestamp),
+        action: Option::Some(action)
+    };
+
+    let pixel = get!(world, (x, y), Pixel);
+
+    assert(pixel == empty_pixel, 'pixel not empty');
+
+    core_actions.update_pixel(ZERO_ADDRESS(),ZERO_ADDRESS(),pixel_update);
+
+    let pixel = get!(world, (x, y), Pixel);
+
+    // TODO properly test created_at and updated_at (if we even keep them like this)
+    changed_pixel.created_at = pixel.created_at;
+    changed_pixel.updated_at = pixel.updated_at;
+
+    assert(pixel == changed_pixel, 'pixel was not changed');
+}
 
 fn get_system_address(world: IWorldDispatcher, app_name: felt252) -> ContractAddress {
     let app = get!(world, app_name, (App));
@@ -237,9 +298,9 @@ fn test_core() {
 
     // Check write access
     test_has_write_access(world, core_actions, paint_actions, player_1, player_2);
-    // // Update pixel
-// update_pixel(world, TEST_POSITION, WHITE_COLOR);
 
+    // // Update pixel
+    test_update_pixel(world, core_actions, player_1);
     // // Get system address
 // let system_address = get_system_address(world, 'app1');
 // println!("System address: {:?}", system_address);
