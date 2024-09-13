@@ -12,8 +12,8 @@ use dojo::{
 
 use pixelaw::core::{
     models::{
-        registry::{app, app_name, core_actions_address, CoreActionsAddress}, pixel::{Pixel, PixelUpdate, pixel},
-        permissions::{permissions}
+        registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
+        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
     utils::{get_core_actions, Direction, Position, DefaultParameters}
@@ -22,16 +22,22 @@ use pixelaw::core::{
 use pixelaw::{
     apps::{
         paint::app::{paint_actions, IPaintActionsDispatcher},
-        snake::app::{snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher}
+        snake::app::{
+            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher
+        }
     }
 };
 
-pub fn setup() -> (
-    IWorldDispatcher,
-    IActionsDispatcher,
-    ContractAddress,
-    ContractAddress
-) {
+pub fn set_caller(caller: ContractAddress) {
+    starknet::testing::set_account_contract_address(caller);
+    starknet::testing::set_contract_address(caller);
+}
+
+pub fn ZERO_ADDRESS() -> ContractAddress {
+    contract_address_const::<0x0>()
+}
+
+pub fn setup() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
     let mut models = array![
         pixel::TEST_CLASS_HASH,
         app::TEST_CLASS_HASH,
@@ -50,21 +56,16 @@ pub fn setup() -> (
     world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-
-
+    world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
     let player_2 = contract_address_const::<0x42>();
 
-
     (world, core_actions, player_1, player_2)
 }
 
-pub fn setup_apps(world: IWorldDispatcher) -> (
-    IPaintActionsDispatcher,
-    ISnakeActionsDispatcher
-) {
+pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
     let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
 
     world.register_model((snake::TEST_CLASS_HASH).try_into().unwrap());
@@ -84,3 +85,5 @@ pub fn setup_apps(world: IWorldDispatcher) -> (
 
     (paint_actions, snake_actions)
 }
+
+

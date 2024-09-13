@@ -21,9 +21,9 @@ pub trait IActions<TContractState> {
     /// # Arguments
     ///
     /// * `world` - A reference to the world dispatcher.
-    /// * `for_system` - The system to update permissions for.
+    /// * `app_key` - The key of the app (example: 'paint') to update permissions for.
     /// * `permission` - The permission to set for the system.
-    fn update_permission(ref world: IWorldDispatcher, for_system: felt252, permission: Permission);
+    fn update_permission(ref world: IWorldDispatcher, app_key: felt252, permission: Permission);
 
     // fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
 
@@ -240,7 +240,7 @@ pub mod actions {
         /// # Arguments
         ///
         /// * `world` - A reference to the world dispatcher.
-        /// * `for_system` - The system to update permissions for.
+        /// * `app_key` - The key of the app (example: 'paint') to update permissions for.
         /// * `permission` - The permission to set for the system.
         ///
         /// # Remarks
@@ -249,14 +249,18 @@ pub mod actions {
         /// It is the app's responsibility to handle `update_permission` responsibly.
         fn update_permission(
             ref world: IWorldDispatcher,
-            for_system: felt252,
+            app_key: felt252,
             permission: Permission,
         ) {
             let caller_address = get_caller_address();
 
             // Retrieve the App of the `for_system`
-            let allowed_app = get!(world, for_system, (AppName));
+            let allowed_app = get!(world, app_key, (AppName));
             let allowed_app = allowed_app.system;
+
+            println!("appkey: {:?}", app_key);
+            println!("caller_address: {:?}", caller_address);
+            println!("allowed_app: {:?}", allowed_app);
 
             set!(
                 world,
