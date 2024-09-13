@@ -431,7 +431,7 @@ pub mod actions {
             // The address making this call. Could be a System of an App
             let caller_address = get_caller_address();
 
-            // First check: Can we grant based on ownership?
+                        // First check: Can we grant based on ownership?
             // If caller is owner or not owned by anyone, allow
             if pixel.owner == caller_account || pixel.owner == contract_address_const::<0>() {
                 return true;
@@ -439,7 +439,6 @@ pub mod actions {
                 // The caller is not a System, and not owner, so no reason to keep looking.
                 return false;
             }
-
             // Deal with Scheduler calling
 
             // The `caller_address` is a System, let's see if it has access

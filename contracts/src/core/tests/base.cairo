@@ -41,6 +41,7 @@ const TEST_POSITION: Position = Position { x: 1, y: 1 };
 const WHITE_COLOR: u32 = 0xFFFFFFFF;
 const RED_COLOR: u32 = 0xFF0000FF;
 
+
 const PERMISSION_ALL: Permission =
     Permission { app: true, color: true, owner: true, text: true, timestamp: true, action: true };
 
@@ -111,7 +112,6 @@ fn test_update_permission(
     // Setup PermissionedApp
     let permissioned: App = core_actions.new_app(permissioned_system, 'permissioned', '', '');
 
-
     // Check that existing permissions are NONE
     let current_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
     assert(current_permissions.permission == PERMISSION_NONE, 'permissions not none');
@@ -124,14 +124,57 @@ fn test_update_permission(
     let new_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
 
     assert(new_permissions.permission == PERMISSION_ALL, 'permissions not all');
-
 }
 
-// fn has_write_access(world: IWorldDispatcher, core_actions: IActionsDispatcher, app_name: felt252,
-// player: ContractAddress) -> bool {
-//     let app = get!(world, app_name, (App));
-//     core_actions.has_write_access(app.system, player)
-// }
+
+fn test_has_write_access(
+    world: IWorldDispatcher,
+    core_actions: IActionsDispatcher,
+    paint_actions: IPaintActionsDispatcher,
+    player_1: ContractAddress,
+    player_2: ContractAddress
+) {
+    // Scenario:
+    // Check if Player2 can change Player1's pixel
+
+    let position = Position { x: 12, y: 12 };
+    let color = 0xFF0000FF;
+    // Setup Pixel
+    set_caller(player_1);
+    paint_actions
+        .put_color(
+            DefaultParameters {
+                for_player: ZERO_ADDRESS(), for_system: ZERO_ADDRESS(), position, color
+            }
+        );
+
+    // Setup PixelUpdate
+    let pixel_update = PixelUpdate {
+        x: 12,
+        y: 12,
+        color: Option::Some(0xFF00FFFF),
+        owner: Option::Some(player_1),
+        app: Option::Some(paint_actions.contract_address),
+        text: Option::None,
+        timestamp: Option::None,
+        action: Option::None
+    };
+
+    set_caller(player_2);
+    let pixel = get!(world, (position.x, position.y), Pixel);
+
+    let has_access = core_actions
+        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+
+    assert(has_access == false, 'should not have access');
+
+    set_caller(player_1);
+
+    let has_access = core_actions
+        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+
+    assert(has_access == true, 'should have access');
+}
 
 // fn update_pixel(world: IWorldDispatcher, core_actions: IActionsDispatcher, position: Position,
 // color: u32) {
@@ -191,10 +234,9 @@ fn test_core() {
     test_get_player_address(core_actions, player_1, player_2);
 
     test_update_permission(world, core_actions, player_1);
-    // // Check write access
-// let has_access = has_write_access(world, 'app1', player_address);
-// assert(has_access, 'Player should have write access');
 
+    // Check write access
+    test_has_write_access(world, core_actions, paint_actions, player_1, player_2);
     // // Update pixel
 // update_pixel(world, TEST_POSITION, WHITE_COLOR);
 
