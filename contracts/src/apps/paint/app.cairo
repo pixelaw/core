@@ -44,9 +44,7 @@ trait IPaintActions<TContractState> {
     /// * `default_params` - The default parameters including position.
     /// * `image_data` - A span of felt252 representing the image data.
     fn pixel_row(
-        ref world: IWorldDispatcher,
-        default_params: DefaultParameters,
-        image_data: Span<felt252>,
+        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>,
     );
 }
 
@@ -79,308 +77,308 @@ mod paint_actions {
 
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
-/// Hook called before a pixel update.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `pixel_update` - The proposed update to the pixel.
-/// * `app_caller` - The app initiating the update.
-/// * `player_caller` - The player initiating the update.
-fn on_pre_update(
-ref world: IWorldDispatcher,
-pixel_update: PixelUpdate,
-app_caller: App,
-player_caller: ContractAddress,
-) {
-// Do nothing
-let _world = world;
-}
+        /// Hook called before a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The proposed update to the pixel.
+        /// * `app_caller` - The app initiating the update.
+        /// * `player_caller` - The player initiating the update.
+        fn on_pre_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) {
+            // Do nothing
+            let _world = world;
+        }
 
-/// Hook called after a pixel update.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `pixel_update` - The update that was applied to the pixel.
-/// * `app_caller` - The app that performed the update.
-/// * `player_caller` - The player that performed the update.
-fn on_post_update(
-ref world: IWorldDispatcher,
-pixel_update: PixelUpdate,
-app_caller: App,
-player_caller: ContractAddress,
-) {
-// Do nothing
-let _world = world;
-}
-}
+        /// Hook called after a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The update that was applied to the pixel.
+        /// * `app_caller` - The app that performed the update.
+        /// * `player_caller` - The player that performed the update.
+        fn on_post_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) {
+            // Do nothing
+            let _world = world;
+        }
+    }
 
     #[abi(embed_v0)]
     impl ActionsImpl of IPaintActions<ContractState> {
-/// Initializes the Paint App.
-///
-/// This function registers the app with core actions and sets up initial permissions.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-fn init(ref world: IWorldDispatcher) {
-let core_actions = pixelaw::core::utils::get_core_actions(world);
+        /// Initializes the Paint App.
+        ///
+        /// This function registers the app with core actions and sets up initial permissions.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        fn init(ref world: IWorldDispatcher) {
+            let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-core_actions.new_app(
-contract_address_const::<0>(),
-APP_KEY,
-APP_ICON,
-APP_MANIFEST,
-);
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON, APP_MANIFEST,);
 
-// TODO: Replace this with proper granting of permission
-core_actions.update_permission(
-'snake',
-Permission {
-app: true,
-color: true,
-owner: false,
-text: true,
-timestamp: false,
-action: false,
-},
-);
-}
+            // // TODO: Replace this with proper granting of permission
+            // core_actions
+            //     .update_permission(
+            //         'snake',
+            //         Permission {
+            //             app: true,
+            //             color: true,
+            //             owner: false,
+            //             text: true,
+            //             timestamp: false,
+            //             action: false,
+            //         },
+            //     );
+        }
 
-/// Interacts with a pixel based on default parameters.
-///
-/// If the pixel's current color matches the desired color, it initiates a fade.
-/// Otherwise, it applies the new color.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `default_params` - The default parameters including position and color.
-fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-println!("interact");
+        /// Interacts with a pixel based on default parameters.
+        ///
+        /// If the pixel's current color matches the desired color, it initiates a fade.
+        /// Otherwise, it applies the new color.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `default_params` - The default parameters including position and color.
+        fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
+            println!("interact");
 
-let position = default_params.position;
+            let position = default_params.position;
 
-// Load the Pixel
-let mut pixel = get!(world, (position.x, position.y), (Pixel));
+            // Load the Pixel
+            let mut pixel = get!(world, (position.x, position.y), (Pixel));
 
-if pixel.color == default_params.color {
-self.fade(default_params);
-} else {
-self.put_color(default_params);
-}
-}
+            if pixel.color == default_params.color {
+                self.fade(default_params);
+            } else {
+                self.put_color(default_params);
+            }
+        }
 
-/// Applies a color to a specified position.
-///
-/// Checks for cooldown and ownership before applying the color.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `default_params` - The default parameters including position and color.
-fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-println!("put_color");
+        /// Applies a color to a specified position.
+        ///
+        /// Checks for cooldown and ownership before applying the color.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `default_params` - The default parameters including position and color.
+        fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
+            println!("put_color");
 
-// Load important variables
-let core_actions = get_core_actions(world);
-let position = default_params.position;
-let player = core_actions.get_player_address(default_params.for_player);
-let system = core_actions.get_system_address(default_params.for_system);
+            // Load important variables
+            let core_actions = get_core_actions(world);
+            let position = default_params.position;
+            let player = core_actions.get_player_address(default_params.for_player);
+            let system = core_actions.get_system_address(default_params.for_system);
 
-// Load the Pixel
-let mut pixel = get!(world, (position.x, position.y), (Pixel));
+            // Load the Pixel
+            let mut pixel = get!(world, (position.x, position.y), (Pixel));
 
-// TODO: Load Paint App Settings like the fade step time
-// For example for the cooldown feature
-let COOLDOWN_SECS = 5;
+            // TODO: Load Paint App Settings like the fade step time
+            // For example for the cooldown feature
+            let COOLDOWN_SECS = 5;
 
-// Check if 5 seconds have passed or if the sender is the owner
-assert!(
-pixel.owner == contract_address_const::<0>()
-|| pixel.owner == player
-|| starknet::get_block_timestamp() - pixel.timestamp >= COOLDOWN_SECS,
-"Cooldown not over"
-);
+            // Check if 5 seconds have passed or if the sender is the owner
+            assert!(
+                pixel.owner == contract_address_const::<0>()
+                    || pixel.owner == player
+                    || starknet::get_block_timestamp()
+                    - pixel.timestamp >= COOLDOWN_SECS,
+                "Cooldown not over"
+            );
 
-// Update color of the pixel
-core_actions.update_pixel(
-player,
-system,
-PixelUpdate {
-x: position.x,
-y: position.y,
-color: Option::Some(default_params.color),
-timestamp: Option::None,
-text: Option::None,
-app: Option::Some(system),
-owner: Option::Some(player),
-action: Option::None, // Not using this feature for paint
-},
-);
+            // Update color of the pixel
+            core_actions
+                .update_pixel(
+                    player,
+                    system,
+                    PixelUpdate {
+                        x: position.x,
+                        y: position.y,
+                        color: Option::Some(default_params.color),
+                        timestamp: Option::None,
+                        text: Option::None,
+                        app: Option::Some(system),
+                        owner: Option::Some(player),
+                        action: Option::None, // Not using this feature for paint
+                    },
+                );
 
-println!("put_color DONE");
-}
+            println!("put_color DONE");
+        }
 
-/// Updates a row of pixels with provided image data.
-///
-/// Processes the image data and updates each pixel accordingly.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `default_params` - The default parameters including position.
-/// * `image_data` - A span of felt252 representing the image data.
-fn pixel_row(
-ref world: IWorldDispatcher,
-default_params: DefaultParameters,
-image_data: Span<felt252>,
-) {
-// row_length determines how many pixels are in a row
-// row_offset determines how far to the right the position started. Next row will
-// continue (x - offset) to the left
+        /// Updates a row of pixels with provided image data.
+        ///
+        /// Processes the image data and updates each pixel accordingly.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `default_params` - The default parameters including position.
+        /// * `image_data` - A span of felt252 representing the image data.
+        fn pixel_row(
+            ref world: IWorldDispatcher,
+            default_params: DefaultParameters,
+            image_data: Span<felt252>,
+        ) {
+            // row_length determines how many pixels are in a row
+            // row_offset determines how far to the right the position started. Next row will
+            // continue (x - offset) to the left
 
-if image_data.is_empty() {
-println!("image_data empty");
-return;
-}
+            if image_data.is_empty() {
+                println!("image_data empty");
+                return;
+            }
 
-let core_actions = get_core_actions(world);
-let position = default_params.position;
-let player = core_actions.get_player_address(default_params.for_player);
-let system = core_actions.get_system_address(default_params.for_system);
+            let core_actions = get_core_actions(world);
+            let position = default_params.position;
+            let player = core_actions.get_player_address(default_params.for_player);
+            let system = core_actions.get_system_address(default_params.for_system);
 
-let mut felt_index = 0;
-let mut pixel_index = 0;
-let mut felt: u256 = (*image_data.at(felt_index)).into();
-let mut stop = false;
-println!("first felt: {}", felt);
+            let mut felt_index = 0;
+            let mut pixel_index = 0;
+            let mut felt: u256 = (*image_data.at(felt_index)).into();
+            let mut stop = false;
+            println!("first felt: {}", felt);
 
-while !stop {
-// Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits
-// are 0 padded.
-// We unpack 4 bytes at a time and use them
+            while !stop {
+                // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits
+                // are 0 padded.
+                // We unpack 4 bytes at a time and use them
 
-core_actions.update_pixel(
-player,
-system,
-PixelUpdate {
-x: position.x + pixel_index,
-y: position.y,
-color: Option::Some(extract(felt.into(), pixel_index % PIXELS_PER_FELT)),
-timestamp: Option::None,
-text: Option::None,
-app: Option::Some(system),
-owner: Option::Some(player),
-action: Option::None, // Not using this feature for paint
-},
-);
+                core_actions
+                    .update_pixel(
+                        player,
+                        system,
+                        PixelUpdate {
+                            x: position.x + pixel_index,
+                            y: position.y,
+                            color: Option::Some(
+                                extract(felt.into(), pixel_index % PIXELS_PER_FELT)
+                            ),
+                            timestamp: Option::None,
+                            text: Option::None,
+                            app: Option::Some(system),
+                            owner: Option::Some(player),
+                            action: Option::None, // Not using this feature for paint
+                        },
+                    );
 
-pixel_index += 1;
+                pixel_index += 1;
 
-// Get a new felt if we processed all pixels
-if pixel_index % PIXELS_PER_FELT == 0 {
-felt_index += 1;
+                // Get a new felt if we processed all pixels
+                if pixel_index % PIXELS_PER_FELT == 0 {
+                    felt_index += 1;
 
-if felt_index == image_data.len() {
-// Break if we processed all the image data
-stop = true;
-break;
-} else {
-felt = (*image_data.at(felt_index)).into();
-}
-}
-}
-}
+                    if felt_index == image_data.len() {
+                        // Break if we processed all the image data
+                        stop = true;
+                        break;
+                    } else {
+                        felt = (*image_data.at(felt_index)).into();
+                    }
+                }
+            }
+        }
 
-/// Initiates the fading process for a pixel.
-///
-/// Decreases the RGB values by a fade step and schedules the next fade if necessary.
-///
-/// # Arguments
-///
-/// * `world` - A reference to the world dispatcher.
-/// * `default_params` - The default parameters including position and color.
-fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-println!("fade");
+        /// Initiates the fading process for a pixel.
+        ///
+        /// Decreases the RGB values by a fade step and schedules the next fade if necessary.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `default_params` - The default parameters including position and color.
+        fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
+            println!("fade");
 
-let core_actions = get_core_actions(world);
-let position = default_params.position;
-let player = core_actions.get_player_address(default_params.for_player);
-let system = core_actions.get_system_address(default_params.for_system);
-let pixel = get!(world, (position.x, position.y), Pixel);
+            let core_actions = get_core_actions(world);
+            let position = default_params.position;
+            let player = core_actions.get_player_address(default_params.for_player);
+            let system = core_actions.get_system_address(default_params.for_system);
+            let pixel = get!(world, (position.x, position.y), Pixel);
 
-println!("decode_color");
+            println!("decode_color");
 
-let (r, g, b, a) = decode_color(pixel.color);
+            let (r, g, b, a) = decode_color(pixel.color);
 
-// If the color is 0,0,0, fading is done.
-if r == 0 && g == 0 && b == 0 {
-println!("fading is done");
-delete!(world, (pixel));
-return;
-}
+            // If the color is 0,0,0, fading is done.
+            if r == 0 && g == 0 && b == 0 {
+                println!("fading is done");
+                delete!(world, (pixel));
+                return;
+            }
 
-// Fade the color
-let FADE_STEP = 5;
+            // Fade the color
+            let FADE_STEP = 5;
 
-println!("encode_color");
-let new_color = encode_color(
-subu8(r, FADE_STEP),
-subu8(g, FADE_STEP),
-subu8(b, FADE_STEP),
-a,
-);
+            println!("encode_color");
+            let new_color = encode_color(
+                subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a,
+            );
 
-// Update color of the pixel
-core_actions.update_pixel(
-player,
-system,
-PixelUpdate {
-x: position.x,
-y: position.y,
-color: Option::Some(new_color),
-timestamp: Option::None,
-text: Option::None,
-app: Option::Some(system),
-owner: Option::Some(player),
-action: Option::None, // Not using this feature for paint
-},
-);
+            // Update color of the pixel
+            core_actions
+                .update_pixel(
+                    player,
+                    system,
+                    PixelUpdate {
+                        x: position.x,
+                        y: position.y,
+                        color: Option::Some(new_color),
+                        timestamp: Option::None,
+                        text: Option::None,
+                        app: Option::Some(system),
+                        owner: Option::Some(player),
+                        action: Option::None, // Not using this feature for paint
+                    },
+                );
 
-let FADE_SECONDS = 4;
+            let FADE_SECONDS = 4;
 
-// Implement fading by scheduling a new fade call
-let queue_timestamp = starknet::get_block_timestamp() + FADE_SECONDS;
-let mut calldata: Array<felt252> = ArrayTrait::new();
+            // Implement fading by scheduling a new fade call
+            let queue_timestamp = starknet::get_block_timestamp() + FADE_SECONDS;
+            let mut calldata: Array<felt252> = ArrayTrait::new();
 
-let THIS_CONTRACT_ADDRESS = get_contract_address();
+            let THIS_CONTRACT_ADDRESS = get_contract_address();
 
-// Prepare calldata
-// Calldata[0]: Calling player
-calldata.append(player.into());
+            // Prepare calldata
+            // Calldata[0]: Calling player
+            calldata.append(player.into());
 
-// Calldata[1]: Calling system
-calldata.append(THIS_CONTRACT_ADDRESS.into());
+            // Calldata[1]: Calling system
+            calldata.append(THIS_CONTRACT_ADDRESS.into());
 
-// Calldata[2,3]: Position[x,y]
-calldata.append(position.x.into());
-calldata.append(position.y.into());
+            // Calldata[2,3]: Position[x,y]
+            calldata.append(position.x.into());
+            calldata.append(position.y.into());
 
-// Calldata[4]: Color
-calldata.append(new_color.into());
+            // Calldata[4]: Color
+            calldata.append(new_color.into());
 
-core_actions.schedule_queue(
-queue_timestamp,                          // When to fade next
-THIS_CONTRACT_ADDRESS,                    // This contract address
-0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // Selector for fade
-calldata.span(),                          // The prepared calldata
-);
-println!("put_fading_color DONE");
-}
-}
+            core_actions
+                .schedule_queue(
+                    queue_timestamp, // When to fade next
+                    THIS_CONTRACT_ADDRESS, // This contract address
+                    0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // Selector for fade
+                    calldata.span(), // The prepared calldata
+                );
+            println!("put_fading_color DONE");
+        }
+    }
 
     const MASK_32: u256 = 0xffffffff;
 
