@@ -251,6 +251,20 @@ fn test_get_player_address(
     assert(addr == player2, 'should return player2');
 }
 
+fn test_get_system_address(
+    core_actions: IActionsDispatcher,
+    paint_contract: ContractAddress,
+    snake_contract: ContractAddress
+) {
+    set_caller(paint_contract);
+
+    let addr = core_actions.get_system_address(ZERO_ADDRESS());
+    assert(addr == paint_contract, 'should return paint_contract');
+
+    let addr = core_actions.get_system_address(snake_contract);
+    assert(addr == snake_contract, 'should return snake_contract');
+}
+
 fn alert_player(player: ContractAddress, message: felt252) {
     // Implementation for alerting the player
     println!("Alerting player {:?}: {}", player, message);
@@ -274,7 +288,7 @@ fn schedule_queue(world: IWorldDispatcher, action: felt252) {
 #[available_gas(999_999_999)]
 fn test_core() {
     let (world, core_actions, player_1, player_2) = setup();
-    let (paint_actions, _snake_actions) = setup_apps(world);
+    let (paint_actions, snake_actions) = setup_apps(world);
 
     init_core_actions(world, core_actions);
 
@@ -284,17 +298,15 @@ fn test_core() {
 
     test_get_player_address(core_actions, player_1, player_2);
 
+    test_get_system_address(
+        core_actions, paint_actions.contract_address, snake_actions.contract_address
+    );
+
     test_update_permission(world, core_actions, player_1);
 
-    // Check write access
     test_has_write_access(world, core_actions, paint_actions, player_1, player_2);
 
-    // // Update pixel
     test_update_pixel(world, core_actions, player_1);
-    // // Get system address
-// let system_address = get_system_address(world, 'app1');
-// println!("System address: {:?}", system_address);
-
     // // Alert player
 // alert_player(player_address, 'This is a test alert');
 
