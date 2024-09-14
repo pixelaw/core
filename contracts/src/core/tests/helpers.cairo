@@ -12,7 +12,7 @@ use dojo::{
 
 use pixelaw::core::{
     models::{
-        registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
+        registry::{App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction},
         pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
@@ -21,9 +21,10 @@ use pixelaw::core::{
 
 use pixelaw::{
     apps::{
-        paint::app::{paint_actions, IPaintActionsDispatcher},
+        paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
         snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher
+            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
+            ISnakeActionsDispatcherTrait
         }
     }
 };
@@ -37,13 +38,22 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0>()
 }
 
-pub fn setup() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
+pub fn setup_core_initialized() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
+    let (world, core_actions, player_1, player_2)  = setup_core();
+
+    core_actions.init();
+
+    (world, core_actions, player_1, player_2)
+}
+
+pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
     let mut models = array![
         pixel::TEST_CLASS_HASH,
         app::TEST_CLASS_HASH,
         app_name::TEST_CLASS_HASH,
         core_actions_address::TEST_CLASS_HASH,
         permissions::TEST_CLASS_HASH,
+        instruction::TEST_CLASS_HASH,
     ];
     let world = spawn_test_world(["pixelaw"].span(), models.span());
 
@@ -57,12 +67,23 @@ pub fn setup() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, Contra
     world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
     let player_2 = contract_address_const::<0x42>();
 
     (world, core_actions, player_1, player_2)
+}
+
+
+pub fn setup_apps_initialized(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+    let (paint_actions, snake_actions) = setup_apps(world);
+
+    paint_actions.init();
+    snake_actions.init();
+
+    (paint_actions, snake_actions)
 }
 
 pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
@@ -85,5 +106,4 @@ pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeAc
 
     (paint_actions, snake_actions)
 }
-
 

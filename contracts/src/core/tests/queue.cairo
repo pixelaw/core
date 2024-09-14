@@ -16,7 +16,7 @@ use pixelaw::core::{
         permissions::{permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
-    utils::{get_core_actions, Direction, Position, DefaultParameters}, tests::helpers::setup
+    utils::{get_core_actions, Direction, Position, DefaultParameters}, tests::helpers::setup_core_initialized
 };
 
 
@@ -26,7 +26,7 @@ const SPAWN_PIXEL_ENTRYPOINT: felt252 =
 #[test]
 #[available_gas(30000000)]
 fn test_process_queue() {
-    let (world, core_actions, _player_1, _player_2) = pixelaw::core::tests::helpers::setup();
+    let (world, core_actions, _player_1, _player_2) = pixelaw::core::tests::helpers::setup_core_initialized();
     let position = Position { x: 0, y: 0 };
 
     let mut calldata: Array<felt252> = ArrayTrait::new();
