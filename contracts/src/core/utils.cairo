@@ -1,5 +1,6 @@
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use pixelaw::core::models::pixel::{Pixel};
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -10,7 +11,7 @@ pub enum Direction {
     Down: (),
 }
 
-#[derive(Copy, Drop, Serde, Introspect)]
+#[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
 pub struct Position {
     pub x: u32,
     pub y: u32
@@ -158,4 +159,9 @@ pub fn decode_color(color: u32) -> (u8, u8, u8, u8) {
     };
 
     (r, g, b, a)
+}
+
+pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -> bool {
+    let pixel: Pixel = get!(world, (position.x, position.y), (Pixel));
+    pixel.color == color
 }

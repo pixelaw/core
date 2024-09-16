@@ -10,3 +10,4 @@ web/public/assets/placeholder/pixel-state.png
 contracts/out
 contracts/manifests
 contracts/target
+.aider*
