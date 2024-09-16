@@ -56,7 +56,7 @@ fn test_register_new_app() {
     let (world, core_actions, _player_1, _player_2) = setup_core();
     let app_name = 'myname';
     let mock_app1_system = contract_address_const::<0xBEAD>();
-    let _new_app1: App = core_actions.new_app(mock_app1_system, app_name, '', '');
+    let _new_app1: App = core_actions.new_app(mock_app1_system, app_name, '');
     // TODO check return values
 
     let loaded_app1_name = get!(world, app_name, (AppName));
@@ -92,10 +92,10 @@ fn test_update_permission() {
     set_caller(player_1);
 
     // Setup PermissioningApp
-    let permissioning: App = core_actions.new_app(permissioning_system, 'permissioning', '', '');
+    let permissioning: App = core_actions.new_app(permissioning_system, 'permissioning', '');
 
     // Setup PermissionedApp
-    let permissioned: App = core_actions.new_app(permissioned_system, 'permissioned', '', '');
+    let permissioned: App = core_actions.new_app(permissioned_system, 'permissioned', '');
 
     // Check that existing permissions are NONE
     let current_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);

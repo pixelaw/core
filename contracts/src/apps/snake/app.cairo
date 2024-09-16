@@ -88,7 +88,6 @@ pub struct SnakeSegment {
 
 pub const APP_KEY: felt252 = 'snake';
 pub const APP_ICON: felt252 = 'U+1F40D';
-const APP_MANIFEST: felt252 = 'BASE/manifests/snake';
 
 /// Interface for Snake actions.
 #[dojo::interface]
@@ -132,7 +131,7 @@ mod snake_actions {
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 
-    use super::{APP_KEY, APP_ICON, APP_MANIFEST};
+    use super::{APP_KEY, APP_ICON};
     use super::{Snake, SnakeSegment};
     use pixelaw::core::utils::{
         get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
@@ -246,7 +245,7 @@ mod snake_actions {
         fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON, APP_MANIFEST,);
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
 
             // TODO: Should use something like: starknet_keccak(array!['interact'].span())
             let INTERACT_SELECTOR =

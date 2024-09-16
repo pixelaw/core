@@ -12,8 +12,6 @@ pub struct App {
     #[key]
     pub system: ContractAddress,
     pub name: felt252,
-    // ipfs link to the contract's manifest.json
-    pub manifest: felt252,
     pub icon: felt252,
     // Default action for the UI (a function in the system)
     pub action: felt252

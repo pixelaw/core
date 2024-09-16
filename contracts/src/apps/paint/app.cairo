@@ -126,7 +126,7 @@ mod paint_actions {
         fn init(ref world: IWorldDispatcher) {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON, APP_MANIFEST,);
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
 
             // // TODO: Replace this with proper granting of permission
             // core_actions

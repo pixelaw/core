@@ -25,7 +25,7 @@ pub trait IActions<TContractState> {
     /// * `permission` - The permission to set for the system.
     fn update_permission(ref world: IWorldDispatcher, app_key: felt252, permission: Permission);
 
-    // fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252, manifest: felt252);
+    // fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252);
 
     /// Checks if a player or system has write access to a pixel.
     ///
@@ -107,7 +107,6 @@ pub trait IActions<TContractState> {
     /// * `system` - Contract address of the app's systems or zero to use the caller.
     /// * `name` - Name of the app.
     /// * `icon` - Unicode hex of the icon of the app.
-    /// * `manifest` - URL to the system's `manifest.json`.
     ///
     /// # Returns
     ///
@@ -117,7 +116,6 @@ pub trait IActions<TContractState> {
         system: ContractAddress,
         name: felt252,
         icon: felt252,
-        manifest: felt252,
     ) -> App;
 
     /// Retrieves the system address.
@@ -151,10 +149,7 @@ pub trait IActions<TContractState> {
     /// * `player` - The player to alert.
     /// * `message` - The message to send.
     fn alert_player(
-        ref world: IWorldDispatcher,
-        position: Position,
-        player: ContractAddress,
-        message: felt252,
+        ref world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252,
     );
 
     /// Sets an instruction for a given selector in a system.
@@ -248,14 +243,12 @@ pub mod actions {
         /// This function grants permissions to a system by the caller.
         /// It is the app's responsibility to handle `update_permission` responsibly.
         fn update_permission(
-            ref world: IWorldDispatcher,
-            app_key: felt252,
-            permission: Permission,
+            ref world: IWorldDispatcher, app_key: felt252, permission: Permission,
         ) {
             let caller_address = get_caller_address();
 
             // TODO maybe check that the caller is indeed an app?
-            
+
             // Retrieve the App of the `for_system`
             let allowed_app = get!(world, app_key, (AppName));
             let allowed_app = allowed_app.system;
@@ -264,41 +257,8 @@ pub mod actions {
             println!("caller_address: {:?}", caller_address);
             println!("allowed_app: {:?}", allowed_app);
 
-            set!(
-                world,
-                Permissions {
-                    allowing_app: caller_address,
-                    allowed_app,
-                    permission
-                }
-            );
+            set!(world, Permissions { allowing_app: caller_address, allowed_app, permission });
         }
-
-        // FIXME Disabled update_app, it's not implemented as it should, and seems unused
-        // /// Updates the name of an app in the registry.
-        // ///
-        // /// # Arguments
-        // ///
-        // /// * `world` - A reference to the world dispatcher.
-        // /// * `name` - The new name of the app.
-        // /// * `icon` - Unicode hex of the icon of the app.
-        // /// * `manifest` - URL to the system's `manifest.json`.
-        // fn update_app(
-        //     ref world: IWorldDispatcher,
-        //     name: felt252,
-        //     icon: felt252,
-        //     manifest: felt252,
-        // ) {
-        //     let system = get_caller_address();
-        //     let app = self.new_app(system, name, icon, manifest);
-        //     emit!(
-        //         world,
-        //         (Event::AppNameUpdated(AppNameUpdated {
-        //             app,
-        //             caller: system.into()
-        //         }))
-        //     );
-        // }
 
         /// Schedules a queue item to be processed at a specified timestamp.
         ///
@@ -327,24 +287,17 @@ pub mod actions {
             // hash the call and store the hash for verification
             let id = poseidon_hash_span(
                 array![
-                    timestamp.into(),
-                    called_system.into(),
-                    selector,
-                    poseidon_hash_span(calldata)
+                    timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)
                 ]
-                .span(),
+                    .span(),
             );
 
             // Emit the event, so an external scheduler can pick it up
             emit!(
                 world,
-                (Event::QueueScheduled(QueueScheduled {
-                    id,
-                    timestamp,
-                    called_system,
-                    selector,
-                    calldata: calldata
-                }))
+                (Event::QueueScheduled(
+                    QueueScheduled { id, timestamp, called_system, selector, calldata: calldata }
+                ))
             );
             println!("schedule_queue DONE");
         }
@@ -374,20 +327,14 @@ pub mod actions {
             println!("process_queue");
 
             // A quick check on the timestamp so we know it's not too early for this one
-            assert!(
-                timestamp <= starknet::get_block_timestamp(),
-                "timestamp still in the future"
-            );
+            assert!(timestamp <= starknet::get_block_timestamp(), "timestamp still in the future");
 
             // Recreate the id to check the integrity
             let calculated_id = poseidon_hash_span(
                 array![
-                    timestamp.into(),
-                    called_system.into(),
-                    selector,
-                    poseidon_hash_span(calldata)
+                    timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)
                 ]
-                .span(),
+                    .span(),
             );
 
             // Only valid when the queue item was found by the hash
@@ -417,7 +364,8 @@ pub mod actions {
         ///
         /// # Remarks
         ///
-        /// This function verifies whether the caller has the necessary permissions to update the pixel.
+        /// This function verifies whether the caller has the necessary permissions to update the
+        /// pixel.
         fn has_write_access(
             ref world: IWorldDispatcher,
             for_player: ContractAddress,
@@ -431,7 +379,7 @@ pub mod actions {
             // The address making this call. Could be a System of an App
             let caller_address = get_caller_address();
 
-                        // First check: Can we grant based on ownership?
+            // First check: Can we grant based on ownership?
             // If caller is owner or not owned by anyone, allow
             if pixel.owner == caller_account || pixel.owner == contract_address_const::<0>() {
                 return true;
@@ -502,16 +450,16 @@ pub mod actions {
             let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
             assert!(
-                self.has_write_access(for_player, for_system, pixel, pixel_update),
-                "No access!"
+                self.has_write_access(for_player, for_system, pixel, pixel_update), "No access!"
             );
 
             let old_pixel_app = pixel.app;
             println!("{:?}", old_pixel_app);
 
             if old_pixel_app != contract_address_const::<0>() {
-                let interoperable_app =
-                    IInteroperabilityDispatcher { contract_address: old_pixel_app };
+                let interoperable_app = IInteroperabilityDispatcher {
+                    contract_address: old_pixel_app
+                };
                 let app_caller = get!(world, for_system, (App));
                 interoperable_app.on_pre_update(pixel_update, app_caller, for_player);
             }
@@ -552,8 +500,9 @@ pub mod actions {
             set!(world, (pixel));
 
             if old_pixel_app != contract_address_const::<0>() {
-                let interoperable_app =
-                    IInteroperabilityDispatcher { contract_address: old_pixel_app };
+                let interoperable_app = IInteroperabilityDispatcher {
+                    contract_address: old_pixel_app
+                };
                 let app_caller = get!(world, for_system, (App));
                 interoperable_app.on_post_update(pixel_update, app_caller, for_player);
             }
@@ -565,7 +514,8 @@ pub mod actions {
         ///
         /// # Arguments
         ///
-        /// * `for_player` - The player contract address. If zero, returns the caller's account address.
+        /// * `for_player` - The player contract address. If zero, returns the caller's account
+        /// address.
         ///
         /// # Returns
         ///
@@ -616,7 +566,6 @@ pub mod actions {
         /// * `system` - Contract address of the app's systems or zero to use the caller.
         /// * `name` - Name of the app.
         /// * `icon` - Unicode hex of the icon of the app.
-        /// * `manifest` - URL to the system's `manifest.json`.
         ///
         /// # Returns
         ///
@@ -626,7 +575,6 @@ pub mod actions {
             system: ContractAddress,
             name: felt252,
             icon: felt252,
-            manifest: felt252,
         ) -> App {
             let mut app_system = system;
             // If the system is not given, use the caller for this.
@@ -643,14 +591,12 @@ pub mod actions {
 
             // Ensure neither contract nor name have been registered
             assert!(
-                app.name == 0 && app_name.system == contract_address_const::<0>(),
-                "app already set"
+                app.name == 0 && app_name.system == contract_address_const::<0>(), "app already set"
             );
 
             // Associate system with name
             app.name = name;
             app.icon = icon;
-            app.manifest = manifest;
 
             // Associate name with system
             app_name.system = system;
@@ -685,13 +631,15 @@ pub mod actions {
             assert!(app.name != '', "cannot be called by a non-app");
             emit!(
                 world,
-                (Event::Alert(Alert {
-                    position,
-                    caller,
-                    player,
-                    message,
-                    timestamp: starknet::get_block_timestamp()
-                }))
+                (Event::Alert(
+                    Alert {
+                        position,
+                        caller,
+                        player,
+                        message,
+                        timestamp: starknet::get_block_timestamp()
+                    }
+                ))
             );
         }
 
