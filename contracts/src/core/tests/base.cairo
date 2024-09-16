@@ -1,3 +1,4 @@
+use core::fmt::Display;
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
     testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
@@ -23,7 +24,7 @@ use pixelaw::core::{
     utils::{get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::{
         setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller
+        set_caller, drop_all_events
     }
 };
 
@@ -278,28 +279,43 @@ fn test_get_system_address() {
     assert(addr == snake_actions.contract_address, 'should return snake_contract');
 }
 
+    // TODO Try alerting with a nonexisting appkey (should panic)
 
 #[test]
 fn test_alert_player() {
     let (world, core_actions, player_1, _player_2) = setup_core_initialized();
     let (paint_actions, _snake_actions) = setup_apps_initialized(world);
 
+    // Prep params
     let position = Position { x: 12, y: 12 };
-
     let message = 'testme';
+    let caller = paint_actions.contract_address;
+    let player = player_1;
 
-    // // Try alerting with a nonexisting appkey (panics)
-    // set_caller(ZERO_ADDRESS());
-    // core_actions.alert_player(position, player, message);
+    set_caller(caller);
 
-    set_caller(paint_actions.contract_address);
-    core_actions.alert_player(position, player_1, message);
+    // Pop all the previous events from the log so only the following one will be there
+    drop_all_events(world.contract_address);
+
+    // Call the action
+    core_actions.alert_player(position, player, message);
+
+    // Assert that the correct event was emitted
+    assert_eq!(
+        starknet::testing::pop_log(world.contract_address),
+        Option::Some(
+            pixelaw::core::actions::actions::Alert {
+                position, caller, player, message, timestamp: get_block_timestamp()
+            }
+        )
+    );
+    
 }
-// fn set_instruction(world: IWorldDispatcher, player: ContractAddress, instruction: felt252) {
-//     // Implementation for setting an instruction for the player
-//     println!("Setting instruction for player {:?}: {}", player, instruction);
-// }
 
+fn test_set_instruction(world: IWorldDispatcher, player: ContractAddress, instruction: felt252) {
+    // Implementation for setting an instruction for the player
+    println!("Setting instruction for player {:?}: {}", player, instruction);
+}
 // fn process_queue(world: IWorldDispatcher) {
 //     // Implementation for processing the action queue
 //     println!("Processing action queue");

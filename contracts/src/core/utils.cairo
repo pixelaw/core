@@ -11,7 +11,7 @@ pub enum Direction {
     Down: (),
 }
 
-#[derive(Copy, Drop, Serde, Introspect)]
+#[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
 pub struct Position {
     pub x: u32,
     pub y: u32

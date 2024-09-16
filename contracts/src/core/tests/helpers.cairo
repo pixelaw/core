@@ -107,3 +107,11 @@ pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeAc
     (paint_actions, snake_actions)
 }
 
+pub fn drop_all_events(address: ContractAddress) {
+    loop {
+        match starknet::testing::pop_log_raw(address) {
+            core::option::Option::Some(_) => {},
+            core::option::Option::None => { break; },
+        };
+    }
+}

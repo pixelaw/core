@@ -204,18 +204,18 @@ pub mod actions {
         caller: felt252,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct Alert {
-        position: Position,
-        caller: ContractAddress,
-        player: ContractAddress,
-        message: felt252,
-        timestamp: u64,
+    #[derive(Debug, Drop, Serde, starknet::Event, PartialEq)]
+    pub struct Alert {
+        pub position: Position,
+        pub caller: ContractAddress,
+        pub player: ContractAddress,
+        pub message: felt252,
+        pub timestamp: u64,
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
         QueueScheduled: QueueScheduled,
         QueueProcessed: QueueProcessed,
         AppNameUpdated: AppNameUpdated,
