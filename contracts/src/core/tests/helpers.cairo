@@ -13,7 +13,7 @@ use dojo::{
 use pixelaw::core::{
     models::{
         registry::{App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction},
-        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions}
+        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
     utils::{get_core_actions, Direction, Position, DefaultParameters}
@@ -28,6 +28,21 @@ use pixelaw::{
         }
     }
 };
+
+
+pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
+pub const WHITE_COLOR: u32 = 0xFFFFFFFF;
+pub const RED_COLOR: u32 = 0xFF0000FF;
+
+
+pub const PERMISSION_ALL: Permission =
+    Permission { app: true, color: true, owner: true, text: true, timestamp: true, action: true };
+
+pub const PERMISSION_NONE: Permission =
+    Permission {
+        app: false, color: false, owner: false, text: false, timestamp: false, action: false
+    };
+
 
 pub fn set_caller(caller: ContractAddress) {
     starknet::testing::set_account_contract_address(caller);

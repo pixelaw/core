@@ -16,15 +16,12 @@ use pixelaw::core::{
         registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
         pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
     },
-    actions::{
-        actions, IActionsDispatcher, IActionsDispatcherTrait,
-        CORE_ACTIONS_KEY, //    has_write_access, set_instruction, alert_player, new_app, get_system_address,
-        //    get_player_address, update_pixel, update_permission, process_queue, schedule_queue
-    },
+    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
     utils::{get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::{
         setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events
+        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
+        PERMISSION_NONE
     }
 };
 
@@ -41,18 +38,6 @@ use pixelaw::{
     }
 };
 
-const TEST_POSITION: Position = Position { x: 1, y: 1 };
-const WHITE_COLOR: u32 = 0xFFFFFFFF;
-const RED_COLOR: u32 = 0xFF0000FF;
-
-
-const PERMISSION_ALL: Permission =
-    Permission { app: true, color: true, owner: true, text: true, timestamp: true, action: true };
-
-const PERMISSION_NONE: Permission =
-    Permission {
-        app: false, color: false, owner: false, text: false, timestamp: false, action: false
-    };
 
 #[test]
 fn test_init_core_actions() {
@@ -80,22 +65,6 @@ fn test_register_new_app() {
     assert(loaded_app1.system == mock_app1_system, 'App system incorrect');
 }
 
-#[test]
-fn test_new_app() { // TODO properly rig a new app. For now it's smoketested by the test setups.
-// let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
-
-// let contractaddr = contract_address_const::<0xBEEF02>();
-// let appkey = 'myapp';
-
-// let appname = get!(world, appkey, (AppName));
-// assert(appname.system == ZERO_ADDRESS(), 'still empty');
-
-// core_actions.new_app(paint_actions.contract_address, PAINT_APP_KEY, '', '');
-// let paint_appname = get!(world, PAINT_APP_KEY, (AppName));
-// let paint_app = get!(world, paint_appname.system, (App));
-// assert(paint_appname.system == paint_actions.contract_address, 'set to system');
-// assert(paint_app.name == PAINT_APP_KEY, 'appname set');
-}
 
 #[test]
 fn test_paint_interaction() {
@@ -279,7 +248,7 @@ fn test_get_system_address() {
     assert(addr == snake_actions.contract_address, 'should return snake_contract');
 }
 
-    // TODO Try alerting with a nonexisting appkey (should panic)
+// TODO Try alerting with a nonexisting appkey (should panic)
 
 #[test]
 fn test_alert_player() {
@@ -309,63 +278,10 @@ fn test_alert_player() {
             }
         )
     );
-    
 }
 
 fn test_set_instruction(world: IWorldDispatcher, player: ContractAddress, instruction: felt252) {
     // Implementation for setting an instruction for the player
     println!("Setting instruction for player {:?}: {}", player, instruction);
 }
-// fn process_queue(world: IWorldDispatcher) {
-//     // Implementation for processing the action queue
-//     println!("Processing action queue");
-// }
-
-// fn schedule_queue(world: IWorldDispatcher, action: felt252) {
-//     // Implementation for scheduling actions in the queue
-//     println!("Scheduling action: {}", action);
-// }
-
-// #[test]
-// #[available_gas(999_999_999)]
-// // TODO move this to the appropriate tests once they're all separated
-// // #[should_panic(
-// //     expected: (
-// //         "cannot be called by a non-app",
-// //         'ENTRYPOINT_FAILED'
-// //     )
-// // )]
-// fn test_core() {
-//     let (world, core_actions, player_1, player_2) = setup();
-//     let (paint_actions, snake_actions) = setup_apps(world);
-
-//     // init_core_actions(world, core_actions);
-
-//     test_register_new_app(world, core_actions);
-
-//     test_paint_interaction(paint_actions);
-
-//     test_get_player_address(core_actions, player_1, player_2);
-
-//     test_get_system_address(
-//         core_actions, paint_actions.contract_address, snake_actions.contract_address
-//     );
-
-//     test_update_permission(world, core_actions, player_1);
-
-//     test_has_write_access(world, core_actions, paint_actions, player_1, player_2);
-
-//     test_update_pixel(world, core_actions, player_1);
-
-//     test_alert_player(core_actions, player_1, paint_actions.contract_address);
-//     // // Set instruction
-// // set_instruction(world, player_address, 'Move to position (2, 2)');
-
-//     // // Process queue
-// // process_queue(world);
-
-//     // // Schedule queue
-// // schedule_queue(world, 'Paint action');
-// }
-
 
