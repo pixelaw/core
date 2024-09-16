@@ -112,10 +112,7 @@ pub trait IActions<TContractState> {
     ///
     /// * `App` - Struct containing the contract address and name fields.
     fn new_app(
-        ref world: IWorldDispatcher,
-        system: ContractAddress,
-        name: felt252,
-        icon: felt252,
+        ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252,
     ) -> App;
 
     /// Retrieves the system address.
@@ -571,10 +568,7 @@ pub mod actions {
         ///
         /// * `App` - Struct containing the contract address and name fields.
         fn new_app(
-            ref world: IWorldDispatcher,
-            system: ContractAddress,
-            name: felt252,
-            icon: felt252,
+            ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252,
         ) -> App {
             let mut app_system = system;
             // If the system is not given, use the caller for this.
