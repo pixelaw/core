@@ -12,7 +12,9 @@ use dojo::{
 
 use pixelaw::core::{
     models::{
-        registry::{App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction},
+        registry::{
+            App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction
+        },
         pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
@@ -53,8 +55,10 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0>()
 }
 
-pub fn setup_core_initialized() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
-    let (world, core_actions, player_1, player_2)  = setup_core();
+pub fn setup_core_initialized() -> (
+    IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress
+) {
+    let (world, core_actions, player_1, player_2) = setup_core();
 
     core_actions.init();
 
@@ -92,7 +96,9 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
 }
 
 
-pub fn setup_apps_initialized(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+pub fn setup_apps_initialized(
+    world: IWorldDispatcher
+) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
     let (paint_actions, snake_actions) = setup_apps(world);
 
     paint_actions.init();

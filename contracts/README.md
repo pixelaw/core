@@ -127,3 +127,25 @@ The App is also tracking score for each Player.
       - UI then calls the functions with only the hash value
     - Reveal
       - there will be 2 params: "rv_NAME" (the actual param) and "rs_NAME" (the used salt)
+
+## How to Deploy to Starknet
+
+### Sepolia
+
+1. Build
+
+```zsh
+sozo build --manifest-path Scarb_deploy.toml --profile sepolia
+```
+
+2. Migrate
+
+```zsh
+sozo migrate plan --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
+```
+
+3. Deploy
+
+```zsh
+sozo migrate apply --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
+```

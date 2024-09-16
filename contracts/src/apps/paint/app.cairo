@@ -127,20 +127,19 @@ mod paint_actions {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-
             // // TODO: Replace this with proper granting of permission
-            // core_actions
-            //     .update_permission(
-            //         'snake',
-            //         Permission {
-            //             app: true,
-            //             color: true,
-            //             owner: false,
-            //             text: true,
-            //             timestamp: false,
-            //             action: false,
-            //         },
-            //     );
+        // core_actions
+        //     .update_permission(
+        //         'snake',
+        //         Permission {
+        //             app: true,
+        //             color: true,
+        //             owner: false,
+        //             text: true,
+        //             timestamp: false,
+        //             action: false,
+        //         },
+        //     );
         }
 
         /// Interacts with a pixel based on default parameters.

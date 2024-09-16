@@ -13,8 +13,9 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
 
 [[target.dojo]]
 build-external-contracts = []
-path = "../contracts/src/lib.cairo"
 
 [profile.dev-pop]
 
 [profile.slot]
+
+[profile.sepolia]
