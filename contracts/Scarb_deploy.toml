@@ -11,6 +11,9 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
 
+[tool.fmt]
+sort-module-level-items = true
+
 [[target.dojo]]
 build-external-contracts = []
 
