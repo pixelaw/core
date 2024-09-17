@@ -1,7 +1,7 @@
-pub mod models;
 pub mod actions;
-pub mod traits;
-pub mod utils;
+pub mod models;
 
 #[cfg(test)]
 mod tests;
+pub mod traits;
+pub mod utils;

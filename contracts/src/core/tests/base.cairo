@@ -1,8 +1,4 @@
 use core::fmt::Display;
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
-};
 
 use core::{traits::TryInto, poseidon::poseidon_hash_span};
 
@@ -36,6 +32,10 @@ use pixelaw::{
             ISnakeActionsDispatcherTrait, APP_KEY as SNAKE_APP_KEY
         }
     }
+};
+use starknet::{
+    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
+    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
 };
 
 

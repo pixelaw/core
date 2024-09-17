@@ -1,25 +1,24 @@
 #[cfg(test)]
 mod tests {
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
-
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use pixelaw::core::models::pixel::{pixel};
-    use pixelaw::core::models::permissions::{permissions};
-    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
-    use pixelaw::core::actions::{
-        actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
-    };
-
     use dojo::utils::test::{spawn_test_world};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use pixelaw::apps::paint::app::{
+        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
+    };
 
     use pixelaw::apps::snake::app::{
         snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
     };
-    use pixelaw::apps::paint::app::{
-        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
-    };
     use pixelaw::apps::snake::app::{Snake};
+    use pixelaw::core::actions::{
+        actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
+    };
+    use pixelaw::core::models::permissions::{permissions};
+
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{pixel};
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
+    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 
     // Helper function: deploys world and actions

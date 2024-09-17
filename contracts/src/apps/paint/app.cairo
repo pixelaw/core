@@ -55,25 +55,25 @@ const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod paint_actions {
+    use pixelaw::core::actions::{
+        IActionsDispatcher as ICoreActionsDispatcher,
+        IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
+    };
+
+    use pixelaw::core::models::permissions::Permission;
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::registry::App;
+    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::utils::{
+        get_core_actions, decode_color, encode_color, subu8, Direction, Position, DefaultParameters,
+    };
     use starknet::{
         get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
         contract_address_const,
     };
 
     use super::IPaintActions;
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-
-    use pixelaw::core::models::permissions::Permission;
-    use pixelaw::core::actions::{
-        IActionsDispatcher as ICoreActionsDispatcher,
-        IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
-    };
     use super::{APP_KEY, APP_ICON, APP_MANIFEST, PIXELS_PER_FELT};
-    use pixelaw::core::utils::{
-        get_core_actions, decode_color, encode_color, subu8, Direction, Position, DefaultParameters,
-    };
-    use pixelaw::core::traits::IInteroperability;
-    use pixelaw::core::models::registry::App;
 
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {

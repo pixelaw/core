@@ -1,6 +1,6 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use starknet::{ContractAddress, ClassHash};
 use pixelaw::core::utils::{Direction, Position, DefaultParameters, starknet_keccak};
+use starknet::{ContractAddress, ClassHash};
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -125,29 +125,28 @@ trait ISnakeActions<TContractState> {
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod snake_actions {
-    use starknet::{
-        ContractAddress, get_caller_address, get_contract_address, get_execution_info,
-        contract_address_const,
-    };
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-
-    use super::{APP_KEY, APP_ICON};
-    use super::{Snake, SnakeSegment};
-    use pixelaw::core::utils::{
-        get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
-        get_core_actions_address,
-    };
-    use super::next_position;
-    use super::ISnakeActions;
+    use dojo::model::introspect::Introspect;
+    use pixelaw::apps::paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait};
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
-    use pixelaw::apps::paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait};
-    use pixelaw::core::traits::IInteroperability;
-
-    use dojo::model::introspect::Introspect;
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
+    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::utils::{
+        get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
+        get_core_actions_address,
+    };
+    use starknet::{
+        ContractAddress, get_caller_address, get_contract_address, get_execution_info,
+        contract_address_const,
+    };
+    use super::ISnakeActions;
+    use super::next_position;
+
+    use super::{APP_KEY, APP_ICON};
+    use super::{Snake, SnakeSegment};
 
     #[event]
     #[derive(Drop, starknet::Event)]
