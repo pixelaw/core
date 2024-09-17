@@ -250,10 +250,6 @@ pub mod actions {
             let allowed_app = get!(world, app_key, (AppName));
             let allowed_app = allowed_app.system;
 
-            println!("appkey: {:?}", app_key);
-            println!("caller_address: {:?}", caller_address);
-            println!("allowed_app: {:?}", allowed_app);
-
             set!(world, Permissions { allowing_app: caller_address, allowed_app, permission });
         }
 
@@ -277,8 +273,6 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>,
         ) {
-            println!("schedule_queue");
-
             // TODO: Review security
 
             // hash the call and store the hash for verification
@@ -296,7 +290,6 @@ pub mod actions {
                     QueueScheduled { id, timestamp, called_system, selector, calldata: calldata }
                 ))
             );
-            println!("schedule_queue DONE");
         }
 
         /// Processes a scheduled queue item.
@@ -321,8 +314,6 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>,
         ) {
-            println!("process_queue");
-
             // A quick check on the timestamp so we know it's not too early for this one
             assert!(timestamp <= starknet::get_block_timestamp(), "timestamp still in the future");
 
@@ -342,7 +333,6 @@ pub mod actions {
 
             // Tell the offchain schedulers that this one is done
             emit!(world, (Event::QueueProcessed(QueueProcessed { id })));
-            println!("process_queue DONE");
         }
 
         /// Checks if a player or system has write access to a pixel.
@@ -442,8 +432,6 @@ pub mod actions {
             for_system: ContractAddress,
             pixel_update: PixelUpdate,
         ) {
-            println!("update_pixel");
-
             let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
             assert!(
@@ -451,7 +439,6 @@ pub mod actions {
             );
 
             let old_pixel_app = pixel.app;
-            println!("{:?}", old_pixel_app);
 
             if old_pixel_app != contract_address_const::<0>() {
                 let interoperable_app = IInteroperabilityDispatcher {
@@ -503,8 +490,6 @@ pub mod actions {
                 let app_caller = get!(world, for_system, (App));
                 interoperable_app.on_post_update(pixel_update, app_caller, for_player);
             }
-
-            println!("update_pixel DONE");
         }
 
         /// Retrieves the player address.
@@ -519,13 +504,11 @@ pub mod actions {
         /// * `ContractAddress` - The player address.
         fn get_player_address(for_player: ContractAddress) -> ContractAddress {
             if for_player == contract_address_const::<0>() {
-                println!("get_player_address.zero");
                 let result = get_tx_info().unbox().account_contract_address;
-                println!("{:?}", result);
+
                 // Return the caller account from the transaction (the end user)
                 return result;
             } else {
-                println!("get_player_address.nonzero");
                 // TODO: Check if getter is a system or the core actions contract
 
                 // Return the `for_player`

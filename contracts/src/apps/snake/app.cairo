@@ -268,8 +268,6 @@ mod snake_actions {
         fn interact(
             ref world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction,
         ) -> u32 {
-            println!("snake: interact");
-
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
@@ -373,8 +371,6 @@ mod snake_actions {
         /// * `world` - A reference to the world dispatcher.
         /// * `owner` - The contract address of the snake's owner.
         fn move(ref world: IWorldDispatcher, owner: ContractAddress) {
-            println!("snake: move");
-
             let core_actions = get_core_actions(world);
 
             // Load the Snake
@@ -385,12 +381,10 @@ mod snake_actions {
 
             // If the snake is dying, handle that
             if snake.is_dying {
-                println!("snake shrinks due to dying");
                 snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
 
                 if snake.length == 0 {
-                    println!("snake is dead: deleting");
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
                     emit!(
@@ -433,7 +427,6 @@ mod snake_actions {
                 // MOVE, GROW, SHRINK, DIE
                 if next_pixel.owner == contract_address_const::<0>() {
                     // Snake just moves
-                    println!("snake moves");
                     // Add a new segment on the next pixel and update the snake
                     snake
                         .first_segment_id =
@@ -442,11 +435,9 @@ mod snake_actions {
                             );
                     snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 } else if !has_write_access {
-                    println!("snake will die");
                     // Snake hit a pixel that is not allowing anything: DIE
                     snake.is_dying = true;
                 } else if next_pixel.owner == snake.owner {
-                    println!("snake grows");
                     // Next pixel is owned by snake owner: GROW
 
                     // Add a new segment
@@ -465,7 +456,6 @@ mod snake_actions {
                     }
                     // We leave the tail as is
                 } else {
-                    println!("snake shrinks");
                     // Next pixel is not owned but can be used temporarily
                     // SHRINK, though
                     if snake.length == 1 {
@@ -482,7 +472,6 @@ mod snake_actions {
                     }
                 }
             } else {
-                println!("snake will die");
                 // Snake hit a pixel that is not allowing anything: DIE
                 snake.is_dying = true;
             }

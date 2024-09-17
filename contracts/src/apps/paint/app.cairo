@@ -152,8 +152,6 @@ mod paint_actions {
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
         fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            println!("interact");
-
             let position = default_params.position;
 
             // Load the Pixel
@@ -175,8 +173,6 @@ mod paint_actions {
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
         fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            println!("put_color");
-
             // Load important variables
             let core_actions = get_core_actions(world);
             let position = default_params.position;
@@ -215,8 +211,6 @@ mod paint_actions {
                         action: Option::None, // Not using this feature for paint
                     },
                 );
-
-            println!("put_color DONE");
         }
 
         /// Updates a row of pixels with provided image data.
@@ -238,7 +232,6 @@ mod paint_actions {
             // continue (x - offset) to the left
 
             if image_data.is_empty() {
-                println!("image_data empty");
                 return;
             }
 
@@ -251,7 +244,6 @@ mod paint_actions {
             let mut pixel_index = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
             let mut stop = false;
-            println!("first felt: {}", felt);
 
             while !stop {
                 // Each felt contains 7 pixels of 4 bytes each, so 224 bits. The leftmost 28 bits
@@ -302,21 +294,16 @@ mod paint_actions {
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
         fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            println!("fade");
-
             let core_actions = get_core_actions(world);
             let position = default_params.position;
             let player = core_actions.get_player_address(default_params.for_player);
             let system = core_actions.get_system_address(default_params.for_system);
             let pixel = get!(world, (position.x, position.y), Pixel);
 
-            println!("decode_color");
-
             let (r, g, b, a) = decode_color(pixel.color);
 
             // If the color is 0,0,0, fading is done.
             if r == 0 && g == 0 && b == 0 {
-                println!("fading is done");
                 delete!(world, (pixel));
                 return;
             }
@@ -324,7 +311,6 @@ mod paint_actions {
             // Fade the color
             let FADE_STEP = 5;
 
-            println!("encode_color");
             let new_color = encode_color(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a,
             );
@@ -375,7 +361,6 @@ mod paint_actions {
                     0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // Selector for fade
                     calldata.span(), // The prepared calldata
                 );
-            println!("put_fading_color DONE");
         }
     }
 
@@ -419,7 +404,6 @@ mod paint_actions {
         } else {
             0
         };
-        println!("{}", result);
         result
     }
 }
