@@ -2,6 +2,7 @@ use starknet::{ContractAddress, ClassHash, contract_address_const};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
+use pixelaw::core::models::area::{Rect};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::Position;
 
@@ -157,6 +158,10 @@ pub trait IActions<TContractState> {
     /// * `selector` - The function selector.
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
+
+    fn add_area(ref world: IWorldDispatcher, rectangle: Rect) -> Option<felt252>;
+    fn remove_area(ref world: IWorldDispatcher, area_id: felt252);
+    fn find_area(ref world: IWorldDispatcher, position: Position, area_id: Option<felt252>) -> Option<felt252>;
 }
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
@@ -175,6 +180,7 @@ pub mod actions {
     use pixelaw::core::models::queue::QueueItem;
     use pixelaw::core::utils::{get_core_actions_address, Position};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
+    use pixelaw::core::models::area::{Rect};
 
     #[derive(Drop, starknet::Event)]
     struct QueueScheduled {
@@ -225,6 +231,9 @@ pub mod actions {
                 world,
                 (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
             );
+
+            // Initialize root rect
+            set!(world, Rect{x_min: 0, y_min: 0, x_max: u32::MAX, y_max: u32::MAX, is_area: false})
         }
 
         /// Updates the permissions for a specified system.
@@ -637,5 +646,23 @@ pub mod actions {
             assert!(app.name != '', "cannot be called by a non-app");
             set!(world, (Instruction { system, selector, instruction }))
         }
+
+        fn add_area(ref world: IWorldDispatcher, rectangle: Rect) -> Option<felt252> {
+            // FIXME this is just to make it compile for now
+            Option::None
+
+            // 
+
+        }
+
+        fn remove_area(ref world: IWorldDispatcher, area_id: felt252){
+
+        }
+
+        fn find_area(ref world: IWorldDispatcher, position: Position, area_id: Option<felt252>) -> Option<felt252>{
+            // FIXME this is just to make it compile for now
+            Option::None
+        }
+
     }
 }
