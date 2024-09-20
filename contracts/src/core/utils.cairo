@@ -1,6 +1,23 @@
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::pixel::{Pixel};
+use pixelaw::core::models::{pixel::{Pixel}, {area::{Rect}}};
+
+
+
+pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
+pub const POW_2_64: u128 = 0x10000000000000000_u128;
+pub const POW_2_48: u128 = 0x1000000000000_u128;
+pub const POW_2_32: u128 = 0x100000000_u128;
+pub const POW_2_31: u128 = 0x80000000_u128;
+pub const POW_2_30: u128 = 0x40000000_u128;
+pub const POW_2_16: u128 = 0x10000_u128;
+pub const POW_2_15: u128 = 0x8000_u128;
+
+pub const MASK_96: u128 = 0xFFFFFFFFFFFFFFFFFFFFFFFF;
+pub const MASK_64: u128 = 0xFFFFFFFFFFFFFFFF;
+pub const MASK_32: u128 = 0xFFFFFFFF;
+pub const MASK_16: u128 = 0xFFFF;
+
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -119,6 +136,7 @@ pub fn subu8(nr: u8, sub: u8) -> u8 {
 }
 
 
+
 // RGBA
 // 0xFF FF FF FF
 // empty: 0x 00 00 00 00
@@ -165,3 +183,23 @@ pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -
     let pixel: Pixel = get!(world, (position.x, position.y), (Pixel));
     pixel.color == color
 }
+
+pub fn choose_leaf(world: IWorldDispatcher, parent_rect_id:u128, new_rect: Rect) -> Rect {
+
+    let parent: Rect = get!(world, (parent_rect_id), Rect);
+
+
+    // // The parent is a leaf and can be used
+    // if parent.is_leaf {
+    //     return parent;
+    // }
+
+    // // Traverse the tree to find the leaf we need
+    // for child in parent.children {
+    //     let a =  choose_leaf(world, *child, parent);
+    // };
+
+    parent
+}
+
+
