@@ -2,13 +2,11 @@ use starknet::{ContractAddress, ClassHash, contract_address_const};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
-use pixelaw::core::models::area::{Rect};
+use pixelaw::core::models::area::{RTreeNode};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
-use pixelaw::core::utils::{Position, POW_2_15};
+use pixelaw::core::utils::{Position, MAX_DIMENSION};
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
-pub const ROOT_RECT_ID: u128 = 0xFFFFFFFFFFFFFFFF;
-pub const MAX_DIMENSION: u128 = POW_2_15;  
 
 
 #[dojo::interface]
@@ -162,14 +160,16 @@ pub trait IActions<TContractState> {
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
-    fn add_area(ref world: IWorldDispatcher, rectangle: Rect, hint_rect: Option<Rect>) -> Option<felt252>;
-    fn remove_area(ref world: IWorldDispatcher, area_id: felt252);
+    fn add_area(
+        ref world: IWorldDispatcher, rectangle: RTreeNode, hint_rtree: Option<u64>
+    ) -> Option<u64>;
+    fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
     fn find_area(
-        ref world: IWorldDispatcher, 
-        position: Position, 
-        area_id: Option<felt252>, 
-        hint_rect: Option<Rect>
-    ) -> Option<felt252>;
+        ref world: IWorldDispatcher,
+        position: Position,
+        area_id: Option<u64>,
+        hint_rtree: Option<felt252>
+    ) -> Option<u64>;
 }
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
@@ -180,15 +180,15 @@ pub mod actions {
         contract_address_const, syscalls::{call_contract_syscall},
     };
 
-    use super::{IActions, ROOT_RECT_ID};
+    use super::{IActions};
 
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::queue::QueueItem;
-    use pixelaw::core::utils::{get_core_actions_address, Position};
+    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
-    use pixelaw::core::models::area::{Rect};
+    use pixelaw::core::models::area::{RTreeNode, RTree, Area, RTreeNodePackableImpl};
 
 
     #[derive(Drop, starknet::Event)]
@@ -241,19 +241,22 @@ pub mod actions {
                 (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
             );
 
-            // // Initialize root rect
-            // set!(
-            //     world,
-            //     Rect {
-            //         id: ROOT_RECT_ID,
-            //         x_min: 0,
-            //         y_min: 0,
-            //         x_max: 0xFFFFFFFF,
-            //         y_max: 0xFFFFFFFF,
-            //         is_area: false,
-            //         children: [].span()
-            //     }
-            // )
+            // // Initialize root RTree
+            set!(
+                world,
+                RTree {
+                    id: RTreeNode {
+                        x_min: 0,
+                        y_min: 0,
+                        x_max: MAX_DIMENSION,
+                        y_max: MAX_DIMENSION,
+                        is_leaf: true,
+                        is_area: false
+                    }
+                        .pack(),
+                    children: 0
+                }
+            )
         }
 
         /// Updates the permissions for a specified system.
@@ -679,30 +682,30 @@ pub mod actions {
         // this.adjustTree(leaf);
         ////////////// FROM JS /////////////////
         fn add_area(
-            ref world: IWorldDispatcher, rectangle: Rect, hint_rect: Option<Rect>
-        ) -> Option<felt252> {
+            ref world: IWorldDispatcher, rectangle: RTreeNode, hint_rtree: Option<u64>
+        ) -> Option<u64> {
             // FIXME this is just to make it compile for now
             Option::None
-
             // 1. Prepare the leaf
+
             // TODO: use the hint to start searching deeper in the tree.
             // Fornow, Start at rootnode
             // let leaf = choose_leaf(world, ROOT_RECT_ID, rectangle);
 
             // 2. Add the child node
-            
-
 
         }
 
-        fn remove_area(ref world: IWorldDispatcher, area_id: felt252) {}
+        fn remove_area(
+            ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>
+        ) {}
 
         fn find_area(
             ref world: IWorldDispatcher,
             position: Position,
-            area_id: Option<felt252>,
-            hint_rect: Option<Rect>
-        ) -> Option<felt252> {
+            area_id: Option<u64>,
+            hint_rtree: Option<felt252>
+        ) -> Option<u64> {
             // FIXME this is just to make it compile for now
             Option::None
         }

@@ -1,6 +1,6 @@
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{Pixel}, {area::{Rect}}};
+use pixelaw::core::models::{pixel::{Pixel}, {area::{RTreeNode, RTree, Area, RTreeNodePackableImpl}}};
 
 
 
@@ -18,6 +18,7 @@ pub const MASK_64: u128 = 0xFFFFFFFFFFFFFFFF;
 pub const MASK_32: u128 = 0xFFFFFFFF;
 pub const MASK_16: u128 = 0xFFFF;
 
+pub const MAX_DIMENSION: u16 = 32767;       // 2**15 -1 (so all bits utilized)
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -184,12 +185,11 @@ pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -
     pixel.color == color
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, parent_rect_id:u128, new_rect: Rect) -> Rect {
+pub fn choose_leaf(world: IWorldDispatcher, parent_id:u64, new_node: RTreeNode) -> RTreeNode {
 
-    let parent: Rect = get!(world, (parent_rect_id), Rect);
+    let parent: RTree = get!(world, (parent_id), RTree);
 
-
-    // // The parent is a leaf and can be used
+    // The parent is a leaf and can be used
     // if parent.is_leaf {
     //     return parent;
     // }
@@ -199,7 +199,7 @@ pub fn choose_leaf(world: IWorldDispatcher, parent_rect_id:u128, new_rect: Rect)
     //     let a =  choose_leaf(world, *child, parent);
     // };
 
-    parent
+    parent.id.unpack()
 }
 
 

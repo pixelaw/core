@@ -10,17 +10,16 @@ use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
-use core::starknet::storage_access::StorePacking;
 
 use pixelaw::{
     core::{
         models::{
             registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-            area::{Rect, Rectangle, RectPackableImpl}
+            area::{RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{get_core_actions, Direction, Position, DefaultParameters},
+        utils::{get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -41,8 +40,28 @@ use pixelaw::{
 
 
 #[test]
-fn test_area_types() {
-    let rect_in = Rectangle{
+fn test_root_area() {
+    let rect_in = RTreeNode {
+        x_min: 0,
+        y_min: 0,
+        x_max: MAX_DIMENSION,       // 2**15 -1
+        y_max: MAX_DIMENSION,       // 2**15 -1
+        is_leaf: true,
+        is_area: false
+    };
+
+    let root_id: u64 = rect_in.pack();
+    
+    let rect_out: RTreeNode = root_id.unpack();
+
+    println!("{:?}", rect_out);
+    println!("root_id: {:?}", root_id);
+    assert(rect_in == rect_out, 'root_id not same');
+}
+
+#[test]
+fn test_area_packing() {
+    let rect_in = RTreeNode{
         x_min: 123,
         y_min: 321,
         x_max: 456,
@@ -55,6 +74,20 @@ fn test_area_types() {
     
     let rect_out = id.unpack();
 
-    println!("{:?}", rect_out);
+    // println!("{:?}", rect_out);
     assert(rect_in == rect_out, 'rect not same');
+}
+
+#[test]
+fn test_child_packing() {
+    let input = array![
+        123,321,456,654
+    ].span();
+
+    let out = input.pack();
+    
+    let unpacked = out.unpack();
+
+    println!("{:?}", unpacked);
+    assert(unpacked == input, 'span not same');
 }

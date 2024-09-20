@@ -5,18 +5,23 @@ use pixelaw::core::utils::{
     POW_2_96
 };
 
+
+pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
+pub const TWO_POW_124: u256 = 0x10000000000000000000000000000000;
+pub const TWO_POW_62: u256 = 0x4000000000000000;
 const TWO_POW_47: u64 = 0x800000000000;
 const TWO_POW_32: u64 = 0x100000000;
 const TWO_POW_17: u64 = 0x20000;
 const TWO_POW_2: u64 = 0x4;
 const TWO_POW_1: u64 = 0x2;
 const MASK_15: u64 = 0x7FFF;
+const MASK_62: u64 = 0x3fffffffffffffff;
 const MASK_1: u64 = 0x1;
 
 
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
-pub struct Rect {
+pub struct RTree {
     #[key]
     pub id: u64, // Only 62 bits used so we can cram 4 in a felt252
     // 00000000000000000000000000000000000000000000000000000000000000
@@ -31,7 +36,7 @@ pub struct Rect {
 }
 
 #[derive(Copy, Drop, Serde, Debug, PartialEq)]
-pub struct Rectangle {
+pub struct RTreeNode {
     pub x_min: u16,
     pub y_min: u16,
     pub x_max: u16,
@@ -49,13 +54,38 @@ pub struct Area {
     allow_nesting: bool
 }
 
+
 pub trait Packable<T, PackedT> {
     fn pack(self: T) -> PackedT;
     fn unpack(self: PackedT) -> T;
 }
 
-pub impl RectPackableImpl of Packable<Rectangle, u64> {
-    fn pack(self: Rectangle) -> u64 {
+
+pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
+    fn pack(self: Span<u64>) -> felt252 {
+        let result: u256 = (*self[0]).try_into().unwrap() * TWO_POW_188
+            + (*self[1]).try_into().unwrap() * TWO_POW_124
+            + (*self[2]).try_into().unwrap() * TWO_POW_62
+            + (*self[3]).try_into().unwrap();
+
+        result.try_into().unwrap()
+    }
+
+    fn unpack(self: felt252) -> Span<u64> {
+        let val: u256 = self.into();
+
+        array![
+            ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap(),
+            ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap(),
+            ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap(),
+            (val & MASK_62.into()).try_into().unwrap()
+        ]
+            .span()
+    }
+}
+
+pub impl RTreeNodePackableImpl of Packable<RTreeNode, u64> {
+    fn pack(self: RTreeNode) -> u64 {
         ((self.x_min.into() * TWO_POW_47))
             + (self.y_min.into() * TWO_POW_32)
             + (self.x_max.into() * TWO_POW_17)
@@ -70,7 +100,7 @@ pub impl RectPackableImpl of Packable<Rectangle, u64> {
             })
     }
 
-    fn unpack(self: u64) -> Rectangle {
+    fn unpack(self: u64) -> RTreeNode {
         let x_min: u16 = ((self / TWO_POW_47) & MASK_15).try_into().unwrap();
         let y_min: u16 = ((self / TWO_POW_32) & MASK_15).try_into().unwrap();
         let x_max: u16 = ((self / TWO_POW_17) & MASK_15).try_into().unwrap();
@@ -78,7 +108,7 @@ pub impl RectPackableImpl of Packable<Rectangle, u64> {
         let is_leaf: bool = ((self / 2) & MASK_1) == 1;
         let is_area: bool = ((self) & MASK_1) == 1;
 
-        Rectangle { x_min, y_min, x_max, y_max, is_leaf, is_area }
+        RTreeNode { x_min, y_min, x_max, y_max, is_leaf, is_area }
     }
 }
 
