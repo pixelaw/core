@@ -6,8 +6,8 @@ use pixelaw::core::utils::{
 };
 
 const TWO_POW_47: u64 = 0x800000000000;
-const TWO_POW_32: u64 = 0x4000000000000;
-const TWO_POW_17: u64 = 0x800000;
+const TWO_POW_32: u64 = 0x100000000;
+const TWO_POW_17: u64 = 0x20000;
 const TWO_POW_2: u64 = 0x4;
 const TWO_POW_1: u64 = 0x2;
 const MASK_15: u64 = 0x7FFF;
@@ -56,7 +56,7 @@ pub trait Packable<T, PackedT> {
 
 pub impl RectPackableImpl of Packable<Rectangle, u64> {
     fn pack(self: Rectangle) -> u64 {
-        (self.x_min.into() * TWO_POW_47)
+        ((self.x_min.into() * TWO_POW_47))
             + (self.y_min.into() * TWO_POW_32)
             + (self.x_max.into() * TWO_POW_17)
             + (self.y_max.into() * TWO_POW_2)

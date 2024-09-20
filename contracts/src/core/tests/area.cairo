@@ -47,7 +47,7 @@ fn test_area_types() {
         y_min: 321,
         x_max: 456,
         y_max: 654,
-        is_leaf: true,
+        is_leaf: false,
         is_area: true
     };
 
@@ -55,5 +55,6 @@ fn test_area_types() {
     
     let rect_out = id.unpack();
 
+    println!("{:?}", rect_out);
     assert(rect_in == rect_out, 'rect not same');
 }
