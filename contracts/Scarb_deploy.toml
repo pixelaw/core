@@ -22,3 +22,7 @@ build-external-contracts = []
 [profile.slot]
 
 [profile.sepolia]
+
+[scripts]
+init_auth = "./scripts/init_auth.sh"
+paint = "./scripts/paint.sh"

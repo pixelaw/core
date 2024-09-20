@@ -22,6 +22,4 @@ sort-module-level-items = true
 
 [profile.slot]
 
-[scripts]
-init_auth = "./scripts/init_auth.sh"
-paint = "./scripts/paint.sh"
+[profile.sepolia]

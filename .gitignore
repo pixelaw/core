@@ -11,3 +11,4 @@ contracts/out
 contracts/manifests
 contracts/target
 .aider*
+contracts/katana/
