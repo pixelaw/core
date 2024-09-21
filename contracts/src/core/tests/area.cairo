@@ -44,14 +44,14 @@ fn test_root_area() {
     let rect_in = RTreeNode {
         x_min: 0,
         y_min: 0,
-        x_max: MAX_DIMENSION,       // 2**15 -1
-        y_max: MAX_DIMENSION,       // 2**15 -1
+        x_max: MAX_DIMENSION, // 2**15 -1
+        y_max: MAX_DIMENSION, // 2**15 -1
         is_leaf: true,
         is_area: false
     };
 
     let root_id: u64 = rect_in.pack();
-    
+
     let rect_out: RTreeNode = root_id.unpack();
 
     println!("{:?}", rect_out);
@@ -61,17 +61,12 @@ fn test_root_area() {
 
 #[test]
 fn test_area_packing() {
-    let rect_in = RTreeNode{
-        x_min: 123,
-        y_min: 321,
-        x_max: 456,
-        y_max: 654,
-        is_leaf: false,
-        is_area: true
+    let rect_in = RTreeNode {
+        x_min: 123, y_min: 321, x_max: 456, y_max: 654, is_leaf: false, is_area: true
     };
 
     let id = rect_in.pack();
-    
+
     let rect_out = id.unpack();
 
     // println!("{:?}", rect_out);
@@ -80,14 +75,30 @@ fn test_area_packing() {
 
 #[test]
 fn test_child_packing() {
-    let input = array![
-        123,321,456,654
-    ].span();
-
+    let input = array![123].span();
     let out = input.pack();
-    
-    let unpacked = out.unpack();
 
-    println!("{:?}", unpacked);
-    assert(unpacked == input, 'span not same');
+    assert(out.unpack() == input, '1 span not same');
+
+
+    let input = array![123, 321].span();
+    let out = input.pack();
+
+    assert(out.unpack() == input, '2 span not same');
+
+
+    let input = array![123, 321, 456].span();
+    let out = input.pack();
+
+    assert(out.unpack() == input, '3 span not same');
+
+
+
+    let input = array![123, 321, 456, 654].span();
+    let out = input.pack();
+
+    assert(out.unpack() == input, '4 span not same');
+
+
+
 }

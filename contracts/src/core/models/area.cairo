@@ -60,27 +60,63 @@ pub trait Packable<T, PackedT> {
     fn unpack(self: PackedT) -> T;
 }
 
+pub trait RTreeChildren<T, T2> {
+    fn get_children(self: T) -> T2;
+    // fn count_children(self: T) -> u8;
+}
+
+// A bunch of helpers with the packed children
+pub impl RTreeChildrenImpl of RTreeChildren<RTree, Span<u64>> {
+    fn get_children(self: RTree) -> Span<u64> {
+        self.children.unpack()
+    }
+    // fn count_children(self: RTree) -> u8{
+
+    // }
+}
 
 pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
     fn pack(self: Span<u64>) -> felt252 {
-        let result: u256 = (*self[0]).try_into().unwrap() * TWO_POW_188
-            + (*self[1]).try_into().unwrap() * TWO_POW_124
-            + (*self[2]).try_into().unwrap() * TWO_POW_62
-            + (*self[3]).try_into().unwrap();
+        let mut out: u256 = 0;
 
-        result.try_into().unwrap()
+        if self.len() > 0 {
+            out += (*self[0]).try_into().unwrap() * TWO_POW_188;
+            if self.len() > 1 {
+                out += (*self[1]).try_into().unwrap() * TWO_POW_124;
+                if self.len() > 2 {
+                    out += (*self[2]).try_into().unwrap() * TWO_POW_62;
+                    if self.len() > 3 {
+                        out += (*self[3]).try_into().unwrap();
+                    }
+                }
+            }
+        }
+
+        out.try_into().unwrap()
     }
 
     fn unpack(self: felt252) -> Span<u64> {
         let val: u256 = self.into();
+        let mut out: Array<u64> = array![];
 
-        array![
-            ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap(),
-            ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap(),
-            ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap(),
-            (val & MASK_62.into()).try_into().unwrap()
-        ]
-            .span()
+        let val1 = ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap();
+        if val1 > 0 {
+            out.append(val1);
+            let val2 = ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap();
+            if val2 > 0 {
+                out.append(val2);
+                let val3 = ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap();
+                if val3 > 0 {
+                    out.append(val3);
+                    let val4 = (val & MASK_62.into()).try_into().unwrap();
+                    if val4 > 0 {
+                        out.append(val4);
+                    }
+                }
+            }
+        };
+
+        out.span()
     }
 }
 

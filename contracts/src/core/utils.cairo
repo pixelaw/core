@@ -1,6 +1,7 @@
+use super::models::area::Packable;
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{Pixel}, {area::{RTreeNode, RTree, Area, RTreeNodePackableImpl}}};
+use pixelaw::core::models::{pixel::{Pixel}, {area::{RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl}}};
 
 
 
@@ -188,6 +189,8 @@ pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -
 pub fn choose_leaf(world: IWorldDispatcher, parent_id:u64, new_node: RTreeNode) -> RTreeNode {
 
     let parent: RTree = get!(world, (parent_id), RTree);
+
+    let children: Span<u64> = parent.get_children();
 
     // The parent is a leaf and can be used
     // if parent.is_leaf {
