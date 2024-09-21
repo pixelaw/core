@@ -14,8 +14,8 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
 [tool.fmt]
 sort-module-level-items = true
 
-[lib]
-# [[target.dojo]]
+# [lib]
+[[target.dojo]]
 
 
 [profile.dev-pop]
