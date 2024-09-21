@@ -1,20 +1,4 @@
-![PixeLAW](https://pixelaw.github.io/book/images/PixeLAW.jpeg)
-
-<div style="display: flex; gap: 0.4rem;">
-
-[![ci-contracts](https://github.com/pixelaw/core/actions/workflows/ci-contracts.yml/badge.svg)](https://github.com/pixelaw/core/actions/workflows/ci-contracts.yml)
-
-<a href="https://x.com/0xpixelaw">
-<img src="https://img.shields.io/twitter/follow/0xpixelaw?style=social"/>
-</a>
-
-<a href="https://github.com/pixelaw/core">
-<img src="https://img.shields.io/github/stars/pixelaw/core?style=social"/>
-</a>
-
-[![discord](https://img.shields.io/badge/join-PixeLAW-green?logo=discord&logoColor=white)](https://t.co/jKDjNbFdZ5)
-
-</div>
+# Pixelaw Contracts
 
 Contracts written in Cairo using Dojo to showcase a Pixel World with app interoperability. Its interoperability is made possible with core actions. Apps are any other contracts that are deployed to the Pixel World.
 
