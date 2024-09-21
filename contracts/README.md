@@ -23,10 +23,10 @@ asdf install dojo 1.0.0-alpha.11
 
 ```
 asdf plugin add scarb
-asdf install scarb 2.7.0-rc.4
+asdf install scarb 2.7.0
 ```
 
-And after moving into contracts directory, the versions for these libs are set in the .tool-versions file.
+And after moving into contracts directory, the versions for these libs are set in the `.tool-versions` file.
 
 ## Running Locally
 
