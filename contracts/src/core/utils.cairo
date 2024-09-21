@@ -1,8 +1,10 @@
 use super::models::area::Packable;
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{Pixel}, {area::{RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl}}};
-
+use pixelaw::core::models::{
+    pixel::{Pixel},
+    {area::{RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl}}
+};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
@@ -19,7 +21,7 @@ pub const MASK_64: u128 = 0xFFFFFFFFFFFFFFFF;
 pub const MASK_32: u128 = 0xFFFFFFFF;
 pub const MASK_16: u128 = 0xFFFF;
 
-pub const MAX_DIMENSION: u16 = 32767;       // 2**15 -1 (so all bits utilized)
+pub const MAX_DIMENSION: u16 = 32767; // 2**15 -1 (so all bits utilized)
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -138,7 +140,6 @@ pub fn subu8(nr: u8, sub: u8) -> u8 {
 }
 
 
-
 // RGBA
 // 0xFF FF FF FF
 // empty: 0x 00 00 00 00
@@ -186,23 +187,66 @@ pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -
     pixel.color == color
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, parent_id:u64, new_node: RTreeNode) -> RTreeNode {
-
-    let parent: RTree = get!(world, (parent_id), RTree);
-
-    let children: Span<u64> = parent.get_children();
-
-    // The parent is a leaf and can be used
-    // if parent.is_leaf {
-    //     return parent;
-    // }
-
-    // // Traverse the tree to find the leaf we need
-    // for child in parent.children {
-    //     let a =  choose_leaf(world, *child, parent);
-    // };
-
-    parent.id.unpack()
+fn min(a: u16, b: u16) -> u16 {
+    if a < b {
+        a
+    } else {
+        b
+    }
 }
 
+fn max(a: u16, b: u16) -> u16 {
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+fn combinedArea(parent: RTreeNode, new: RTreeNode) -> u128 {
+    let x_min = min(parent.x_min, new.x_min);
+    let y_min = min(parent.y_min, new.y_min);
+    let x_max = max(parent.x_max, new.x_max);
+    let y_max = max(parent.y_max, new.y_max);
+
+    (x_max - x_min).into() * (y_max - y_min).into()
+}
+
+pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_node: RTreeNode) -> RTreeNode {
+    let parent: RTree = get!(world, (parent_id), RTree);
+
+    let parent_node: RTreeNode = parent.id.unpack();
+
+    // The parent is a leaf and can be used
+    if parent_node.is_leaf {
+        return parent_node;
+    }
+
+    // Choose the most suitable child
+    let mut bestChild: Option<RTreeNode> = Option::None;
+    let mut bestEnlargement: u128 = POW_2_96; // Some super high value
+
+    for child in parent
+        .get_children() {
+            let tn: RTreeNode = (*child).unpack();
+            let enlargement = combinedArea(tn, new_node);
+        };
+
+    // let bestChild: RTreeItem | null = null;
+    // let bestEnlargement = Infinity;
+
+    // for (let child of node.children) {
+    //     let enlargement = this.calculateEnlargement(child, item);
+    //     if (enlargement < bestEnlargement) {
+    //         bestEnlargement = enlargement;
+    //         bestChild = child;
+    //     } else if (enlargement === bestEnlargement && child.area() < bestChild!.area()) {
+    //         bestChild = child;
+    //     }
+    // }
+
+    // return this.chooseLeaf(bestChild!, item);
+
+    parent_node
+}
 
