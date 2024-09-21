@@ -16,7 +16,7 @@ use pixelaw::{
         models::{
             registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-            area::{RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
+            area::{ROOT_RTREENODE,RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
@@ -41,14 +41,7 @@ use pixelaw::{
 
 #[test]
 fn test_root_area() {
-    let rect_in = RTreeNode {
-        x_min: 0,
-        y_min: 0,
-        x_max: MAX_DIMENSION, // 2**15 -1
-        y_max: MAX_DIMENSION, // 2**15 -1
-        is_leaf: true,
-        is_area: false
-    };
+    let rect_in = ROOT_RTREENODE;
 
     let root_id: u64 = rect_in.pack();
 

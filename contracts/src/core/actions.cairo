@@ -161,7 +161,7 @@ pub trait IActions<TContractState> {
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
     fn add_area(
-        ref world: IWorldDispatcher, rectangle: RTreeNode, hint_rtree: Option<u64>
+        ref world: IWorldDispatcher, node: RTreeNode, hint_rtree: Option<u64>
     ) -> Option<u64>;
     fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
     fn find_area(
@@ -186,10 +186,10 @@ pub mod actions {
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::queue::QueueItem;
-    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION};
+    use pixelaw::core::utils::{choose_leaf, get_core_actions_address, Position, MAX_DIMENSION};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
     use pixelaw::core::models::area::{RTreeNode, RTree, Area, RTreeNodePackableImpl};
-
+    use pixelaw::core::utils;
 
     #[derive(Drop, starknet::Event)]
     struct QueueScheduled {
@@ -241,22 +241,24 @@ pub mod actions {
                 (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
             );
 
+            // Initialize root RTree
+            set!(world, RTree { id: 0, children: 0 });
             // // Initialize root RTree
-            set!(
-                world,
-                RTree {
-                    id: RTreeNode {
-                        x_min: 0,
-                        y_min: 0,
-                        x_max: MAX_DIMENSION,
-                        y_max: MAX_DIMENSION,
-                        is_leaf: true,
-                        is_area: false
-                    }
-                        .pack(),
-                    children: 0
-                }
-            )
+        // set!(
+        //     world,
+        //     RTree {
+        //         id: RTreeNode {
+        //             x_min: 0,
+        //             y_min: 0,
+        //             x_max: MAX_DIMENSION,
+        //             y_max: MAX_DIMENSION,
+        //             is_leaf: true,
+        //             is_area: false
+        //         }
+        //             .pack(),
+        //         children: 0
+        //     }
+        // );
         }
 
         /// Updates the permissions for a specified system.
@@ -682,18 +684,18 @@ pub mod actions {
         // this.adjustTree(leaf);
         ////////////// FROM JS /////////////////
         fn add_area(
-            ref world: IWorldDispatcher, rectangle: RTreeNode, hint_rtree: Option<u64>
+            ref world: IWorldDispatcher, node: RTreeNode, hint_rtree: Option<u64>
         ) -> Option<u64> {
-            // FIXME this is just to make it compile for now
-            Option::None
             // 1. Prepare the leaf
 
             // TODO: use the hint to start searching deeper in the tree.
             // Fornow, Start at rootnode
-            // let leaf = choose_leaf(world, ROOT_RECT_ID, rectangle);
+            let leaf = utils::choose_leaf(world, 0, node);
 
             // 2. Add the child node
 
+            // FIXME this is just to make it compile for now
+            Option::None
         }
 
         fn remove_area(

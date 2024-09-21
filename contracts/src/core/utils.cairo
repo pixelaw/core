@@ -3,7 +3,12 @@ use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_addr
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::{
     pixel::{Pixel},
-    {area::{RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl}}
+    {
+        area::{
+            RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
+            RTreeNodeTraitImpl, ROOT_RTREENODE
+        }
+    }
 };
 
 
@@ -212,41 +217,54 @@ fn combinedArea(parent: RTreeNode, new: RTreeNode) -> u128 {
     (x_max - x_min).into() * (y_max - y_min).into()
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_node: RTreeNode) -> RTreeNode {
-    let parent: RTree = get!(world, (parent_id), RTree);
 
-    let parent_node: RTreeNode = parent.id.unpack();
+fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: RTreeNode) -> (RTreeNode, u64) {
+    // Choose the most suitable child
+    let mut best_child: RTreeNode = RTreeNode {
+        x_min: 0, x_max: 0, y_min: 0, y_max: 0, is_leaf: false, is_area: false
+    };
+    let mut best_child_id: u64 = 0;
+
+    let mut best_new_area: u128 = POW_2_96; // TODO should me pow2_32_max (15bit*15bit)
+
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+        let new_area = combinedArea(child, new);
+
+        if new_area < best_new_area {
+            best_new_area = new_area;
+            best_child = child;
+            best_child_id = *child_id;
+        } else if new_area == best_new_area && child.area() < best_child.area() {
+            best_child = child;
+            best_child_id = *child_id;
+        }
+    };
+
+    (best_child, best_child_id)
+}
+
+pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_node: RTreeNode) -> RTreeNode {
+    // If root has no children yet, then what?
+
+    let parent_node: RTreeNode = match parent_id {
+        0 => ROOT_RTREENODE,
+        _ => parent_id.unpack()
+    };
 
     // The parent is a leaf and can be used
     if parent_node.is_leaf {
         return parent_node;
     }
 
-    // Choose the most suitable child
-    let mut bestChild: Option<RTreeNode> = Option::None;
-    let mut bestEnlargement: u128 = POW_2_96; // Some super high value
+    // Load the parent from storage so we can inspect children
+    let parent: RTree = get!(world, (parent_id), RTree);
 
-    for child in parent
-        .get_children() {
-            let tn: RTreeNode = (*child).unpack();
-            let enlargement = combinedArea(tn, new_node);
-        };
+    // Find the most suitable child (that fits the new area without expanding the least)
+    let (_best_child, best_child_id) = choose_best_child(parent_node, parent.get_children(), new_node);
 
-    // let bestChild: RTreeItem | null = null;
-    // let bestEnlargement = Infinity;
-
-    // for (let child of node.children) {
-    //     let enlargement = this.calculateEnlargement(child, item);
-    //     if (enlargement < bestEnlargement) {
-    //         bestEnlargement = enlargement;
-    //         bestChild = child;
-    //     } else if (enlargement === bestEnlargement && child.area() < bestChild!.area()) {
-    //         bestChild = child;
-    //     }
-    // }
-
-    // return this.chooseLeaf(bestChild!, item);
-
-    parent_node
+    // Recursively keep looking for the best child, until the leaf with the smallest new area is
+    // found
+    choose_leaf(world, best_child_id, new_node)
 }
 

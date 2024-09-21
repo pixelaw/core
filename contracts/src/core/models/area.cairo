@@ -2,7 +2,7 @@ use core::starknet::storage_access::StorePacking;
 use starknet::{ContractAddress, ClassHash};
 use pixelaw::core::utils::{
     MASK_16, MASK_32, MASK_64, MASK_96, POW_2_16, POW_2_30, POW_2_31, POW_2_32, POW_2_48, POW_2_64,
-    POW_2_96
+    POW_2_96, MAX_DIMENSION
 };
 
 
@@ -17,6 +17,16 @@ const TWO_POW_1: u64 = 0x2;
 const MASK_15: u64 = 0x7FFF;
 const MASK_62: u64 = 0x3fffffffffffffff;
 const MASK_1: u64 = 0x1;
+
+pub const ROOT_RTREENODE: RTreeNode = RTreeNode {
+    x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION, is_leaf: false, is_area: false
+};
+
+pub const FIRST_RTREENODE: RTreeNode = RTreeNode {
+    x_min: 0, y_min: 0, x_max: 10, y_max: 10, is_leaf: true, is_area: false
+};
+
+pub const ROOT_RTREENODE_ID: u64 = 4294967292;  // for ROOT_RTREENODE
 
 
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
@@ -54,6 +64,15 @@ pub struct Area {
     allow_nesting: bool
 }
 
+pub trait RTreeNodeTrait<RTreeNode> {
+    fn area(self: RTreeNode) -> u32;
+}
+
+pub impl RTreeNodeTraitImpl of RTreeNodeTrait<RTreeNode> {
+    fn area(self: RTreeNode) -> u32{
+        (self.x_max - self.x_min).into() * (self.y_max - self.y_min).into()
+    }
+}
 
 pub trait Packable<T, PackedT> {
     fn pack(self: T) -> PackedT;
