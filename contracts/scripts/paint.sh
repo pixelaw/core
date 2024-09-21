@@ -6,9 +6,7 @@ function paint() {
   execute \
   pixelaw-paint_actions \
   interact \
-  -c 0,0,$1,"0xFFFFFF"
-
-  sleep 0.3
+  -c 0,0,$1,3816652287
 }
 
 # H

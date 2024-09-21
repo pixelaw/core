@@ -10,4 +10,5 @@ web/public/assets/placeholder/pixel-state.png
 contracts/out
 contracts/target
 .aider*
-contracts/katana/
+katana/
+torii
