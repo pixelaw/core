@@ -1,3 +1,4 @@
+
 use core::fmt::Display;
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
@@ -16,10 +17,10 @@ use pixelaw::{
         models::{
             registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-            area::{ROOT_RTREENODE,RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
+            area::{ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE,RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
+        utils::{find_node_for_position, Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -37,25 +38,33 @@ use pixelaw::{
         }
     }
 };
-
+use pixelaw::core::utils;
 
 #[test]
 fn test_root_area() {
-    let rect_in = ROOT_RTREENODE;
 
-    let root_id: u64 = rect_in.pack();
+    let root_id_empty: u64 = ROOT_RTREENODE_EMPTY.pack();
+    let root_id: u64 = ROOT_RTREENODE.pack();
+    let first_id: u64 = FIRST_RTREENODE.pack();
 
-    let rect_out: RTreeNode = root_id.unpack();
+    let rootnode_empty: RTreeNode = root_id_empty.unpack();
+    let rootnode: RTreeNode = root_id.unpack();
 
-    println!("{:?}", rect_out);
+    println!("root_id_empty: {:?}", root_id_empty);
     println!("root_id: {:?}", root_id);
-    assert(rect_in == rect_out, 'root_id not same');
+    println!("first_id: {:?}", first_id);
+
+    println!("rootnode_empty: {:?}", rootnode_empty);
+    println!("rootnode: {:?}", rootnode);
+
+    assert(ROOT_RTREENODE_EMPTY == rootnode_empty, 'rootnode_empty not same');
+    assert(ROOT_RTREENODE == rootnode, 'rootnode not same');
 }
 
 #[test]
 fn test_area_packing() {
     let rect_in = RTreeNode {
-        x_min: 123, y_min: 321, x_max: 456, y_max: 654, is_leaf: false, is_area: true
+        bounds: utils::Bounds{x_min: 123, y_min: 321, x_max: 456, y_max: 654}, is_leaf: false, is_area: true
     };
 
     let id = rect_in.pack();
@@ -64,6 +73,20 @@ fn test_area_packing() {
 
     // println!("{:?}", rect_out);
     assert(rect_in == rect_out, 'rect not same');
+}
+
+
+#[test]
+fn test_adding() {
+    let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
+
+    let bounds = Bounds{x_min: 123, y_min: 321, x_max: 456, y_max: 654};
+    let position = Position{x: 1, y: 1};
+
+    core_actions.add_area(bounds, Option::None);
+
+    let found = find_node_for_position(world, position, ROOT_ID, true);
+    println!("found: {:?}", found);
 }
 
 #[test]
@@ -83,8 +106,8 @@ fn test_child_packing() {
     let input = array![123, 321, 456].span();
     let out = input.pack();
 
-    assert(out.unpack() == input, '3 span not same');
-
+    let out_unpacked: Span<u64> = out.unpack();
+    assert(out_unpacked == input, '3 span not same');
 
 
     let input = array![123, 321, 456, 654].span();

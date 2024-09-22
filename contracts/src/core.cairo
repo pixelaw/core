@@ -4,4 +4,4 @@ pub mod traits;
 pub mod utils;
 
 #[cfg(test)]
-mod tests;
+pub mod tests;

@@ -12,9 +12,9 @@ use pixelaw::core::utils::{Direction, Position, DefaultParameters, starknet_kecc
 ///
 /// # Returns
 ///
-/// * `Option<(u32, u32)>` - The next position as an `Option`. Returns `None` if the move is
+/// * `Option<(u16, u16)>` - The next position as an `Option`. Returns `None` if the move is
 /// invalid.
-fn next_position(x: u32, y: u32, direction: Direction) -> Option<(u32, u32)> {
+fn next_position(x: u16, y: u16, direction: Direction) -> Option<(u16, u16)> {
     match direction {
         Direction::None(()) => Option::Some((x, y)),
         Direction::Left(()) => { if x == 0 {
@@ -79,8 +79,8 @@ pub struct SnakeSegment {
     pub id: u32,
     pub previous_id: u32,
     pub next_id: u32,
-    pub x: u32,
-    pub y: u32,
+    pub x: u16,
+    pub y: u16,
     pub pixel_original_color: u32,
     pub pixel_original_text: felt252,
     pub pixel_original_app: ContractAddress,
@@ -159,8 +159,8 @@ mod snake_actions {
     #[derive(Drop, starknet::Event)]
     struct Died {
         owner: ContractAddress,
-        x: u32,
-        y: u32,
+        x: u16,
+        y: u16,
     }
 
     #[derive(Drop, starknet::Event)]

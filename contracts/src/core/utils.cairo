@@ -6,7 +6,7 @@ use pixelaw::core::models::{
     {
         area::{
             RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
-            RTreeNodeTraitImpl, ROOT_RTREENODE
+            BoundsTraitImpl, ROOT_RTREENODE
         }
     }
 };
@@ -39,8 +39,17 @@ pub enum Direction {
 
 #[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
 pub struct Position {
-    pub x: u32,
-    pub y: u32
+    pub x: u16,
+    pub y: u16
+}
+
+
+#[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
+pub struct Bounds {
+    pub x_min: u16,
+    pub y_min: u16,
+    pub x_max: u16,
+    pub y_max: u16
 }
 
 
@@ -100,7 +109,7 @@ pub fn get_position(direction: Direction, position: Position) -> Position {
             }
         },
         Direction::Right => {
-            if position.x == U32_MAX {
+            if position.x == 0xFFFF {
                 position
             } else {
                 Position { x: position.x + 1, y: position.y }
@@ -114,7 +123,7 @@ pub fn get_position(direction: Direction, position: Position) -> Position {
             }
         },
         Direction::Down => {
-            if position.y == U32_MAX {
+            if position.y == 0xFFFF {
                 position
             } else {
                 Position { x: position.x, y: position.y + 1 }
@@ -208,7 +217,7 @@ fn max(a: u16, b: u16) -> u16 {
     }
 }
 
-fn combinedArea(parent: RTreeNode, new: RTreeNode) -> u128 {
+fn combinedArea(parent: Bounds, new: Bounds) -> u32 {
     let x_min = min(parent.x_min, new.x_min);
     let y_min = min(parent.y_min, new.y_min);
     let x_max = max(parent.x_max, new.x_max);
@@ -218,39 +227,54 @@ fn combinedArea(parent: RTreeNode, new: RTreeNode) -> u128 {
 }
 
 
-fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: RTreeNode) -> (RTreeNode, u64) {
-    // Choose the most suitable child
-    let mut best_child: RTreeNode = RTreeNode {
-        x_min: 0, x_max: 0, y_min: 0, y_max: 0, is_leaf: false, is_area: false
-    };
+fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64 {
     let mut best_child_id: u64 = 0;
+    let mut best_child_area: u32 = 0;
 
-    let mut best_new_area: u128 = POW_2_96; // TODO should me pow2_32_max (15bit*15bit)
+    let mut best_new_area: u32 = 0x40000000; //  pow2_32_max (15bit*15bit)
 
     for child_id in children {
         let child: RTreeNode = (*child_id).unpack();
-        let new_area = combinedArea(child, new);
+        let new_area = combinedArea(child.bounds, new);
 
         if new_area < best_new_area {
             best_new_area = new_area;
-            best_child = child;
+            best_child_area = child.bounds.area();
             best_child_id = *child_id;
-        } else if new_area == best_new_area && child.area() < best_child.area() {
-            best_child = child;
+        } else if new_area == best_new_area && child.bounds.area() < best_child_area {
             best_child_id = *child_id;
         }
     };
 
-    (best_child, best_child_id)
+    (best_child_id)
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_node: RTreeNode) -> RTreeNode {
-    // If root has no children yet, then what?
+pub fn find_node_for_position(world: IWorldDispatcher, position: Position, node_id: u64, has_area: bool) -> u64 {
+    let node: RTreeNode = node_id.unpack();
 
-    let parent_node: RTreeNode = match parent_id {
-        0 => ROOT_RTREENODE,
-        _ => parent_id.unpack()
+    if !node.bounds.contains(position) || node.is_area != has_area {
+        return 0;
+    }
+
+    // Load the treenode from storage so we can inspect children
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    let children: Span<u64> = treenode.get_children();
+    let mut found_child_id: u64 = 0;
+
+    for child_id in children {
+        let id = find_node_for_position(world, position, *child_id, has_area);
+        if id != 0 {
+            found_child_id = id;
+            break;
+        }
     };
+
+    found_child_id
+}
+
+pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_bounds: Bounds) -> RTreeNode {
+    let parent_node: RTreeNode = parent_id.unpack();
 
     // The parent is a leaf and can be used
     if parent_node.is_leaf {
@@ -260,11 +284,13 @@ pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_node: RTreeNode)
     // Load the parent from storage so we can inspect children
     let parent: RTree = get!(world, (parent_id), RTree);
 
+    println!("looking: {:?}", parent.children);
+
     // Find the most suitable child (that fits the new area without expanding the least)
-    let (_best_child, best_child_id) = choose_best_child(parent_node, parent.get_children(), new_node);
+    let best_child_id = choose_best_child(parent_node, parent.get_children(), new_bounds);
 
     // Recursively keep looking for the best child, until the leaf with the smallest new area is
     // found
-    choose_leaf(world, best_child_id, new_node)
+    choose_leaf(world, best_child_id, new_bounds)
 }
 

@@ -2,8 +2,8 @@ use starknet::{ContractAddress, ClassHash};
 
 #[derive(Copy, Drop, Serde)]
 pub struct PixelUpdate {
-    pub x: u32,
-    pub y: u32,
+    pub x: u16,
+    pub y: u16,
     pub color: Option<u32>,
     pub owner: Option<ContractAddress>,
     pub app: Option<ContractAddress>,
@@ -17,9 +17,9 @@ pub struct PixelUpdate {
 pub struct Pixel {
     // System properties
     #[key]
-    pub x: u32,
+    pub x: u16,
     #[key]
-    pub y: u32,
+    pub y: u16,
     // User-changeable properties
     pub app: ContractAddress,
     pub color: u32,

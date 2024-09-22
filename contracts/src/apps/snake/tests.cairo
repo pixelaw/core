@@ -21,65 +21,17 @@ mod tests {
     };
     use pixelaw::apps::snake::app::{Snake};
     use starknet::{contract_address_const, testing::set_account_contract_address};
-
-    // Helper function: deploys world and actions
-    fn deploy_world() -> (
-        IWorldDispatcher, IActionsDispatcher, ISnakeActionsDispatcher, IPaintActionsDispatcher
-    ) {
-        let _player1 = starknet::contract_address_const::<0x1337>();
-
-        // Deploy World and models
-        let mut models = array![
-            pixel::TEST_CLASS_HASH,
-            app::TEST_CLASS_HASH,
-            app_name::TEST_CLASS_HASH,
-            core_actions_address::TEST_CLASS_HASH,
-            permissions::TEST_CLASS_HASH,
-            instruction::TEST_CLASS_HASH,
-            snake::TEST_CLASS_HASH,
-            snake_segment::TEST_CLASS_HASH,
-        ];
-        let world = spawn_test_world(["pixelaw"].span(), models.span());
-
-        // Deploy Core actions
-        let core_actions_address = world
-            .deploy_contract('salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap());
-        let core_actions = IActionsDispatcher { contract_address: core_actions_address };
-
-        // Deploy Snake actions
-        let snake_actions_address = world
-            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
-        let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
-
-        // Deploy Paint actions
-        let paint_actions = IPaintActionsDispatcher {
-            contract_address: world
-                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap())
-        };
-
-        // Setup dojo auth
-        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
-
-        (world, core_actions, snake_actions, paint_actions)
-    }
+    use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
 
 
     #[test]
     #[available_gas(3000000000)]
     fn test_playthrough() {
-        // Deploy everything
-        let (world, core_actions, snake_actions, paint_actions) = deploy_world();
+        let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
+        let (paint_actions, snake_actions) = setup_apps_initialized(world);
+    
         let SNAKE_COLOR = 0xFF00FF;
 
-        core_actions.init();
-        snake_actions.init();
 
         // Setup players
         let player1 = contract_address_const::<0x1337>();

@@ -18,47 +18,16 @@ mod tests {
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
+    use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
 
-
-    // Helper function: deploys world and actions
-    fn deploy_world() -> (IWorldDispatcher, IActionsDispatcher, IPaintActionsDispatcher) {
-        // Deploy World and models
-        let mut models = array![
-            pixel::TEST_CLASS_HASH,
-            app::TEST_CLASS_HASH,
-            app_name::TEST_CLASS_HASH,
-            core_actions_address::TEST_CLASS_HASH,
-            permissions::TEST_CLASS_HASH,
-        ];
-        let world = spawn_test_world(["pixelaw"].span(), models.span());
-
-        // Deploy Core actions
-        let core_actions_address = world
-            .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
-        let core_actions = IActionsDispatcher { contract_address: core_actions_address };
-
-        // Deploy Paint actions
-        let paint_actions_address = world
-            .deploy_contract('salt2', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
-        let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
-
-        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-
-        (world, core_actions, paint_actions)
-    }
 
     #[test]
     #[available_gas(3000000000)]
     fn test_paint_actions() {
         // Deploy everything
-        let (world, core_actions, paint_actions) = deploy_world();
-
-        core_actions.init();
-        paint_actions.init();
+        let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
+        let (paint_actions, _snake_actions) = setup_apps_initialized(world);
+    
 
         let player1 = contract_address_const::<0x1337>();
         set_account_contract_address(player1);

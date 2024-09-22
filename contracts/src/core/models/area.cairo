@@ -1,10 +1,11 @@
+
 use core::starknet::storage_access::StorePacking;
 use starknet::{ContractAddress, ClassHash};
 use pixelaw::core::utils::{
     MASK_16, MASK_32, MASK_64, MASK_96, POW_2_16, POW_2_30, POW_2_31, POW_2_32, POW_2_48, POW_2_64,
     POW_2_96, MAX_DIMENSION
 };
-
+use pixelaw::core::utils;
 
 pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
 pub const TWO_POW_124: u256 = 0x10000000000000000000000000000000;
@@ -18,15 +19,30 @@ const MASK_15: u64 = 0x7FFF;
 const MASK_62: u64 = 0x3fffffffffffffff;
 const MASK_1: u64 = 0x1;
 
-pub const ROOT_RTREENODE: RTreeNode = RTreeNode {
-    x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION, is_leaf: false, is_area: false
-};
+pub const ROOT_RTREENODE_EMPTY: RTreeNode =
+    RTreeNode {
+        bounds: utils::Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
+        is_leaf: true,
+        is_area: false
+    };
 
-pub const FIRST_RTREENODE: RTreeNode = RTreeNode {
-    x_min: 0, y_min: 0, x_max: 10, y_max: 10, is_leaf: true, is_area: false
-};
+pub const ROOT_RTREENODE: RTreeNode =
+    RTreeNode {
+        bounds: utils::Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
+        is_leaf: false,
+        is_area: false
+    };
 
-pub const ROOT_RTREENODE_ID: u64 = 4294967292;  // for ROOT_RTREENODE
+pub const FIRST_RTREENODE: RTreeNode =
+    RTreeNode {
+        bounds: utils::Bounds { x_min: 0, y_min: 0, x_max: 10, y_max: 10 },
+        is_leaf: true,
+        is_area: false
+    };
+
+pub const ROOT_EMPTY_ID: u64 =4294967294 ; // for ROOT_RTREENODE_EMPTY
+pub const ROOT_ID: u64 = 4294967292; // for ROOT_RTREENODE
+pub const FIRST_ID: u64 = 1310762; // for FIRST_RTREENODE
 
 
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
@@ -47,10 +63,7 @@ pub struct RTree {
 
 #[derive(Copy, Drop, Serde, Debug, PartialEq)]
 pub struct RTreeNode {
-    pub x_min: u16,
-    pub y_min: u16,
-    pub x_max: u16,
-    pub y_max: u16,
+    pub bounds: utils::Bounds,
     pub is_leaf: bool,
     pub is_area: bool,
 }
@@ -64,13 +77,49 @@ pub struct Area {
     allow_nesting: bool
 }
 
-pub trait RTreeNodeTrait<RTreeNode> {
-    fn area(self: RTreeNode) -> u32;
+pub trait RTreeTrait<RTree> {
+    fn get_node(self: RTree) -> RTreeNode;
+    fn get_children(self: RTree) -> Span<u64>;
+    fn add_child_id(self: RTree, child_id: u64) -> felt252;
+    // fn remove_child_id(child_id: u64) -> felt252;
+    // fn change_to_leaf(child_id: u64) -> felt252;
+    // fn change_to_nonleaf(child_id: u64) -> felt252;
 }
 
-pub impl RTreeNodeTraitImpl of RTreeNodeTrait<RTreeNode> {
-    fn area(self: RTreeNode) -> u32{
+pub impl RTreeTraitImpl of RTreeTrait<RTree> {
+    fn get_node(self: RTree) -> RTreeNode {
+        self.id.unpack()
+    }
+
+    fn get_children(self: RTree) -> Span<u64>{
+        self.children.unpack()
+    }
+
+    fn add_child_id(self: RTree, child_id: u64) -> felt252{
+        let children: Span<u64> = self.children.unpack();
+        assert_lt!(children.len(), 4);
+
+        let mut arr: Array<u64> =children.into();
+        arr.append(child_id);
+
+        let new_span: Span<u64> = arr.span();
+        new_span.pack()
+        
+    }
+}
+
+pub trait BoundsTrait<Bounds> {
+    fn area(self: Bounds) -> u32;
+    fn contains(self: Bounds, position: utils::Position) -> bool;
+}
+
+pub impl BoundsTraitImpl of BoundsTrait<utils::Bounds> {
+    fn area(self: utils::Bounds) -> u32 {
         (self.x_max - self.x_min).into() * (self.y_max - self.y_min).into()
+    }
+    fn contains(self: utils::Bounds, position: utils::Position) -> bool {
+        position.x >= self.x_min && position.x <= self.x_max 
+        && position.y >= self.y_min && position.y <= self.y_max
     }
 }
 
@@ -81,7 +130,6 @@ pub trait Packable<T, PackedT> {
 
 pub trait RTreeChildren<T, T2> {
     fn get_children(self: T) -> T2;
-    // fn count_children(self: T) -> u8;
 }
 
 // A bunch of helpers with the packed children
@@ -89,9 +137,6 @@ pub impl RTreeChildrenImpl of RTreeChildren<RTree, Span<u64>> {
     fn get_children(self: RTree) -> Span<u64> {
         self.children.unpack()
     }
-    // fn count_children(self: RTree) -> u8{
-
-    // }
 }
 
 pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
@@ -99,13 +144,13 @@ pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
         let mut out: u256 = 0;
 
         if self.len() > 0 {
-            out += (*self[0]).try_into().unwrap() * TWO_POW_188;
+            out += (*self[0]).try_into().unwrap();
             if self.len() > 1 {
-                out += (*self[1]).try_into().unwrap() * TWO_POW_124;
+                out += (*self[1]).try_into().unwrap() * TWO_POW_62;
                 if self.len() > 2 {
-                    out += (*self[2]).try_into().unwrap() * TWO_POW_62;
+                    out += (*self[2]).try_into().unwrap() * TWO_POW_124;
                     if self.len() > 3 {
-                        out += (*self[3]).try_into().unwrap();
+                        out += (*self[3]).try_into().unwrap() * TWO_POW_188;
                     }
                 }
             }
@@ -118,16 +163,17 @@ pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
         let val: u256 = self.into();
         let mut out: Array<u64> = array![];
 
-        let val1 = ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap();
+        let val1 = (val & MASK_62.into()).try_into().unwrap();
+
         if val1 > 0 {
             out.append(val1);
-            let val2 = ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap();
+            let val2 = ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap();
             if val2 > 0 {
                 out.append(val2);
-                let val3 = ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap();
+                let val3 = ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap();
                 if val3 > 0 {
                     out.append(val3);
-                    let val4 = (val & MASK_62.into()).try_into().unwrap();
+                    let val4 = ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap();
                     if val4 > 0 {
                         out.append(val4);
                     }
@@ -135,16 +181,35 @@ pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
             }
         };
 
+////////////////////////////////
+        // let val1 = ((val / TWO_POW_188.into()) & MASK_62.into()).try_into().unwrap();
+        
+        // if val1 > 0 {
+        //     out.append(val1);
+        //     let val2 = ((val / TWO_POW_124.into()) & MASK_62.into()).try_into().unwrap();
+        //     if val2 > 0 {
+        //         out.append(val2);
+        //         let val3 = ((val / TWO_POW_62.into()) & MASK_62.into()).try_into().unwrap();
+        //         if val3 > 0 {
+        //             out.append(val3);
+        //             let val4 = (val & MASK_62.into()).try_into().unwrap();
+        //             if val4 > 0 {
+        //                 out.append(val4);
+        //             }
+        //         }
+        //     }
+        // };
+
         out.span()
     }
 }
 
 pub impl RTreeNodePackableImpl of Packable<RTreeNode, u64> {
     fn pack(self: RTreeNode) -> u64 {
-        ((self.x_min.into() * TWO_POW_47))
-            + (self.y_min.into() * TWO_POW_32)
-            + (self.x_max.into() * TWO_POW_17)
-            + (self.y_max.into() * TWO_POW_2)
+        ((self.bounds.x_min.into() * TWO_POW_47))
+            + (self.bounds.y_min.into() * TWO_POW_32)
+            + (self.bounds.x_max.into() * TWO_POW_17)
+            + (self.bounds.y_max.into() * TWO_POW_2)
             + (match self.is_leaf {
                 true => 2,
                 false => 0
@@ -156,14 +221,17 @@ pub impl RTreeNodePackableImpl of Packable<RTreeNode, u64> {
     }
 
     fn unpack(self: u64) -> RTreeNode {
-        let x_min: u16 = ((self / TWO_POW_47) & MASK_15).try_into().unwrap();
-        let y_min: u16 = ((self / TWO_POW_32) & MASK_15).try_into().unwrap();
-        let x_max: u16 = ((self / TWO_POW_17) & MASK_15).try_into().unwrap();
-        let y_max: u16 = ((self / TWO_POW_2) & MASK_15).try_into().unwrap();
+        let bounds = utils::Bounds {
+            x_min: ((self / TWO_POW_47) & MASK_15).try_into().unwrap(),
+            y_min: ((self / TWO_POW_32) & MASK_15).try_into().unwrap(),
+            x_max: ((self / TWO_POW_17) & MASK_15).try_into().unwrap(),
+            y_max: ((self / TWO_POW_2) & MASK_15).try_into().unwrap()
+        };
+
         let is_leaf: bool = ((self / 2) & MASK_1) == 1;
         let is_area: bool = ((self) & MASK_1) == 1;
 
-        RTreeNode { x_min, y_min, x_max, y_max, is_leaf, is_area }
+        RTreeNode { bounds, is_leaf, is_area }
     }
 }
 

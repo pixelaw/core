@@ -50,7 +50,7 @@ trait IPaintActions<TContractState> {
 
 pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
-const PIXELS_PER_FELT: u32 = 7;
+const PIXELS_PER_FELT: u16 = 7;
 const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
@@ -241,7 +241,7 @@ mod paint_actions {
             let system = core_actions.get_system_address(default_params.for_system);
 
             let mut felt_index = 0;
-            let mut pixel_index = 0;
+            let mut pixel_index: u16 = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
             let mut stop = false;
 
@@ -386,7 +386,7 @@ mod paint_actions {
     /// # Returns
     ///
     /// * `u32` - The extracted 32-bit value.
-    fn extract(felt: u256, index: u32) -> u32 {
+    fn extract(felt: u256, index: u16) -> u32 {
         let result: u32 = if index == 0 {
             (felt / TWO_POW_192).try_into().unwrap()
         } else if index == 1 {
