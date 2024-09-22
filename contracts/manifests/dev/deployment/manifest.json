@@ -1235,8 +1235,8 @@
       }
     ],
     "address": "0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34",
-    "transaction_hash": "0x289631c02961b4572334cd0ff57596683d680df85dd48b5177a748bf5547324",
-    "block_number": 5,
+    "transaction_hash": "0x507cd13b0e34b357d25bd0ddafa527c8caf0729f894e57ad9129c1f29311768",
+    "block_number": 3,
     "seed": "pixelaw",
     "metadata": {
       "profile_name": "dev",
@@ -2548,15 +2548,7 @@
       "writes": [],
       "init_calldata": [],
       "tag": "pixelaw-paint_actions",
-      "systems": [
-        "on_pre_update",
-        "on_post_update",
-        "init",
-        "interact",
-        "put_color",
-        "pixel_row",
-        "fade"
-      ],
+      "systems": ["on_pre_update", "on_post_update", "init", "interact", "put_color", "pixel_row", "fade"],
       "manifest_name": "pixelaw-paint_actions-2afb94fe"
     },
     {
@@ -3103,12 +3095,7 @@
       "writes": [],
       "init_calldata": [],
       "tag": "pixelaw-snake_actions",
-      "systems": [
-        "on_pre_update",
-        "on_post_update",
-        "init",
-        "move"
-      ],
+      "systems": ["on_pre_update", "on_post_update", "init", "move"],
       "manifest_name": "pixelaw-snake_actions-4f967106"
     }
   ],
