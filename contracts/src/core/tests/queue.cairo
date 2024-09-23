@@ -1,8 +1,3 @@
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address},
-};
-
 use core::{traits::TryInto, poseidon::poseidon_hash_span};
 
 use dojo::{
@@ -18,6 +13,10 @@ use pixelaw::core::{
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
     utils::{get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::setup_core_initialized
+};
+use starknet::{
+    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
+    testing::{set_block_timestamp, set_account_contract_address},
 };
 
 

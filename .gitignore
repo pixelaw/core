@@ -8,6 +8,6 @@ web/public/assets/placeholder/pixel-state.png
 **/**/*.log
 **/**/*.sqlite
 contracts/out
-contracts/manifests
 contracts/target
 .aider*
+db/

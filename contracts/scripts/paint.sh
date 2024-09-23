@@ -3,13 +3,10 @@ set -uo pipefail
 
 function paint() {
   sozo \
-  --profile dev-pop \
   execute \
-  0x1f04b61e71f2afa9610c422db007807f73ebad6b4c069e72bb6e22ff032a93c \
+  pixelaw-paint_actions \
   interact \
-  -c 0,0,$1,"0xFFFFFF"
-
-  sleep 0.3
+  -c 0,0,$1,3816652287
 }
 
 # H

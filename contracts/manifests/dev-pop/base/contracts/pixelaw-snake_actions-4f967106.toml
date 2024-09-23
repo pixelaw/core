@@ -1,0 +1,16 @@
+kind = "DojoContract"
+class_hash = "0x566a961335e1183fe83b156d6349a0320f401b4f0b4b20485e2b709e748dcd0"
+original_class_hash = "0x566a961335e1183fe83b156d6349a0320f401b4f0b4b20485e2b709e748dcd0"
+base_class_hash = "0x0"
+abi = "manifests/dev-pop/base/abis/contracts/pixelaw-snake_actions-4f967106.json"
+reads = []
+writes = []
+init_calldata = []
+tag = "pixelaw-snake_actions"
+systems = [
+    "on_pre_update",
+    "on_post_update",
+    "init",
+    "move",
+]
+manifest_name = "pixelaw-snake_actions-4f967106"
