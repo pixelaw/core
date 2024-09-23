@@ -161,9 +161,7 @@ pub trait IActions<TContractState> {
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
-    fn add_area(
-        ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>
-    ) -> u64;
+    fn add_area(ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>) -> u64;
     fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
     fn find_area(
         ref world: IWorldDispatcher,
@@ -189,7 +187,9 @@ pub mod actions {
     use pixelaw::core::models::queue::QueueItem;
     use pixelaw::core::utils::{choose_leaf, get_core_actions_address, Position, MAX_DIMENSION};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
-    use pixelaw::core::models::area::{BoundsTraitImpl,RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl};
+    use pixelaw::core::models::area::{
+        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
+    };
     use pixelaw::core::utils;
 
     #[derive(Drop, starknet::Event)]
@@ -244,7 +244,6 @@ pub mod actions {
 
             // Initialize root RTree
             set!(world, RTree { id: ROOT_ID, children: 1310762 });
-
         }
 
         /// Updates the permissions for a specified system.
@@ -683,20 +682,18 @@ pub mod actions {
             let leaf_changing = utils::choose_leaf(world, ROOT_ID, bounds);
             let leafnode_changing: RTreeNode = leaf_changing.get_node();
 
-            let new_area = RTreeNode{bounds, is_leaf: true, is_area:true};
+            let new_area = RTreeNode { bounds, is_leaf: true, is_area: true };
             let new_area_id = new_area.pack();
 
             println!("leaf_changing: {:?}", leaf_changing);
-            
+
             // 2. Add the area node
             let mut children: Span<u64> = leaf_changing.get_children();
 
             if children.len() == 4 {
                 // TODO Maxed out children, need to split
                 println!("splitting leaf_changing: {:?}", leaf_changing);
-
-            }else{
-
+            } else {
                 // Add the child
                 let updated_leaf_children = leaf_changing.add_child_id(new_area_id);
 
@@ -705,26 +702,18 @@ pub mod actions {
 
                 // Increase size of leaf node since it now contains our Area
                 // This also changes its id.
-                let leafnode_new = RTreeNode{
-                    bounds: leafnode_changing.bounds.combine(bounds),
-                    is_leaf: true,
-                    is_area: false
+                let leafnode_new = RTreeNode {
+                    bounds: leafnode_changing.bounds.combine(bounds), is_leaf: true, is_area: false
                 };
 
-                leaf_new_id =leafnode_new.pack();
-                let leaf_new = RTree{
-                    id: leaf_new_id,
-                    children: updated_leaf_children
-                };
+                leaf_new_id = leafnode_new.pack();
+                let leaf_new = RTree { id: leaf_new_id, children: updated_leaf_children };
 
                 // Store the new Leaf node
                 set!(world, (leaf_new));
-
                 // TODO replace parent child entry
 
-
             }
-
 
             leaf_new_id
         }
