@@ -49,7 +49,7 @@ scarb --manifest-path Scarb_deploy.toml run init_auth
 
 ```bash
 # Run Katana
-katana --disable-fee --allowed-origins "*" --db-dir katana
+katana --disable-fee --allowed-origins "*" --db-dir db/katana
 ```
 
 #### 2. Terminal two
@@ -62,10 +62,10 @@ sozo build
 sozo migrate apply
 
 # Initialize the pixelaw app
-scarb run init_auth
+scarb run init
 
 # Start Torii
-torii --world 0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34 --allowed-origins "*"
+torii --world 0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34 --allowed-origins "*" --database db/torii
 ```
 
 ## How to Deploy to Starknet
