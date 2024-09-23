@@ -81,11 +81,20 @@ fn test_adding() {
     let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
 
     let bounds = Bounds{x_min: 123, y_min: 321, x_max: 456, y_max: 654};
-    let position = Position{x: 1, y: 1};
+    let position_1 = Position{x: 1, y: 1};
+    let position_2 = Position{x: 123, y: 456};
 
-    core_actions.add_area(bounds, Option::None);
+    let _result = core_actions.add_area(bounds, Option::None);
 
-    let found = find_node_for_position(world, position, ROOT_ID, true);
+    let not_found = find_node_for_position(world, position_1, ROOT_ID, true);   // has_area=true
+
+    assert(not_found == 0, 'should not find');
+
+    let found = find_node_for_position(world, position_2, ROOT_ID, true);   // has_area=true
+
+    assert(found != 0, 'should find');
+
+
     println!("found: {:?}", found);
 }
 

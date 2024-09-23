@@ -5,7 +5,7 @@ use pixelaw::core::models::{
     pixel::{Pixel},
     {
         area::{
-            RTreeNode, RTree, Area, RTreeChildrenImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
+            RTreeNode, RTree, Area, RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
             BoundsTraitImpl, ROOT_RTREENODE
         }
     }
@@ -201,7 +201,7 @@ pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -
     pixel.color == color
 }
 
-fn min(a: u16, b: u16) -> u16 {
+pub fn min(a: u16, b: u16) -> u16 {
     if a < b {
         a
     } else {
@@ -209,7 +209,7 @@ fn min(a: u16, b: u16) -> u16 {
     }
 }
 
-fn max(a: u16, b: u16) -> u16 {
+pub fn max(a: u16, b: u16) -> u16 {
     if a > b {
         a
     } else {
@@ -273,21 +273,21 @@ pub fn find_node_for_position(world: IWorldDispatcher, position: Position, node_
     found_child_id
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, parent_id: u64, new_bounds: Bounds) -> RTreeNode {
-    let parent_node: RTreeNode = parent_id.unpack();
+pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds) -> RTree {
+    let node: RTreeNode = node_id.unpack();
+
+    // Load the parent from storage
+    let treenode: RTree = get!(world, (node_id), RTree);
 
     // The parent is a leaf and can be used
-    if parent_node.is_leaf {
-        return parent_node;
+    if node.is_leaf {
+        return treenode;
     }
 
-    // Load the parent from storage so we can inspect children
-    let parent: RTree = get!(world, (parent_id), RTree);
-
-    println!("looking: {:?}", parent.children);
+    println!("looking: {:?}", treenode.get_children());
 
     // Find the most suitable child (that fits the new area without expanding the least)
-    let best_child_id = choose_best_child(parent_node, parent.get_children(), new_bounds);
+    let best_child_id = choose_best_child(node, treenode.get_children(), new_bounds);
 
     // Recursively keep looking for the best child, until the leaf with the smallest new area is
     // found

@@ -163,14 +163,14 @@ pub trait IActions<TContractState> {
 
     fn add_area(
         ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>
-    ) -> Option<u64>;
+    ) -> u64;
     fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
     fn find_area(
         ref world: IWorldDispatcher,
         position: Position,
         area_id: Option<u64>,
         hint_rtree: Option<felt252>
-    ) -> Option<u64>;
+    ) -> u64;
 }
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
@@ -189,7 +189,7 @@ pub mod actions {
     use pixelaw::core::models::queue::QueueItem;
     use pixelaw::core::utils::{choose_leaf, get_core_actions_address, Position, MAX_DIMENSION};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
-    use pixelaw::core::models::area::{ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl};
+    use pixelaw::core::models::area::{BoundsTraitImpl,RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl};
     use pixelaw::core::utils;
 
     #[derive(Drop, starknet::Event)]
@@ -671,19 +671,62 @@ pub mod actions {
         ////////////// FROM JS /////////////////
         fn add_area(
             ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>
-        ) -> Option<u64> {
+        ) -> u64 {
             // 1. Prepare the leaf
 
             // TODO: use the hint to start searching deeper in the tree.
             // Fornow, Start at rootnode
 
-            let leaf = utils::choose_leaf(world, ROOT_ID, bounds);
+            // Default output
+            let mut leaf_new_id = 0;
 
-            println!("leaf: {:?}", leaf);
-            // 2. Add the child node
+            let leaf_changing = utils::choose_leaf(world, ROOT_ID, bounds);
+            let leafnode_changing: RTreeNode = leaf_changing.get_node();
 
-            // FIXME this is just to make it compile for now
-            Option::None
+            let new_area = RTreeNode{bounds, is_leaf: true, is_area:true};
+            let new_area_id = new_area.pack();
+
+            println!("leaf_changing: {:?}", leaf_changing);
+            
+            // 2. Add the area node
+            let mut children: Span<u64> = leaf_changing.get_children();
+
+            if children.len() == 4 {
+                // TODO Maxed out children, need to split
+                println!("splitting leaf_changing: {:?}", leaf_changing);
+
+            }else{
+
+                // Add the child
+                let updated_leaf_children = leaf_changing.add_child_id(new_area_id);
+
+                // Remove the old Leaf node
+                delete!(world, (leaf_changing));
+
+                // Increase size of leaf node since it now contains our Area
+                // This also changes its id.
+                let leafnode_new = RTreeNode{
+                    bounds: leafnode_changing.bounds.combine(bounds),
+                    is_leaf: true,
+                    is_area: false
+                };
+
+                leaf_new_id =leafnode_new.pack();
+                let leaf_new = RTree{
+                    id: leaf_new_id,
+                    children: updated_leaf_children
+                };
+
+                // Store the new Leaf node
+                set!(world, (leaf_new));
+
+                // TODO replace parent child entry
+
+
+            }
+
+
+            leaf_new_id
         }
 
         fn remove_area(
@@ -695,9 +738,9 @@ pub mod actions {
             position: Position,
             area_id: Option<u64>,
             hint_rtree: Option<felt252>
-        ) -> Option<u64> {
+        ) -> u64 {
             // FIXME this is just to make it compile for now
-            Option::None
+            0
         }
     }
 }
