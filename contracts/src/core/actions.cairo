@@ -679,7 +679,9 @@ pub mod actions {
             // Default output
             let mut leaf_new_id = 0;
 
-            let (leaf_changing, leafnode_parent_id): (RTree, u64) = utils::choose_leaf(world, ROOT_ID, bounds, 0);
+            let (leaf_changing, leafnode_parent_id): (RTree, u64) = utils::choose_leaf(
+                world, ROOT_ID, bounds, 0
+            );
             let leafnode_changing: RTreeNode = leaf_changing.get_node();
 
             let new_area = RTreeNode { bounds, is_leaf: true, is_area: true };
@@ -712,10 +714,15 @@ pub mod actions {
                 // Store the new Leaf node
                 set!(world, (leaf_new));
 
-                // TODO replace parent child entry
+                // Replace parent child entry
                 let leafnode_parent = get!(world, (leafnode_parent_id), RTree);
-                let leafnode_parent_updated_children = leafnode_parent.replace_child_id(leaf_changing.id,leaf_new_id);
-                set!(world, (RTree{id: leafnode_parent.id, children: leafnode_parent_updated_children}));
+                set!(
+                    world,
+                    (RTree {
+                        id: leafnode_parent.id,
+                        children: leafnode_parent.replace_child_id(leaf_changing.id, leaf_new_id)
+                    })
+                );
             }
 
             leaf_new_id
