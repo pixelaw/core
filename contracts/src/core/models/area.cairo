@@ -78,6 +78,7 @@ pub trait RTreeTrait<RTree> {
     fn get_node(self: RTree) -> RTreeNode;
     fn get_children(self: RTree) -> Span<u64>;
     fn add_child_id(self: RTree, child_id: u64) -> felt252;
+    fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252;
     // fn remove_child_id(child_id: u64) -> felt252;
 // fn change_to_leaf(child_id: u64) -> felt252;
 // fn change_to_nonleaf(child_id: u64) -> felt252;
@@ -101,6 +102,22 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
 
         let new_span: Span<u64> = arr.span();
         new_span.pack()
+    }
+
+    // Naive implementation of replacement
+    fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252{
+        let children: Span<u64> = self.children.unpack();
+
+        let mut output: Array<u64> = array![];
+
+        for child_id in children {
+            if *child_id != child_id_existing {
+                output.append(*child_id);
+            }
+        };
+        output.append(child_id_new);
+        output.span().pack()
+
     }
 }
 

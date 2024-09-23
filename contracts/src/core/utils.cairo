@@ -218,6 +218,7 @@ pub fn max(a: u16, b: u16) -> u16 {
 }
 
 fn combinedArea(parent: Bounds, new: Bounds) -> u32 {
+    // TODO use the bounds.combine()
     let x_min = min(parent.x_min, new.x_min);
     let y_min = min(parent.y_min, new.y_min);
     let x_max = max(parent.x_max, new.x_max);
@@ -273,7 +274,7 @@ pub fn find_node_for_position(world: IWorldDispatcher, position: Position, node_
     found_child_id
 }
 
-pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds) -> RTree {
+pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64) -> (RTree, u64) {
     let node: RTreeNode = node_id.unpack();
 
     // Load the parent from storage
@@ -281,7 +282,7 @@ pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds) ->
 
     // The parent is a leaf and can be used
     if node.is_leaf {
-        return treenode;
+        return (treenode, parent_id);
     }
 
     println!("looking: {:?}", treenode.get_children());
@@ -291,6 +292,6 @@ pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds) ->
 
     // Recursively keep looking for the best child, until the leaf with the smallest new area is
     // found
-    choose_leaf(world, best_child_id, new_bounds)
+    choose_leaf(world, best_child_id, new_bounds, parent_id)
 }
 
