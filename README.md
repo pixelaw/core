@@ -1,4 +1,15 @@
-# PixeLAW Core
+![PixeLAW](https://pixelaw.github.io/book/images/PixeLAW.jpeg)
+
+[![ci-contracts](https://github.com/pixelaw/core/actions/workflows/ci-contracts.yml/badge.svg)](https://github.com/pixelaw/core/actions/workflows/ci-contracts.yml) 
+<a href="https://x.com/0xpixelaw">
+<img src="https://img.shields.io/twitter/follow/0xpixelaw?style=social"/>
+</a>
+<a href="https://github.com/pixelaw/core">
+<img src="https://img.shields.io/github/stars/pixelaw/core?style=social"/>
+</a>
+[![discord](https://img.shields.io/badge/join-PixeLAW-green?logo=discord&logoColor=white)](https://t.co/jKDjNbFdZ5)
+
+
 A game built on top of Dojo. See live example at <SECRET_URL: please reach out us on discord>.
 
 This repository includes core components and systems. For more details, please check [PixeLAW Book](https://pixelaw.github.io/book/index.html).

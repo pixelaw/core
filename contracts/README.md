@@ -1,10 +1,8 @@
-# PixeLAW Contracts
+# Pixelaw Contracts
 
 Contracts written in Cairo using Dojo to showcase a Pixel World with app interoperability. Its interoperability is made possible with core actions. Apps are any other contracts that are deployed to the Pixel World.
 
-## Development
-
-### Prerequisites
+## Prerequisites
 
 - [asdf](https://asdf-vm.com/)
 - [scarb](https://docs.swmansion.com/scarb/)
@@ -25,10 +23,72 @@ asdf install dojo 1.0.0-alpha.11
 
 ```
 asdf plugin add scarb
-asdf install scarb 2.7.0-rc.4
+asdf install scarb 2.7.0
 ```
 
-And after moving into contracts directory, the versions for these libs are set in the .tool-versions file.
+And after moving into contracts directory, the versions for these libs are set in the `.tool-versions` file.
+
+## Running Locally
+
+**If you use vscode,**
+
+#### 1. Run the katana and torii
+just open this repo and press `⌘` + `⇧` + `B`
+
+#### 2. Migrate contracts
+
+```bash
+sozo build --manifest-path Scarb_deploy.toml
+sozo migrate apply --manifest-path Scarb_deploy.toml
+scarb --manifest-path Scarb_deploy.toml run init_auth
+```
+
+**Otherwise,**
+
+#### 1.Terminal one (Make sure this is running)
+
+```bash
+# Run Katana
+katana --disable-fee --allowed-origins "*" --db-dir db/katana
+```
+
+#### 2. Terminal two
+
+```bash
+# Build the example
+sozo build
+
+# Migrate the example
+sozo migrate apply
+
+# Initialize the pixelaw app
+scarb run init
+
+# Start Torii
+torii --world 0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34 --allowed-origins "*" --database db/torii
+```
+
+## How to Deploy to Starknet
+
+### Sepolia
+
+1. Build
+
+```zsh
+sozo build --manifest-path Scarb_deploy.toml --profile sepolia
+```
+
+2. Migrate
+
+```zsh
+sozo migrate plan --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
+```
+
+3. Deploy
+
+```zsh
+sozo migrate apply --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
+```
 
 ## Default Apps
 
@@ -127,25 +187,3 @@ The App is also tracking score for each Player.
       - UI then calls the functions with only the hash value
     - Reveal
       - there will be 2 params: "rv_NAME" (the actual param) and "rs_NAME" (the used salt)
-
-## How to Deploy to Starknet
-
-### Sepolia
-
-1. Build
-
-```zsh
-sozo build --manifest-path Scarb_deploy.toml --profile sepolia
-```
-
-2. Migrate
-
-```zsh
-sozo migrate plan --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
-```
-
-3. Deploy
-
-```zsh
-sozo migrate apply --account-address $YOUR_ACCOUNT_ADDRESS --private-key $YOUR_PRIVATE_KEY --profile sepolia --manifest-path Scarb_deploy.toml
-```

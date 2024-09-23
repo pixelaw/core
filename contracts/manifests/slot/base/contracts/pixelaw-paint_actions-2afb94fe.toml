@@ -1,0 +1,19 @@
+kind = "DojoContract"
+class_hash = "0x26345888698fbdcfa98dca43542f038a02620c9b485c1487b7e76a21f63aff"
+original_class_hash = "0x26345888698fbdcfa98dca43542f038a02620c9b485c1487b7e76a21f63aff"
+base_class_hash = "0x0"
+abi = "manifests/slot/base/abis/contracts/pixelaw-paint_actions-2afb94fe.json"
+reads = []
+writes = []
+init_calldata = []
+tag = "pixelaw-paint_actions"
+systems = [
+    "on_pre_update",
+    "on_post_update",
+    "init",
+    "interact",
+    "put_color",
+    "pixel_row",
+    "fade",
+]
+manifest_name = "pixelaw-paint_actions-2afb94fe"

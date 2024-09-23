@@ -1,7 +1,7 @@
 [package]
 cairo-version = "=2.7.0"
 name = "pixelaw"
-version = "0.3.40"
+version = "0.3.50"
 homepage = "https://github.com/pixelaw/core"
 edition = "2024_07"
 
@@ -11,6 +11,9 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
 
+[tool.fmt]
+sort-module-level-items = true
+
 [[target.dojo]]
 build-external-contracts = []
 
@@ -19,3 +22,9 @@ build-external-contracts = []
 [profile.slot]
 
 [profile.sepolia]
+
+[scripts]
+init = "./scripts/init.sh"
+paint = "./scripts/paint.sh"
+paint_json = "./scripts/paint_json.sh"
+populate = "./scripts/populate.sh"

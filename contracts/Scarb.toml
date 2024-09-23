@@ -11,12 +11,15 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
 
-[lib]
+[tool.fmt]
+sort-module-level-items = true
+
+# [lib]
+[[target.dojo]]
 
 
 [profile.dev-pop]
 
 [profile.slot]
 
-[scripts]
-init_auth = "./scripts/init_auth.sh"
+[profile.sepolia]
