@@ -680,7 +680,7 @@ pub mod actions {
             let mut leaf_new_id = 0;
 
             let (leaf_changing, leafnode_parent_id): (RTree, u64) = utils::choose_leaf(
-                world, ROOT_ID, bounds, 0
+                world, ROOT_ID, bounds, ROOT_ID
             );
             let leafnode_changing: RTreeNode = leaf_changing.get_node();
 
@@ -695,7 +695,9 @@ pub mod actions {
             if children.len() == 4 {
                 // TODO Maxed out children, need to split
                 println!("splitting leaf_changing: {:?}", leaf_changing);
+                
             } else {
+                println!("just adding the child to the leaf: {:?}", leaf_changing);
                 // Add the child
                 let updated_leaf_children = leaf_changing.add_child_id(new_area_id);
 
@@ -711,6 +713,7 @@ pub mod actions {
                 leaf_new_id = leafnode_new.pack();
                 let leaf_new = RTree { id: leaf_new_id, children: updated_leaf_children };
 
+                println!("updated leaf bounds: {:?}", leafnode_new.bounds);
                 // Store the new Leaf node
                 set!(world, (leaf_new));
 

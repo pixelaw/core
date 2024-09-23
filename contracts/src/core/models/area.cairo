@@ -108,6 +108,8 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
     fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252{
         let children: Span<u64> = self.children.unpack();
 
+        println!("replace_child_id: {:?}, {:?}, {:?}", self.id, child_id_existing, child_id_new);
+
         let mut output: Array<u64> = array![];
 
         for child_id in children {

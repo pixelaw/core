@@ -250,12 +250,37 @@ fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64
     (best_child_id)
 }
 
+pub fn print_tree(world: IWorldDispatcher, node_id: u64, indent: ByteArray) {
+    let node: RTreeNode = node_id.unpack();
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+
+    let children: Span<u64> = treenode.get_children();
+
+    println!("{} Node: {} {:?}", indent, node_id, node);
+    println!("{} Children: {:?}", indent,  children);
+
+    let mut new_indent: ByteArray = "    " + indent.clone();
+
+    for child_id in children {
+        print_tree(world, *child_id, new_indent.clone());
+    };
+}
+
 pub fn find_node_for_position(world: IWorldDispatcher, position: Position, node_id: u64, has_area: bool) -> u64 {
     let node: RTreeNode = node_id.unpack();
 
-    if !node.bounds.contains(position) || node.is_area != has_area {
+    println!("find_node_for_position: {:?}", node_id);
+    if node.bounds.contains(position) && node.is_area == has_area {
+        // This is the area node we were looking for
+        return node_id;
+    }else if !node.bounds.contains(position) {
+        println!("nope: {:?}", node.bounds);
+        // We're not going to be finding anything here
         return 0;
     }
+
+    // Let's continue looking at children, something maybe below
 
     // Load the treenode from storage so we can inspect children
     let treenode: RTree = get!(world, (node_id), RTree);
@@ -263,6 +288,7 @@ pub fn find_node_for_position(world: IWorldDispatcher, position: Position, node_
     let children: Span<u64> = treenode.get_children();
     let mut found_child_id: u64 = 0;
 
+    println!("children: {:?}", children);
     for child_id in children {
         let id = find_node_for_position(world, position, *child_id, has_area);
         if id != 0 {

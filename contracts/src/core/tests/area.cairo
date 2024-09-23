@@ -20,7 +20,7 @@ use pixelaw::{
             area::{ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE,RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{find_node_for_position, Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
+        utils::{print_tree, find_node_for_position, Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -80,11 +80,16 @@ fn test_area_packing() {
 fn test_adding() {
     let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
 
-    let bounds = Bounds{x_min: 123, y_min: 321, x_max: 456, y_max: 654};
-    let position_1 = Position{x: 1, y: 1};
-    let position_2 = Position{x: 123, y: 456};
+    let bounds_1 = Bounds{x_min: 10, y_min: 10, x_max: 19, y_max: 19};
+    let bounds_2 = Bounds{x_min: 20, y_min: 20, x_max: 29, y_max: 29};
+    let bounds_3 = Bounds{x_min: 30, y_min: 30, x_max: 39, y_max: 39};
+    let bounds_4 = Bounds{x_min: 40, y_min: 40, x_max: 49, y_max: 49};
+    let bounds_5 = Bounds{x_min: 50, y_min: 50, x_max: 59, y_max: 59};
 
-    let _result = core_actions.add_area(bounds, Option::None);
+    let position_1 = Position{x: 1, y: 1};
+    let position_2 = Position{x: 11, y: 11};
+
+    let _result = core_actions.add_area(bounds_1, Option::None);
 
     let not_found = find_node_for_position(world, position_1, ROOT_ID, true);   // has_area=true
 
@@ -95,7 +100,17 @@ fn test_adding() {
     assert(found != 0, 'should find');
 
 
+    // Add more than 4 so node splitting is necessary
+    let _result = core_actions.add_area(bounds_2, Option::None);
+    let _result = core_actions.add_area(bounds_3, Option::None);
+    let _result = core_actions.add_area(bounds_4, Option::None);
+    let _result = core_actions.add_area(bounds_5, Option::None);
+
+
     println!("found: {:?}", found);
+
+    println!("------------------ PRINTING TREE -----------------");
+    print_tree(world, ROOT_ID, "");
 }
 
 #[test]
