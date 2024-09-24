@@ -103,14 +103,21 @@ fn test_adding() {
     // Add more than 4 so node splitting is necessary
     let _result = core_actions.add_area(bounds_2, Option::None);
     let _result = core_actions.add_area(bounds_3, Option::None);
-    let _result = core_actions.add_area(bounds_4, Option::None);
+    let newleaf_id = core_actions.add_area(bounds_4, Option::None);
     let _result = core_actions.add_area(bounds_5, Option::None);
 
 
-    println!("found: {:?}", found);
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
+
+
+    let mut ancestors: Array<u64> = array![];
+
+    utils::get_ancestors(world, ref ancestors, newleaf_id);
+
+    println!("ancestors: {:?}", ancestors);
+
 }
 
 #[test]

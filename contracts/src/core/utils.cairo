@@ -1,3 +1,4 @@
+use super::models::area::RTreeTrait;
 use super::models::area::Packable;
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -6,7 +7,7 @@ use pixelaw::core::models::{
     {
         area::{
             RTreeNode, RTree, Area, RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
-            BoundsTraitImpl, ROOT_RTREENODE
+            BoundsTraitImpl, ROOT_RTREENODE, ROOT_ID
         }
     }
 };
@@ -319,5 +320,72 @@ pub fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, pa
     // Recursively keep looking for the best child, until the leaf with the smallest new area is
     // found
     choose_leaf(world, best_child_id, new_bounds, parent_id)
+}
+
+
+pub fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_node_id: u64) {
+    if ancestors.len() == 0 {
+        ancestors.append(ROOT_ID);
+    }
+    let current_id = ancestors[ancestors.len() -1];
+    let current_node: RTree = get!(world, (*current_id), RTree);
+    let children: Span<u64> = current_node.get_children();
+
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+        let search_node: RTreeNode = search_node_id.unpack();
+        if child.bounds.intersects(search_node.bounds) {
+            // found it
+            ancestors.append(*child_id);
+
+            get_ancestors(world, ref ancestors, search_node_id);
+            break;
+        }
+    };
+
+}
+
+
+// // Keep searching until we find a leaf, or not
+// pub fn find_parent(world: IWorldDispatcher, node_id: u64) -> u64 {
+//     let mut result = 0;
+
+//     // Load the node from storage
+//     let node: RTree = get!(world, (node_id), RTree);
+
+//     let children: Span<u64> = node.get_children();
+
+//     for child_id in children {
+//         let child_bounds = child_id.unpack();
+//         if child_id == node_id {
+//             result = node_id;
+//             break;
+//         }
+//     };
+
+//     // Not found in these children
+
+//     result
+// }
+
+// Splits the current node, and those above it if needed
+pub fn split_node(world: IWorldDispatcher, node_id: u64, parent_id: u64) -> u64 {
+
+    // Load the node from storage
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    // Check if there are 2 or more children
+    if treenode.get_children().len() == 4 {
+        // No need to split
+        return 0;
+    }
+    
+    // Since we're splitting this one, the parent will gain an extra child. 
+    // Split parent if needed.
+    let new_parent_id = split_node(world, parent_id, 0);
+
+    // TODO
+    node_id
+
 }
 

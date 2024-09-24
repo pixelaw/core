@@ -127,6 +127,7 @@ pub trait BoundsTrait<Bounds> {
     fn area(self: Bounds) -> u32;
     fn contains(self: Bounds, position: Position) -> bool;
     fn combine(self: Bounds, other: Bounds) -> Bounds;
+    fn intersects(self: Bounds, other: Bounds) -> bool;
 }
 
 pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
@@ -139,6 +140,13 @@ pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
             && position.y >= self.y_min
             && position.y <= self.y_max
     }
+    fn intersects(self: Bounds, other: Bounds) -> bool {
+        !(self.x_max < other.x_min ||
+            self.x_min > other.x_max ||
+            self.y_max < other.y_min ||
+            self.y_min > other.y_max)
+    }
+
     fn combine(self: Bounds, other: Bounds) -> Bounds {
         Bounds {
             x_min: min(self.x_min, other.x_min),

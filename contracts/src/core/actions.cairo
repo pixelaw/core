@@ -695,7 +695,18 @@ pub mod actions {
             if children.len() == 4 {
                 // TODO Maxed out children, need to split
                 println!("splitting leaf_changing: {:?}", leaf_changing);
-                
+
+                // // TODO check if the childcount of parent supports this
+                // let leafnode_parent = get!(world, (leafnode_parent_id), RTree);
+                // let siblings = leafnode_parent.get_node().get_children();
+                // if siblings.len() == 4 {
+                //     println!("splitting parent: {:?}", leafnode_parent);
+                // }
+
+                // TODO create a new sibling
+
+                // TODO distribute children over current and new sibling
+
             } else {
                 println!("just adding the child to the leaf: {:?}", leaf_changing);
                 // Add the child
