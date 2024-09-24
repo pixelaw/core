@@ -739,7 +739,7 @@ pub mod actions {
                 );
             }
 
-            leaf_new_id
+            new_area_id
         }
 
         fn remove_area(
