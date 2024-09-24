@@ -4,7 +4,7 @@ use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::area::{RTreeNode};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
-use pixelaw::core::utils::{Position, MAX_DIMENSION};
+use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
 use pixelaw::core::utils;
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
@@ -161,7 +161,7 @@ pub trait IActions<TContractState> {
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
-    fn add_area(ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>) -> u64;
+    fn add_area(ref world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64;
     fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
     fn find_area(
         ref world: IWorldDispatcher,
@@ -185,7 +185,7 @@ pub mod actions {
     use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::queue::QueueItem;
-    use pixelaw::core::utils::{choose_leaf, get_core_actions_address, Position, MAX_DIMENSION};
+    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
     use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
     use pixelaw::core::models::area::{
         BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
@@ -657,94 +657,16 @@ pub mod actions {
             set!(world, (Instruction { system, selector, instruction }))
         }
 
-        ////////////// FROM JS /////////////////
-        // let leaf = this.chooseLeaf(this.root, item);
-        // leaf.children.push(item);
-        // leaf.enlarge(item);
 
-        // if (leaf.children.length > this.maxEntries) {
-        //     this.splitNode(leaf);
-        // }
-
-        // this.adjustTree(leaf);
-        ////////////// FROM JS /////////////////
-        fn add_area(
-            ref world: IWorldDispatcher, bounds: utils::Bounds, hint_rtree: Option<u64>
-        ) -> u64 {
-            // 1. Prepare the leaf
-
-            // TODO: use the hint to start searching deeper in the tree.
-            // Fornow, Start at rootnode
-
-            // Default output
-            let mut leaf_new_id = 0;
-
-            let (leaf_changing, leafnode_parent_id): (RTree, u64) = utils::choose_leaf(
-                world, ROOT_ID, bounds, ROOT_ID
-            );
-            let leafnode_changing: RTreeNode = leaf_changing.get_node();
-
-            let new_area = RTreeNode { bounds, is_leaf: true, is_area: true };
-            let new_area_id = new_area.pack();
-
-            println!("leaf_changing: {:?}", leaf_changing);
-
-            // 2. Add the area node
-            let mut children: Span<u64> = leaf_changing.get_children();
-
-            if children.len() == 4 {
-                // TODO Maxed out children, need to split
-                println!("splitting leaf_changing: {:?}", leaf_changing);
-
-                // // TODO check if the childcount of parent supports this
-                // let leafnode_parent = get!(world, (leafnode_parent_id), RTree);
-                // let siblings = leafnode_parent.get_node().get_children();
-                // if siblings.len() == 4 {
-                //     println!("splitting parent: {:?}", leafnode_parent);
-                // }
-
-                // TODO create a new sibling
-
-                // TODO distribute children over current and new sibling
-
-            } else {
-                println!("just adding the child to the leaf: {:?}", leaf_changing);
-                // Add the child
-                let updated_leaf_children = leaf_changing.add_child_id(new_area_id);
-
-                // Remove the old Leaf node
-                delete!(world, (leaf_changing));
-
-                // Increase size of leaf node since it now contains our Area
-                // This also changes its id.
-                let leafnode_new = RTreeNode {
-                    bounds: leafnode_changing.bounds.combine(bounds), is_leaf: true, is_area: false
-                };
-
-                leaf_new_id = leafnode_new.pack();
-                let leaf_new = RTree { id: leaf_new_id, children: updated_leaf_children };
-
-                println!("updated leaf bounds: {:?}", leafnode_new.bounds);
-                // Store the new Leaf node
-                set!(world, (leaf_new));
-
-                // Replace parent child entry
-                let leafnode_parent = get!(world, (leafnode_parent_id), RTree);
-                set!(
-                    world,
-                    (RTree {
-                        id: leafnode_parent.id,
-                        children: leafnode_parent.replace_child_id(leaf_changing.id, leaf_new_id)
-                    })
-                );
-            }
-
-            new_area_id
+        fn add_area(ref world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64 {
+            utils::area::add_area(world, bounds, hint_rtree)
         }
 
         fn remove_area(
             ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>
-        ) {}
+        ) {
+            utils::area::remove_area(world, area_id, hint_rtree)
+        }
 
         fn find_area(
             ref world: IWorldDispatcher,
@@ -752,8 +674,7 @@ pub mod actions {
             area_id: Option<u64>,
             hint_rtree: Option<felt252>
         ) -> u64 {
-            // FIXME this is just to make it compile for now
-            0
+            utils::area::find_area(world, position, area_id, hint_rtree)
         }
     }
 }

@@ -108,8 +108,6 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
     fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252{
         let children: Span<u64> = self.children.unpack();
 
-        println!("replace_child_id: {:?}, {:?}, {:?}", self.id, child_id_existing, child_id_new);
-
         let mut output: Array<u64> = array![];
 
         for child_id in children {
@@ -125,7 +123,8 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
 
 pub trait BoundsTrait<Bounds> {
     fn area(self: Bounds) -> u32;
-    fn contains(self: Bounds, position: Position) -> bool;
+    fn contains_position(self: Bounds, position: Position) -> bool;
+    fn contains_bounds(self: Bounds, other: Bounds) -> bool;
     fn combine(self: Bounds, other: Bounds) -> Bounds;
     fn intersects(self: Bounds, other: Bounds) -> bool;
 }
@@ -134,7 +133,13 @@ pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
     fn area(self: Bounds) -> u32 {
         (self.x_max - self.x_min).into() * (self.y_max - self.y_min).into()
     }
-    fn contains(self: Bounds, position: Position) -> bool {
+    fn contains_bounds(self: Bounds, other: Bounds) -> bool {
+        other.x_min >= self.x_min
+            && other.x_max <= self.x_max
+            && other.y_min >= self.y_min
+            && other.y_max <= self.y_max
+    }
+    fn contains_position(self: Bounds, position: Position) -> bool {
         position.x >= self.x_min
             && position.x <= self.x_max
             && position.y >= self.y_min

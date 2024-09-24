@@ -1,4 +1,3 @@
-
 use core::fmt::Display;
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
@@ -17,10 +16,14 @@ use pixelaw::{
         models::{
             registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-            area::{ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE,RTreeNode, RTreeNodePackableImpl, ChildrenPackableImpl}
+            area::{
+                ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
+                RTreeNodePackableImpl, ChildrenPackableImpl
+            }
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{print_tree, find_node_for_position, Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
+        utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
+        utils::area::{print_tree, find_node_for_position, get_ancestors},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -42,7 +45,6 @@ use pixelaw::core::utils;
 
 #[test]
 fn test_root_area() {
-
     let root_id_empty: u64 = ROOT_RTREENODE_EMPTY.pack();
     let root_id: u64 = ROOT_RTREENODE.pack();
     let first_id: u64 = FIRST_RTREENODE.pack();
@@ -64,7 +66,9 @@ fn test_root_area() {
 #[test]
 fn test_area_packing() {
     let rect_in = RTreeNode {
-        bounds: utils::Bounds{x_min: 123, y_min: 321, x_max: 456, y_max: 654}, is_leaf: false, is_area: true
+        bounds: utils::Bounds { x_min: 123, y_min: 321, x_max: 456, y_max: 654 },
+        is_leaf: false,
+        is_area: true
     };
 
     let id = rect_in.pack();
@@ -80,48 +84,39 @@ fn test_area_packing() {
 fn test_adding() {
     let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
 
-    let bounds_1 = Bounds{x_min: 10, y_min: 10, x_max: 19, y_max: 19};
-    let bounds_2 = Bounds{x_min: 20, y_min: 20, x_max: 29, y_max: 29};
-    let bounds_3 = Bounds{x_min: 30, y_min: 30, x_max: 39, y_max: 39};
-    let bounds_4 = Bounds{x_min: 40, y_min: 40, x_max: 49, y_max: 49};
-    let bounds_5 = Bounds{x_min: 50, y_min: 50, x_max: 59, y_max: 59};
+    let bounds_1 = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
+    let bounds_2 = Bounds { x_min: 20, y_min: 20, x_max: 29, y_max: 29 };
+    let bounds_3 = Bounds { x_min: 30, y_min: 30, x_max: 39, y_max: 39 };
+    let bounds_4 = Bounds { x_min: 40, y_min: 40, x_max: 49, y_max: 49 };
+    let bounds_5 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
 
-    let position_1 = Position{x: 1, y: 1};
-    let position_2 = Position{x: 11, y: 11};
+    let position_1 = Position { x: 1, y: 1 };
+    let position_2 = Position { x: 11, y: 11 };
 
     let _result = core_actions.add_area(bounds_1, Option::None);
 
-    let not_found = find_node_for_position(world, position_1, ROOT_ID, true);   // has_area=true
+    let not_found = find_node_for_position(world, position_1, ROOT_ID, true); // has_area=true
 
     assert(not_found == 0, 'should not find');
 
-    let found = find_node_for_position(world, position_2, ROOT_ID, true);   // has_area=true
+    let found = find_node_for_position(world, position_2, ROOT_ID, true); // has_area=true
 
     assert(found != 0, 'should find');
 
-
     // Add more than 4 so node splitting is necessary
-    let area_id = core_actions.add_area(bounds_2, Option::None);
-    let area_id = core_actions.add_area(bounds_3, Option::None);
+    let _area_id = core_actions.add_area(bounds_2, Option::None);
+    let _area_id = core_actions.add_area(bounds_3, Option::None);
     let area_id = core_actions.add_area(bounds_4, Option::None);
 
     let mut ancestors: Array<u64> = array![];
-    utils::get_ancestors(world, ref ancestors, area_id);
+    get_ancestors(world, ref ancestors, area_id);
     assert(ancestors == array![ROOT_ID, 6422726, area_id], 'wrong ancestors');
 
+    // Trigger a split
     let _result = core_actions.add_area(bounds_5, Option::None);
-
-
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
-
-
-
-
-
-    println!("ancestors: {:?}", ancestors);
-
 }
 
 #[test]
@@ -131,12 +126,10 @@ fn test_child_packing() {
 
     assert(out.unpack() == input, '1 span not same');
 
-
     let input = array![123, 321].span();
     let out = input.pack();
 
     assert(out.unpack() == input, '2 span not same');
-
 
     let input = array![123, 321, 456].span();
     let out = input.pack();
@@ -144,12 +137,8 @@ fn test_child_packing() {
     let out_unpacked: Span<u64> = out.unpack();
     assert(out_unpacked == input, '3 span not same');
 
-
     let input = array![123, 321, 456, 654].span();
     let out = input.pack();
 
     assert(out.unpack() == input, '4 span not same');
-
-
-
 }
