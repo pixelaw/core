@@ -4,7 +4,7 @@ class_hash = "0x6f4515274ee23404789c3351a77107d0ec07508530119822046600ca6948d6e"
 original_class_hash = "0x6f4515274ee23404789c3351a77107d0ec07508530119822046600ca6948d6e"
 abi = "manifests/slot/deployment/abis/dojo-world.json"
 address = "0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34"
-transaction_hash = "0xf97c1e5993326189b232d6abb37f8a3733557b231d9d8bfc10fb6a7a078f89"
+transaction_hash = "0x7adbf5f503d501eaacf2e2f9e5c7791aa6cfb4967e082e3be26ea8d7aad81b7"
 block_number = 3
 seed = "pixelaw"
 manifest_name = "dojo-world"
@@ -29,7 +29,16 @@ original_class_hash = "0x17d390af6c3b449b52da5a0969a00006a3b7935ffc08192dc8cefde
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/slot/deployment/abis/contracts/pixelaw-actions-16928a49.json"
 reads = []
-writes = []
+writes = [
+    "pixelaw-App",
+    "pixelaw-AppName",
+    "pixelaw-CoreActionsAddress",
+    "pixelaw-Pixel",
+    "pixelaw-Permissions",
+    "pixelaw-QueueItem",
+    "pixelaw-Snake",
+    "pixelaw-Instruction",
+]
 init_calldata = []
 tag = "pixelaw-actions"
 systems = [
@@ -51,7 +60,7 @@ original_class_hash = "0x26345888698fbdcfa98dca43542f038a02620c9b485c1487b7e76a2
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/slot/deployment/abis/contracts/pixelaw-paint_actions-2afb94fe.json"
 reads = []
-writes = []
+writes = ["pixelaw-Pixel"]
 init_calldata = []
 tag = "pixelaw-paint_actions"
 systems = [
@@ -73,7 +82,10 @@ original_class_hash = "0x6dbe6fed41677edc917050c80b2e15727f48534fd7752e153e7cf74
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/slot/deployment/abis/contracts/pixelaw-snake_actions-4f967106.json"
 reads = []
-writes = []
+writes = [
+    "pixelaw-Snake",
+    "pixelaw-SnakeSegment",
+]
 init_calldata = []
 tag = "pixelaw-snake_actions"
 systems = [

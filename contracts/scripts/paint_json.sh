@@ -4,6 +4,7 @@ set -uo pipefail
 function paint() {
   sozo \
     execute \
+    --profile $SCARB_PROFILE \
     pixelaw-paint_actions \
     interact \
     -c 0,0,$1
