@@ -1235,7 +1235,7 @@
       }
     ],
     "address": "0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34",
-    "transaction_hash": "0x507cd13b0e34b357d25bd0ddafa527c8caf0729f894e57ad9129c1f29311768",
+    "transaction_hash": "0x3f0a3ef84b6c8c32b8b2169f3d9cba4206e0704e8f780d0e3e35747123c56fc",
     "block_number": 3,
     "seed": "pixelaw",
     "metadata": {
@@ -2035,7 +2035,16 @@
         }
       ],
       "reads": [],
-      "writes": [],
+      "writes": [
+        "pixelaw-App",
+        "pixelaw-AppName",
+        "pixelaw-CoreActionsAddress",
+        "pixelaw-Pixel",
+        "pixelaw-Permissions",
+        "pixelaw-QueueItem",
+        "pixelaw-Snake",
+        "pixelaw-Instruction"
+      ],
       "init_calldata": [],
       "tag": "pixelaw-actions",
       "systems": [
@@ -2052,8 +2061,8 @@
     {
       "kind": "DojoContract",
       "address": "0x41b6ece4125198c4de0d9d7efa2fad0af34376178b2c0a5a4487c676f35d5c6",
-      "class_hash": "0xcd76621d6a3678a27c2d5424907d1151e04b4ceb28c02d800b3ddfe2d016f2",
-      "original_class_hash": "0xcd76621d6a3678a27c2d5424907d1151e04b4ceb28c02d800b3ddfe2d016f2",
+      "class_hash": "0x26345888698fbdcfa98dca43542f038a02620c9b485c1487b7e76a21f63aff",
+      "original_class_hash": "0x26345888698fbdcfa98dca43542f038a02620c9b485c1487b7e76a21f63aff",
       "base_class_hash": "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2",
       "abi": [
         {
@@ -2545,10 +2554,20 @@
         }
       ],
       "reads": [],
-      "writes": [],
+      "writes": [
+        "pixelaw-Pixel"
+      ],
       "init_calldata": [],
       "tag": "pixelaw-paint_actions",
-      "systems": ["on_pre_update", "on_post_update", "init", "interact", "put_color", "pixel_row", "fade"],
+      "systems": [
+        "on_pre_update",
+        "on_post_update",
+        "init",
+        "interact",
+        "put_color",
+        "pixel_row",
+        "fade"
+      ],
       "manifest_name": "pixelaw-paint_actions-2afb94fe"
     },
     {
@@ -3092,10 +3111,18 @@
         }
       ],
       "reads": [],
-      "writes": [],
+      "writes": [
+        "pixelaw-Snake",
+        "pixelaw-SnakeSegment"
+      ],
       "init_calldata": [],
       "tag": "pixelaw-snake_actions",
-      "systems": ["on_pre_update", "on_post_update", "init", "move"],
+      "systems": [
+        "on_pre_update",
+        "on_post_update",
+        "init",
+        "move"
+      ],
       "manifest_name": "pixelaw-snake_actions-4f967106"
     }
   ],

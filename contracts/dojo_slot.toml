@@ -13,6 +13,6 @@ mappings = {}
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/pixelaw-dev/katana/"
-account_address = "0x4f81df02927e5b5c3797a0610009c6a64840c920ab87989db71f7cf9599c3df"
-private_key = "0x2eaeabacb2a4cec59598e398df52846532f3b01091f578403b392f0862cc801"
+account_address = "0x798115b6af1edfeb17bf60973d2250bc7a12bcd4824293eecd8feead990ed50"
+private_key = "0x24a070bc4fe89dc2415d651aba07d14e4460b6b02de60a0c6f9a0df40ddaf56"
 world_address = "0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34"
