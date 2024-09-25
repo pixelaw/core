@@ -1,3 +1,4 @@
+
 use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
@@ -144,42 +145,129 @@ pub fn print_tree(world: IWorldDispatcher, node_id: u64, indent: ByteArray) {
     };
 }
 
+pub fn add_root_layer(world: IWorldDispatcher) -> u64 {
+    // TODO
+    println!("adding root layer");
+    ROOT_ID
+}
+
+
+fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
+    
+// Sanity check
+    assert_gt!(children.len(), 1);
+
+    // Find the optimal way to split the childen into 2 smallest groups
+
+    let mut max_difference = 0;
+    let mut seed_child_1 = 0;
+    let mut seed_child_2 = 1;
+
+    let mut i = 0;
+    let mut j = 1;
+
+    // Precache a collection of the unpacked children ids
+    let mut bounds: Array<Bounds> = array![];
+    for child in children {
+        let tn: RTreeNode = (*child).unpack();
+        bounds.append(tn.bounds);
+    };
+
+    while i < children.len() {
+        while j < children.len() {
+
+            let combined_area = bounds.at(i).deref().combine(bounds.at(j).deref()).area();
+
+            let difference = combined_area - bounds.at(i).deref().area() +  bounds.at(j).deref().area();
+
+            if (difference > max_difference) {
+                max_difference = difference;
+                seed_child_1 = i;
+                seed_child_2 = j;
+            }
+
+            j += 1;
+        };
+        i += 1;
+    };
+
+    // These two are the "worst" combination, so can be seed for the split
+    let mut arr1 = array![*children[seed_child_1]];
+    let mut arr2 = array![*children[seed_child_2]];
+
+    let mut i = 0;
+
+    // Get the bounds for both seeds for easier comparison later
+    let bounds1 = *bounds[seed_child_1];
+    let bounds2 = *bounds[seed_child_2];
+
+
+    while i < bounds.len() {
+        // Only process the remaining children
+        if i != seed_child_1 && i != seed_child_2{
+            let compared: Bounds = *bounds[i];
+            let enlargement1 = bounds1.combine(compared).area();
+            let enlargement2 = bounds2.combine(compared).area();
+
+            if enlargement1 < enlargement2 {
+                // This item goes with seed1
+
+            }else{
+                // This item goes with seed2
+                
+
+            }
+
+        }
+
+
+        i += 1;
+    };
+
+    (array![].span(), array![].span())
+}
 
 // Splits the current node, and those above it if needed
 pub fn split_node_if_needed(
     world: IWorldDispatcher, ancestors: Span<u64>, level: usize, new_children: Span<u64>
 ) -> u64 {
+    // Determine the node_id that we're handling
     let node_id = *ancestors[level];
-
-    // TODO deal with new_children
 
     // Load the node from storage
     let treenode: RTree = get!(world, (node_id), RTree);
 
     // No need to split if there are less than 4 children
     if treenode.get_children().len() < 4 {
-        return 0;
+        return node_id;
     }
     println!("splitting at level {:?}, node: {:?}", level, node_id);
 
     if level == 0 {
-        // TODO We're at root level, add a layer instead??
-        return 0;
+        // TODO We're at root level and it's full: add a layer instead
+        return node_id;
     }
 
     // Since we're splitting this one, the parent will gain an extra child.
     // Split parent if needed.
-    let parent_id = split_node_if_needed(world, ancestors, level - 1, bounds_added);
+    let parent_id = match level {
+        0 => add_root_layer(world),
+        _ => split_node_if_needed(world, ancestors, level - 1, new_children)
+    };
 
-    if parent_id > 0 {// TODO The parent changed, do something??
-    }
-
+    // Load the parent
     let parent: RTree = get!(world, (parent_id), RTree);
 
     // TODO split this node now, after parents were done
+    let (this_children, sibling_children) = distribute_children(new_children);
+
     // TODO Determine new bounds of this node and the new sibling
 
+    println!("parent: {:?}", parent);
+
     // TODO Add a new sibling to the parent
+    // let updated_children = parent.add_child_id(new_area_id);
+
     // TODO distribute children over current and new sibling
 
     node_id
@@ -195,58 +283,55 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>
     // Default output
     let mut leaf_new_id = 0;
 
-    let (mut leaf_changing, leafnode_parent_id): (RTree, u64) = choose_leaf(
-        world, ROOT_ID, bounds, ROOT_ID
-    );
-    let leafnode_changing: RTreeNode = leaf_changing.get_node();
+    // Find a leaf to attach this Area to
+    let (mut parent, grandparent_id): (RTree, u64) = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
+    let parentnode: RTreeNode = parent.get_node();
 
+    // Prepare the new area
     let new_area = RTreeNode { bounds, is_leaf: true, is_area: true };
     let new_area_id = new_area.pack();
 
-    // 2. Add the area node
-    let mut children: Span<u64> = leaf_changing.get_children();
+    // 2. Add the area node to the parent children array
+    let updated_leaf_children = parent.add_child_id(new_area_id);
 
-    // Add the child
-    let updated_leaf_children = leaf_changing.add_child_id(new_area_id);
-
-
-    if children.len() > 4 {
+    // Handle when there are more than 4 children
+    if updated_leaf_children.len() > 4 {
         // Maxed out children, need to split
-        println!("splitting leaf_changing: {:?}", leaf_changing);
+        println!("splitting parent: {:?}", parent);
 
-        // Get the ancestors, so we can split up
+        // Get the ancestors, so we can split ancestors if needed
         let mut ancestors: Array<u64> = array![];
-        get_ancestors(world, ref ancestors, leaf_changing.id);
+        get_ancestors(world, ref ancestors, parent.id);
 
         let new_parent_leaf_id = split_node_if_needed(
-            world, ancestors.span(), ancestors.len() - 1, bounds
+            world, ancestors.span(), ancestors.len() - 1, updated_leaf_children
         );
-        leaf_changing = get!(world, (new_parent_leaf_id), RTree);
+
+        parent = get!(world, (new_parent_leaf_id), RTree);
     }
 
-
     // Remove the old Leaf node
-    delete!(world, (leaf_changing));
+    delete!(world, (parent));
 
     // Increase size of leaf node since it now contains our Area
     // This also changes its id.
     let leafnode_new = RTreeNode {
-        bounds: leafnode_changing.bounds.combine(bounds), is_leaf: true, is_area: false
+        bounds: parentnode.bounds.combine(bounds), is_leaf: true, is_area: false
     };
 
     leaf_new_id = leafnode_new.pack();
-    let leaf_new = RTree { id: leaf_new_id, children: updated_leaf_children };
+    let leaf_new = RTree { id: leaf_new_id, children: updated_leaf_children.pack() };
 
     // Store the new Leaf node
     set!(world, (leaf_new));
 
     // Replace parent child entry
-    let leafnode_parent = get!(world, (leafnode_parent_id), RTree);
+    let leafnode_parent = get!(world, (grandparent_id), RTree);
     set!(
         world,
         (RTree {
             id: leafnode_parent.id,
-            children: leafnode_parent.replace_child_id(leaf_changing.id, leaf_new_id)
+            children: leafnode_parent.replace_child_id(parent.id, leaf_new_id)
         })
     );
 

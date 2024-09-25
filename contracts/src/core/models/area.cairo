@@ -77,7 +77,7 @@ pub struct Area {
 pub trait RTreeTrait<RTree> {
     fn get_node(self: RTree) -> RTreeNode;
     fn get_children(self: RTree) -> Span<u64>;
-    fn add_child_id(self: RTree, child_id: u64) -> felt252;
+    fn add_child_id(self: RTree, child_id: u64) -> Span<u64>;
     fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252;
     // fn remove_child_id(child_id: u64) -> felt252;
 // fn change_to_leaf(child_id: u64) -> felt252;
@@ -93,15 +93,13 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
         self.children.unpack()
     }
 
-    fn add_child_id(self: RTree, child_id: u64) -> felt252 {
+    fn add_child_id(self: RTree, child_id: u64) -> Span<u64> {
         let children: Span<u64> = self.children.unpack();
-        assert_lt!(children.len(), 4);
 
         let mut arr: Array<u64> = children.into();
         arr.append(child_id);
 
-        let new_span: Span<u64> = arr.span();
-        new_span.pack()
+        arr.span()
     }
 
     // Naive implementation of replacement
@@ -169,6 +167,8 @@ pub trait Packable<T, PackedT> {
 
 
 pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
+    
+    // It only packs the first 4 entries in the Span and discards the rest!
     fn pack(self: Span<u64>) -> felt252 {
         let mut out: u256 = 0;
 
