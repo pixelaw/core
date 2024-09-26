@@ -1,10 +1,11 @@
+use super::RTreeTrait;
 
 use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
 use pixelaw::core::{
-    utils::{Bounds, min, max, Position},
+    utils::{Bounds, min, max, Position,MAX_DIMENSION},
     models::{
         pixel::{Pixel},
         {
@@ -154,7 +155,7 @@ pub fn add_root_layer(world: IWorldDispatcher) -> u64 {
 
 fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
     
-// Sanity check
+    // Don't split if only 1 child
     assert_gt!(children.len(), 1);
 
     // Find the optimal way to split the childen into 2 smallest groups
@@ -211,13 +212,11 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
 
             if enlargement1 < enlargement2 {
                 // This item goes with seed1
-
+                arr1.append(*children[i]);
             }else{
                 // This item goes with seed2
-                
-
+                arr2.append(*children[i]);
             }
-
         }
 
 
@@ -245,27 +244,44 @@ pub fn split_node_if_needed(
 
     if level == 0 {
         // TODO We're at root level and it's full: add a layer instead
+        println!("TODO!!!! ROOT LEVEL");
         return node_id;
     }
 
     // Since we're splitting this one, the parent will gain an extra child.
     // Split parent if needed.
-    let parent_id = match level {
+    let leafparent_id = match level {
         0 => add_root_layer(world),
         _ => split_node_if_needed(world, ancestors, level - 1, new_children)
     };
 
-    // Load the parent
-    let parent: RTree = get!(world, (parent_id), RTree);
+    // Load the leafparent
+    let leafparent: RTree = get!(world, (leafparent_id), RTree);
 
     // TODO split this node now, after parents were done
     let (this_children, sibling_children) = distribute_children(new_children);
 
     // TODO Determine new bounds of this node and the new sibling
+    let this_spanningbounds = spanning_bounds(this_children);
+    let sibling_spanningbounds = spanning_bounds(sibling_children);
 
-    println!("parent: {:?}", parent);
+    let this_node = RTreeNode{bounds: this_spanningbounds, is_leaf: true, is_area: false};
+    let sibling_node = RTreeNode{bounds: sibling_spanningbounds, is_leaf: true, is_area: false};
+
+    println!("leafparent: {:?}", leafparent);
+
+    let current_siblings = leafparent.get_children();
+    let updated_siblings = current_siblings.replace_child_id(node_id, this_node.pack());
+    let updated_siblings = updated_siblings.add_child_id(sibling_node.pack());
+
+    // Store the leafparent BUT NOW ITS ID CHANGED WITH THE BOUNDS....???
+    set!(world, (RTree{id: }))
+
+    // TODO Change this node in the parent
+    // let siblings = leafparent
 
     // TODO Add a new sibling to the parent
+
     // let updated_children = parent.add_child_id(new_area_id);
 
     // TODO distribute children over current and new sibling
@@ -273,6 +289,30 @@ pub fn split_node_if_needed(
     node_id
 }
 
+// Calculates bounds that span all given nodes
+fn spanning_bounds(nodes: Span<u64>) -> Bounds {
+    let mut result = Bounds{x_min: MAX_DIMENSION, y_min: MAX_DIMENSION, x_max: 0, y_max: 0};
+
+    for node in nodes {
+        let n: RTreeNode = node.deref().unpack();
+        let b = n.bounds;
+        if b.x_min < result.x_min {
+            result.x_min = b.x_min;
+        }
+        if b.x_max > result.x_max {
+            result.x_max = b.x_max;
+        }
+        if b.y_min < result.y_min {
+            result.y_min = b.y_min;
+        }
+        if b.y_max > result.y_max{
+            result.y_max = b.y_max;
+        }
+    };  
+
+    result
+
+}
 
 pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64 {
     // 1. Prepare the leaf

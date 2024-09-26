@@ -92,7 +92,7 @@ fn test_adding() {
     let bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
     let bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
     let bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
-    let bounds_5 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
+    let bounds_9 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
 
     let position_1 = Position { x: 1, y: 1 };
     let position_2 = Position { x: 11, y: 11 };
