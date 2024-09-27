@@ -16,7 +16,7 @@
     {
       "label": "Start Torii",
       "type": "shell",
-      "command": "torii --world 0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34 --database db/torii --allowed-origins '*'",
+      "command": "torii --world 0x29861a9e7b2e8414e13c97819ff2b62f1245932abe8f05b3c6e58ad42a1d243 --database db/torii --allowed-origins '*'",
       "isBackground": true,
       "problemMatcher": [],
       "presentation": {
