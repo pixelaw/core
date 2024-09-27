@@ -9,13 +9,13 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.11" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.13" }
 
 [tool.fmt]
 sort-module-level-items = true
 
-# [lib]
-[[target.dojo]]
+[lib]
+# [[target.dojo]]
 
 
 [profile.dev-pop]
