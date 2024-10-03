@@ -130,7 +130,6 @@ pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeAc
     world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
 
-
     (paint_actions, snake_actions)
 }
 

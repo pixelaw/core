@@ -18,9 +18,9 @@ mod tests {
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
+    use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
-    use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
 
 
     #[test]
@@ -28,9 +28,8 @@ mod tests {
     fn test_playthrough() {
         let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
         let (paint_actions, snake_actions) = setup_apps_initialized(world);
-    
-        let SNAKE_COLOR = 0xFF00FF;
 
+        let SNAKE_COLOR = 0xFF00FF;
 
         // Setup players
         let player1 = contract_address_const::<0x1337>();

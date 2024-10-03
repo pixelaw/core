@@ -1,8 +1,4 @@
 use core::fmt::Display;
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
-};
 
 use core::{traits::TryInto, poseidon::poseidon_hash_span};
 
@@ -10,6 +6,7 @@ use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
+use pixelaw::core::utils;
 
 use pixelaw::{
     core::{
@@ -41,7 +38,10 @@ use pixelaw::{
         }
     }
 };
-use pixelaw::core::utils;
+use starknet::{
+    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
+    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
+};
 
 #[test]
 fn test_root_area() {
@@ -121,8 +121,6 @@ fn test_adding() {
 
     // Trigger a split
     let _result = core_actions.add_area(bounds_5, Option::None);
-
-
 }
 
 #[test]

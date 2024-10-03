@@ -1,10 +1,10 @@
 use core::starknet::storage_access::StorePacking;
-use starknet::{ContractAddress, ClassHash};
 use pixelaw::core::utils::{
     MASK_16, MASK_32, MASK_64, MASK_96, POW_2_16, POW_2_30, POW_2_31, POW_2_32, POW_2_48, POW_2_64,
     POW_2_96, MAX_DIMENSION
 };
 use pixelaw::core::utils::{min, max, Bounds, Position};
+use starknet::{ContractAddress, ClassHash};
 
 pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
 pub const TWO_POW_124: u256 = 0x10000000000000000000000000000000;
@@ -103,7 +103,7 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
     }
 
     // Naive implementation of replacement
-    fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252{
+    fn replace_child_id(self: RTree, child_id_existing: u64, child_id_new: u64) -> felt252 {
         let children: Span<u64> = self.children.unpack();
 
         let mut output: Array<u64> = array![];
@@ -115,7 +115,6 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
         };
         output.append(child_id_new);
         output.span().pack()
-
     }
 }
 
@@ -144,10 +143,10 @@ pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
             && position.y <= self.y_max
     }
     fn intersects(self: Bounds, other: Bounds) -> bool {
-        !(self.x_max < other.x_min ||
-            self.x_min > other.x_max ||
-            self.y_max < other.y_min ||
-            self.y_min > other.y_max)
+        !(self.x_max < other.x_min
+            || self.x_min > other.x_max
+            || self.y_max < other.y_min
+            || self.y_min > other.y_max)
     }
 
     fn combine(self: Bounds, other: Bounds) -> Bounds {
@@ -167,7 +166,6 @@ pub trait Packable<T, PackedT> {
 
 
 pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
-    
     // It only packs the first 4 entries in the Span and discards the rest!
     fn pack(self: Span<u64>) -> felt252 {
         let mut out: u256 = 0;

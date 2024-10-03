@@ -1,11 +1,11 @@
-use starknet::{ContractAddress, ClassHash, contract_address_const};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::area::{RTreeNode};
+use pixelaw::core::models::permissions::{Permission};
+use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
 use pixelaw::core::utils;
+use starknet::{ContractAddress, ClassHash, contract_address_const};
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
@@ -174,23 +174,23 @@ pub trait IActions<TContractState> {
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 pub mod actions {
     use core::poseidon::poseidon_hash_span;
+    use pixelaw::core::models::area::{
+        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
+    };
+    use pixelaw::core::models::permissions::{Permission, Permissions};
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::queue::QueueItem;
+
+    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
+    use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
+    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
+    use pixelaw::core::utils;
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_tx_info,
         contract_address_const, syscalls::{call_contract_syscall},
     };
 
     use super::{IActions};
-
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
-    use pixelaw::core::models::permissions::{Permission, Permissions};
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use pixelaw::core::models::queue::QueueItem;
-    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
-    use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
-    use pixelaw::core::models::area::{
-        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
-    };
-    use pixelaw::core::utils;
 
     #[derive(Drop, starknet::Event)]
     struct QueueScheduled {
@@ -662,9 +662,7 @@ pub mod actions {
             utils::area::add_area(world, bounds, hint_rtree)
         }
 
-        fn remove_area(
-            ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>
-        ) {
+        fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>) {
             utils::area::remove_area(world, area_id, hint_rtree)
         }
 

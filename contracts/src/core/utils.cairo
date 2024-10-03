@@ -1,7 +1,8 @@
-use super::models::area::RTreeTrait;
-use super::models::area::Packable;
-use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
+pub mod area;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+
+use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};
+use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::models::{
     pixel::{Pixel},
     {
@@ -11,8 +12,9 @@ use pixelaw::core::models::{
         }
     }
 };
-
-pub mod area;
+use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
+use super::models::area::Packable;
+use super::models::area::RTreeTrait;
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
 pub const POW_2_64: u128 = 0x10000000000000000_u128;
@@ -133,9 +135,6 @@ pub fn get_position(direction: Direction, position: Position) -> Position {
         },
     }
 }
-
-use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 /// Returns the PixeLAW Core actions as Dispatcher, ready to use
 pub fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
     let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
