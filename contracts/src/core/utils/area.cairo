@@ -135,8 +135,7 @@ pub fn print_tree(world: IWorldDispatcher, node_id: u64, indent: ByteArray) {
 
     let children: Span<u64> = treenode.get_children();
 
-    println!("{} Node: {} {:?}", indent, node_id, node);
-    println!("{} Children: {:?}", indent, children);
+    println!("{} Node: {} {:?}, children {:?}", indent, node_id, node, children);
 
     let mut new_indent: ByteArray = "    " + indent.clone();
 
@@ -252,6 +251,7 @@ pub fn update_ancestry(
 ) -> u64 {
     // Step 1: Identify Node to update
     let mut current_node_id = *ancestry[level];
+    println!("update_ancestry: {:?}", current_node_id);
     let current_treenode: RTree = get!(world, (current_node_id), RTree);
     let mut current_node: RTreeNode = current_treenode.get_node();
 
@@ -330,12 +330,13 @@ pub fn update_ancestry(
 pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64 {
     // 1. Prepare the leaf
 
-    println!("adding: {:?}", bounds);
     // TODO: use the hint to start searching deeper in the tree.
 
     // Step 1: Prepare the Leaf (parent, leaf)
     let (mut leaf, leafparent_id): (RTree, u64) = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
     let leafnode: RTreeNode = leaf.get_node();
+
+    println!("adding to leaf: {:?}", leaf.id);
 
     // Step 2: Create New Area Node
     let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };

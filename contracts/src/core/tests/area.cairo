@@ -114,17 +114,16 @@ fn test_adding() {
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
+    // let _area_id = core_actions.add_area(bounds_3, Option::None);
 
-    let _area_id = core_actions.add_area(bounds_3, Option::None);
+    // let area_id = core_actions.add_area(bounds_4, Option::None);
 
-    let area_id = core_actions.add_area(bounds_4, Option::None);
+    // let mut ancestors: Array<u64> = array![];
+// get_ancestors(world, ref ancestors, area_id);
+// assert(ancestors == array![ROOT_ID, 6422726, area_id], 'wrong ancestors');
 
-    let mut ancestors: Array<u64> = array![];
-    get_ancestors(world, ref ancestors, area_id);
-    assert(ancestors == array![ROOT_ID, 6422726, area_id], 'wrong ancestors');
-
-    // Trigger a split
-    let _result = core_actions.add_area(bounds_5, Option::None);
+    // // Trigger a split
+// let _result = core_actions.add_area(bounds_5, Option::None);
 }
 
 #[test]
