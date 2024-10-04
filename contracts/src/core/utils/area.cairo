@@ -117,6 +117,10 @@ pub fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_
     let children: Span<u64> = current_node.get_children();
 
     for child_id in children {
+        if *child_id == search_node_id {
+            ancestors.append(*child_id);
+            break;
+        }
         let child: RTreeNode = (*child_id).unpack();
         let search_node: RTreeNode = search_node_id.unpack();
         if child.bounds.contains_bounds(search_node.bounds) {

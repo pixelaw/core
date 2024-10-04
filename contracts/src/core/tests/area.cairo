@@ -97,9 +97,14 @@ fn test_adding() {
     let position_1 = Position { x: 1, y: 1 };
     let position_2 = Position { x: 11, y: 11 };
 
+    println!("------------------ PRINTING TREE -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
+
     let _result = core_actions.add_area(bounds_1, Option::None);
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
 
     let not_found = find_node_for_position(world, position_1, ROOT_ID, true); // has_area=true
 
@@ -114,6 +119,7 @@ fn test_adding() {
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     // let _area_id = core_actions.add_area(bounds_3, Option::None);
 
     // let area_id = core_actions.add_area(bounds_4, Option::None);
