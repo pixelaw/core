@@ -102,9 +102,6 @@ fn test_adding() {
     println!("------------------ ------------- -----------------");
 
     let _result = core_actions.add_area(bounds_1, Option::None);
-    println!("------------------ PRINTING TREE -----------------");
-    print_tree(world, ROOT_ID, "");
-    println!("------------------ ------------- -----------------");
 
     let not_found = find_node_for_position(world, position_1, ROOT_ID, true); // has_area=true
 
@@ -117,13 +114,12 @@ fn test_adding() {
     // Add more than 4 so node splitting is necessary
     let _area_id = core_actions.add_area(bounds_2, Option::None);
 
+    let _area_id = core_actions.add_area(bounds_3, Option::None);
+
+    let _area_id = core_actions.add_area(bounds_4, Option::None);
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
-    // let _area_id = core_actions.add_area(bounds_3, Option::None);
-
-    // let area_id = core_actions.add_area(bounds_4, Option::None);
-
     // let mut ancestors: Array<u64> = array![];
 // get_ancestors(world, ref ancestors, area_id);
 // assert(ancestors == array![ROOT_ID, 6422726, area_id], 'wrong ancestors');

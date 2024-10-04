@@ -289,7 +289,7 @@ pub fn update_ancestry(
 
             current_node_id = updated_node_id;
         } else {
-            // Only update children, not the nodeID
+            // This is root, and the ID has to stay the same (bounds will never change)
             set!(world, RTree { id: current_node_id, children: updated_children.span().pack() });
         }
 
