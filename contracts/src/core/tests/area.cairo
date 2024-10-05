@@ -89,17 +89,13 @@ fn test_adding() {
     let bounds_3 = Bounds { x_min: 30, y_min: 30, x_max: 39, y_max: 39 };
     let bounds_4 = Bounds { x_min: 40, y_min: 40, x_max: 49, y_max: 49 };
     let bounds_5 = Bounds { x_min: 50, y_min: 50, x_max: 59, y_max: 59 };
-    let bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
-    let bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
-    let bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
-    let bounds_9 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
+    let _bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
+    let _bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
+    let _bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
+    let _bounds_9 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
 
     let position_1 = Position { x: 1, y: 1 };
     let position_2 = Position { x: 11, y: 11 };
-
-    println!("------------------ PRINTING TREE -----------------");
-    print_tree(world, ROOT_ID, "");
-    println!("------------------ ------------- -----------------");
 
     let _result = core_actions.add_area(bounds_1, Option::None);
 
@@ -120,12 +116,12 @@ fn test_adding() {
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
-    // let mut ancestors: Array<u64> = array![];
-// get_ancestors(world, ref ancestors, area_id);
-// assert(ancestors == array![ROOT_ID, 6422726, area_id], 'wrong ancestors');
-
     // // Trigger a split
-// let _result = core_actions.add_area(bounds_5, Option::None);
+    let _result = core_actions.add_area(bounds_5, Option::None);
+
+    println!("------------------ PRINTING TREE -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
 }
 
 #[test]

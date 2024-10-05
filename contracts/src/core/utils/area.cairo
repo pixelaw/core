@@ -87,7 +87,7 @@ pub fn find_node_for_position(
 
 pub fn choose_leaf(
     world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64
-) -> (RTree, u64) {
+) -> RTree {
     let node: RTreeNode = node_id.unpack();
 
     // Load the parent from storage
@@ -95,7 +95,7 @@ pub fn choose_leaf(
 
     // The parent is a leaf and can be used
     if node.is_leaf {
-        return (treenode, parent_id);
+        return treenode;
     }
 
     // Find the most suitable child (that fits the new area without expanding the least)
@@ -182,6 +182,7 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
     // Don't split if only 1 child
     assert_gt!(children.len(), 1);
 
+    println!("distribute_children: {:?}", children);
     // Find the optimal way to split the childen into 2 smallest groups
 
     let mut max_difference = 0;
@@ -246,7 +247,7 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
         i += 1;
     };
 
-    (array![].span(), array![].span())
+    (arr1.span(), arr2.span())
 }
 
 // Splits the current node, and those above it if needed
@@ -265,15 +266,11 @@ pub fn update_ancestry(
     // // Step 3: Remove the old node from storage, we're replacing it with 2 new ones
     delete!(world, (current_treenode));
 
-    println!("current_children leaf: {:?}", current_children);
-    println!("updated_children leaf: {:?}", updated_children);
-    println!("level: {:?}", level);
     println!("current_node_id: {:?}", current_node_id);
+    println!("current_children: {:?}", current_children);
+    println!("updated_children: {:?}", updated_children);
 
-    if updated_children.len() > 4 {
-        // Maxed out children, need to split
-        println!("splitting leaf: {:?}", current_node_id);
-    } else {
+    if updated_children.len() <= 4 {
         // Get children of parent, if not root
         if level != 0 {
             let current_spanningbounds = spanning_bounds(updated_children.span());
@@ -296,38 +293,55 @@ pub fn update_ancestry(
         return current_node_id;
     }
 
-    // // Step 4: distribute the new children over two collections
-    // let mut new_children = array![];
-    // new_children.append_span(current_children);
-    // let (current_children, sibling_children) = distribute_children(new_children.span());
+    // Step 4: distribute the new children over two collections
+    let (current_children, sibling_children) = distribute_children(updated_children.span());
 
-    // // Step 5: Calculate New Bounds
-    // let current_spanningbounds = spanning_bounds(current_children);
-    // let sibling_spanningbounds = spanning_bounds(sibling_children);
+    // Step 5: Calculate New Bounds
+    let current_spanningbounds = spanning_bounds(current_children);
+    let sibling_spanningbounds = spanning_bounds(sibling_children);
 
-    // // Step 6: Create New Nodes
-    // current_node.bounds = current_spanningbounds;
-    // let current_node_id = current_node.pack();
-    // let sibling_node = RTreeNode {
-    //     bounds: sibling_spanningbounds, is_leaf: current_node.is_leaf, is_area: false
-    // };
-    // let sibling_node_id = sibling_node.pack();
+    // Step 6: Create New Nodes
+    current_node.bounds = current_spanningbounds;
+    let updated_node_id = current_node.pack();
+    let sibling_node = RTreeNode {
+        bounds: sibling_spanningbounds, is_leaf: current_node.is_leaf, is_area: false
+    };
+    let sibling_node_id = sibling_node.pack();
 
-    // set!(world, RTree { id: current_node_id, children: current_children.pack() });
-    // set!(world, RTree { id: sibling_node_id, children: sibling_children.pack() });
+    println!("splitting: {:?}", updated_node_id);
+    println!("bounds: {:?} {:?}", current_spanningbounds, sibling_spanningbounds);
+    println!("----------------------------------");
 
-    // // Step 7: Handle Parent Node
-    // if level == 0 {
-    //     // Create the new nodes under root (a new layer)
+    // Remove the old node
+    delete!(world, (current_treenode));
 
-    //     // Update Root's children
-    //     add_root_layer(world);
-    //     //return existing_node_id;
-    // } else {
-    //     // TODO need to also send the replacement id of the current node.
-    //     update_ancestry(world, ancestry, level - 1, sibling_node_id)
-    // }
-    current_node_id
+    // Add the two new ones
+    set!(world, RTree { id: updated_node_id, children: current_children.pack() });
+    set!(world, RTree { id: sibling_node_id, children: sibling_children.pack() });
+
+    // Step 7: Handle Parent Node
+    if level == 0 {
+        // Create the new nodes under root (a new layer)
+
+        // TODO Update Root's children
+        add_root_layer(world);
+        //return existing_node_id;
+    } else {
+        // Update the parent children
+        let parent_node_id = *ancestry[level - 1];
+        let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
+
+        // Replace the current node
+        let mut parent_updated_children = parent_treenode
+            .replace_child_id(current_node_id, updated_node_id);
+
+        // Add the new sibling
+        parent_updated_children.append(sibling_node_id);
+
+        // Update the parents
+        update_ancestry(world, ancestry, level - 1, parent_updated_children);
+    }
+    updated_node_id
 }
 
 
@@ -337,8 +351,8 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>
     // TODO: use the hint to start searching deeper in the tree.
 
     // Step 1: Prepare the Leaf (parent, leaf)
-    let (mut leaf, leafparent_id): (RTree, u64) = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
-    let leafnode: RTreeNode = leaf.get_node();
+    let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
+    // let leafnode: RTreeNode = leaf.get_node();
 
     println!("adding to leaf: {:?}", leaf.id);
 
