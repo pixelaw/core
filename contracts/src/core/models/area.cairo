@@ -119,6 +119,7 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
 }
 
 pub trait BoundsTrait<Bounds> {
+    fn check(self: Bounds);
     fn area(self: Bounds) -> u32;
     fn contains_position(self: Bounds, position: Position) -> bool;
     fn contains_bounds(self: Bounds, other: Bounds) -> bool;
@@ -127,6 +128,9 @@ pub trait BoundsTrait<Bounds> {
 }
 
 pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
+    fn check(self: Bounds) {
+        assert(self.x_max >= self.x_min && self.y_max >= self.y_min, 'invalid bounds');
+    }
     fn area(self: Bounds) -> u32 {
         (self.x_max - self.x_min).into() * (self.y_max - self.y_min).into()
     }

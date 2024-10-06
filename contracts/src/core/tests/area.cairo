@@ -89,13 +89,20 @@ fn test_adding() {
     let bounds_3 = Bounds { x_min: 30, y_min: 30, x_max: 39, y_max: 39 };
     let bounds_4 = Bounds { x_min: 40, y_min: 40, x_max: 49, y_max: 49 };
     let bounds_5 = Bounds { x_min: 50, y_min: 50, x_max: 59, y_max: 59 };
-    let _bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
-    let _bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
-    let _bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
-    let _bounds_9 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
+    let bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
+    let bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
+    let bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
+    let bounds_9 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
+    let bounds_10 = Bounds { x_min: 90, y_min: 90, x_max: 99, y_max: 99 };
+    let bounds_11 = Bounds { x_min: 100, y_min: 100, x_max: 109, y_max: 109 };
+    let bounds_12 = Bounds { x_min: 110, y_min: 110, x_max: 119, y_max: 119 };
+    let bounds_13 = Bounds { x_min: 120, y_min: 120, x_max: 129, y_max: 129 };
+    let bounds_14 = Bounds { x_min: 130, y_min: 130, x_max: 139, y_max: 139 };
+    let bounds_15 = Bounds { x_min: 1050, y_min: 1050, x_max: 1059, y_max: 1059 };
 
     let position_1 = Position { x: 1, y: 1 };
     let position_2 = Position { x: 11, y: 11 };
+    let position_3 = Position { x: 131, y: 131 };
 
     let _result = core_actions.add_area(bounds_1, Option::None);
 
@@ -119,9 +126,23 @@ fn test_adding() {
     // // Trigger a split
     let _result = core_actions.add_area(bounds_5, Option::None);
 
+    // Keep adding
+    let _result = core_actions.add_area(bounds_6, Option::None);
+    let _result = core_actions.add_area(bounds_7, Option::None);
+    let _result = core_actions.add_area(bounds_8, Option::None);
+    let _result = core_actions.add_area(bounds_9, Option::None);
+    let _result = core_actions.add_area(bounds_10, Option::None);
+    let _result = core_actions.add_area(bounds_11, Option::None);
+    let _result = core_actions.add_area(bounds_12, Option::None);
+    let _result = core_actions.add_area(bounds_13, Option::None);
+    let _result = core_actions.add_area(bounds_14, Option::None);
+    let _result = core_actions.add_area(bounds_15, Option::None);
+
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
+
+    assert(find_node_for_position(world, position_3, ROOT_ID, true) != 0, 'should find');
 }
 
 #[test]
