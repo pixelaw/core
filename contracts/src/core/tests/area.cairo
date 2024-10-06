@@ -104,7 +104,7 @@ fn test_adding() {
     let position_2 = Position { x: 11, y: 11 };
     let position_3 = Position { x: 131, y: 131 };
 
-    let _result = core_actions.add_area(bounds_1, Option::None);
+    let _result = core_actions.add_area(bounds_1);
 
     let not_found = find_node_for_position(world, position_1, ROOT_ID, true); // has_area=true
 
@@ -115,28 +115,28 @@ fn test_adding() {
     assert(found != 0, 'should find');
 
     // Add more than 4 so node splitting is necessary
-    let _area_id = core_actions.add_area(bounds_2, Option::None);
+    let _area_id = core_actions.add_area(bounds_2);
 
-    let _area_id = core_actions.add_area(bounds_3, Option::None);
+    let _area_id = core_actions.add_area(bounds_3);
 
-    let _area_id = core_actions.add_area(bounds_4, Option::None);
+    let _area_id = core_actions.add_area(bounds_4);
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
     // // Trigger a split
-    let _result = core_actions.add_area(bounds_5, Option::None);
+    let _result = core_actions.add_area(bounds_5);
 
     // Keep adding
-    let _result = core_actions.add_area(bounds_6, Option::None);
-    let _result = core_actions.add_area(bounds_7, Option::None);
-    let _result = core_actions.add_area(bounds_8, Option::None);
-    let _result = core_actions.add_area(bounds_9, Option::None);
-    let _result = core_actions.add_area(bounds_10, Option::None);
-    let _result = core_actions.add_area(bounds_11, Option::None);
-    let _result = core_actions.add_area(bounds_12, Option::None);
-    let _result = core_actions.add_area(bounds_13, Option::None);
-    let _result = core_actions.add_area(bounds_14, Option::None);
-    let _result = core_actions.add_area(bounds_15, Option::None);
+    let _result = core_actions.add_area(bounds_6);
+    let _result = core_actions.add_area(bounds_7);
+    let _result = core_actions.add_area(bounds_8);
+    let _result = core_actions.add_area(bounds_9);
+    let _result = core_actions.add_area(bounds_10);
+    let _result = core_actions.add_area(bounds_11);
+    let _result = core_actions.add_area(bounds_12);
+    let _result = core_actions.add_area(bounds_13);
+    let _result = core_actions.add_area(bounds_14);
+    let _result = core_actions.add_area(bounds_15);
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");

@@ -129,8 +129,17 @@ pub trait BoundsTrait<Bounds> {
 
 pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
     fn check(self: Bounds) {
-        assert(self.x_max >= self.x_min && self.y_max >= self.y_min, 'invalid bounds');
+        assert(
+            self.x_max >= self.x_min
+                && self.y_max >= self.y_min
+                && self.x_min <= MAX_DIMENSION
+                && self.x_max <= MAX_DIMENSION
+                && self.y_min <= MAX_DIMENSION
+                && self.y_max <= MAX_DIMENSION,
+            'invalid bounds'
+        );
     }
+
     fn area(self: Bounds) -> u32 {
         (self.x_max - self.x_min).into() * (self.y_max - self.y_min).into()
     }

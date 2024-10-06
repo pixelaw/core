@@ -17,17 +17,6 @@ use pixelaw::core::{
 use super::RTreeTrait;
 
 
-fn combinedArea(parent: Bounds, new: Bounds) -> u32 {
-    // TODO use the bounds.combine()
-    let x_min = min(parent.x_min, new.x_min);
-    let y_min = min(parent.y_min, new.y_min);
-    let x_max = max(parent.x_max, new.x_max);
-    let y_max = max(parent.y_max, new.y_max);
-
-    (x_max - x_min).into() * (y_max - y_min).into()
-}
-
-
 fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64 {
     let mut best_child_id: u64 = 0;
     let mut best_child_area: u32 = 0;
@@ -36,7 +25,7 @@ fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64
 
     for child_id in children {
         let child: RTreeNode = (*child_id).unpack();
-        let new_area = combinedArea(child.bounds, new);
+        let new_area = child.bounds.combine(new).area();
 
         if new_area < best_new_area {
             best_new_area = new_area;
@@ -254,19 +243,12 @@ pub fn update_ancestry(
 ) -> u64 {
     // Step 1: Identify Node to update
     let mut current_node_id = *ancestry[level];
-    // println!("update_ancestry: {:?}", current_node_id);
+
     let current_treenode: RTree = get!(world, (current_node_id), RTree);
     let mut current_node: RTreeNode = current_treenode.get_node();
 
-    // Step 2: Check if Splitting is Needed and return if not
-    // let current_children = current_treenode.get_children();
-
     // // Step 3: Remove the old node from storage, we're replacing it with 2 new ones
     delete!(world, (current_treenode));
-
-    // println!("current_node_id: {:?}", current_node_id);
-    // println!("current_children: {:?}", current_children);
-    // println!("updated_children: {:?}", updated_children);
 
     if updated_children.len() <= 4 {
         // Get children of parent, if not root
@@ -311,10 +293,6 @@ pub fn update_ancestry(
     set!(world, RTree { id: sibling_node_id, children: sibling_children.pack() });
 
     if level == 0 {
-        println!("ROOT----------------------------------");
-        println!("current_node_id: {:?}", current_node_id);
-        println!("----------------------------------");
-
         // Move the node and sibling as new children under ROOT
 
         let updated_root_children = array![updated_node_id, sibling_node_id].span();
@@ -327,9 +305,7 @@ pub fn update_ancestry(
     // Remove the old node
     delete!(world, (current_treenode));
 
-    // Step 7: Handle Parent Node
-
-    // Update the parent children
+    // Step 7: Update the parent children
     let parent_node_id = *ancestry[level - 1];
     let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
 
@@ -346,24 +322,11 @@ pub fn update_ancestry(
     updated_node_id
 }
 
-pub fn add_root_layer(world: IWorldDispatcher) -> u64 {
-    // TODO
-    println!("adding root layer");
-    ROOT_ID
-}
-
-pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64 {
-    // 1. Prepare the leaf
-
-    // TODO: use the hint to start searching deeper in the tree.
-
+pub fn add_area(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     bounds.check();
 
     // Step 1: Prepare the Leaf (parent, leaf)
     let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
-    // let leafnode: RTreeNode = leaf.get_node();
-
-    println!("adding to leaf: {:?}", leaf.id);
 
     // Step 2: Create New Area Node
     let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };
@@ -376,8 +339,6 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>
     let mut ancestors: Array<u64> = array![];
     get_ancestors(world, ref ancestors, leaf.id);
 
-    // println!("ancestors leaf: {:?}", ancestors);
-
     let new_leaf_id = update_ancestry(
         world,
         ancestors.span(), // ancestors
@@ -389,11 +350,5 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>
     new_leaf_id
 }
 
-pub fn remove_area(world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>) {}
+pub fn remove_area(world: IWorldDispatcher, area_id: u64) {}
 
-pub fn find_area(
-    world: IWorldDispatcher, position: Position, area_id: Option<u64>, hint_rtree: Option<felt252>
-) -> u64 {
-    // FIXME this is just to make it compile for now
-    0
-}

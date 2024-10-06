@@ -161,14 +161,9 @@ pub trait IActions<TContractState> {
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
-    fn add_area(ref world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64;
-    fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>);
-    fn find_area(
-        ref world: IWorldDispatcher,
-        position: Position,
-        area_id: Option<u64>,
-        hint_rtree: Option<felt252>
-    ) -> u64;
+    fn add_area(ref world: IWorldDispatcher, bounds: Bounds) -> u64;
+    fn remove_area(ref world: IWorldDispatcher, area_id: u64);
+    fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<u64>;
 }
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
@@ -658,21 +653,20 @@ pub mod actions {
         }
 
 
-        fn add_area(ref world: IWorldDispatcher, bounds: Bounds, hint_rtree: Option<u64>) -> u64 {
-            utils::area::add_area(world, bounds, hint_rtree)
+        fn add_area(ref world: IWorldDispatcher, bounds: Bounds) -> u64 {
+            utils::area::add_area(world, bounds)
         }
 
-        fn remove_area(ref world: IWorldDispatcher, area_id: felt252, hint_rtree: Option<felt252>) {
-            utils::area::remove_area(world, area_id, hint_rtree)
+        fn remove_area(ref world: IWorldDispatcher, area_id: u64) {
+            utils::area::remove_area(world, area_id)
         }
 
-        fn find_area(
-            ref world: IWorldDispatcher,
-            position: Position,
-            area_id: Option<u64>,
-            hint_rtree: Option<felt252>
-        ) -> u64 {
-            utils::area::find_area(world, position, area_id, hint_rtree)
+        fn find_area_by_position(ref world: IWorldDispatcher, position: Position,) -> Option<u64> {
+            let result = utils::area::find_node_for_position(world, position, ROOT_ID, true);
+            match result {
+                0 => Option::None,
+                _ => Option::Some(result)
+            }
         }
     }
 }
