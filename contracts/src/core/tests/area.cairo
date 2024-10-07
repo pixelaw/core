@@ -97,7 +97,7 @@ fn test_adding_overlapping() {
 #[test]
 #[should_panic(expected: ('overlap containing', 'ENTRYPOINT_FAILED'))]
 fn test_adding_containing() {
-    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let bounds_1 = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
 
@@ -105,6 +105,10 @@ fn test_adding_containing() {
     let bounds_2 = Bounds { x_min: 5, y_min: 5, x_max: 25, y_max: 25 };
 
     let _a1: Area = core_actions.add_area(bounds_1, player_1, WHITE_COLOR);
+
+    println!("------------------ PRINTING TREE -----------------");
+    print_tree(world, ROOT_ID, "");
+
     let _a2: Area = core_actions.add_area(bounds_2, player_1, WHITE_COLOR);
 }
 

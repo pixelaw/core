@@ -345,34 +345,67 @@ pub fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u
     };
 }
 
+// TODO testing
+pub fn find_node_spanning_bounds(
+    world: IWorldDispatcher, bounds: Bounds, node_id: u64, is_area: bool
+) -> u64 {
+    let node: RTreeNode = node_id.unpack();
+    let mut result: u64 = ROOT_ID;
+
+    // If the given node doesnt contain it, just return immediately
+    if !node.bounds.contains_bounds(bounds) || is_area && node.is_leaf {
+        return ROOT_ID;
+    }
+
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    let children: Span<u64> = treenode.get_children();
+
+    // Evaluate children
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+
+        // Check the children
+        if child.bounds.contains_bounds(bounds) {
+            result = find_node_spanning_bounds(world, bounds, *child_id, is_area);
+
+            break;
+        }
+    };
+    result
+}
+
 
 pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
-    // TODO we can optimize the start of the search by caching the node that contains the new bounds
+    // We can optimize the start of the search by caching the node that contains the new bounds
     // and using that instead of ROOT_ID
-    check_area_containing(world, bounds, ROOT_ID);
+    let node_search_id = find_node_spanning_bounds(world, bounds, ROOT_ID, false);
+
+    // Check if our new bounds contain an existing area
+    check_area_containing(world, bounds, node_search_id);
 
     // Check that each of the 4 corners are not inside of an existing area
     assert(
         find_node_for_position(
-            world, Position { x: bounds.x_min, y: bounds.y_min }, ROOT_ID, true
+            world, Position { x: bounds.x_min, y: bounds.y_min }, node_search_id, true
         ) == 0,
         'overlap topleft'
     );
     assert(
         find_node_for_position(
-            world, Position { x: bounds.x_max, y: bounds.y_min }, ROOT_ID, true
+            world, Position { x: bounds.x_max, y: bounds.y_min }, node_search_id, true
         ) == 0,
         'overlap topright'
     );
     assert(
         find_node_for_position(
-            world, Position { x: bounds.x_min, y: bounds.y_max }, ROOT_ID, true
+            world, Position { x: bounds.x_min, y: bounds.y_max }, node_search_id, true
         ) == 0,
         'overlap bottomleft'
     );
     assert(
         find_node_for_position(
-            world, Position { x: bounds.x_max, y: bounds.y_max }, ROOT_ID, true
+            world, Position { x: bounds.x_max, y: bounds.y_max }, node_search_id, true
         ) == 0,
         'overlap bottomright'
     );
