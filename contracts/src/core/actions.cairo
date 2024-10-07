@@ -1,5 +1,5 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::area::{RTreeNode};
+use pixelaw::core::models::area::{Area, RTreeNode};
 use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
@@ -161,7 +161,9 @@ pub trait IActions<TContractState> {
     /// * `instruction` - The instruction to set.
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
-    fn add_area(ref world: IWorldDispatcher, bounds: Bounds) -> u64;
+    fn add_area(
+        ref world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+    ) -> Area;
     fn remove_area(ref world: IWorldDispatcher, area_id: u64);
     fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<u64>;
 }
@@ -653,8 +655,20 @@ pub mod actions {
         }
 
 
-        fn add_area(ref world: IWorldDispatcher, bounds: Bounds) -> u64 {
-            utils::area::add_area(world, bounds)
+        fn add_area(
+            ref world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+        ) -> Area {
+            // Add node in the RTree index
+            let id = utils::area::add_area_node(world, bounds);
+
+            // Create Area
+            let area = Area { id, owner, default_color };
+
+            // Store
+            set!(world, (area));
+
+            // Return
+            area
         }
 
         fn remove_area(ref world: IWorldDispatcher, area_id: u64) {

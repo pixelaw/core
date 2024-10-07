@@ -69,9 +69,9 @@ pub struct RTreeNode {
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
 pub struct Area {
     #[key]
-    id: u64,
-    owner: ContractAddress,
-    allow_nesting: bool
+    pub id: u64,
+    pub owner: ContractAddress,
+    pub default_color: u32
 }
 
 pub trait RTreeTrait<RTree> {

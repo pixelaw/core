@@ -322,11 +322,13 @@ pub fn update_ancestry(
     updated_node_id
 }
 
-pub fn add_area(world: IWorldDispatcher, bounds: Bounds) -> u64 {
+pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     bounds.check();
 
     // Step 1: Prepare the Leaf (parent, leaf)
     let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
+
+    // TODO Check existing areas for overlap
 
     // Step 2: Create New Area Node
     let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };
@@ -339,7 +341,7 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     let mut ancestors: Array<u64> = array![];
     get_ancestors(world, ref ancestors, leaf.id);
 
-    let new_leaf_id = update_ancestry(
+    update_ancestry(
         world,
         ancestors.span(), // ancestors
         ancestors.len() - 1, // level 
@@ -347,8 +349,9 @@ pub fn add_area(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     );
 
     // Step 6: Return New Area ID
-    new_leaf_id
+    new_area_id
 }
 
-pub fn remove_area(world: IWorldDispatcher, area_id: u64) {}
+pub fn remove_area(world: IWorldDispatcher, area_id: u64) { // TODO implement
+}
 

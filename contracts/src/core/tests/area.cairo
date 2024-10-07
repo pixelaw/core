@@ -14,7 +14,7 @@ use pixelaw::{
             registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
             area::{
-                ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
+                Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
                 RTreeNodePackableImpl, ChildrenPackableImpl
             }
         },
@@ -82,7 +82,7 @@ fn test_area_packing() {
 
 #[test]
 fn test_adding() {
-    let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let bounds_1 = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
     let bounds_2 = Bounds { x_min: 20, y_min: 20, x_max: 29, y_max: 29 };
@@ -104,7 +104,7 @@ fn test_adding() {
     let position_2 = Position { x: 11, y: 11 };
     let position_3 = Position { x: 131, y: 131 };
 
-    let _result = core_actions.add_area(bounds_1);
+    let _a1: Area = core_actions.add_area(bounds_1, player_1, WHITE_COLOR);
 
     let not_found = find_node_for_position(world, position_1, ROOT_ID, true); // has_area=true
 
@@ -115,28 +115,28 @@ fn test_adding() {
     assert(found != 0, 'should find');
 
     // Add more than 4 so node splitting is necessary
-    let _area_id = core_actions.add_area(bounds_2);
+    let _a2 = core_actions.add_area(bounds_2, player_1, WHITE_COLOR);
 
-    let _area_id = core_actions.add_area(bounds_3);
+    let _a3 = core_actions.add_area(bounds_3, player_1, WHITE_COLOR);
 
-    let _area_id = core_actions.add_area(bounds_4);
+    let _a4 = core_actions.add_area(bounds_4, player_1, WHITE_COLOR);
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
     // // Trigger a split
-    let _result = core_actions.add_area(bounds_5);
+    let _a5 = core_actions.add_area(bounds_5, player_1, WHITE_COLOR);
 
     // Keep adding
-    let _result = core_actions.add_area(bounds_6);
-    let _result = core_actions.add_area(bounds_7);
-    let _result = core_actions.add_area(bounds_8);
-    let _result = core_actions.add_area(bounds_9);
-    let _result = core_actions.add_area(bounds_10);
-    let _result = core_actions.add_area(bounds_11);
-    let _result = core_actions.add_area(bounds_12);
-    let _result = core_actions.add_area(bounds_13);
-    let _result = core_actions.add_area(bounds_14);
-    let _result = core_actions.add_area(bounds_15);
+    let _a6 = core_actions.add_area(bounds_6, player_1, WHITE_COLOR);
+    let _a7 = core_actions.add_area(bounds_7, player_1, WHITE_COLOR);
+    let _a8 = core_actions.add_area(bounds_8, player_1, WHITE_COLOR);
+    let _a9 = core_actions.add_area(bounds_9, player_1, WHITE_COLOR);
+    let _a10 = core_actions.add_area(bounds_10, player_1, WHITE_COLOR);
+    let _a11 = core_actions.add_area(bounds_11, player_1, WHITE_COLOR);
+    let _a12 = core_actions.add_area(bounds_12, player_1, WHITE_COLOR);
+    let _a13 = core_actions.add_area(bounds_13, player_1, WHITE_COLOR);
+    let _a14 = core_actions.add_area(bounds_14, player_1, WHITE_COLOR);
+    let _a15 = core_actions.add_area(bounds_15, player_1, WHITE_COLOR);
 
     println!("------------------ PRINTING TREE -----------------");
     print_tree(world, ROOT_ID, "");

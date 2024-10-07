@@ -11,7 +11,7 @@ use pixelaw::core::{
             App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction
         },
         pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-        area::{r_tree, RTree}
+        area::{r_tree, RTree, area, Area}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
     utils::{get_core_actions, Direction, Position, DefaultParameters}
@@ -73,7 +73,8 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
         core_actions_address::TEST_CLASS_HASH,
         permissions::TEST_CLASS_HASH,
         instruction::TEST_CLASS_HASH,
-        r_tree::TEST_CLASS_HASH
+        r_tree::TEST_CLASS_HASH,
+        area::TEST_CLASS_HASH
     ];
     let world = spawn_test_world(["pixelaw"].span(), models.span());
 
@@ -89,6 +90,7 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
     world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
