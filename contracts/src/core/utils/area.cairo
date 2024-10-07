@@ -15,29 +15,7 @@ use pixelaw::core::{
     }
 };
 use super::RTreeTrait;
-
-
-fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64 {
-    let mut best_child_id: u64 = 0;
-    let mut best_child_area: u32 = 0;
-
-    let mut best_new_area: u32 = 0x40000000; //  pow2_32_max (15bit*15bit)
-
-    for child_id in children {
-        let child: RTreeNode = (*child_id).unpack();
-        let new_area = child.bounds.combine(new).area();
-
-        if new_area < best_new_area {
-            best_new_area = new_area;
-            best_child_area = child.bounds.area();
-            best_child_id = *child_id;
-        } else if new_area == best_new_area && child.bounds.area() < best_child_area {
-            best_child_id = *child_id;
-        }
-    };
-
-    (best_child_id)
-}
+use super::super::models::area::BoundsTrait;
 
 
 pub fn find_node_for_position(
@@ -72,27 +50,6 @@ pub fn find_node_for_position(
     };
 
     found_child_id
-}
-
-pub fn choose_leaf(
-    world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64
-) -> RTree {
-    let node: RTreeNode = node_id.unpack();
-
-    // Load the parent from storage
-    let treenode: RTree = get!(world, (node_id), RTree);
-
-    // The parent is a leaf and can be used
-    if node.is_leaf {
-        return treenode;
-    }
-
-    // Find the most suitable child (that fits the new area without expanding the least)
-    let best_child_id = choose_best_child(node, treenode.get_children(), new_bounds);
-
-    // Recursively keep looking for the best child, until the leaf with the smallest new area is
-    // found
-    choose_leaf(world, best_child_id, new_bounds, parent_id)
 }
 
 
@@ -322,13 +279,114 @@ pub fn update_ancestry(
     updated_node_id
 }
 
+pub fn choose_leaf(
+    world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64
+) -> RTree {
+    let node: RTreeNode = node_id.unpack();
+
+    // Load the parent from storage
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    // The parent is a leaf and can be used
+    if node.is_leaf {
+        return treenode;
+    }
+
+    // Find the most suitable child (that fits the new area without expanding the least)
+    let best_child_id = choose_best_child(node, treenode.get_children(), new_bounds);
+
+    // Recursively keep looking for the best child, until the leaf with the smallest new area is
+    // found
+    choose_leaf(world, best_child_id, new_bounds, parent_id)
+}
+
+
+fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64 {
+    let mut best_child_id: u64 = 0;
+    let mut best_child_area: u32 = 0;
+
+    let mut best_new_area: u32 = 0x40000000; //  pow2_32_max (15bit*15bit)
+
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+        let new_area = child.bounds.combine(new).area();
+
+        if new_area < best_new_area {
+            best_new_area = new_area;
+            best_child_area = child.bounds.area();
+            best_child_id = *child_id;
+        } else if new_area == best_new_area && child.bounds.area() < best_child_area {
+            best_child_id = *child_id;
+        }
+    };
+
+    (best_child_id)
+}
+
+pub fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u64) {
+    let node: RTreeNode = node_id.unpack();
+
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    let children: Span<u64> = treenode.get_children();
+
+    // Evaluate children
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+        if node.is_leaf {
+            // We're looping Area's now
+            assert(!bounds.contains_bounds(child.bounds), 'overlap containing');
+        } else {
+            // We're looping Nodes now, so recurse only if the node contains our bounds
+            if child.bounds.contains_bounds(bounds) {
+                check_area_containing(world, bounds, *child_id);
+            }
+        }
+    };
+}
+
+
+pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
+    // TODO we can optimize the start of the search by caching the node that contains the new bounds
+    // and using that instead of ROOT_ID
+    check_area_containing(world, bounds, ROOT_ID);
+
+    // Check that each of the 4 corners are not inside of an existing area
+    assert(
+        find_node_for_position(
+            world, Position { x: bounds.x_min, y: bounds.y_min }, ROOT_ID, true
+        ) == 0,
+        'overlap topleft'
+    );
+    assert(
+        find_node_for_position(
+            world, Position { x: bounds.x_max, y: bounds.y_min }, ROOT_ID, true
+        ) == 0,
+        'overlap topright'
+    );
+    assert(
+        find_node_for_position(
+            world, Position { x: bounds.x_min, y: bounds.y_max }, ROOT_ID, true
+        ) == 0,
+        'overlap bottomleft'
+    );
+    assert(
+        find_node_for_position(
+            world, Position { x: bounds.x_max, y: bounds.y_max }, ROOT_ID, true
+        ) == 0,
+        'overlap bottomright'
+    );
+}
+
 pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
+    // Check that the bounds are correct (min < max etc)
     bounds.check();
+
+    // Ensure the new area is not overlapping (entirely or partially) with an existing
+    check_area_overlap(world, bounds);
 
     // Step 1: Prepare the Leaf (parent, leaf)
     let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
-
-    // TODO Check existing areas for overlap
 
     // Step 2: Create New Area Node
     let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };

@@ -79,6 +79,34 @@ fn test_area_packing() {
     assert(rect_in == rect_out, 'rect not same');
 }
 
+#[test]
+#[should_panic(expected: ('overlap topleft', 'ENTRYPOINT_FAILED'))]
+fn test_adding_overlapping() {
+    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+
+    let bounds_1 = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
+
+    // These bounds are overlapping on the topleft with the prior
+    let bounds_2 = Bounds { x_min: 15, y_min: 15, x_max: 29, y_max: 29 };
+
+    let _a1: Area = core_actions.add_area(bounds_1, player_1, WHITE_COLOR);
+    let _a2: Area = core_actions.add_area(bounds_2, player_1, WHITE_COLOR);
+}
+
+
+#[test]
+#[should_panic(expected: ('overlap containing', 'ENTRYPOINT_FAILED'))]
+fn test_adding_containing() {
+    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+
+    let bounds_1 = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
+
+    // These bounds are containing the prior (so all corners are not inside another area)
+    let bounds_2 = Bounds { x_min: 5, y_min: 5, x_max: 25, y_max: 25 };
+
+    let _a1: Area = core_actions.add_area(bounds_1, player_1, WHITE_COLOR);
+    let _a2: Area = core_actions.add_area(bounds_2, player_1, WHITE_COLOR);
+}
 
 #[test]
 fn test_adding() {
