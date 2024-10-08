@@ -123,8 +123,8 @@ fn test_adding() {
     let bounds_5 = Bounds { x_min: 50, y_min: 50, x_max: 59, y_max: 59 };
     let bounds_6 = Bounds { x_min: 60, y_min: 60, x_max: 69, y_max: 69 };
     let bounds_7 = Bounds { x_min: 70, y_min: 70, x_max: 79, y_max: 79 };
-    let bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
-    let bounds_9 = Bounds { x_min: 80, y_min: 80, x_max: 89, y_max: 89 };
+    let bounds_8 = Bounds { x_min: 80, y_min: 80, x_max: 84, y_max: 84 };
+    let bounds_9 = Bounds { x_min: 85, y_min: 85, x_max: 89, y_max: 89 };
     let bounds_10 = Bounds { x_min: 90, y_min: 90, x_max: 99, y_max: 99 };
     let bounds_11 = Bounds { x_min: 100, y_min: 100, x_max: 109, y_max: 109 };
     let bounds_12 = Bounds { x_min: 110, y_min: 110, x_max: 119, y_max: 119 };
@@ -168,13 +168,16 @@ fn test_adding() {
     let _a12 = core_actions.add_area(bounds_12, player_1, WHITE_COLOR);
     let _a13 = core_actions.add_area(bounds_13, player_1, WHITE_COLOR);
     let _a14 = core_actions.add_area(bounds_14, player_1, WHITE_COLOR);
+
+    // FIXME this addition messes up the tree (doesnt move children correctly)
     let _a15 = core_actions.add_area(bounds_15, player_1, WHITE_COLOR);
 
-    println!("------------------ PRINTING TREE -----------------");
+    println!("------------------ PRINTING FINAL TREE -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
 
-    assert(find_node_for_position(world, position_3, ROOT_ID, true) != 0, 'should find');
+    assert(find_node_for_position(world, position_2, ROOT_ID, true) != 0, 'should find 2');
+    assert(find_node_for_position(world, position_3, ROOT_ID, true) != 0, 'should find 3');
 }
 
 #[test]

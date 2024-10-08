@@ -32,7 +32,7 @@ pub fn find_node_for_position(
         // We're not going to be finding anything here
         return 0;
     }
-
+    println!("i: {:?}", node_id);
     // Let's continue looking at children, something maybe below
 
     // Load the treenode from storage so we can inspect children
@@ -337,8 +337,9 @@ pub fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u
             // We're looping Area's now
             assert(!bounds.contains_bounds(child.bounds), 'overlap containing');
         } else {
-            // We're looping Nodes now, so recurse only if the node contains our bounds
-            if child.bounds.contains_bounds(bounds) {
+            // We're looping Nodes now, so recurse only if our bounds contains the childnode
+            // This means we're getting closer to finding a matching Area (inside)
+            if bounds.contains_bounds(child.bounds) {
                 check_area_containing(world, bounds, *child_id);
             }
         }
@@ -379,7 +380,7 @@ pub fn find_node_spanning_bounds(
 pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
     // We can optimize the start of the search by caching the node that contains the new bounds
     // and using that instead of ROOT_ID
-    let node_search_id = find_node_spanning_bounds(world, bounds, ROOT_ID, false);
+    let node_search_id = ROOT_ID; //find_node_spanning_bounds(world, bounds, ROOT_ID, false);
 
     // Check if our new bounds contain an existing area
     check_area_containing(world, bounds, node_search_id);
