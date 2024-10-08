@@ -32,7 +32,7 @@ pub fn find_node_for_position(
         // We're not going to be finding anything here
         return 0;
     }
-    println!("i: {:?}", node_id);
+
     // Let's continue looking at children, something maybe below
 
     // Load the treenode from storage so we can inspect children
