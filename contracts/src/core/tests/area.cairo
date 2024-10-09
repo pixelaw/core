@@ -152,27 +152,51 @@ fn test_adding() {
     let _a3 = core_actions.add_area(bounds_3, player_1, WHITE_COLOR);
 
     let _a4 = core_actions.add_area(bounds_4, player_1, WHITE_COLOR);
-    println!("------------------ PRINTING TREE -----------------");
+
+    println!("------------------BEFORE FIRST SPLIT -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
     // // Trigger a split
     let _a5 = core_actions.add_area(bounds_5, player_1, WHITE_COLOR);
 
+    println!("------------------AFTER FIRST SPLIT -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
+
     // Keep adding
     let _a6 = core_actions.add_area(bounds_6, player_1, WHITE_COLOR);
+    println!("------------------BEFORE SEVEN -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     let _a7 = core_actions.add_area(bounds_7, player_1, WHITE_COLOR);
+    println!("------------------AFTER SEVEN -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     let _a8 = core_actions.add_area(bounds_8, player_1, WHITE_COLOR);
     let _a9 = core_actions.add_area(bounds_9, player_1, WHITE_COLOR);
+    println!("------------------AFTER NINE -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     let _a10 = core_actions.add_area(bounds_10, player_1, WHITE_COLOR);
+    println!("------------------AFTER TEN -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     let _a11 = core_actions.add_area(bounds_11, player_1, WHITE_COLOR);
+    println!("------------------AFTER ELEVEN -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
     let _a12 = core_actions.add_area(bounds_12, player_1, WHITE_COLOR);
     let _a13 = core_actions.add_area(bounds_13, player_1, WHITE_COLOR);
     let _a14 = core_actions.add_area(bounds_14, player_1, WHITE_COLOR);
 
+    println!("------------------ BEFORE LAST SPLIT -----------------");
+    print_tree(world, ROOT_ID, "");
+    println!("------------------ ------------- -----------------");
+
     // FIXME this addition messes up the tree (doesnt move children correctly)
     let _a15 = core_actions.add_area(bounds_15, player_1, WHITE_COLOR);
 
-    println!("------------------ PRINTING FINAL TREE -----------------");
+    println!("------------------ AFTER LAST SPLIT -----------------");
     print_tree(world, ROOT_ID, "");
     println!("------------------ ------------- -----------------");
 
