@@ -334,11 +334,11 @@ pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
 }
 
 // Splits the current node, and those above it if needed
-pub fn update_ancestry(
-    world: IWorldDispatcher, ancestry: Span<u64>, level: usize, updated_children: Array<u64>
+pub fn update_ancestors(
+    world: IWorldDispatcher, ancestors: Span<u64>, level: usize, updated_children: Array<u64>
 ) {
     // Step 1: Identify Node to update
-    let mut current_node_id = *ancestry[level];
+    let mut current_node_id = *ancestors[level];
 
     let current_treenode: RTree = get!(world, (current_node_id), RTree);
     let mut current_node: RTreeNode = current_treenode.get_node();
@@ -354,11 +354,11 @@ pub fn update_ancestry(
             let updated_node_id = current_node.pack();
             set!(world, RTree { id: updated_node_id, children: updated_children.span().pack() });
 
-            let parent_node_id = *ancestry[level - 1];
+            let parent_node_id = *ancestors[level - 1];
             let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
             let parent_updated_children = parent_treenode
                 .replace_child_id(current_node_id, updated_node_id);
-            update_ancestry(world, ancestry, level - 1, parent_updated_children);
+            update_ancestors(world, ancestors, level - 1, parent_updated_children);
 
             current_node_id = updated_node_id;
         } else {
@@ -404,7 +404,7 @@ pub fn update_ancestry(
     }
 
     // Step 7: Update the parent children
-    let parent_node_id = *ancestry[level - 1];
+    let parent_node_id = *ancestors[level - 1];
     let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
 
     // Replace the current node
@@ -415,7 +415,7 @@ pub fn update_ancestry(
     parent_updated_children.append(sibling_node_id);
 
     // Update the parents
-    update_ancestry(world, ancestry, level - 1, parent_updated_children);
+    update_ancestors(world, ancestors, level - 1, parent_updated_children);
 }
 
 pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
@@ -439,7 +439,7 @@ pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     let mut ancestors: Array<u64> = array![];
     get_ancestors(world, ref ancestors, leaf.id);
 
-    update_ancestry(
+    update_ancestors(
         world,
         ancestors.span(), // ancestors
         ancestors.len() - 1, // level 
@@ -450,6 +450,27 @@ pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
     new_area_id
 }
 
-pub fn remove_area(world: IWorldDispatcher, area_id: u64) { // TODO implement
+pub fn remove_area_node(world: IWorldDispatcher, area_id: u64) {
+    // Check that this id is really an area
+    let area_node: RTreeNode = area_id.unpack();
+    assert(area_node.is_area, 'not area');
+
+    // Get ancestors
+    let mut ancestors: Array<u64> = array![];
+    get_ancestors(world, ref ancestors, area_id);
+    let ancestors_level = ancestors.len() - 1;
+
+    if *(ancestors.at(ancestors_level)) == area_id {
+        // Load the leaf that has this area
+        println!("remving: {:?}", ancestors);
+
+        let parent_node_id = *ancestors[ancestors_level - 1];
+        let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
+        let parent_updated_children = parent_treenode.remove_child_id(area_id);
+
+        // TODO for now we only remove the child
+        // BUT we should be shrinking the ancestor nodes recursively!
+        set!(world, RTree { id: parent_node_id, children: parent_updated_children.span().pack() });
+    }
 }
 

@@ -661,10 +661,10 @@ pub mod actions {
             // Add node in the RTree index
             let id = utils::area::add_area_node(world, bounds);
 
-            // Create Area
+            // Create Area model
             let area = Area { id, owner, default_color };
 
-            // Store
+            // Store Area model
             set!(world, (area));
 
             // Return
@@ -672,7 +672,11 @@ pub mod actions {
         }
 
         fn remove_area(ref world: IWorldDispatcher, area_id: u64) {
-            utils::area::remove_area(world, area_id)
+            let area = get!(world, area_id, (Area));
+
+            utils::area::remove_area_node(world, area_id);
+
+            delete!(world, (area));
         }
 
         fn find_area_by_position(ref world: IWorldDispatcher, position: Position,) -> Option<u64> {
