@@ -44,6 +44,18 @@ pub fn add_area(
     area
 }
 
+pub fn find_area_for_position(
+    world: IWorldDispatcher, position: Position, node_hint: Option<u64>
+) -> Option<Area> {
+    let mut result = Option::None;
+
+    let found_area_id = find_node_for_position(world, position, node_hint.unwrap_or(ROOT_ID), true);
+    if found_area_id != 0 {
+        result = Option::Some(get!(world, (found_area_id), (Area)));
+    }
+    result
+}
+
 pub fn find_node_for_position(
     world: IWorldDispatcher, position: Position, node_id: u64, has_area: bool
 ) -> u64 {

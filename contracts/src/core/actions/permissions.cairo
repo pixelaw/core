@@ -42,9 +42,20 @@ pub fn has_write_access(
     // The address making this call. Could be a System of an App
     let caller_address = get_caller_address();
 
-    // TODO Check if the pixel belongs to an Area
-    // If there is an area_hint, try to load the area
-    // if area_id_hint.
+    // Check if the pixel belongs to an Area
+    let area_result = super::area::find_area_for_position(
+        world, Position { x: pixel.x, y: pixel.y }, area_id_hint
+    );
+
+    if let Option::Some(area) = area_result {
+        println!("found: {:?}", area);
+        if area.owner == caller_account || area.owner == contract_address_const::<0>() {
+            return true;
+        } else if caller_account == caller_address {
+            // The caller is not a System, and not owner, so no reason to keep looking.
+            return false;
+        }
+    }
 
     // First check: Can we grant based on ownership?
     // If caller is owner or not owned by anyone, allow
