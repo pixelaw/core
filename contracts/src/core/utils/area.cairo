@@ -462,7 +462,6 @@ pub fn remove_area_node(world: IWorldDispatcher, area_id: u64) {
 
     if *(ancestors.at(ancestors_level)) == area_id {
         // Load the leaf that has this area
-        println!("remving: {:?}", ancestors);
 
         let parent_node_id = *ancestors[ancestors_level - 1];
         let parent_treenode: RTree = get!(world, (parent_node_id), RTree);

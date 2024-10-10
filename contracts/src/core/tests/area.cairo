@@ -71,17 +71,10 @@ const POSITION_15: Position = Position { x: 1051, y: 1052 };
 fn test_root_area() {
     let root_id_empty: u64 = ROOT_RTREENODE_EMPTY.pack();
     let root_id: u64 = ROOT_RTREENODE.pack();
-    let first_id: u64 = FIRST_RTREENODE.pack();
+    let _first_id: u64 = FIRST_RTREENODE.pack();
 
     let rootnode_empty: RTreeNode = root_id_empty.unpack();
     let rootnode: RTreeNode = root_id.unpack();
-
-    println!("root_id_empty: {:?}", root_id_empty);
-    println!("root_id: {:?}", root_id);
-    println!("first_id: {:?}", first_id);
-
-    println!("rootnode_empty: {:?}", rootnode_empty);
-    println!("rootnode: {:?}", rootnode);
 
     assert(ROOT_RTREENODE_EMPTY == rootnode_empty, 'rootnode_empty not same');
     assert(ROOT_RTREENODE == rootnode, 'rootnode not same');
@@ -127,8 +120,8 @@ fn test_adding_containing() {
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
 
-    println!("------------------ PRINTING TREE -----------------");
-    print_tree(world, ROOT_ID, "");
+    // println!("------------------ PRINTING TREE -----------------");
+    // print_tree(world, ROOT_ID, "");
 
     let _a2: Area = core_actions
         .add_area(
