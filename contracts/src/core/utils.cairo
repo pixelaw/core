@@ -1,4 +1,3 @@
-pub mod area;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};

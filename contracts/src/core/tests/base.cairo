@@ -147,14 +147,14 @@ fn test_has_write_access() {
     let pixel = get!(world, (position.x, position.y), Pixel);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None);
 
     assert(has_access == false, 'should not have access');
 
     set_caller(player_1);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None);
 
     assert(has_access == true, 'should have access');
 }

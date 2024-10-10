@@ -20,7 +20,7 @@ use pixelaw::{
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
-        utils::area::{print_tree, find_node_for_position, get_ancestors},
+        actions::area::{print_tree, find_node_for_position, get_ancestors},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -116,7 +116,7 @@ fn test_adding_overlapping() {
 #[test]
 #[should_panic(expected: ('overlap containing', 'ENTRYPOINT_FAILED'))]
 fn test_adding_containing() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
 

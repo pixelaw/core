@@ -8,15 +8,41 @@ use pixelaw::core::{
         pixel::{Pixel},
         {
             area::{
-                RTreeNode, RTree, Area, RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
-                BoundsTraitImpl, ROOT_RTREENODE, ROOT_ID
+                RTreeNode, RTree, Area, RTreeTrait, RTreeTraitImpl, RTreeNodePackableImpl,
+                ChildrenPackableImpl, BoundsTraitImpl, ROOT_RTREENODE, ROOT_ID
             }
         }
     }
 };
-use super::RTreeTrait;
+use starknet::{
+    ContractAddress, get_caller_address, get_contract_address, get_tx_info, contract_address_const,
+    syscalls::{call_contract_syscall},
+};
 use super::super::models::area::BoundsTrait;
 
+pub fn remove_area(world: IWorldDispatcher, area_id: u64) {
+    let area = get!(world, area_id, (Area));
+
+    remove_area_node(world, area_id);
+
+    delete!(world, (area));
+}
+
+pub fn add_area(
+    world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+) -> Area {
+    // Add node in the RTree index
+    let id = add_area_node(world, bounds);
+
+    // Create Area model
+    let area = Area { id, owner, default_color };
+
+    // Store Area model
+    set!(world, (area));
+
+    // Return
+    area
+}
 
 pub fn find_node_for_position(
     world: IWorldDispatcher, position: Position, node_id: u64, has_area: bool
@@ -52,6 +78,12 @@ pub fn find_node_for_position(
     found_child_id
 }
 
+// Mainly for UI: Return all areas (partially) inside given bounds
+pub fn find_areas_inside_bounds(world: IWorldDispatcher, bounds: Bounds) -> Span<u64> {
+    let mut result: Array<u64> = array![];
+    // TODO
+    result.span()
+}
 
 pub fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_node_id: u64) {
     if ancestors.len() == 0 {

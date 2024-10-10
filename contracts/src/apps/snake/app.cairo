@@ -420,6 +420,7 @@ mod snake_actions {
                             owner: Option::None,
                             action: Option::None, // Not using this feature for snake
                         },
+                        Option::None
                     );
 
                 // Determine what happens to the snake
