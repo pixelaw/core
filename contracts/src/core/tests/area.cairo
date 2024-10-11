@@ -20,7 +20,7 @@ use pixelaw::{
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
-        actions::area::{print_tree, find_node_for_position, get_ancestors},
+        actions::area::{print_tree, find_node_for_position},
         tests::helpers::{
             setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
             set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -203,6 +203,10 @@ fn test_adding() {
     assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
     assert(find_node_for_position(world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');
     assert(find_node_for_position(world, POSITION_15, ROOT_ID, true) != 0, 'should find 3');
+
+    let areas = core_actions
+        .find_areas_inside_bounds(Bounds { x_min: 30, y_min: 30, x_max: 45, y_max: 45 });
+    println!("areas: {:?}", areas);
 }
 
 #[test]

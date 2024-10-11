@@ -48,7 +48,6 @@ pub fn has_write_access(
     );
 
     if let Option::Some(area) = area_result {
-        println!("found: {:?}", area);
         if area.owner == caller_account || area.owner == contract_address_const::<0>() {
             return true;
         } else if caller_account == caller_address {
@@ -57,7 +56,7 @@ pub fn has_write_access(
         }
     }
 
-    // First check: Can we grant based on ownership?
+    // Can we grant based on direct ownership?
     // If caller is owner or not owned by anyone, allow
     if pixel.owner == caller_account || pixel.owner == contract_address_const::<0>() {
         return true;

@@ -90,14 +90,113 @@ pub fn find_node_for_position(
     found_child_id
 }
 
-// Mainly for UI: Return all areas (partially) inside given bounds
-pub fn find_areas_inside_bounds(world: IWorldDispatcher, bounds: Bounds) -> Span<u64> {
-    let mut result: Array<u64> = array![];
-    // TODO
-    result.span()
+pub fn print_tree(world: IWorldDispatcher, node_id: u64, indent: ByteArray) {
+    let node: RTreeNode = node_id.unpack();
+    let treenode: RTree = get!(world, (node_id), RTree);
+
+    let children: Span<u64> = treenode.get_children();
+
+    if node.is_leaf {
+        println!("{} LEAF: {} {:?}, children {:?}", indent, node_id, node, children);
+    } else if node.is_area {
+        println!("{} AREA: {} {:?}, children {:?}", indent, node_id, node, children);
+    } else {
+        println!("{} NODE: {} {:?}, children {:?}", indent, node_id, node, children);
+    }
+
+    let mut new_indent: ByteArray = "    " + indent.clone();
+
+    for child_id in children {
+        print_tree(world, *child_id, new_indent.clone());
+    };
 }
 
-pub fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_node_id: u64) {
+// Mainly for UI: Return all areas (partially) inside given bounds
+// The node_id is the starting point.
+// If it's ROOT_ID, this means traversing pretty much the entire index!
+pub fn find_nodes_inside_bounds(
+    world: IWorldDispatcher,
+    ref result: Array<u64>,
+    search_bounds: Bounds,
+    node_id: u64,
+    only_area: bool
+) {
+    // Load
+    let treenode: RTree = get!(world, (node_id), RTree);
+    let children: Span<u64> = treenode.get_children();
+
+    // Evaluate children
+    for child_id in children {
+        let child: RTreeNode = (*child_id).unpack();
+
+        // Check the children
+        if search_bounds.intersects(child.bounds) && (only_area && child.is_area) || !only_area {
+            println!("adding: {:?}", child_id);
+            result.append(*child_id);
+        }
+        if !child.is_area {
+            find_nodes_inside_bounds(world, ref result, search_bounds, *child_id, only_area);
+        }
+    };
+}
+
+pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
+    // Check that the bounds are correct (min < max etc)
+    bounds.check();
+
+    // Ensure the new area is not overlapping (entirely or partially) with an existing
+    check_area_overlap(world, bounds);
+
+    // Step 1: Prepare the Leaf (parent, leaf)
+    let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
+
+    // Step 2: Create New Area Node
+    let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };
+    let new_area_id = new_area.pack();
+
+    // Step 3: Update Parent Node, Add the area node to the parent children array
+    let updated_leaf_children: Array<u64> = leaf.add_child_id(new_area_id);
+
+    // Step 4: Handle recursive ancestor resizing
+    let mut ancestors: Array<u64> = array![];
+    get_ancestors(world, ref ancestors, leaf.id);
+
+    update_ancestors(
+        world,
+        ancestors.span(), // ancestors
+        ancestors.len() - 1, // level 
+        updated_leaf_children // new id (new leaf_id can be calculated from this)
+    );
+
+    // Step 6: Return New Area ID
+    new_area_id
+}
+
+pub fn remove_area_node(world: IWorldDispatcher, area_id: u64) {
+    // Check that this id is really an area
+    let area_node: RTreeNode = area_id.unpack();
+    assert(area_node.is_area, 'not area');
+
+    // Get ancestors
+    let mut ancestors: Array<u64> = array![];
+    get_ancestors(world, ref ancestors, area_id);
+    let ancestors_level = ancestors.len() - 1;
+
+    if *(ancestors.at(ancestors_level)) == area_id {
+        // Load the leaf that has this area
+
+        let parent_node_id = *ancestors[ancestors_level - 1];
+        let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
+        let parent_updated_children = parent_treenode.remove_child_id(area_id);
+
+        // TODO for now we only remove the child
+        // BUT we should be shrinking the ancestor nodes recursively!
+        set!(world, RTree { id: parent_node_id, children: parent_updated_children.span().pack() });
+    }
+}
+
+
+fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_node_id: u64) {
     if ancestors.len() == 0 {
         ancestors.append(ROOT_ID);
     }
@@ -122,28 +221,6 @@ pub fn get_ancestors(world: IWorldDispatcher, ref ancestors: Array<u64>, search_
         }
     };
 }
-
-pub fn print_tree(world: IWorldDispatcher, node_id: u64, indent: ByteArray) {
-    let node: RTreeNode = node_id.unpack();
-    let treenode: RTree = get!(world, (node_id), RTree);
-
-    let children: Span<u64> = treenode.get_children();
-
-    if node.is_leaf {
-        println!("{} LEAF: {} {:?}, children {:?}", indent, node_id, node, children);
-    } else if node.is_area {
-        println!("{} AREA: {} {:?}, children {:?}", indent, node_id, node, children);
-    } else {
-        println!("{} NODE: {} {:?}, children {:?}", indent, node_id, node, children);
-    }
-
-    let mut new_indent: ByteArray = "    " + indent.clone();
-
-    for child_id in children {
-        print_tree(world, *child_id, new_indent.clone());
-    };
-}
-
 
 // Calculates bounds that span all given nodes
 fn spanning_bounds(nodes: Span<u64>) -> Bounds {
@@ -244,9 +321,7 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
     (arr1.span(), arr2.span())
 }
 
-pub fn choose_leaf(
-    world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64
-) -> RTree {
+fn choose_leaf(world: IWorldDispatcher, node_id: u64, new_bounds: Bounds, parent_id: u64) -> RTree {
     let node: RTreeNode = node_id.unpack();
 
     // Load the parent from storage
@@ -288,7 +363,7 @@ fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64
     (best_child_id)
 }
 
-pub fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u64) {
+fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u64) {
     let node: RTreeNode = node_id.unpack();
 
     let treenode: RTree = get!(world, (node_id), RTree);
@@ -312,7 +387,7 @@ pub fn check_area_containing(world: IWorldDispatcher, bounds: Bounds, node_id: u
 }
 
 // TODO testing
-pub fn find_node_spanning_bounds(
+pub fn find_smallest_node_spanning_bounds(
     world: IWorldDispatcher, bounds: Bounds, node_id: u64, is_area: bool
 ) -> u64 {
     let node: RTreeNode = node_id.unpack();
@@ -333,7 +408,7 @@ pub fn find_node_spanning_bounds(
 
         // Check the children
         if child.bounds.contains_bounds(bounds) {
-            result = find_node_spanning_bounds(world, bounds, *child_id, is_area);
+            result = find_smallest_node_spanning_bounds(world, bounds, *child_id, is_area);
 
             break;
         }
@@ -342,7 +417,7 @@ pub fn find_node_spanning_bounds(
 }
 
 
-pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
+fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
     // We can optimize the start of the search by caching the node that contains the new bounds
     // and using that instead of ROOT_ID
     let node_search_id = ROOT_ID; //find_node_spanning_bounds(world, bounds, ROOT_ID, false);
@@ -378,7 +453,7 @@ pub fn check_area_overlap(world: IWorldDispatcher, bounds: Bounds) {
 }
 
 // Splits the current node, and those above it if needed
-pub fn update_ancestors(
+fn update_ancestors(
     world: IWorldDispatcher, ancestors: Span<u64>, level: usize, updated_children: Array<u64>
 ) {
     // Step 1: Identify Node to update
@@ -460,60 +535,5 @@ pub fn update_ancestors(
 
     // Update the parents
     update_ancestors(world, ancestors, level - 1, parent_updated_children);
-}
-
-pub fn add_area_node(world: IWorldDispatcher, bounds: Bounds) -> u64 {
-    // Check that the bounds are correct (min < max etc)
-    bounds.check();
-
-    // Ensure the new area is not overlapping (entirely or partially) with an existing
-    check_area_overlap(world, bounds);
-
-    // Step 1: Prepare the Leaf (parent, leaf)
-    let mut leaf: RTree = choose_leaf(world, ROOT_ID, bounds, ROOT_ID);
-
-    // Step 2: Create New Area Node
-    let new_area = RTreeNode { bounds, is_leaf: false, is_area: true };
-    let new_area_id = new_area.pack();
-
-    // Step 3: Update Parent Node, Add the area node to the parent children array
-    let updated_leaf_children: Array<u64> = leaf.add_child_id(new_area_id);
-
-    // Step 4: Handle recursive ancestor resizing
-    let mut ancestors: Array<u64> = array![];
-    get_ancestors(world, ref ancestors, leaf.id);
-
-    update_ancestors(
-        world,
-        ancestors.span(), // ancestors
-        ancestors.len() - 1, // level 
-        updated_leaf_children // new id (new leaf_id can be calculated from this)
-    );
-
-    // Step 6: Return New Area ID
-    new_area_id
-}
-
-pub fn remove_area_node(world: IWorldDispatcher, area_id: u64) {
-    // Check that this id is really an area
-    let area_node: RTreeNode = area_id.unpack();
-    assert(area_node.is_area, 'not area');
-
-    // Get ancestors
-    let mut ancestors: Array<u64> = array![];
-    get_ancestors(world, ref ancestors, area_id);
-    let ancestors_level = ancestors.len() - 1;
-
-    if *(ancestors.at(ancestors_level)) == area_id {
-        // Load the leaf that has this area
-
-        let parent_node_id = *ancestors[ancestors_level - 1];
-        let parent_treenode: RTree = get!(world, (parent_node_id), RTree);
-        let parent_updated_children = parent_treenode.remove_child_id(area_id);
-
-        // TODO for now we only remove the child
-        // BUT we should be shrinking the ancestor nodes recursively!
-        set!(world, RTree { id: parent_node_id, children: parent_updated_children.span().pack() });
-    }
 }
 

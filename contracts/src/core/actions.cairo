@@ -172,8 +172,8 @@ pub trait IActions<TContractState> {
         ref world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
     ) -> Area;
     fn remove_area(ref world: IWorldDispatcher, area_id: u64);
-    fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<u64>;
-    fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<u64>;
+    fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<Area>;
+    fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<Area>;
 }
 
 
@@ -386,16 +386,28 @@ pub mod actions {
             super::area::remove_area(world, area_id);
         }
 
-        fn find_area_by_position(ref world: IWorldDispatcher, position: Position,) -> Option<u64> {
+        fn find_area_by_position(ref world: IWorldDispatcher, position: Position,) -> Option<Area> {
             let result = super::area::find_node_for_position(world, position, ROOT_ID, true);
             match result {
                 0 => Option::None,
-                _ => Option::Some(result)
+                _ => Option::Some(get!(world, (result), (Area)))
             }
         }
 
-        fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<u64> {
-            super::area::find_areas_inside_bounds(world, bounds)
+        fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<Area> {
+            let mut result: Array<Area> = array![];
+            let mut area_ids: Array<u64> = array![];
+            let smallest_node = super::area::find_smallest_node_spanning_bounds(
+                world, bounds, ROOT_ID, false
+            );
+            super::area::find_nodes_inside_bounds(world, ref area_ids, bounds, smallest_node, true);
+            if area_ids.len() == 0 {
+                return result.span();
+            }
+            for area_id in area_ids {
+                result.append(get!(world, area_id, (Area)));
+            };
+            result.span()
         }
     }
 }
