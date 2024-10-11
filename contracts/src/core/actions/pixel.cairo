@@ -4,7 +4,7 @@ use pixelaw::core::models::area::{
     BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
 };
 use pixelaw::core::models::permissions::{Permission, Permissions};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateTrait};
 use pixelaw::core::models::queue::QueueItem;
 
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
@@ -22,6 +22,8 @@ pub fn update_pixel(
     for_system: ContractAddress,
     pixel_update: PixelUpdate,
 ) {
+    pixel_update.validate();
+
     let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
     assert!(

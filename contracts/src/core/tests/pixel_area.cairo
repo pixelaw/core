@@ -6,6 +6,7 @@ use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
+use pixelaw::core::utils::{MAX_DIMENSION};
 
 use pixelaw::core::{
     models::{
@@ -43,6 +44,25 @@ use starknet::{
 };
 const BOUNDS_1: Bounds = Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 };
 const POSITION_1: Position = Position { x: 1, y: 1 };
+
+#[test]
+#[should_panic(expected: ('position overflow', 'ENTRYPOINT_FAILED'))]
+fn test_pixel_with_invalid_position() {
+    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+
+    // Setup PixelUpdate
+    let pixel_update = PixelUpdate {
+        x: MAX_DIMENSION + 2,
+        y: MAX_DIMENSION + 3,
+        color: Option::Some(0xFF00FFFF),
+        owner: Option::Some(player_1),
+        app: Option::None,
+        text: Option::None,
+        timestamp: Option::None,
+        action: Option::None
+    };
+    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update);
+}
 
 #[test]
 fn test_add_new_pixel_in_owned_area() {
