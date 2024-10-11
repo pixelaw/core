@@ -206,7 +206,9 @@ fn test_adding() {
 
     let areas = core_actions
         .find_areas_inside_bounds(Bounds { x_min: 30, y_min: 30, x_max: 45, y_max: 45 });
-    println!("areas: {:?}", areas);
+
+    assert(*areas.at(0).id == 4222253504790685, 'not area 1');
+    assert(*areas.at(1).id == 5629671339327685, 'not area 2');
 }
 
 #[test]
