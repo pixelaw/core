@@ -51,7 +51,6 @@ trait IPaintActions<TContractState> {
 pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u16 = 7;
-const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod paint_actions {
@@ -65,7 +64,7 @@ mod paint_actions {
     use pixelaw::core::models::registry::App;
     use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::utils::{
-        get_core_actions, decode_color, encode_color, subu8, Direction, Position, DefaultParameters,
+        get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position, DefaultParameters,
     };
     use starknet::{
         get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
@@ -73,7 +72,7 @@ mod paint_actions {
     };
 
     use super::IPaintActions;
-    use super::{APP_KEY, APP_ICON, APP_MANIFEST, PIXELS_PER_FELT};
+    use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
     impl ActionsInteroperability of IInteroperability<ContractState> {
@@ -300,7 +299,7 @@ mod paint_actions {
             let system = core_actions.get_system_address(default_params.for_system);
             let pixel = get!(world, (position.x, position.y), Pixel);
 
-            let (r, g, b, a) = decode_color(pixel.color);
+            let (r, g, b, a) = decode_rgba(pixel.color);
 
             // If the color is 0,0,0, fading is done.
             if r == 0 && g == 0 && b == 0 {
@@ -311,7 +310,7 @@ mod paint_actions {
             // Fade the color
             let FADE_STEP = 5;
 
-            let new_color = encode_color(
+            let new_color = encode_rgba(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a,
             );
 

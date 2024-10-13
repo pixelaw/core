@@ -15,7 +15,7 @@ mod tests {
     use pixelaw::core::models::registry::{app, app_name, core_actions_address};
     use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{
-        get_core_actions, encode_color, decode_color, Direction, Position, DefaultParameters
+        get_core_actions, encode_rgba, decode_rgba, Direction, Position, DefaultParameters
     };
 
     use starknet::{contract_address_const, testing::set_account_contract_address};
@@ -31,7 +31,7 @@ mod tests {
         let player1 = contract_address_const::<0x1337>();
         set_account_contract_address(player1);
 
-        let color = encode_color(1, 0, 0, 1);
+        let color = encode_rgba(1, 0, 0, 1);
 
         paint_actions
             .interact(

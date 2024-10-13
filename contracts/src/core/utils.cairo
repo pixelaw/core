@@ -30,6 +30,7 @@ pub const MASK_32: u128 = 0xFFFFFFFF;
 pub const MASK_16: u128 = 0xFFFF;
 
 pub const MAX_DIMENSION: u16 = 32767; // 2**15 -1 (so all bits utilized)
+const U32_MAX: u32 = 0xFFFFFFFF;
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -76,7 +77,6 @@ impl DirectionIntoFelt252 of Into<Direction, felt252> {
         }
     }
 }
-const U32_MAX: u32 = 0xFFFFFFFF;
 
 
 /// Computes the starknet keccak to have a hash that fits in one felt.
@@ -153,55 +153,36 @@ pub fn subu8(nr: u8, sub: u8) -> u8 {
     }
 }
 
-
 // RGBA
 // 0xFF FF FF FF
 // empty: 0x 00 00 00 00
 // normal color (opaque): 0x FF FF FF FF
-pub fn encode_color(r: u8, g: u8, b: u8, a: u8) -> u32 {
+
+pub fn encode_rgba(r: u8, g: u8, b: u8, a: u8) -> u32 {
     (r.into() * 0x1000000) + (g.into() * 0x10000) + (b.into() * 0x100) + a.into()
 }
 
-pub fn decode_color(color: u32) -> (u8, u8, u8, u8) {
-    let r: u32 = (color / 0x1000000);
-    let g: u32 = (color / 0x10000) & 0xff;
-    let b: u32 = (color / 0x100) & 0xff;
-    let a: u32 = color & 0xff;
+pub fn decode_rgba(self: u32) -> (u8, u8, u8, u8) {
+    let r: u32 = (self / 0x1000000);
+    let g: u32 = (self / 0x10000) & 0xff;
+    let b: u32 = (self / 0x100) & 0xff;
+    let a: u32 = self & 0xff;
 
-    let r: Option<u8> = r.try_into();
-    let g: Option<u8> = g.try_into();
-    let b: Option<u8> = b.try_into();
-    let a: Option<u8> = a.try_into();
-
-    let r: u8 = match r {
-        Option::Some(r) => r,
-        Option::None => 0
-    };
-
-    let g: u8 = match g {
-        Option::Some(g) => g,
-        Option::None => 0,
-    };
-
-    let b: u8 = match b {
-        Option::Some(b) => b,
-        Option::None => 0,
-    };
-
-    let a: u8 = match a {
-        Option::Some(a) => a,
-        Option::None => 0xFF,
-    };
-
-    (r, g, b, a)
+    (
+        r.try_into().unwrap_or(0),
+        g.try_into().unwrap_or(0),
+        b.try_into().unwrap_or(0),
+        a.try_into().unwrap_or(0xFF)
+    )
 }
+
 
 pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -> bool {
     let pixel: Pixel = get!(world, (position.x, position.y), (Pixel));
     pixel.color == color
 }
 
-pub fn min(a: u16, b: u16) -> u16 {
+pub fn min<T, +PartialOrd<T>, +Copy<T>, +Drop<T>>(a: T, b: T) -> T {
     if a < b {
         a
     } else {
@@ -209,7 +190,7 @@ pub fn min(a: u16, b: u16) -> u16 {
     }
 }
 
-pub fn max(a: u16, b: u16) -> u16 {
+pub fn max<T, +PartialOrd<T>, +Copy<T>, +Drop<T>>(a: T, b: T) -> T {
     if a > b {
         a
     } else {

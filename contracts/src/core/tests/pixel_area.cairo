@@ -50,7 +50,7 @@ const POSITION_1: Position = Position { x: 1, y: 1 };
 fn test_pixel_with_invalid_position() {
     let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    // Setup PixelUpdate
+    // Setup PixelUpdate with x/y that are u16, but not u15
     let pixel_update = PixelUpdate {
         x: MAX_DIMENSION + 2,
         y: MAX_DIMENSION + 3,
