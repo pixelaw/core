@@ -133,7 +133,7 @@ mod snake_actions {
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::traits::IHooks;
     use pixelaw::core::utils::{
         get_callers, get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
         get_core_actions_address,
@@ -172,7 +172,7 @@ mod snake_actions {
 
     /// Implementation of interoperability hooks for the Snake actions.
     #[abi(embed_v0)]
-    impl ActionsInteroperability of IInteroperability<ContractState> {
+    impl ActionsInteroperability of IHooks<ContractState> {
         /// Hook called before a pixel update.
         ///
         /// # Arguments

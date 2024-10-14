@@ -8,7 +8,7 @@ use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateTrait};
 use pixelaw::core::models::queue::QueueItem;
 
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
-use pixelaw::core::traits::{IInteroperabilityDispatcher, IInteroperabilityDispatcherTrait};
+use pixelaw::core::traits::{IHooksDispatcher, IHooksDispatcherTrait};
 use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
 use pixelaw::core::utils;
 use starknet::{
@@ -36,7 +36,7 @@ pub fn update_pixel(
     let old_pixel_app = pixel.app;
 
     if old_pixel_app != contract_address_const::<0>() {
-        let interoperable_app = IInteroperabilityDispatcher { contract_address: old_pixel_app };
+        let interoperable_app = IHooksDispatcher { contract_address: old_pixel_app };
         let app_caller = get!(world, for_system, (App));
         interoperable_app.on_pre_update(pixel_update, app_caller, for_player);
     }
@@ -77,7 +77,7 @@ pub fn update_pixel(
     set!(world, (pixel));
 
     if old_pixel_app != contract_address_const::<0>() {
-        let interoperable_app = IInteroperabilityDispatcher { contract_address: old_pixel_app };
+        let interoperable_app = IHooksDispatcher { contract_address: old_pixel_app };
         let app_caller = get!(world, for_system, (App));
         interoperable_app.on_post_update(pixel_update, app_caller, for_player);
     }

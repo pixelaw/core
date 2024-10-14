@@ -62,7 +62,7 @@ mod paint_actions {
     use pixelaw::core::models::permissions::Permission;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IInteroperability;
+    use pixelaw::core::traits::IHooks;
     use pixelaw::core::utils::{
         get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position,
         DefaultParameters,
@@ -76,7 +76,7 @@ mod paint_actions {
     use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
-    impl ActionsInteroperability of IInteroperability<ContractState> {
+    impl ActionsInteroperability of IHooks<ContractState> {
         /// Hook called before a pixel update.
         ///
         /// # Arguments
