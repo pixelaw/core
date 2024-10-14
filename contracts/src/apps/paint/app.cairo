@@ -1,6 +1,6 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 #[dojo::interface]
@@ -64,7 +64,8 @@ mod paint_actions {
     use pixelaw::core::models::registry::App;
     use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::utils::{
-        get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position, DefaultParameters,
+        get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position,
+        DefaultParameters,
     };
     use starknet::{
         get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
@@ -175,8 +176,7 @@ mod paint_actions {
             // Load important variables
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+            let (player, system) = get_callers(default_params);
 
             // Load the Pixel
             let mut pixel = get!(world, (position.x, position.y), (Pixel));
@@ -236,8 +236,8 @@ mod paint_actions {
 
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+
+            let (player, system) = get_callers(default_params);
 
             let mut felt_index = 0;
             let mut pixel_index: u16 = 0;
@@ -295,8 +295,9 @@ mod paint_actions {
         fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+
+            let (player, system) = get_callers(default_params);
+
             let pixel = get!(world, (position.x, position.y), Pixel);
 
             let (r, g, b, a) = decode_rgba(pixel.color);

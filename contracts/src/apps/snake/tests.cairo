@@ -44,8 +44,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -77,8 +77,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -104,8 +104,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -134,8 +134,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -151,8 +151,8 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },

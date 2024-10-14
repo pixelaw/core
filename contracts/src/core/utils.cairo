@@ -11,7 +11,10 @@ use pixelaw::core::models::{
         }
     }
 };
-use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address};
+use starknet::{
+    ContractAddress, contract_address_const, get_tx_info, get_caller_address, ClassHash,
+    get_contract_address
+};
 use super::models::area::Packable;
 use super::models::area::RTreeTrait;
 
@@ -59,8 +62,8 @@ pub struct Bounds {
 
 #[derive(Copy, Drop, Serde)]
 pub struct DefaultParameters {
-    pub for_player: ContractAddress,
-    pub for_system: ContractAddress,
+    pub player_override: Option<ContractAddress>,
+    pub system_override: Option<ContractAddress>,
     pub position: Position,
     pub color: u32
 }
@@ -100,6 +103,25 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
     hash.try_into().expect('starknet keccak overflow')
 }
 
+
+// Returns the current (account and system) callers
+// Taking into account overrides from DefaultParams
+pub fn get_callers(params: DefaultParameters) -> (ContractAddress, ContractAddress) {
+    let mut player = contract_address_const::<0>();
+    let mut system = contract_address_const::<0>();
+
+    if let Option::Some(override) = params.player_override {
+        player = override;
+    } else {
+        player = get_tx_info().unbox().account_contract_address;
+    }
+    if let Option::Some(override) = params.system_override {
+        system = override;
+    } else {
+        system = get_caller_address();
+    }
+    (player, system)
+}
 
 pub fn get_position(direction: Direction, position: Position) -> Position {
     match direction {

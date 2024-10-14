@@ -36,8 +36,8 @@ mod tests {
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
                     position: Position { x: 1, y: 1 },
                     color: color
                 },

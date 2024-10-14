@@ -1,5 +1,5 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::utils::{Direction, Position, DefaultParameters, starknet_keccak};
+use pixelaw::core::utils::{get_callers, Direction, Position, DefaultParameters, starknet_keccak};
 use starknet::{ContractAddress, ClassHash};
 
 /// Calculates the next position based on the current coordinates and direction.
@@ -135,7 +135,7 @@ mod snake_actions {
     use pixelaw::core::models::registry::App;
     use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::utils::{
-        get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
+        get_callers, get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
         get_core_actions_address,
     };
     use starknet::{
@@ -220,10 +220,10 @@ mod snake_actions {
                         contract_address: old_app.system,
                     };
                     let params = DefaultParameters {
-                        for_player: pixel.owner,
-                        for_system: old_app.system,
+                        player_override: Option::Some(pixel.owner), // TODO Check this
+                        system_override: Option::Some(old_app.system),
                         position: Position { x: pixel_update.x, y: pixel_update.y, },
-                        color: pixel_update.color.unwrap(),
+                        color: pixel_update.color.unwrap()
                     };
                     paint_actions.fade(params);
                 }
@@ -270,8 +270,7 @@ mod snake_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+            let (player, system) = get_callers(default_params);
 
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);

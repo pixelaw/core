@@ -13,7 +13,7 @@ use pixelaw::core::{
         pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{get_core_actions, Direction, Position, DefaultParameters},
+    utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::{
         setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
         set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
@@ -74,8 +74,8 @@ fn test_paint_interaction() {
     paint_actions
         .interact(
             DefaultParameters {
-                for_player: ZERO_ADDRESS(), // Leave this 0 if not processing the Queue
-                for_system: ZERO_ADDRESS(), // Leave this 0 if not processing the Queue
+                player_override: Option::None,
+                system_override: Option::None,
                 position: TEST_POSITION,
                 color: RED_COLOR
             }
@@ -127,7 +127,7 @@ fn test_has_write_access() {
     paint_actions
         .put_color(
             DefaultParameters {
-                for_player: ZERO_ADDRESS(), for_system: ZERO_ADDRESS(), position, color
+                player_override: Option::None, system_override: Option::None, position, color
             }
         );
 
@@ -220,33 +220,38 @@ fn test_update_pixel() {
 
 
 #[test]
-fn test_get_player_address() {
-    let (_world, core_actions, player_1, player_2) = setup_core_initialized();
+fn test_get_callers() {
+    let (_world, _core_actions, player_1, player_2) = setup_core_initialized();
+
+    let system_override = starknet::contract_address_const::<0x69>();
+
+    let no_override = DefaultParameters {
+        player_override: Option::None,
+        system_override: Option::None,
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
+
+    let has_override = DefaultParameters {
+        player_override: Option::Some(player_2),
+        system_override: Option::Some(system_override),
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
 
     // Test with 0 address, we expect the caller
     set_account_contract_address(player_1);
 
-    let addr = core_actions.get_player_address(ZERO_ADDRESS());
-    assert(addr == player_1, 'should return player1');
+    let (player, system) = get_callers(no_override);
+    assert(player == player_1, 'should return player1');
+    assert(system == ZERO_ADDRESS(), 'should return zero');
+    println!("sys: {:?}", system);
 
-    let addr = core_actions.get_player_address(player_2);
-    assert(addr == player_2, 'should return player2');
+    let (player, system) = get_callers(has_override);
+    assert(player == player_2, 'should return player_2');
+    assert(system == system_override, 'should return system_override');
 }
 
-
-#[test]
-fn test_get_system_address() {
-    let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, snake_actions) = setup_apps_initialized(world);
-
-    set_caller(paint_actions.contract_address);
-
-    let addr = core_actions.get_system_address(ZERO_ADDRESS());
-    assert(addr == paint_actions.contract_address, 'should return paint_contract');
-
-    let addr = core_actions.get_system_address(snake_actions.contract_address);
-    assert(addr == snake_actions.contract_address, 'should return snake_contract');
-}
 
 // TODO Try alerting with a nonexisting appkey (should panic)
 

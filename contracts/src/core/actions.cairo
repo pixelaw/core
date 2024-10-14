@@ -125,27 +125,6 @@ pub trait IActions<TContractState> {
         ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252,
     ) -> App;
 
-    /// Retrieves the system address.
-    ///
-    /// # Arguments
-    ///
-    /// * `for_system` - The system contract address. If zero, returns the caller's address.
-    ///
-    /// # Returns
-    ///
-    /// * `ContractAddress` - The system address.
-    fn get_system_address(for_system: ContractAddress) -> ContractAddress;
-
-    /// Retrieves the player address.
-    ///
-    /// # Arguments
-    ///
-    /// * `for_player` - The player contract address. If zero, returns the caller's account address.
-    ///
-    /// # Returns
-    ///
-    /// * `ContractAddress` - The player address.
-    fn get_player_address(for_player: ContractAddress) -> ContractAddress;
 
     /// Sends an alert to a player.
     ///
@@ -305,35 +284,6 @@ pub mod actions {
             pixel_update: PixelUpdate,
         ) {
             super::pixel::update_pixel(world, for_player, for_system, pixel_update);
-        }
-
-
-        fn get_player_address(for_player: ContractAddress) -> ContractAddress {
-            if for_player == contract_address_const::<0>() {
-                let result = get_tx_info().unbox().account_contract_address;
-
-                // Return the caller account from the transaction (the end user)
-                return result;
-            } else {
-                // TODO: Check if getter is a system or the core actions contract
-
-                // Return the `for_player`
-                return for_player;
-            }
-        }
-
-
-        fn get_system_address(for_system: ContractAddress) -> ContractAddress {
-            if for_system != contract_address_const::<0>() {
-                // TODO: Check that the caller is the CoreActions contract
-                // Otherwise, it should be zero (if caller not core_actions)
-
-                // Return the `for_system`
-                return for_system;
-            } else {
-                // Return the caller account from the transaction (the end user)
-                return get_caller_address();
-            }
         }
 
 
