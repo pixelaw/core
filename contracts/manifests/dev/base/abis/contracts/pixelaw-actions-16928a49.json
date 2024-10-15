@@ -28,7 +28,7 @@
     "items": [
       {
         "type": "function",
-        "name": "contract_name",
+        "name": "name",
         "inputs": [],
         "outputs": [
           {
@@ -181,11 +181,11 @@
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "app",
@@ -283,11 +283,11 @@
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "color",
@@ -353,11 +353,75 @@
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
+        "type": "core::integer::u16"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "pixelaw::core::utils::Bounds",
+    "members": [
+      {
+        "name": "x_min",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "y_min",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "x_max",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "y_max",
+        "type": "core::integer::u16"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "pixelaw::core::models::area::Area",
+    "members": [
+      {
+        "name": "id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "default_color",
         "type": "core::integer::u32"
+      }
+    ]
+  },
+  {
+    "type": "enum",
+    "name": "core::option::Option::<pixelaw::core::models::area::Area>",
+    "variants": [
+      {
+        "name": "Some",
+        "type": "pixelaw::core::models::area::Area"
+      },
+      {
+        "name": "None",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::array::Span::<pixelaw::core::models::area::Area>",
+    "members": [
+      {
+        "name": "snapshot",
+        "type": "@core::array::Array::<pixelaw::core::models::area::Area>"
       }
     ]
   },
@@ -407,6 +471,10 @@
           {
             "name": "pixel_update",
             "type": "pixelaw::core::models::pixel::PixelUpdate"
+          },
+          {
+            "name": "area_id_hint",
+            "type": "core::option::Option::<core::integer::u64>"
           }
         ],
         "outputs": [
@@ -514,38 +582,6 @@
       },
       {
         "type": "function",
-        "name": "get_system_address",
-        "inputs": [
-          {
-            "name": "for_system",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
-        "name": "get_player_address",
-        "inputs": [
-          {
-            "name": "for_player",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
         "name": "alert_player",
         "inputs": [
           {
@@ -578,6 +614,74 @@
           }
         ],
         "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "add_area",
+        "inputs": [
+          {
+            "name": "bounds",
+            "type": "pixelaw::core::utils::Bounds"
+          },
+          {
+            "name": "owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "default_color",
+            "type": "core::integer::u32"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "pixelaw::core::models::area::Area"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_area",
+        "inputs": [
+          {
+            "name": "area_id",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "find_area_by_position",
+        "inputs": [
+          {
+            "name": "position",
+            "type": "pixelaw::core::utils::Position"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::option::Option::<pixelaw::core::models::area::Area>"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "find_areas_inside_bounds",
+        "inputs": [
+          {
+            "name": "bounds",
+            "type": "pixelaw::core::utils::Bounds"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Span::<pixelaw::core::models::area::Area>"
+          }
+        ],
         "state_mutability": "external"
       }
     ]
