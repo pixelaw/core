@@ -35,6 +35,11 @@ pub const MASK_16: u128 = 0xFFFF;
 pub const MAX_DIMENSION: u16 = 32767; // 2**15 -1 (so all bits utilized)
 const U32_MAX: u32 = 0xFFFFFFFF;
 
+pub const ON_PRE_UPDATE_HOOK: felt252 =
+    0x3aaf17d2bb02c9d23c8c0c465fb64d421430b1a9e838ada90d7ca34b766efbb;
+pub const ON_POST_UPDATE_HOOK: felt252 =
+    0x3484ad2e032768c324059cc216083c643765f60c00f2b9b0561bc98ceb1c92;
+
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
     None: (),
@@ -118,7 +123,7 @@ pub fn get_callers(params: DefaultParameters) -> (ContractAddress, ContractAddre
     if let Option::Some(override) = params.system_override {
         system = override;
     } else {
-        system = get_caller_address();
+        system = get_contract_address();
     }
     (player, system)
 }

@@ -23,7 +23,7 @@ pub struct Pixel {
     pub action: felt252
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Default, Copy, Drop, Serde)]
 pub struct PixelUpdate {
     pub x: u16, // only 15 bits used, to a max of 32767
     pub y: u16, // only 15 bits used, to a max of 32767
@@ -35,12 +35,61 @@ pub struct PixelUpdate {
     pub action: Option<felt252>
 }
 
+
 pub trait PixelUpdateTrait<PixelUpdate> {
     fn validate(self: PixelUpdate);
+    fn add_to_calldata(self: PixelUpdate, ref calldata: Array<felt252>);
 }
 
 pub impl PixelUpdateTraitImpl of PixelUpdateTrait<PixelUpdate> {
     fn validate(self: PixelUpdate) {
         assert(self.x <= MAX_DIMENSION && self.y <= MAX_DIMENSION, 'position overflow');
+    }
+
+    fn add_to_calldata(self: PixelUpdate, ref calldata: Array<felt252>) {
+        calldata.append(self.x.into());
+        calldata.append(self.y.into());
+        match self.color {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
+        match self.owner {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
+        match self.app {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
+        match self.text {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
+        match self.timestamp {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
+        match self.action {
+            Option::Some(value) => {
+                calldata.append(0.into());
+                calldata.append(value.into());
+            },
+            Option::None => { calldata.append(1.into()); },
+        }
     }
 }

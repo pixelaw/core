@@ -1,5 +1,5 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+use pixelaw::core::models::{pixel::{Pixel, PixelUpdate}, registry::{App}};
 use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
@@ -11,6 +11,20 @@ trait IPaintActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     fn init(ref world: IWorldDispatcher);
+
+    fn on_pre_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    );
+
+    fn on_post_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    );
 
     /// Interacts with a pixel based on default parameters.
     ///
@@ -44,7 +58,7 @@ trait IPaintActions<TContractState> {
     /// * `default_params` - The default parameters including position.
     /// * `image_data` - A span of felt252 representing the image data.
     fn pixel_row(
-        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>,
+        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
     );
 }
 
@@ -62,7 +76,6 @@ mod paint_actions {
     use pixelaw::core::models::permissions::Permission;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IHooks;
     use pixelaw::core::utils::{
         get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position,
         DefaultParameters,
@@ -76,7 +89,33 @@ mod paint_actions {
     use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
-    impl ActionsInteroperability of IHooks<ContractState> {
+    impl Actions of IPaintActions<ContractState> {
+        /// Initializes the Paint App.
+        ///
+        /// This function registers the app with core actions and sets up initial permissions.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        fn init(ref world: IWorldDispatcher) {
+            let core_actions = pixelaw::core::utils::get_core_actions(world);
+
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+            // // TODO: Replace this with proper granting of permission
+        // core_actions
+        //     .update_permission(
+        //         'snake',
+        //         Permission {
+        //             app: true,
+        //             color: true,
+        //             owner: false,
+        //             text: true,
+        //             timestamp: false,
+        //             action: false,
+        //         },
+        //     );
+        }
+
         /// Hook called before a pixel update.
         ///
         /// # Arguments
@@ -111,35 +150,6 @@ mod paint_actions {
         ) {
             // Do nothing
             let _world = world;
-        }
-    }
-
-    #[abi(embed_v0)]
-    impl ActionsImpl of IPaintActions<ContractState> {
-        /// Initializes the Paint App.
-        ///
-        /// This function registers the app with core actions and sets up initial permissions.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        fn init(ref world: IWorldDispatcher) {
-            let core_actions = pixelaw::core::utils::get_core_actions(world);
-
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-            // // TODO: Replace this with proper granting of permission
-        // core_actions
-        //     .update_permission(
-        //         'snake',
-        //         Permission {
-        //             app: true,
-        //             color: true,
-        //             owner: false,
-        //             text: true,
-        //             timestamp: false,
-        //             action: false,
-        //         },
-        //     );
         }
 
         /// Interacts with a pixel based on default parameters.

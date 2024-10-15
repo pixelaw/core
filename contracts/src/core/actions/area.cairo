@@ -1,7 +1,4 @@
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
-};
+use dojo::{world::{IWorldDispatcher, IWorldDispatcherTrait}};
 use pixelaw::core::{
     utils::{Bounds, min, max, Position, MAX_DIMENSION},
     models::{
@@ -248,7 +245,7 @@ fn spanning_bounds(nodes: Span<u64>) -> Bounds {
 
 fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
     // Don't split if only 1 child
-    assert_gt!(children.len(), 1);
+    assert!(children.len() > 1, "split error");
 
     // Find the optimal way to split the childen into 2 smallest groups
 

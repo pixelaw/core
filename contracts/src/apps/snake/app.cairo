@@ -1,6 +1,11 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::utils::{get_callers, Direction, Position, DefaultParameters, starknet_keccak};
-use starknet::{ContractAddress, ClassHash};
+
+
+use pixelaw::core::models::{pixel::{Pixel, PixelUpdate}, registry::{App}};
+use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
+use starknet::{
+    get_caller_address, get_contract_address, get_execution_info, ContractAddress, ClassHash
+};
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -98,7 +103,19 @@ trait ISnakeActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     fn init(ref world: IWorldDispatcher);
+    fn on_pre_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    );
 
+    fn on_post_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    );
     /// Starts or interacts with a snake.
     ///
     /// # Arguments
@@ -133,7 +150,6 @@ mod snake_actions {
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IHooks;
     use pixelaw::core::utils::{
         get_callers, get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
         get_core_actions_address,
@@ -170,66 +186,6 @@ mod snake_actions {
 
     const SNAKE_MAX_LENGTH: u8 = 255;
 
-    /// Implementation of interoperability hooks for the Snake actions.
-    #[abi(embed_v0)]
-    impl ActionsInteroperability of IHooks<ContractState> {
-        /// Hook called before a pixel update.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The proposed update to the pixel.
-        /// * `app_caller` - The app initiating the update.
-        /// * `player_caller` - The player initiating the update.
-        fn on_pre_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            // Do nothing
-            let _world = world;
-        }
-
-        /// Hook called after a pixel update.
-        ///
-        /// If the snake is reverting and the previous app was 'paint', it calls the fade function.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The update that was applied to the pixel.
-        /// * `app_caller` - The app that performed the update.
-        /// * `player_caller` - The player that performed the update.
-        fn on_post_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            let core_actions_address = get_core_actions_address(world);
-            assert!(core_actions_address == get_caller_address(), "caller is not core_actions");
-
-            // When the snake is reverting
-            if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
-                let old_app = pixel_update.app.unwrap();
-                let old_app = get!(world, old_app, (App));
-                if old_app.name == 'paint' {
-                    let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
-                    let paint_actions = IPaintActionsDispatcher {
-                        contract_address: old_app.system,
-                    };
-                    let params = DefaultParameters {
-                        player_override: Option::Some(pixel.owner), // TODO Check this
-                        system_override: Option::Some(old_app.system),
-                        position: Position { x: pixel_update.x, y: pixel_update.y, },
-                        color: pixel_update.color.unwrap()
-                    };
-                    paint_actions.fade(params);
-                }
-            }
-        }
-    }
 
     /// Implementation of the Snake actions.
     #[abi(embed_v0)]
@@ -253,6 +209,41 @@ mod snake_actions {
             core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
 
+        /// Hook called before a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The proposed update to the pixel.
+        /// * `app_caller` - The app initiating the update.
+        /// * `player_caller` - The player initiating the update.
+        fn on_pre_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) {
+            // Do nothing
+            let _world = world;
+        }
+
+        /// Hook called after a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The update that was applied to the pixel.
+        /// * `app_caller` - The app that performed the update.
+        /// * `player_caller` - The player that performed the update.
+        fn on_post_update(
+            ref world: IWorldDispatcher,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) {
+            // Do nothing
+            let _world = world;
+        }
         /// Starts a new snake or changes the direction of an existing snake.
         ///
         /// # Arguments
