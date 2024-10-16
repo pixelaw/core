@@ -186,7 +186,7 @@ mod paint_actions {
             // Load important variables
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let (player, system) = get_callers(default_params);
+            let (player, system) = get_callers(world, default_params);
 
             // Load the Pixel
             let mut pixel = get!(world, (position.x, position.y), (Pixel));
@@ -247,7 +247,7 @@ mod paint_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(default_params);
+            let (player, system) = get_callers(world, default_params);
 
             let mut felt_index = 0;
             let mut pixel_index: u16 = 0;
@@ -306,7 +306,7 @@ mod paint_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(default_params);
+            let (player, system) = get_callers(world, default_params);
 
             let pixel = get!(world, (position.x, position.y), Pixel);
 

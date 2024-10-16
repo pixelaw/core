@@ -5,18 +5,6 @@ use dojo::{
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
 
-use pixelaw::core::{
-    models::{
-        registry::{
-            App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction
-        },
-        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-        area::{r_tree, RTree, area, Area}
-    },
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{get_core_actions, Direction, Position, DefaultParameters}
-};
-
 use pixelaw::{
     apps::{
         paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
@@ -24,8 +12,22 @@ use pixelaw::{
             snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
             ISnakeActionsDispatcherTrait
         }
+    },
+    core::{
+        models::{
+            registry::{
+                App, app, app_name, core_actions_address, CoreActionsAddress, Instruction,
+                instruction
+            },
+            pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
+            area::{r_tree, RTree, area, Area}
+        },
+        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
+        utils::{get_core_actions, Direction, Position, DefaultParameters},
     }
 };
+
+
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
     testing::{set_block_timestamp, set_account_contract_address},

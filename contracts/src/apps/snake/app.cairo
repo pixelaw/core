@@ -261,7 +261,7 @@ mod snake_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(default_params);
+            let (player, system) = get_callers(world, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);

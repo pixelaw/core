@@ -111,19 +111,26 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
 
 // Returns the current (account and system) callers
 // Taking into account overrides from DefaultParams
-pub fn get_callers(params: DefaultParameters) -> (ContractAddress, ContractAddress) {
+pub fn get_callers(
+    world: IWorldDispatcher, params: DefaultParameters
+) -> (ContractAddress, ContractAddress) {
     let mut player = contract_address_const::<0>();
     let mut system = contract_address_const::<0>();
 
+    let core_address = get_core_actions_address(world);
+    let caller_contract = get_contract_address();
+
     if let Option::Some(override) = params.player_override {
+        assert(caller_contract == core_address, 'only core can override');
         player = override;
     } else {
         player = get_tx_info().unbox().account_contract_address;
     }
     if let Option::Some(override) = params.system_override {
+        assert(caller_contract == core_address, 'only core can override');
         system = override;
     } else {
-        system = get_contract_address();
+        system = caller_contract;
     }
     (player, system)
 }

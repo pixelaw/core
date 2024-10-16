@@ -40,6 +40,7 @@ pub fn update_pixel(
     let current_pixel_app = pixel.app;
     let app_caller = get!(world, for_system, (App));
 
+    // If the pixel is assigned an app contract, try calling the hook
     if current_pixel_app != contract_address_const::<0>() {
         call_hook(
             world, current_pixel_app, ON_PRE_UPDATE_HOOK, pixel_update, app_caller, for_player

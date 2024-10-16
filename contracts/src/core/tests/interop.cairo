@@ -43,6 +43,12 @@ use starknet::{
     testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
 };
 
+#[test]
+fn test_app_permissions() {
+    let (world, _core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_paint_actions, _snake_actions) = setup_apps_initialized(world);
+    set_caller(player_1);
+}
 
 #[test]
 fn test_hooks() {
@@ -52,6 +58,8 @@ fn test_hooks() {
     set_caller(player_1);
 
     println!("gonna call: {:?}", paint_actions.contract_address);
+
+    // Paint has hooks, Snake does not
 
     // paint_actions
     //     .on_pre_update(

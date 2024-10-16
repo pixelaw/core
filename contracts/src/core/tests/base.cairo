@@ -35,7 +35,9 @@ use pixelaw::{
 };
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
+    testing::{
+        set_block_timestamp, set_account_contract_address, set_caller_address, set_contract_address
+    },
 };
 
 
@@ -218,10 +220,26 @@ fn test_update_pixel() {
     assert(pixel == changed_pixel, 'pixel was not changed');
 }
 
+#[test]
+#[should_panic(expected: 'only core can override')]
+fn test_get_callers_non_core() {
+    let (world, _core_actions, _player_1, player_2) = setup_core_initialized();
+    let system_override = starknet::contract_address_const::<0x69>();
+
+    // Don't fake the calling contract, so this call fails
+
+    let has_override = DefaultParameters {
+        player_override: Option::Some(player_2),
+        system_override: Option::Some(system_override),
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
+    let (_player, _system) = get_callers(world, has_override);
+}
 
 #[test]
 fn test_get_callers() {
-    let (_world, _core_actions, player_1, player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, player_2) = setup_core_initialized();
 
     let system_override = starknet::contract_address_const::<0x69>();
 
@@ -242,12 +260,14 @@ fn test_get_callers() {
     // Test with 0 address, we expect the caller
     set_account_contract_address(player_1);
 
-    let (player, system) = get_callers(no_override);
+    let (player, system) = get_callers(world, no_override);
     assert(player == player_1, 'should return player1');
     assert(system == ZERO_ADDRESS(), 'should return zero');
-    println!("sys: {:?}", system);
 
-    let (player, system) = get_callers(has_override);
+    // impersonate core_actions so the override is allowed
+    set_contract_address(core_actions.contract_address);
+
+    let (player, system) = get_callers(world, has_override);
     assert(player == player_2, 'should return player_2');
     assert(system == system_override, 'should return system_override');
 }
