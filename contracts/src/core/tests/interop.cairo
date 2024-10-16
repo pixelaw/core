@@ -59,23 +59,7 @@ fn test_hooks() {
 
     println!("gonna call: {:?}", paint_actions.contract_address);
 
-    // Paint has hooks, Snake does not
-
-    // paint_actions
-    //     .on_pre_update(
-    //         PixelUpdate {
-    //             x: 0,
-    //             y: 0,
-    //             color: Option::None,
-    //             owner: Option::None,
-    //             app: Option::None,
-    //             text: Option::None,
-    //             timestamp: Option::None,
-    //             action: Option::None
-    //         },
-    //         App { system: ZERO_ADDRESS(), name: 0, icon: 0, action: 0 },
-    //         ZERO_ADDRESS(),
-    //     );
+    // Paint has hooks, Snake does not??
 
     paint_actions
         .interact(

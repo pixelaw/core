@@ -38,12 +38,19 @@ pub fn update_pixel(
         "No access!"
     );
     let current_pixel_app = pixel.app;
-    let app_caller = get!(world, for_system, (App));
+    let mut app_caller = get!(world, for_system, (App));
+    let mut pixel_update = pixel_update;
+    let mut for_player = for_player;
 
     // If the pixel is assigned an app contract, try calling the hook
     if current_pixel_app != contract_address_const::<0>() {
         call_hook(
-            world, current_pixel_app, ON_PRE_UPDATE_HOOK, pixel_update, app_caller, for_player
+            world,
+            current_pixel_app,
+            ON_PRE_UPDATE_HOOK,
+            ref pixel_update,
+            ref app_caller,
+            ref for_player
         );
     }
 
@@ -84,7 +91,12 @@ pub fn update_pixel(
 
     if current_pixel_app != contract_address_const::<0>() {
         call_hook(
-            world, current_pixel_app, ON_POST_UPDATE_HOOK, pixel_update, app_caller, for_player
+            world,
+            current_pixel_app,
+            ON_POST_UPDATE_HOOK,
+            ref pixel_update,
+            ref app_caller,
+            ref for_player
         );
     }
 }
@@ -92,9 +104,9 @@ fn call_hook(
     world: IWorldDispatcher,
     contract_address: ContractAddress,
     entrypoint: felt252,
-    pixel_update: PixelUpdate,
-    app_caller: App,
-    for_player: ContractAddress
+    ref pixel_update: PixelUpdate,
+    ref app_caller: App,
+    ref for_player: ContractAddress
 ) {
     let mut calldata: Array<felt252> = array![];
 
@@ -102,12 +114,78 @@ fn call_hook(
     app_caller.add_to_calldata(ref calldata);
     calldata.append(for_player.into());
 
-    let result = call_contract_syscall(contract_address, entrypoint, calldata.span());
-    // println!("result {:?}", result);
-    if result.is_err() {
-        if let Option::Some(err) = result.err() {
+    let out = call_contract_syscall(contract_address, entrypoint, calldata.span());
+
+    if out.is_err() {
+        if let Option::Some(err) = out.err() {
             // Panic on any other error than ENTRYPOINT_NOT_FOUND (which means hook wasnt enabled)
             assert(*err.at(0) == 'ENTRYPOINT_NOT_FOUND', *err.at(0));
         }
+    } else {
+        // assemble the output from the raw values
+        // Ok([123, 321, 0, 2936078335, 0, 4919, 0,
+        // 599683841819055043807870040764827848153960037270322986500076169224417352594, 1, 1, 1,
+        // 599683841819055043807870040764827848153960037270322986500076169224417352594, 4919])
+
+        let (new_pixel_update, new_app_caller, new_for_player) = parseHookOutput(out.unwrap());
+        pixel_update = new_pixel_update;
+
+        if app_caller.system != new_app_caller {
+            app_caller = get!(world, new_app_caller, (App));
+        }
+
+        for_player = new_for_player;
     }
+}
+
+fn parseHookOutput(data: Span<felt252>) -> (PixelUpdate, ContractAddress, ContractAddress) {
+    let mut color: Option<u32> = Option::None;
+    let mut owner: Option<ContractAddress> = Option::None;
+    let mut app: Option<ContractAddress> = Option::None;
+    let mut text: Option<felt252> = Option::None;
+    let mut timestamp: Option<u64> = Option::None;
+    let mut action: Option<felt252> = Option::None;
+
+    let x: u16 = data.at(0).deref().try_into().unwrap();
+    let y: u16 = data.at(1).deref().try_into().unwrap();
+
+    let mut i = 2;
+
+    if data.at(i).deref() == 0 {
+        i += 1;
+        color = Option::Some(data.at(i).deref().try_into().unwrap());
+    }
+    i += 1;
+    if data.at(i).deref() == 0 {
+        i += 1;
+        owner = Option::Some(data.at(i).deref().try_into().unwrap());
+    }
+    i += 1;
+    if data.at(i).deref() == 0 {
+        i += 1;
+        app = Option::Some(data.at(i).deref().try_into().unwrap());
+    }
+    i += 1;
+    if data.at(i).deref() == 0 {
+        i += 1;
+        text = Option::Some(data.at(i).deref().try_into().unwrap());
+    }
+    i += 1;
+    if data.at(i).deref() == 0 {
+        i += 1;
+        timestamp = Option::Some(data.at(i).deref().try_into().unwrap());
+    }
+    i += 1;
+    if data.at(i).deref() == 0 {
+        i += 1;
+        action = Option::Some(data.at(i).deref().try_into().unwrap())
+    }
+
+    i += 1;
+    let app_caller: ContractAddress = data.at(i).deref().try_into().unwrap();
+
+    i += 1;
+    let player_caller: ContractAddress = data.at(i).deref().try_into().unwrap();
+
+    (PixelUpdate { x, y, color, owner, app, text, timestamp, action }, app_caller, player_caller)
 }

@@ -17,14 +17,14 @@ trait IPaintActions<TContractState> {
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
-    );
+    ) -> (PixelUpdate, ContractAddress, ContractAddress);
 
     fn on_post_update(
         ref world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
-    );
+    ) -> (PixelUpdate, ContractAddress, ContractAddress);
 
     /// Interacts with a pixel based on default parameters.
     ///
@@ -85,11 +85,10 @@ mod paint_actions {
         contract_address_const,
     };
 
-    use super::IPaintActions;
     use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
-    impl Actions of IPaintActions<ContractState> {
+    impl Actions of super::IPaintActions<ContractState> {
         /// Initializes the Paint App.
         ///
         /// This function registers the app with core actions and sets up initial permissions.
@@ -129,9 +128,19 @@ mod paint_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) {
+        ) -> (PixelUpdate, ContractAddress, ContractAddress) {
             // Do nothing
             let _world = world;
+
+            // Check which app is calling
+            if app_caller
+                .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
+            }
+
+            println!("on_pre_update: {:?}", app_caller.name);
+
+            // Don't modify the inputs for now
+            (pixel_update, app_caller.system, player_caller)
         }
 
         /// Hook called after a pixel update.
@@ -147,9 +156,16 @@ mod paint_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) {
+        ) -> (PixelUpdate, ContractAddress, ContractAddress) {
             // Do nothing
             let _world = world;
+
+            // Check which app is calling
+            if app_caller
+                .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
+            }
+
+            (pixel_update, app_caller.system, player_caller)
         }
 
         /// Interacts with a pixel based on default parameters.
