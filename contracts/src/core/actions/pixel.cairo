@@ -88,6 +88,7 @@ pub fn update_pixel(
     // Load the pixel
     let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
+    println!("a {:?}", pixel);
     match can_update_pixel(world, for_player, for_system, pixel, pixel_update, area_id_hint) {
         Result::Ok(pixel_update) => apply_pixel_update(ref pixel, pixel_update),
         Result::Err(err) => { return Result::Err(err); },
@@ -151,12 +152,12 @@ fn call_on_pre_update(
     pixel_update.add_to_calldata(ref calldata);
     app_caller.add_to_calldata(ref calldata);
     calldata.append(for_player.into());
-
+    println!("call_on_pre_update {:?}", app_caller);
     let out = call_contract_syscall(contract_address, ON_PRE_UPDATE_HOOK, calldata.span());
 
     if out.is_err() {
         if let Option::Some(err) = out.err() {
-            if *err.at(0) == 'ENTRYPOINT_NOT_FOUND' {
+            if *err.at(0) != 'ENTRYPOINT_NOT_FOUND' && *err.at(0) != 'CONTRACT_NOT_DEPLOYED' {
                 result = Result::Err(*err.at(0));
             }
         }

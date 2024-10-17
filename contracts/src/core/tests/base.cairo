@@ -124,7 +124,7 @@ fn test_can_update_pixel() {
     let pixel = get!(world, (position.x, position.y), Pixel);
 
     let has_access = core_actions
-        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
         .is_ok();
 
     assert(has_access == false, 'should not have access');
@@ -132,7 +132,7 @@ fn test_can_update_pixel() {
     set_caller(player_1);
 
     let has_access = core_actions
-        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_1, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
         .is_ok();
 
     assert(has_access == true, 'should have access');
