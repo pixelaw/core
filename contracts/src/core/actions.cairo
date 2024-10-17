@@ -1,12 +1,10 @@
 pub mod app;
 pub mod area;
-pub mod permissions;
 pub mod pixel;
 pub mod queue;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::area::{Area, RTreeNode};
-use pixelaw::core::models::permissions::{Permission};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
@@ -146,7 +144,6 @@ pub mod actions {
     use pixelaw::core::models::area::{
         BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
     };
-    use pixelaw::core::models::permissions::{Permission, Permissions};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::queue::QueueItem;
 

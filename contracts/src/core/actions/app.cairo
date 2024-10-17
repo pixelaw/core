@@ -3,7 +3,6 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::area::{
     BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
 };
-use pixelaw::core::models::permissions::{Permission, Permissions};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::queue::QueueItem;
 

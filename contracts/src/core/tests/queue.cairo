@@ -6,10 +6,7 @@ use dojo::{
 };
 
 use pixelaw::core::{
-    models::{
-        registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},
-        permissions::{permissions}
-    },
+    models::{registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},},
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
     utils::{get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::setup_core_initialized

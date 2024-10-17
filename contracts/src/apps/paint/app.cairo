@@ -73,7 +73,6 @@ mod paint_actions {
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
 
-    use pixelaw::core::models::permissions::Permission;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
@@ -91,7 +90,7 @@ mod paint_actions {
     impl Actions of super::IPaintActions<ContractState> {
         /// Initializes the Paint App.
         ///
-        /// This function registers the app with core actions and sets up initial permissions.
+        /// This function registers the app with core actions
         ///
         /// # Arguments
         ///

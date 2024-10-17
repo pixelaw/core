@@ -19,8 +19,7 @@ use pixelaw::{
                 App, app, app_name, core_actions_address, CoreActionsAddress, Instruction,
                 instruction
             },
-            pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
-            area::{r_tree, RTree, area, Area}
+            pixel::{Pixel, PixelUpdate, pixel}, area::{r_tree, RTree, area, Area}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{get_core_actions, Direction, Position, DefaultParameters},
@@ -37,15 +36,6 @@ use starknet::{
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
 pub const WHITE_COLOR: u32 = 0xFFFFFFFF;
 pub const RED_COLOR: u32 = 0xFF0000FF;
-
-
-pub const PERMISSION_ALL: Permission =
-    Permission { app: true, color: true, owner: true, text: true, timestamp: true, action: true };
-
-pub const PERMISSION_NONE: Permission =
-    Permission {
-        app: false, color: false, owner: false, text: false, timestamp: false, action: false
-    };
 
 
 pub fn set_caller(caller: ContractAddress) {
@@ -73,7 +63,6 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
         app::TEST_CLASS_HASH,
         app_name::TEST_CLASS_HASH,
         core_actions_address::TEST_CLASS_HASH,
-        permissions::TEST_CLASS_HASH,
         instruction::TEST_CLASS_HASH,
         r_tree::TEST_CLASS_HASH,
         area::TEST_CLASS_HASH
@@ -89,7 +78,6 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
     world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);

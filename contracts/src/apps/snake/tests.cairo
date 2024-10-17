@@ -13,7 +13,6 @@ mod tests {
     use pixelaw::core::actions::{
         actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
     };
-    use pixelaw::core::models::permissions::{permissions};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};

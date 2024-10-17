@@ -11,7 +11,7 @@ use pixelaw::core::utils::{MAX_DIMENSION};
 use pixelaw::core::{
     models::{
         registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions},
+        pixel::{Pixel, PixelUpdate, pixel},
         area::{
             Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
             RTreeNodePackableImpl, ChildrenPackableImpl
@@ -21,8 +21,7 @@ use pixelaw::core::{
     utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::{
         setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
-        PERMISSION_NONE
+        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
     }
 };
 
