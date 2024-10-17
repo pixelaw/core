@@ -32,7 +32,6 @@ pub fn can_update_pixel(
     if pixel.owner == for_player {
         return Result::Ok(pixel_update);
     }
-
     // Load the area
     let area_result = super::area::find_area_for_position(
         world, Position { x: pixel.x, y: pixel.y }, area_id_hint

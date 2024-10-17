@@ -69,7 +69,13 @@ fn test_add_new_pixel_in_owned_area() {
 
     set_caller(player_1);
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
+    let _a1: Area = core_actions
+        .add_area(
+            Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 },
+            player_1,
+            WHITE_COLOR,
+            ZERO_ADDRESS()
+        );
 
     set_caller(player_2);
 
@@ -88,7 +94,7 @@ fn test_add_new_pixel_in_owned_area() {
     };
 
     let has_access = core_actions
-        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
         .is_ok();
 
     assert(has_access == false, 'should not have access');

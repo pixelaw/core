@@ -4,7 +4,7 @@ use pixelaw::core::utils::{
 };
 use starknet::{ContractAddress, ClassHash};
 
-#[derive(Copy, Drop, Serde, PartialEq)]
+#[derive(Debug, Copy, Drop, Serde, PartialEq)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
 pub struct Pixel {
     // System properties
@@ -23,7 +23,7 @@ pub struct Pixel {
     pub action: felt252
 }
 
-#[derive(Default, Copy, Drop, Serde)]
+#[derive(Debug, Default, Copy, Drop, Serde)]
 pub struct PixelUpdate {
     pub x: u16, // only 15 bits used, to a max of 32767
     pub y: u16, // only 15 bits used, to a max of 32767
