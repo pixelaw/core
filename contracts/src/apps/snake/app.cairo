@@ -266,7 +266,7 @@ mod snake_actions {
             set!(world, (snake, segment));
 
             // Call core_actions to update the color
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -351,7 +351,7 @@ mod snake_actions {
                 let next_pixel = get!(world, (next_x, next_y), Pixel);
 
                 let has_write_access = core_actions
-                    .has_write_access(
+                    .can_update_pixel(
                         snake.owner,
                         get_contract_address(),
                         next_pixel,
@@ -366,7 +366,8 @@ mod snake_actions {
                             action: Option::None, // Not using this feature for snake
                         },
                         Option::None
-                    );
+                    )
+                    .is_ok();
 
                 // Determine what happens to the snake
                 // MOVE, GROW, SHRINK, DIE
@@ -462,7 +463,7 @@ mod snake_actions {
         let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
 
         // Write the changes to the pixel
-        core_actions
+        let _ = core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
@@ -530,7 +531,7 @@ mod snake_actions {
         );
 
         // Write the changes to the pixel
-        core_actions
+        let _pu = core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),

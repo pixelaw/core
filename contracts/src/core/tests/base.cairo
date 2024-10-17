@@ -85,38 +85,9 @@ fn test_paint_interaction() {
         );
 }
 
-#[test]
-fn test_update_permission() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
-
-    let permissioning_system = contract_address_const::<0xBEEF01>();
-    let permissioned_system = contract_address_const::<0xDEAD01>();
-
-    set_caller(player_1);
-
-    // Setup PermissioningApp
-    let permissioning: App = core_actions.new_app(permissioning_system, 'permissioning', '');
-
-    // Setup PermissionedApp
-    let permissioned: App = core_actions.new_app(permissioned_system, 'permissioned', '');
-
-    // Check that existing permissions are NONE
-    let current_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
-    assert(current_permissions.permission == PERMISSION_NONE, 'permissions not none');
-
-    // Update the permissions, as caller
-    set_caller(permissioning.system);
-    core_actions.update_permission(permissioned.name, PERMISSION_ALL);
-
-    // Check that existing permissions are ALL
-    let new_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
-
-    assert(new_permissions.permission == PERMISSION_ALL, 'permissions not all');
-}
-
 
 #[test]
-fn test_has_write_access() {
+fn test_can_update_pixel() {
     let (world, core_actions, player_1, player_2) = setup_core_initialized();
     let (paint_actions, _snake_actions) = setup_apps_initialized(world);
 
@@ -154,14 +125,16 @@ fn test_has_write_access() {
     let pixel = get!(world, (position.x, position.y), Pixel);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None);
+        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .is_ok();
 
     assert(has_access == false, 'should not have access');
 
     set_caller(player_1);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None);
+        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .is_ok();
 
     assert(has_access == true, 'should have access');
 }
@@ -214,7 +187,7 @@ fn test_update_pixel() {
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
-    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
+    let _ = core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
 
     let pixel = get!(world, (x, y), Pixel);
 

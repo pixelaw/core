@@ -25,38 +25,17 @@ pub trait IActions<TContractState> {
     /// * `world` - A reference to the world dispatcher.
     fn init(ref world: IWorldDispatcher);
 
-    /// Updates the permissions for a specified system.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    /// * `app_key` - The key of the app (example: 'paint') to update permissions for.
-    /// * `permission` - The permission to set for the system.
-    fn update_permission(ref world: IWorldDispatcher, app_key: felt252, permission: Permission);
 
-    // fn update_app(ref world: IWorldDispatcher, name: felt252, icon: felt252);
-
-    /// Checks if a player or system has write access to a pixel.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    /// * `for_player` - The player contract address.
-    /// * `for_system` - The system contract address.
-    /// * `pixel` - The pixel to check access for.
-    /// * `pixel_update` - The proposed update to the pixel.
-    ///
-    /// # Returns
-    ///
-    /// * `bool` - True if access is granted, false otherwise.
-    fn has_write_access(
+    // Check if and how a Pixel can be updated, based on given params
+    // It checks all ownership (pixel and Area) and hooks
+    fn can_update_pixel(
         ref world: IWorldDispatcher,
         for_player: ContractAddress,
         for_system: ContractAddress,
         pixel: Pixel,
         pixel_update: PixelUpdate,
-        area_id_hint: Option<u64>,
-    ) -> bool;
+        area_id_hint: Option<u64>
+    ) -> Result<PixelUpdate, felt252>;
 
     /// Processes a scheduled queue item.
     ///
@@ -108,7 +87,7 @@ pub trait IActions<TContractState> {
         for_system: ContractAddress,
         area_id: Option<u64>,
         pixel_update: PixelUpdate,
-    );
+    ) -> Result<PixelUpdate, felt252>;
 
     /// Registers a new app.
     ///
@@ -232,22 +211,15 @@ pub mod actions {
             set!(world, RTree { id: ROOT_ID, children: 1310762 });
         }
 
-
-        fn update_permission(
-            ref world: IWorldDispatcher, app_key: felt252, permission: Permission,
-        ) {
-            super::permissions::update_permission(world, app_key, permission);
-        }
-
-        fn has_write_access(
+        fn can_update_pixel(
             ref world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel: Pixel,
             pixel_update: PixelUpdate,
             area_id_hint: Option<u64>
-        ) -> bool {
-            super::permissions::has_write_access(
+        ) -> Result<PixelUpdate, felt252> {
+            super::pixel::can_update_pixel(
                 world, for_player, for_system, pixel, pixel_update, area_id_hint
             )
         }
@@ -288,8 +260,8 @@ pub mod actions {
             for_system: ContractAddress,
             area_id: Option<u64>,
             pixel_update: PixelUpdate,
-        ) {
-            super::pixel::update_pixel(world, for_player, for_system, area_id, pixel_update);
+        ) -> Result<PixelUpdate, felt252> {
+            super::pixel::update_pixel(world, for_player, for_system, area_id, pixel_update)
         }
 
 

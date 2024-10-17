@@ -116,21 +116,23 @@ mod paint_actions {
             app_caller: App,
             player_caller: ContractAddress,
         ) -> Option<PixelUpdate> {
-            // Do nothing
             let _world = world;
 
-            // Check which app is calling
-            if app_caller.name == 'snake' {
-                // Snake can do ANYTHING to a paint pixel... (even change owners)
-                // TODO make a more realistic example, like block those PixelUpdate (with owner
-                // enabled)
-                return Option::Some(pixel_update);
-            }
+            let mut result = Option::None; //Default is to not allow anything
 
             println!("on_pre_update: {:?}", app_caller.name);
 
-            // Don't modify the inputs for now
-            Option::None
+            // Check which app is calling
+            if app_caller.name == 'snake' {
+                if pixel_update.owner.is_some() {
+                    // If Snake wants to change the owner, we don't allow that.
+                    result = Option::None;
+                }
+                // Anything else is okay
+                result = Option::Some(pixel_update);
+            }
+
+            result
         }
 
         /// Hook called after a pixel update.
@@ -153,6 +155,7 @@ mod paint_actions {
             // Check which app is calling
             if app_caller
                 .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
+            // Maybe nice example is to keep a counter of "snakebites" for the paint app
             }
         }
 
@@ -209,7 +212,7 @@ mod paint_actions {
             );
 
             // Update color of the pixel
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -264,7 +267,7 @@ mod paint_actions {
                 // are 0 padded.
                 // We unpack 4 bytes at a time and use them
 
-                core_actions
+                let _ = core_actions
                     .update_pixel(
                         player,
                         system,
@@ -332,7 +335,7 @@ mod paint_actions {
             );
 
             // Update color of the pixel
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,

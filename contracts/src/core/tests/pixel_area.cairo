@@ -61,7 +61,7 @@ fn test_pixel_with_invalid_position() {
         timestamp: Option::None,
         action: Option::None
     };
-    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
+    let _ = core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
 }
 
 #[test]
@@ -89,7 +89,8 @@ fn test_add_new_pixel_in_owned_area() {
     };
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None);
+        .can_update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .is_ok();
 
     assert(has_access == false, 'should not have access');
 }
