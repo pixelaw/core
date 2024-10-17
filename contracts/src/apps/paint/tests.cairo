@@ -38,6 +38,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 1, y: 1 },
                     color: color
                 },

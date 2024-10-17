@@ -61,7 +61,7 @@ fn test_pixel_with_invalid_position() {
         timestamp: Option::None,
         action: Option::None
     };
-    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update);
+    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
 }
 
 #[test]
@@ -70,7 +70,7 @@ fn test_add_new_pixel_in_owned_area() {
 
     set_caller(player_1);
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     set_caller(player_2);
 

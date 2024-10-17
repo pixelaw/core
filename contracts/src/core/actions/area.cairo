@@ -26,13 +26,17 @@ pub fn remove_area(world: IWorldDispatcher, area_id: u64) {
 }
 
 pub fn add_area(
-    world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+    world: IWorldDispatcher,
+    bounds: Bounds,
+    owner: ContractAddress,
+    color: u32,
+    app: ContractAddress
 ) -> Area {
     // Add node in the RTree index
     let id = add_area_node(world, bounds);
 
     // Create Area model
-    let area = Area { id, owner, default_color };
+    let area = Area { id, owner, color, app };
 
     // Store Area model
     set!(world, (area));

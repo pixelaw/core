@@ -70,8 +70,9 @@ pub struct RTreeNode {
 pub struct Area {
     #[key]
     pub id: u64,
+    pub app: ContractAddress,
     pub owner: ContractAddress,
-    pub default_color: u32
+    pub color: u32
 }
 
 pub trait RTreeTrait<RTree> {

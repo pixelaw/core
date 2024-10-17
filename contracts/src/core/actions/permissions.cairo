@@ -27,6 +27,50 @@ pub fn update_permission(world: IWorldDispatcher, app_key: felt252, permission: 
     set!(world, Permissions { allowing_app: caller_address, allowed_app, permission });
 }
 
+pub fn test_write(
+    world: IWorldDispatcher,
+    for_player: ContractAddress,
+    for_system: ContractAddress,
+    pixel: Pixel,
+    pixel_update: PixelUpdate,
+    area_id_hint: Option<u64>
+) -> (bool, Option<PixelUpdate>) {
+    // 1. Is there an owner of pixel or area?
+    if pixel.owner == for_player {
+        return (true, Option::None);
+    }
+
+    // Load the area
+    let area_result = super::area::find_area_for_position(
+        world, Position { x: pixel.x, y: pixel.y }, area_id_hint
+    );
+
+    if let Option::Some(area) = area_result {
+        // Return true if the player is owner of the area
+        if area.owner == for_player {
+            return (true, Option::None);
+        }
+        // Return true if neither area nor pixel have an owner
+        if area.owner == contract_address_const::<0>()
+            && pixel.owner == contract_address_const::<0>() {
+            return (true, Option::None);
+        }
+        // Return true if there is no area and pixel has no owner
+    } else if pixel.owner == contract_address_const::<0>() {
+        return (true, Option::None);
+    }
+
+    // At this point its likely that the pixel and/or area have a different owner
+    // We can still try to call the hook on the pixel's App and see if that allows
+
+    // TODO how do we tell apart
+    //      permission / overrides
+
+    // 2. Does calling the hook error?
+
+    (true, Option::None)
+}
+
 pub fn has_write_access(
     world: IWorldDispatcher,
     for_player: ContractAddress,
@@ -78,26 +122,26 @@ pub fn has_write_access(
         return true;
     }
 
-    let permissions = get!(world, (pixel.app, caller_app.system).into(), (Permissions));
+    // let permissions = get!(world, (pixel.app, caller_app.system).into(), (Permissions));
 
-    if pixel_update.app.is_some() && !permissions.permission.app {
-        return false;
-    };
-    if pixel_update.color.is_some() && !permissions.permission.color {
-        return false;
-    };
-    if pixel_update.owner.is_some() && !permissions.permission.owner {
-        return false;
-    };
-    if pixel_update.text.is_some() && !permissions.permission.text {
-        return false;
-    };
-    if pixel_update.timestamp.is_some() && !permissions.permission.timestamp {
-        return false;
-    };
-    if pixel_update.action.is_some() && !permissions.permission.action {
-        return false;
-    };
+    // if pixel_update.app.is_some() && !permissions.permission.app {
+    //     return false;
+    // };
+    // if pixel_update.color.is_some() && !permissions.permission.color {
+    //     return false;
+    // };
+    // if pixel_update.owner.is_some() && !permissions.permission.owner {
+    //     return false;
+    // };
+    // if pixel_update.text.is_some() && !permissions.permission.text {
+    //     return false;
+    // };
+    // if pixel_update.timestamp.is_some() && !permissions.permission.timestamp {
+    //     return false;
+    // };
+    // if pixel_update.action.is_some() && !permissions.permission.action {
+    //     return false;
+    // };
 
     // Since we checked all the permissions and no assert fired, we can return true
     true

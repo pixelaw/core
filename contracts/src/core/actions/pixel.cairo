@@ -20,38 +20,64 @@ use starknet::{
     syscalls::{call_contract_syscall},
 };
 
+// Gives the appropriate App, based on availability in Pixel or Area
+pub fn determine_app(pixel: Pixel, area_result: Option<Area>) -> ContractAddress {
+    let mut result = contract_address_const::<0>();
+    if pixel.app == contract_address_const::<0>() {
+        if let Option::Some(area) = area_result {
+            result = area.app;
+        }
+    } else {
+        result = pixel.app;
+    }
+    result
+}
+
+pub fn validate_callers(world: IWorldDispatcher, for_player: ContractAddress) {
+    let core_address = get_core_actions_address(world);
+
+    let caller_account = get_tx_info().unbox().account_contract_address;
+    let caller_contract = get_contract_address();
+
+    if for_player != caller_account {
+        assert(caller_contract == core_address, 'unauthorized caller_account');
+    }
+}
 
 pub fn update_pixel(
     world: IWorldDispatcher,
     for_player: ContractAddress,
     for_system: ContractAddress,
+    area_id: Option<u64>,
     pixel_update: PixelUpdate,
 ) {
+    // Check if the pixel_update values are valid (x and y)
     pixel_update.validate();
 
+    // validate that for_player is not different from the actual caller unless the
+    // calling contract is the core.
+    // TODO is there an exploit by doing this through a hook then?
+    validate_callers(world, for_player);
+
+    // Load the pixel
     let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
 
-    assert!(
-        super::permissions::has_write_access(
-            world, for_player, for_system, pixel, pixel_update, Option::None
-        ),
-        "No access!"
+    // Try to find an Area for this position
+    let area_result = super::area::find_area_for_position(
+        world, Position { x: pixel.x, y: pixel.y }, area_id
     );
-    let current_pixel_app = pixel.app;
-    let mut app_caller = get!(world, for_system, (App));
+
+    // Which App controls this pixel?
+    let pixel_app = determine_app(pixel, area_result);
+
+    let mut caller_app = get!(world, for_system, (App));
     let mut pixel_update = pixel_update;
     let mut for_player = for_player;
 
     // If the pixel is assigned an app contract, try calling the hook
-    if current_pixel_app != contract_address_const::<0>() {
-        call_hook(
-            world,
-            current_pixel_app,
-            ON_PRE_UPDATE_HOOK,
-            ref pixel_update,
-            ref app_caller,
-            ref for_player
-        );
+    // NOTE the pixel_update passed by ref CAN BE CHANGED inside the hook call!
+    if pixel_app != contract_address_const::<0>() { // TODO handle Option result
+    // call_on_pre_update(world, pixel_app, pixel_update, caller_app, for_player);
     }
 
     // If the pixel has no owner set yet, do that now.
@@ -62,59 +88,53 @@ pub fn update_pixel(
         pixel.updated_at = now;
     }
 
-    if pixel_update.app.is_some() {
-        pixel.app = pixel_update.app.unwrap();
+    if let Option::Some(app) = pixel_update.app {
+        pixel.app = app;
     }
 
-    if pixel_update.color.is_some() {
-        pixel.color = pixel_update.color.unwrap();
+    if let Option::Some(color) = pixel_update.color {
+        pixel.color = color;
     }
 
-    if pixel_update.owner.is_some() {
-        pixel.owner = pixel_update.owner.unwrap();
+    if let Option::Some(owner) = pixel_update.owner {
+        pixel.owner = owner;
     }
 
-    if pixel_update.text.is_some() {
-        pixel.text = pixel_update.text.unwrap();
+    if let Option::Some(text) = pixel_update.text {
+        pixel.text = text;
     }
 
-    if pixel_update.timestamp.is_some() {
-        pixel.timestamp = pixel_update.timestamp.unwrap();
+    if let Option::Some(timestamp) = pixel_update.timestamp {
+        pixel.timestamp = timestamp;
     }
 
-    if pixel_update.action.is_some() {
-        pixel.action = pixel_update.action.unwrap()
+    if let Option::Some(action) = pixel_update.action {
+        pixel.action = action;
     }
 
     // Set Pixel
     set!(world, (pixel));
 
-    if current_pixel_app != contract_address_const::<0>() {
-        call_hook(
-            world,
-            current_pixel_app,
-            ON_POST_UPDATE_HOOK,
-            ref pixel_update,
-            ref app_caller,
-            ref for_player
-        );
+    if pixel_app != contract_address_const::<0>() {
+        call_on_post_update(world, pixel_app, pixel_update, caller_app, for_player);
     }
 }
-fn call_hook(
+
+fn call_on_pre_update(
     world: IWorldDispatcher,
     contract_address: ContractAddress,
-    entrypoint: felt252,
-    ref pixel_update: PixelUpdate,
-    ref app_caller: App,
-    ref for_player: ContractAddress
-) {
+    pixel_update: PixelUpdate,
+    app_caller: App,
+    for_player: ContractAddress
+) -> Option<PixelUpdate> {
     let mut calldata: Array<felt252> = array![];
+    let mut result = Option::None;
 
     pixel_update.add_to_calldata(ref calldata);
     app_caller.add_to_calldata(ref calldata);
     calldata.append(for_player.into());
 
-    let out = call_contract_syscall(contract_address, entrypoint, calldata.span());
+    let out = call_contract_syscall(contract_address, ON_PRE_UPDATE_HOOK, calldata.span());
 
     if out.is_err() {
         if let Option::Some(err) = out.err() {
@@ -127,18 +147,35 @@ fn call_hook(
         // 599683841819055043807870040764827848153960037270322986500076169224417352594, 1, 1, 1,
         // 599683841819055043807870040764827848153960037270322986500076169224417352594, 4919])
 
-        let (new_pixel_update, new_app_caller, new_for_player) = parseHookOutput(out.unwrap());
-        pixel_update = new_pixel_update;
+        result = parseHookOutput(out.unwrap());
+    }
+    result
+}
 
-        if app_caller.system != new_app_caller {
-            app_caller = get!(world, new_app_caller, (App));
+fn call_on_post_update(
+    world: IWorldDispatcher,
+    contract_address: ContractAddress,
+    pixel_update: PixelUpdate,
+    app_caller: App,
+    for_player: ContractAddress
+) {
+    let mut calldata: Array<felt252> = array![];
+
+    pixel_update.add_to_calldata(ref calldata);
+    app_caller.add_to_calldata(ref calldata);
+    calldata.append(for_player.into());
+
+    let out = call_contract_syscall(contract_address, ON_POST_UPDATE_HOOK, calldata.span());
+
+    if out.is_err() {
+        if let Option::Some(err) = out.err() {
+            // Panic on any other error than ENTRYPOINT_NOT_FOUND (which means hook wasnt enabled)
+            assert(*err.at(0) == 'ENTRYPOINT_NOT_FOUND', *err.at(0));
         }
-
-        for_player = new_for_player;
     }
 }
 
-fn parseHookOutput(data: Span<felt252>) -> (PixelUpdate, ContractAddress, ContractAddress) {
+fn parseHookOutput(data: Span<felt252>) -> Option<PixelUpdate> {
     let mut color: Option<u32> = Option::None;
     let mut owner: Option<ContractAddress> = Option::None;
     let mut app: Option<ContractAddress> = Option::None;
@@ -180,12 +217,6 @@ fn parseHookOutput(data: Span<felt252>) -> (PixelUpdate, ContractAddress, Contra
         i += 1;
         action = Option::Some(data.at(i).deref().try_into().unwrap())
     }
-
-    i += 1;
-    let app_caller: ContractAddress = data.at(i).deref().try_into().unwrap();
-
-    i += 1;
-    let player_caller: ContractAddress = data.at(i).deref().try_into().unwrap();
-
-    (PixelUpdate { x, y, color, owner, app, text, timestamp, action }, app_caller, player_caller)
+    //TODO
+    Option::Some(PixelUpdate { x, y, color, owner, app, text, timestamp, action })
 }

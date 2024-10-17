@@ -46,6 +46,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -79,6 +80,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -106,6 +108,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -136,6 +139,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -153,6 +157,7 @@ mod tests {
                 DefaultParameters {
                     player_override: Option::None,
                     system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },

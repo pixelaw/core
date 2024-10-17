@@ -17,14 +17,14 @@ trait IPaintActions<TContractState> {
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
-    ) -> (PixelUpdate, ContractAddress, ContractAddress);
+    ) -> Option<PixelUpdate>;
 
     fn on_post_update(
         ref world: IWorldDispatcher,
         pixel_update: PixelUpdate,
         app_caller: App,
         player_caller: ContractAddress
-    ) -> (PixelUpdate, ContractAddress, ContractAddress);
+    );
 
     /// Interacts with a pixel based on default parameters.
     ///
@@ -100,19 +100,6 @@ mod paint_actions {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-            // // TODO: Replace this with proper granting of permission
-        // core_actions
-        //     .update_permission(
-        //         'snake',
-        //         Permission {
-        //             app: true,
-        //             color: true,
-        //             owner: false,
-        //             text: true,
-        //             timestamp: false,
-        //             action: false,
-        //         },
-        //     );
         }
 
         /// Hook called before a pixel update.
@@ -128,19 +115,22 @@ mod paint_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) -> (PixelUpdate, ContractAddress, ContractAddress) {
+        ) -> Option<PixelUpdate> {
             // Do nothing
             let _world = world;
 
             // Check which app is calling
-            if app_caller
-                .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
+            if app_caller.name == 'snake' {
+                // Snake can do ANYTHING to a paint pixel... (even change owners)
+                // TODO make a more realistic example, like block those PixelUpdate (with owner
+                // enabled)
+                return Option::Some(pixel_update);
             }
 
             println!("on_pre_update: {:?}", app_caller.name);
 
             // Don't modify the inputs for now
-            (pixel_update, app_caller.system, player_caller)
+            Option::None
         }
 
         /// Hook called after a pixel update.
@@ -156,7 +146,7 @@ mod paint_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) -> (PixelUpdate, ContractAddress, ContractAddress) {
+        ) {
             // Do nothing
             let _world = world;
 
@@ -164,8 +154,6 @@ mod paint_actions {
             if app_caller
                 .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
             }
-
-            (pixel_update, app_caller.system, player_caller)
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -225,6 +213,7 @@ mod paint_actions {
                 .update_pixel(
                     player,
                     system,
+                    Option::None, // TODO area_hint
                     PixelUpdate {
                         x: position.x,
                         y: position.y,
@@ -279,6 +268,7 @@ mod paint_actions {
                     .update_pixel(
                         player,
                         system,
+                        Option::None, // area_hint
                         PixelUpdate {
                             x: position.x + pixel_index,
                             y: position.y,
@@ -346,6 +336,7 @@ mod paint_actions {
                 .update_pixel(
                     player,
                     system,
+                    Option::None,
                     PixelUpdate {
                         x: position.x,
                         y: position.y,

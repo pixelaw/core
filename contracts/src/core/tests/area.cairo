@@ -101,14 +101,15 @@ fn test_area_packing() {
 fn test_adding_overlapping() {
     let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     let _a2: Area = core_actions
         .add_area(
             Bounds {
                 x_min: 15, y_min: 15, x_max: 25, y_max: 25
             }, // These bounds are overlapping the prior
             player_1,
-            WHITE_COLOR
+            WHITE_COLOR,
+            ZERO_ADDRESS()
         );
 }
 
@@ -118,7 +119,7 @@ fn test_adding_overlapping() {
 fn test_adding_containing() {
     let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     // println!("------------------ PRINTING TREE -----------------");
     // print_tree(world, ROOT_ID, "");
@@ -129,7 +130,8 @@ fn test_adding_containing() {
                 x_min: 5, y_min: 5, x_max: 25, y_max: 25
             }, // These bounds are containing the prior (so all corners are not inside another area)
             player_1,
-            WHITE_COLOR
+            WHITE_COLOR,
+            ZERO_ADDRESS()
         );
 }
 
@@ -137,7 +139,7 @@ fn test_adding_containing() {
 fn test_remove() {
     let (world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    let a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(a1.id);
 
     assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) == 0, 'should not find 1');
@@ -149,7 +151,7 @@ fn test_remove() {
 fn test_remove_nonarea() {
     let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(120);
 }
 
@@ -157,7 +159,7 @@ fn test_remove_nonarea() {
 fn test_adding() {
     let (world, core_actions, player_1, _player_2) = setup_core_initialized();
 
-    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR);
+    let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     let not_found = find_node_for_position(world, POSITION_1, ROOT_ID, true); // has_area=true
 
@@ -168,33 +170,33 @@ fn test_adding() {
     assert(found != 0, 'should find');
 
     // Add more than 4 so node splitting is necessary
-    let _a2 = core_actions.add_area(BOUNDS_2, player_1, WHITE_COLOR);
+    let _a2 = core_actions.add_area(BOUNDS_2, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a3 = core_actions.add_area(BOUNDS_3, player_1, WHITE_COLOR);
+    let _a3 = core_actions.add_area(BOUNDS_3, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a4 = core_actions.add_area(BOUNDS_4, player_1, WHITE_COLOR);
+    let _a4 = core_actions.add_area(BOUNDS_4, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     // // Trigger a split
-    let _a5 = core_actions.add_area(BOUNDS_5, player_1, WHITE_COLOR);
+    let _a5 = core_actions.add_area(BOUNDS_5, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     // Keep adding
-    let _a6 = core_actions.add_area(BOUNDS_6, player_1, WHITE_COLOR);
+    let _a6 = core_actions.add_area(BOUNDS_6, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a7 = core_actions.add_area(BOUNDS_7, player_1, WHITE_COLOR);
+    let _a7 = core_actions.add_area(BOUNDS_7, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a8 = core_actions.add_area(BOUNDS_8, player_1, WHITE_COLOR);
-    let _a9 = core_actions.add_area(BOUNDS_9, player_1, WHITE_COLOR);
+    let _a8 = core_actions.add_area(BOUNDS_8, player_1, WHITE_COLOR, ZERO_ADDRESS());
+    let _a9 = core_actions.add_area(BOUNDS_9, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a10 = core_actions.add_area(BOUNDS_10, player_1, WHITE_COLOR);
+    let _a10 = core_actions.add_area(BOUNDS_10, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a11 = core_actions.add_area(BOUNDS_11, player_1, WHITE_COLOR);
+    let _a11 = core_actions.add_area(BOUNDS_11, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let _a12 = core_actions.add_area(BOUNDS_12, player_1, WHITE_COLOR);
-    let _a13 = core_actions.add_area(BOUNDS_13, player_1, WHITE_COLOR);
-    let _a14 = core_actions.add_area(BOUNDS_14, player_1, WHITE_COLOR);
+    let _a12 = core_actions.add_area(BOUNDS_12, player_1, WHITE_COLOR, ZERO_ADDRESS());
+    let _a13 = core_actions.add_area(BOUNDS_13, player_1, WHITE_COLOR, ZERO_ADDRESS());
+    let _a14 = core_actions.add_area(BOUNDS_14, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     // FIXME this addition messes up the tree (doesnt move children correctly)
-    let _a15 = core_actions.add_area(BOUNDS_15, player_1, WHITE_COLOR);
+    let _a15 = core_actions.add_area(BOUNDS_15, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
     println!("------------------ AFTER LAST SPLIT -----------------");
     print_tree(world, ROOT_ID, "");

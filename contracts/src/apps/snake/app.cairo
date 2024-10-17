@@ -103,19 +103,7 @@ trait ISnakeActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     fn init(ref world: IWorldDispatcher);
-    fn on_pre_update(
-        ref world: IWorldDispatcher,
-        pixel_update: PixelUpdate,
-        app_caller: App,
-        player_caller: ContractAddress
-    );
 
-    fn on_post_update(
-        ref world: IWorldDispatcher,
-        pixel_update: PixelUpdate,
-        app_caller: App,
-        player_caller: ContractAddress
-    );
     /// Starts or interacts with a snake.
     ///
     /// # Arguments
@@ -209,41 +197,7 @@ mod snake_actions {
             core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
 
-        /// Hook called before a pixel update.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The proposed update to the pixel.
-        /// * `app_caller` - The app initiating the update.
-        /// * `player_caller` - The player initiating the update.
-        fn on_pre_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            // Do nothing
-            let _world = world;
-        }
 
-        /// Hook called after a pixel update.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The update that was applied to the pixel.
-        /// * `app_caller` - The app that performed the update.
-        /// * `player_caller` - The player that performed the update.
-        fn on_post_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            // Do nothing
-            let _world = world;
-        }
         /// Starts a new snake or changes the direction of an existing snake.
         ///
         /// # Arguments
@@ -316,6 +270,7 @@ mod snake_actions {
                 .update_pixel(
                     player,
                     system,
+                    Option::None,
                     PixelUpdate {
                         x: position.x,
                         y: position.y,
@@ -511,6 +466,7 @@ mod snake_actions {
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
+                Option::None, // TODO area_hint
                 PixelUpdate {
                     x: pixel.x,
                     y: pixel.y,
@@ -578,6 +534,7 @@ mod snake_actions {
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
+                Option::None,
                 PixelUpdate {
                     x: pixel.x,
                     y: pixel.y,

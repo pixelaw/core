@@ -66,6 +66,7 @@ fn test_hooks() {
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
+                area_hint: Option::None,
                 position: Position { x: 123, y: 321 },
                 color: 0xFF00FFFF
             },
@@ -76,6 +77,7 @@ fn test_hooks() {
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
+                area_hint: Option::None,
                 position: Position { x: 123, y: 321 },
                 color: 0xAF00FFFF
             },

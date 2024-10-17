@@ -69,6 +69,7 @@ pub struct Bounds {
 pub struct DefaultParameters {
     pub player_override: Option<ContractAddress>,
     pub system_override: Option<ContractAddress>,
+    pub area_hint: Option<u64>,
     pub position: Position,
     pub color: u32
 }

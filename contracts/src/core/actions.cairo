@@ -106,6 +106,7 @@ pub trait IActions<TContractState> {
         ref world: IWorldDispatcher,
         for_player: ContractAddress,
         for_system: ContractAddress,
+        area_id: Option<u64>,
         pixel_update: PixelUpdate,
     );
 
@@ -148,7 +149,11 @@ pub trait IActions<TContractState> {
     fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
     fn add_area(
-        ref world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+        ref world: IWorldDispatcher,
+        bounds: Bounds,
+        owner: ContractAddress,
+        color: u32,
+        app: ContractAddress
     ) -> Area;
     fn remove_area(ref world: IWorldDispatcher, area_id: u64);
     fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<Area>;
@@ -281,9 +286,10 @@ pub mod actions {
             ref world: IWorldDispatcher,
             for_player: ContractAddress,
             for_system: ContractAddress,
+            area_id: Option<u64>,
             pixel_update: PixelUpdate,
         ) {
-            super::pixel::update_pixel(world, for_player, for_system, pixel_update);
+            super::pixel::update_pixel(world, for_player, for_system, area_id, pixel_update);
         }
 
 
@@ -327,9 +333,13 @@ pub mod actions {
 
 
         fn add_area(
-            ref world: IWorldDispatcher, bounds: Bounds, owner: ContractAddress, default_color: u32
+            ref world: IWorldDispatcher,
+            bounds: Bounds,
+            owner: ContractAddress,
+            color: u32,
+            app: ContractAddress
         ) -> Area {
-            super::area::add_area(world, bounds, owner, default_color)
+            super::area::add_area(world, bounds, owner, color, app)
         }
 
         fn remove_area(ref world: IWorldDispatcher, area_id: u64) {

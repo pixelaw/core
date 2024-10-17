@@ -78,6 +78,7 @@ fn test_paint_interaction() {
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
+                area_hint: Option::None,
                 position: TEST_POSITION,
                 color: RED_COLOR
             }
@@ -129,7 +130,11 @@ fn test_has_write_access() {
     paint_actions
         .put_color(
             DefaultParameters {
-                player_override: Option::None, system_override: Option::None, position, color
+                player_override: Option::None,
+                system_override: Option::None,
+                area_hint: Option::None,
+                position,
+                color
             }
         );
 
@@ -209,7 +214,7 @@ fn test_update_pixel() {
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
-    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update);
+    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
 
     let pixel = get!(world, (x, y), Pixel);
 
@@ -231,6 +236,7 @@ fn test_get_callers_non_core() {
     let has_override = DefaultParameters {
         player_override: Option::Some(player_2),
         system_override: Option::Some(system_override),
+        area_hint: Option::None,
         position: Position { x: 1, y: 1 },
         color: 0
     };
@@ -246,6 +252,7 @@ fn test_get_callers() {
     let no_override = DefaultParameters {
         player_override: Option::None,
         system_override: Option::None,
+        area_hint: Option::None,
         position: Position { x: 1, y: 1 },
         color: 0
     };
@@ -253,6 +260,7 @@ fn test_get_callers() {
     let has_override = DefaultParameters {
         player_override: Option::Some(player_2),
         system_override: Option::Some(system_override),
+        area_hint: Option::None,
         position: Position { x: 1, y: 1 },
         color: 0
     };
