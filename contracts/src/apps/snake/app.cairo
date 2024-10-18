@@ -330,10 +330,11 @@ mod snake_actions {
             if snake.is_dying {
                 snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
-
+                println!("shrinking");
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
+                    println!("dead");
                     emit!(
                         world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
                     );
@@ -378,6 +379,7 @@ mod snake_actions {
                 if next_pixel.owner == contract_address_const::<0>() {
                     // Snake just moves
                     // Add a new segment on the next pixel and update the snake
+                    println!("moving");
                     snake
                         .first_segment_id =
                             create_new_segment(
@@ -385,9 +387,11 @@ mod snake_actions {
                             );
                     snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 } else if !has_write_access {
+                    println!("dying");
                     // Snake hit a pixel that is not allowing anything: DIE
                     snake.is_dying = true;
                 } else if next_pixel.owner == snake.owner {
+                    println!("growing");
                     // Next pixel is owned by snake owner: GROW
 
                     // Add a new segment

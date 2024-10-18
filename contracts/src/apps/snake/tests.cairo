@@ -17,7 +17,7 @@ mod tests {
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
     use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
-    use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
+    use pixelaw::core::tests::helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 
@@ -61,17 +61,17 @@ mod tests {
 
         // Check if the pixel is blank again at 1,1
         let pixel1_1 = get!(world, (1, 1), Pixel);
-        assert(pixel1_1.color == 0, 'wrong pixel color 3');
+        assert(pixel1_1.color == 0, 'wrong pixel color 1,1');
 
         // Check that the pixel is snake at 2,1
         let pixel2_1 = get!(world, (2, 1), Pixel);
-        assert(pixel2_1.color == SNAKE_COLOR, 'wrong pixel color 4');
+        assert(pixel2_1.color == SNAKE_COLOR, 'wrong pixel color 2,1');
 
         // Move right (head at 3,1 now)
         snake_actions.move(player1);
 
         // Check if the pixel is blank again at 2,1
-        assert(get!(world, (2, 1), Pixel).color == 0, 'wrong pixel color 5');
+        assert(get!(world, (2, 1), Pixel).color == 0, 'wrong pixel color 2,1');
 
         // Paint 4,1 so player1 owns it
         paint_actions
@@ -89,7 +89,7 @@ mod tests {
         snake_actions.move(player1);
 
         // Check that 3,1 is still snake color
-        assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color 6');
+        assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color 3,1');
 
         // Move right (head at 5,1 now)
         snake_actions.move(player1);
@@ -101,7 +101,7 @@ mod tests {
         //  1: hit the other pixel
         //  2: shrink
         //  3: shrink / delete
-        set_account_contract_address(player2);
+        set_caller(player2);
         paint_actions
             .interact(
                 DefaultParameters {
@@ -113,7 +113,7 @@ mod tests {
                 }
             );
 
-        set_account_contract_address(player1);
+        set_caller(player1);
 
         // Hit the pixel
         snake_actions.move(player1);
