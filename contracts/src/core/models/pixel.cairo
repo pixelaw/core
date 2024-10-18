@@ -23,7 +23,45 @@ pub struct Pixel {
     pub action: felt252
 }
 
-#[derive(Debug, Default, Copy, Drop, Serde)]
+
+#[derive(Drop, Copy, Serde)]
+pub enum PixelUpdateResult {
+    Ok: PixelUpdate,
+    NotAllowed,
+    Error: felt252
+}
+
+pub trait PixelUpdateResultTrait<PixelUpdateResult> {
+    fn is_ok(self: PixelUpdateResult) -> bool;
+    fn is_err(self: PixelUpdateResult) -> bool;
+    fn unwrap(self: PixelUpdateResult) -> PixelUpdate;
+}
+
+pub impl PixelUpdateResultTraitImpl of PixelUpdateResultTrait<PixelUpdateResult> {
+    fn is_ok(self: PixelUpdateResult) -> bool {
+        match self {
+            PixelUpdateResult::Ok(_) => true,
+            _ => false,
+        }
+    }
+
+    /// Returns true if the result is `Error`.
+    fn is_err(self: PixelUpdateResult) -> bool {
+        match self {
+            PixelUpdateResult::Error(_) => true,
+            _ => false,
+        }
+    }
+    fn unwrap(self: PixelUpdateResult) -> PixelUpdate {
+        match self {
+            PixelUpdateResult::Ok(value) => value,
+            PixelUpdateResult::NotAllowed => panic!("Called `unwrap()` on a `NotAllowed` value"),
+            PixelUpdateResult::Error(_) => panic!("Called `unwrap()` on an `Error` value"),
+        }
+    }
+}
+
+#[derive(PartialEq, Debug, Default, Copy, Drop, Serde)]
 pub struct PixelUpdate {
     pub x: u16, // only 15 bits used, to a max of 32767
     pub y: u16, // only 15 bits used, to a max of 32767

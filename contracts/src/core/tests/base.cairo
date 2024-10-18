@@ -10,7 +10,7 @@ use dojo::{
 use pixelaw::core::{
     models::{
         registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, pixel},
+        pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait, pixel},
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
     utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters},
@@ -124,7 +124,7 @@ fn test_can_update_pixel() {
     let pixel = get!(world, (position.x, position.y), Pixel);
 
     let has_access = core_actions
-        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
         .is_ok();
 
     assert(has_access == false, 'should not have access');
@@ -132,7 +132,7 @@ fn test_can_update_pixel() {
     set_caller(player_1);
 
     let has_access = core_actions
-        .can_update_pixel(player_1, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_1, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
         .is_ok();
 
     assert(has_access == true, 'should have access');
@@ -186,7 +186,8 @@ fn test_update_pixel() {
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
-    let _ = core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
+    let _ = core_actions
+        .update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update, Option::None, false);
 
     let pixel = get!(world, (x, y), Pixel);
 

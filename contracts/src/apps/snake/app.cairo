@@ -1,7 +1,7 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 
-use pixelaw::core::models::{pixel::{Pixel, PixelUpdate}, registry::{App}};
+use pixelaw::core::models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App}};
 use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
 use starknet::{
     get_caller_address, get_contract_address, get_execution_info, ContractAddress, ClassHash
@@ -136,7 +136,9 @@ mod snake_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{
+        Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait
+    };
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         get_callers, get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
@@ -220,14 +222,14 @@ mod snake_actions {
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);
             let mut snake = get!(world, player, Snake);
-
+            println!("1");
             // Change direction if snake already exists
             if snake.length > 0 {
                 snake.direction = direction;
                 set!(world, (snake));
                 return snake.first_segment_id;
             }
-
+            println!("2");
             // TODO: Check if the pixel is unowned or player owned
 
             let mut id = world.uuid();
@@ -270,7 +272,6 @@ mod snake_actions {
                 .update_pixel(
                     player,
                     system,
-                    Option::None,
                     PixelUpdate {
                         x: position.x,
                         y: position.y,
@@ -281,6 +282,8 @@ mod snake_actions {
                         owner: Option::None,
                         action: Option::None, // Not using this feature for snake
                     },
+                    Option::None,
+                    false
                 );
 
             let MOVE_SECONDS = 0;
@@ -365,7 +368,8 @@ mod snake_actions {
                             owner: Option::None,
                             action: Option::None, // Not using this feature for snake
                         },
-                        Option::None
+                        Option::None,
+                        false
                     )
                     .is_ok();
 
@@ -467,7 +471,6 @@ mod snake_actions {
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
-                Option::None, // TODO area_hint
                 PixelUpdate {
                     x: pixel.x,
                     y: pixel.y,
@@ -478,6 +481,8 @@ mod snake_actions {
                     owner: Option::None,
                     action: Option::None, // Not using this feature for snake
                 },
+                Option::None, // TODO area_hint
+                false
             );
 
         let result = last_segment.previous_id;
@@ -535,7 +540,6 @@ mod snake_actions {
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
-                Option::None,
                 PixelUpdate {
                     x: pixel.x,
                     y: pixel.y,
@@ -546,6 +550,8 @@ mod snake_actions {
                     owner: Option::None,
                     action: Option::None, // Not using this feature for snake
                 },
+                Option::None,
+                false
             );
         id
     }

@@ -132,7 +132,6 @@ pub fn find_nodes_inside_bounds(
 
         // Check the children
         if search_bounds.intersects(child.bounds) && (only_area && child.is_area) || !only_area {
-            println!("adding: {:?}", child_id);
             result.append(*child_id);
         }
         if !child.is_area {

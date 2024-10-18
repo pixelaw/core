@@ -119,7 +119,7 @@ mod paint_actions {
 
             let mut result = Option::None; //Default is to not allow anything
 
-            println!("on_pre_update: {:?}", app_caller.name);
+            println!("paint.on_pre_update: {:?}", app_caller);
 
             // Check which app is calling
             if app_caller.name == 'snake' {
@@ -215,7 +215,6 @@ mod paint_actions {
                 .update_pixel(
                     player,
                     system,
-                    Option::None, // TODO area_hint
                     PixelUpdate {
                         x: position.x,
                         y: position.y,
@@ -226,6 +225,8 @@ mod paint_actions {
                         owner: Option::Some(player),
                         action: Option::None, // Not using this feature for paint
                     },
+                    Option::None, // TODO area_hint
+                    false
                 );
         }
 
@@ -270,7 +271,6 @@ mod paint_actions {
                     .update_pixel(
                         player,
                         system,
-                        Option::None, // area_hint
                         PixelUpdate {
                             x: position.x + pixel_index,
                             y: position.y,
@@ -283,6 +283,8 @@ mod paint_actions {
                             owner: Option::Some(player),
                             action: Option::None, // Not using this feature for paint
                         },
+                        Option::None, // area_hint
+                        false
                     );
 
                 pixel_index += 1;
@@ -338,7 +340,6 @@ mod paint_actions {
                 .update_pixel(
                     player,
                     system,
-                    Option::None,
                     PixelUpdate {
                         x: position.x,
                         y: position.y,
@@ -349,6 +350,8 @@ mod paint_actions {
                         owner: Option::Some(player),
                         action: Option::None, // Not using this feature for paint
                     },
+                    Option::None,
+                    false
                 );
 
             let FADE_SECONDS = 4;

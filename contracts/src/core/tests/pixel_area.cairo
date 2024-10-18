@@ -11,7 +11,7 @@ use pixelaw::core::utils::{MAX_DIMENSION};
 use pixelaw::core::{
     models::{
         registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, pixel},
+        pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait, pixel},
         area::{
             Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
             RTreeNodePackableImpl, ChildrenPackableImpl
@@ -60,7 +60,8 @@ fn test_pixel_with_invalid_position() {
         timestamp: Option::None,
         action: Option::None
     };
-    let _ = core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), Option::None, pixel_update);
+    let _ = core_actions
+        .update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update, Option::None, false);
 }
 
 #[test]
@@ -94,7 +95,7 @@ fn test_add_new_pixel_in_owned_area() {
     };
 
     let has_access = core_actions
-        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None)
+        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
         .is_ok();
 
     assert(has_access == false, 'should not have access');

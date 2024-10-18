@@ -197,9 +197,9 @@ fn test_adding() {
     // FIXME this addition messes up the tree (doesnt move children correctly)
     let _a15 = core_actions.add_area(BOUNDS_15, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    println!("------------------ AFTER LAST SPLIT -----------------");
-    print_tree(world, ROOT_ID, "");
-    println!("------------------ ------------- -----------------");
+    // println!("------------------ AFTER LAST SPLIT -----------------");
+    // print_tree(world, ROOT_ID, "");
+    // println!("------------------ ------------- -----------------");
 
     assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
     assert(find_node_for_position(world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');

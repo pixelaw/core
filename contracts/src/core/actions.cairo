@@ -5,7 +5,7 @@ pub mod queue;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::area::{Area, RTreeNode};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+use pixelaw::core::models::pixel::{PixelUpdateResult, Pixel, PixelUpdate};
 use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
 use pixelaw::core::utils;
@@ -32,8 +32,28 @@ pub trait IActions<TContractState> {
         for_system: ContractAddress,
         pixel: Pixel,
         pixel_update: PixelUpdate,
-        area_id_hint: Option<u64>
-    ) -> Result<PixelUpdate, felt252>;
+        area_id_hint: Option<u64>,
+        allow_modify: bool
+    ) -> PixelUpdateResult;
+
+
+    /// Updates a pixel with the provided updates.
+    ///
+    /// # Arguments
+    ///
+    /// * `world` - A reference to the world dispatcher.
+    /// * `for_player` - The player making the update.
+    /// * `for_system` - The system making the update.
+    /// * `pixel_update` - The updates to apply to the pixel.
+    fn update_pixel(
+        ref world: IWorldDispatcher,
+        for_player: ContractAddress,
+        for_system: ContractAddress,
+        pixel_update: PixelUpdate,
+        area_id: Option<u64>,
+        allow_modify: bool
+    ) -> PixelUpdateResult;
+
 
     /// Processes a scheduled queue item.
     ///
@@ -70,22 +90,6 @@ pub trait IActions<TContractState> {
         selector: felt252,
         calldata: Span<felt252>,
     );
-
-    /// Updates a pixel with the provided updates.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    /// * `for_player` - The player making the update.
-    /// * `for_system` - The system making the update.
-    /// * `pixel_update` - The updates to apply to the pixel.
-    fn update_pixel(
-        ref world: IWorldDispatcher,
-        for_player: ContractAddress,
-        for_system: ContractAddress,
-        area_id: Option<u64>,
-        pixel_update: PixelUpdate,
-    ) -> Result<PixelUpdate, felt252>;
 
     /// Registers a new app.
     ///
@@ -144,7 +148,7 @@ pub mod actions {
     use pixelaw::core::models::area::{
         BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
     };
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
     use pixelaw::core::models::queue::QueueItem;
 
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
@@ -214,10 +218,24 @@ pub mod actions {
             for_system: ContractAddress,
             pixel: Pixel,
             pixel_update: PixelUpdate,
-            area_id_hint: Option<u64>
-        ) -> Result<PixelUpdate, felt252> {
+            area_id_hint: Option<u64>,
+            allow_modify: bool
+        ) -> PixelUpdateResult {
             super::pixel::can_update_pixel(
-                world, for_player, for_system, pixel, pixel_update, area_id_hint
+                world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
+            )
+        }
+
+        fn update_pixel(
+            ref world: IWorldDispatcher,
+            for_player: ContractAddress,
+            for_system: ContractAddress,
+            pixel_update: PixelUpdate,
+            area_id: Option<u64>,
+            allow_modify: bool
+        ) -> PixelUpdateResult {
+            super::pixel::update_pixel(
+                world, for_player, for_system, pixel_update, area_id, allow_modify
             )
         }
 
@@ -248,17 +266,6 @@ pub mod actions {
             );
 
             emit!(world, (Event::QueueProcessed(event)));
-        }
-
-
-        fn update_pixel(
-            ref world: IWorldDispatcher,
-            for_player: ContractAddress,
-            for_system: ContractAddress,
-            area_id: Option<u64>,
-            pixel_update: PixelUpdate,
-        ) -> Result<PixelUpdate, felt252> {
-            super::pixel::update_pixel(world, for_player, for_system, area_id, pixel_update)
         }
 
 
