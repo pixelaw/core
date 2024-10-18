@@ -119,16 +119,15 @@ mod paint_actions {
 
             let mut result = Option::None; //Default is to not allow anything
 
-            println!("paint.on_pre_update: {:?}", app_caller);
-
             // Check which app is calling
             if app_caller.name == 'snake' {
-                if pixel_update.owner.is_some() {
-                    // If Snake wants to change the owner, we don't allow that.
+                if pixel_update.owner.is_some() || pixel_update.app.is_some() {
+                    // If Snake wants to change the owner or app, we don't allow that.
                     result = Option::None;
+                } else {
+                    // Anything else is okay unmodified
+                    result = Option::Some(pixel_update);
                 }
-                // Anything else is okay
-                result = Option::Some(pixel_update);
             }
 
             result

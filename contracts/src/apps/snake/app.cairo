@@ -222,14 +222,12 @@ mod snake_actions {
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);
             let mut snake = get!(world, player, Snake);
-            println!("1");
             // Change direction if snake already exists
             if snake.length > 0 {
                 snake.direction = direction;
                 set!(world, (snake));
                 return snake.first_segment_id;
             }
-            println!("2");
             // TODO: Check if the pixel is unowned or player owned
 
             let mut id = world.uuid();
@@ -330,11 +328,10 @@ mod snake_actions {
             if snake.is_dying {
                 snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
-                println!("shrinking");
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
-                    println!("dead");
+
                     emit!(
                         world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
                     );
@@ -379,7 +376,7 @@ mod snake_actions {
                 if next_pixel.owner == contract_address_const::<0>() {
                     // Snake just moves
                     // Add a new segment on the next pixel and update the snake
-                    println!("moving");
+
                     snake
                         .first_segment_id =
                             create_new_segment(
@@ -387,11 +384,9 @@ mod snake_actions {
                             );
                     snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 } else if !has_write_access {
-                    println!("dying");
                     // Snake hit a pixel that is not allowing anything: DIE
                     snake.is_dying = true;
                 } else if next_pixel.owner == snake.owner {
-                    println!("growing");
                     // Next pixel is owned by snake owner: GROW
 
                     // Add a new segment

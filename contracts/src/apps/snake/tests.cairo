@@ -129,10 +129,6 @@ mod tests {
         // Check that 5,1 is not snake color
         assert(get!(world, (5, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 5,1');
 
-        // This command should revert
-        snake_actions.move(player1);
-
-        println!("-----------------");
         // Spawn the snake again at 3,1 so it grows from the paint at 4,1
         snake_actions
             .interact(

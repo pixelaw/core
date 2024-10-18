@@ -167,7 +167,7 @@ fn call_on_pre_update(
     app_caller.add_to_calldata(ref calldata);
     calldata.append(for_player.into());
 
-    println!("call_on_pre_update {:?}", pixel_update);
+    // println!("call_on_pre_update {:?}", pixel_update);
     let out = call_contract_syscall(contract_address, ON_PRE_UPDATE_HOOK, calldata.span());
 
     if out.is_err() {
@@ -225,7 +225,7 @@ fn parseHookOutput(data: Span<felt252>) -> Option<PixelUpdate> {
     let mut timestamp: Option<u64> = Option::None;
     let mut action: Option<felt252> = Option::None;
 
-    println!("parse: {:?}", data);
+    // println!("parse: {:?}", data);
     if data.at(0).deref() == 1 {
         return Option::None;
     }
