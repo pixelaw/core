@@ -45,7 +45,5 @@ mod tests {
 
         let pixel_1_1 = get!(world, (1, 1), (Pixel));
         assert(pixel_1_1.color == color, 'should be the color');
-
-        println!("Passed test");
     }
 }

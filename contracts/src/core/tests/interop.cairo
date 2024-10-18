@@ -56,8 +56,6 @@ fn test_hooks() {
 
     set_caller(player_1);
 
-    println!("gonna call: {:?}", paint_actions.contract_address);
-
     // Paint has hooks, Snake does not??
 
     paint_actions
