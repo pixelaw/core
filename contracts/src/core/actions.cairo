@@ -145,6 +145,7 @@ pub trait IActions<TContractState> {
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 pub mod actions {
     use core::poseidon::poseidon_hash_span;
+    use pixelaw::core::events::{QueueScheduled, QueueProcessed, AppNameUpdated, Alert};
     use pixelaw::core::models::area::{
         BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
     };
@@ -154,7 +155,6 @@ pub mod actions {
     use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
 
     use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
-    use pixelaw::core::utils;
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_tx_info,
         contract_address_const, syscalls::{call_contract_syscall},
@@ -162,34 +162,6 @@ pub mod actions {
 
     use super::{IActions};
 
-    #[derive(Drop, starknet::Event)]
-    pub struct QueueScheduled {
-        pub id: felt252,
-        pub timestamp: u64,
-        pub called_system: ContractAddress,
-        pub selector: felt252,
-        pub calldata: Span<felt252>,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct QueueProcessed {
-        pub id: felt252,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct AppNameUpdated {
-        app: App,
-        caller: felt252,
-    }
-
-    #[derive(Debug, Drop, Serde, starknet::Event, PartialEq)]
-    pub struct Alert {
-        pub position: Position,
-        pub caller: ContractAddress,
-        pub player: ContractAddress,
-        pub message: felt252,
-        pub timestamp: u64,
-    }
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -249,6 +221,7 @@ pub mod actions {
             let event = super::queue::schedule_queue(
                 world, timestamp, called_system, selector, calldata
             );
+            println!("sked: {:?}", event);
             emit!(world, (Event::QueueScheduled(event)));
         }
 

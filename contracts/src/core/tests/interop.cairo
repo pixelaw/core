@@ -57,7 +57,7 @@ fn test_hooks() {
     set_caller(player_1);
 
     // Paint has hooks, Snake does not??
-
+    // TODO more testing
     paint_actions
         .interact(
             DefaultParameters {

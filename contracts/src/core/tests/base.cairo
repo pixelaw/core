@@ -279,7 +279,7 @@ fn test_alert_player() {
     assert_eq!(
         starknet::testing::pop_log(world.contract_address),
         Option::Some(
-            pixelaw::core::actions::actions::Alert {
+            pixelaw::core::events::Alert {
                 position, caller, player, message, timestamp: get_block_timestamp()
             }
         )

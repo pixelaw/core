@@ -40,7 +40,10 @@ pub const ON_PRE_UPDATE_HOOK: felt252 =
 pub const ON_POST_UPDATE_HOOK: felt252 =
     0x3484ad2e032768c324059cc216083c643765f60c00f2b9b0561bc98ceb1c92;
 
-#[derive(Serde, Copy, Drop, Introspect)]
+pub const SNAKE_MOVE_ENTRYPOINT: felt252 =
+    0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
+
+#[derive(Debug, PartialEq, Serde, Copy, Drop, Introspect)]
 pub enum Direction {
     None: (),
     Left: (),

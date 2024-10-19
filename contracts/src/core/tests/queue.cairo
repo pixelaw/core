@@ -5,18 +5,24 @@ use dojo::{
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
 
+use pixelaw::apps::snake::app::{
+    snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
+};
+
 use pixelaw::core::{
+    events::{QueueScheduled},
     models::{registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},},
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
-    utils::{get_core_actions, Direction, Position, DefaultParameters},
-    tests::helpers::setup_core_initialized
+    utils::{get_core_actions, Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
+    tests::helpers::{
+        setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
+        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
+    }
 };
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
     testing::{set_block_timestamp, set_account_contract_address},
 };
-
-
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
 
@@ -55,3 +61,80 @@ fn test_process_queue() {
     assert(pixel.x == position.x, 'incorrect timestamp.x');
     assert(pixel.y == position.y, 'incorrect timestamp.y');
 }
+
+
+#[test]
+fn test_queue_full() {
+    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_, snake_actions) = setup_apps_initialized(world);
+
+    let SNAKE_COLOR = 0xFF00FF;
+
+    set_caller(player_1);
+    let position = Position { x: 234, y: 432 };
+
+    let event_contract = core_actions.contract_address;
+
+    // Pop all the previous events from the log so only the following one will be there
+    drop_all_events(event_contract);
+
+    let timestamp = 1729297000;
+    set_block_timestamp(timestamp);
+    snake_actions
+        .interact(
+            DefaultParameters {
+                player_override: Option::None,
+                system_override: Option::None,
+                area_hint: Option::None,
+                position,
+                color: SNAKE_COLOR
+            },
+            Direction::Right
+        );
+    // snake_actions.move(player_1);
+    // Assert that the correct event was emitted
+    let log = starknet::testing::pop_log_raw(event_contract);
+    println!("log: {:?}", log);
+
+    let called_system = snake_actions.contract_address;
+    let selector = SNAKE_MOVE_ENTRYPOINT;
+    let calldata: Span<felt252> = array![player_1.into()].span();
+
+    let id = poseidon_hash_span(
+        array![timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)]
+            .span()
+    );
+
+    let expected_event = QueueScheduled { id, timestamp, called_system, selector, calldata };
+    assert_eq!(starknet::testing::pop_log(event_contract), Option::Some(expected_event));
+    // let mut calldata: Array<felt252> = ArrayTrait::new();
+// calldata.append('snake');
+// position.serialize(ref calldata);
+// calldata.append('snake');
+// calldata.append(0);
+// let id = poseidon_hash_span(
+//     array![
+//         0.into(),
+//         core_actions.contract_address.into(),
+//         SPAWN_PIXEL_ENTRYPOINT.into(),
+//         poseidon_hash_span(calldata.span())
+//     ]
+//         .span()
+// );
+
+    // core_actions
+//     .process_queue(
+//         id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span()
+//     );
+
+    // let pixel = get!(world, (position).into(), (Pixel));
+
+    // // check timestamp
+// assert(pixel.created_at == starknet::get_block_timestamp(), 'incorrect
+// timestamp.created_at');
+// assert(pixel.updated_at == starknet::get_block_timestamp(), 'incorrect
+// timestamp.updated_at');
+// assert(pixel.x == position.x, 'incorrect timestamp.x');
+// assert(pixel.y == position.y, 'incorrect timestamp.y');
+}
+

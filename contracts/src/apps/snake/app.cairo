@@ -168,10 +168,10 @@ mod snake_actions {
         y: u16,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct Moved {
-        owner: ContractAddress,
-        direction: Direction,
+    #[derive(PartialEq, Debug, Drop, starknet::Event)]
+    pub struct Moved {
+        pub owner: ContractAddress,
+        pub direction: Direction,
     }
 
     const SNAKE_MAX_LENGTH: u8 = 255;
@@ -317,7 +317,9 @@ mod snake_actions {
         /// * `owner` - The contract address of the snake's owner.
         fn move(ref world: IWorldDispatcher, owner: ContractAddress) {
             let core_actions = get_core_actions(world);
-
+            println!(
+                "snake.move entrypoint: {:?}", get_execution_info().unbox().entry_point_selector
+            );
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));
 

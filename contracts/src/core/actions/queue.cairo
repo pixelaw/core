@@ -1,5 +1,6 @@
 use core::poseidon::poseidon_hash_span;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use pixelaw::core::events::{QueueScheduled, QueueProcessed, AppNameUpdated, Alert};
 use pixelaw::core::models::area::{
     BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
 };
@@ -15,7 +16,6 @@ use starknet::{
     ContractAddress, get_caller_address, get_contract_address, get_tx_info, contract_address_const,
     syscalls::{call_contract_syscall},
 };
-use super::actions::{QueueProcessed, QueueScheduled};
 
 pub fn schedule_queue(
     world: IWorldDispatcher,
