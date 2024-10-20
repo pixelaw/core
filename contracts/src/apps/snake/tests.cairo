@@ -13,72 +13,22 @@ mod tests {
     use pixelaw::core::actions::{
         actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
     };
-    use pixelaw::core::models::permissions::{permissions};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+    use pixelaw::core::tests::helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
-
-    // Helper function: deploys world and actions
-    fn deploy_world() -> (
-        IWorldDispatcher, IActionsDispatcher, ISnakeActionsDispatcher, IPaintActionsDispatcher
-    ) {
-        let _player1 = starknet::contract_address_const::<0x1337>();
-
-        // Deploy World and models
-        let mut models = array![
-            pixel::TEST_CLASS_HASH,
-            app::TEST_CLASS_HASH,
-            app_name::TEST_CLASS_HASH,
-            core_actions_address::TEST_CLASS_HASH,
-            permissions::TEST_CLASS_HASH,
-            instruction::TEST_CLASS_HASH,
-            snake::TEST_CLASS_HASH,
-            snake_segment::TEST_CLASS_HASH,
-        ];
-        let world = spawn_test_world(["pixelaw"].span(), models.span());
-
-        // Deploy Core actions
-        let core_actions_address = world
-            .deploy_contract('salt1', core_actions::TEST_CLASS_HASH.try_into().unwrap());
-        let core_actions = IActionsDispatcher { contract_address: core_actions_address };
-
-        // Deploy Snake actions
-        let snake_actions_address = world
-            .deploy_contract('salt2', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
-        let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
-
-        // Deploy Paint actions
-        let paint_actions = IPaintActionsDispatcher {
-            contract_address: world
-                .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap())
-        };
-
-        // Setup dojo auth
-        world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
-        world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
-
-        (world, core_actions, snake_actions, paint_actions)
-    }
 
 
     #[test]
     #[available_gas(3000000000)]
     fn test_playthrough() {
-        // Deploy everything
-        let (world, core_actions, snake_actions, paint_actions) = deploy_world();
-        let SNAKE_COLOR = 0xFF00FF;
+        let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
+        let (paint_actions, snake_actions) = setup_apps_initialized(world);
 
-        core_actions.init();
-        snake_actions.init();
+        let SNAKE_COLOR = 0xFF00FF;
 
         // Setup players
         let player1 = contract_address_const::<0x1337>();
@@ -93,8 +43,9 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 1, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -110,24 +61,25 @@ mod tests {
 
         // Check if the pixel is blank again at 1,1
         let pixel1_1 = get!(world, (1, 1), Pixel);
-        assert(pixel1_1.color == 0, 'wrong pixel color 3');
+        assert(pixel1_1.color == 0, 'wrong pixel color 1,1');
 
         // Check that the pixel is snake at 2,1
         let pixel2_1 = get!(world, (2, 1), Pixel);
-        assert(pixel2_1.color == SNAKE_COLOR, 'wrong pixel color 4');
+        assert(pixel2_1.color == SNAKE_COLOR, 'wrong pixel color 2,1');
 
         // Move right (head at 3,1 now)
         snake_actions.move(player1);
 
         // Check if the pixel is blank again at 2,1
-        assert(get!(world, (2, 1), Pixel).color == 0, 'wrong pixel color 5');
+        assert(get!(world, (2, 1), Pixel).color == 0, 'wrong pixel color 2,1');
 
         // Paint 4,1 so player1 owns it
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 4, y: 1 },
                     color: 0xF0F0F0
                 }
@@ -137,7 +89,7 @@ mod tests {
         snake_actions.move(player1);
 
         // Check that 3,1 is still snake color
-        assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color 6');
+        assert(get!(world, (3, 1), Pixel).color == SNAKE_COLOR, 'wrong pixel color 3,1');
 
         // Move right (head at 5,1 now)
         snake_actions.move(player1);
@@ -149,18 +101,19 @@ mod tests {
         //  1: hit the other pixel
         //  2: shrink
         //  3: shrink / delete
-        set_account_contract_address(player2);
+        set_caller(player2);
         paint_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 6, y: 1 },
                     color: 0xF0F0F0
                 }
             );
 
-        set_account_contract_address(player1);
+        set_caller(player1);
 
         // Hit the pixel
         snake_actions.move(player1);
@@ -176,15 +129,13 @@ mod tests {
         // Check that 5,1 is not snake color
         assert(get!(world, (5, 1), Pixel).color != SNAKE_COLOR, 'wrong pixel color for 5,1');
 
-        // This command should revert
-        // snake_actions.move(player1);
-
         // Spawn the snake again at 3,1 so it grows from the paint at 4,1
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },
@@ -200,8 +151,9 @@ mod tests {
         snake_actions
             .interact(
                 DefaultParameters {
-                    for_player: contract_address_const::<0>(),
-                    for_system: contract_address_const::<0>(),
+                    player_override: Option::None,
+                    system_override: Option::None,
+                    area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
                     color: SNAKE_COLOR
                 },

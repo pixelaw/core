@@ -384,11 +384,11 @@
       },
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "pixel_original_color",

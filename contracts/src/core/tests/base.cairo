@@ -10,14 +10,13 @@ use dojo::{
 use pixelaw::core::{
     models::{
         registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
+        pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait, pixel},
     },
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{get_core_actions, Direction, Position, DefaultParameters},
+    utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters},
     tests::helpers::{
         setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR, PERMISSION_ALL,
-        PERMISSION_NONE
+        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
     }
 };
 
@@ -35,7 +34,9 @@ use pixelaw::{
 };
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
+    testing::{
+        set_block_timestamp, set_account_contract_address, set_caller_address, set_contract_address
+    },
 };
 
 
@@ -74,46 +75,18 @@ fn test_paint_interaction() {
     paint_actions
         .interact(
             DefaultParameters {
-                for_player: ZERO_ADDRESS(), // Leave this 0 if not processing the Queue
-                for_system: ZERO_ADDRESS(), // Leave this 0 if not processing the Queue
+                player_override: Option::None,
+                system_override: Option::None,
+                area_hint: Option::None,
                 position: TEST_POSITION,
                 color: RED_COLOR
             }
         );
 }
 
-#[test]
-fn test_update_permission() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
-
-    let permissioning_system = contract_address_const::<0xBEEF01>();
-    let permissioned_system = contract_address_const::<0xDEAD01>();
-
-    set_caller(player_1);
-
-    // Setup PermissioningApp
-    let permissioning: App = core_actions.new_app(permissioning_system, 'permissioning', '');
-
-    // Setup PermissionedApp
-    let permissioned: App = core_actions.new_app(permissioned_system, 'permissioned', '');
-
-    // Check that existing permissions are NONE
-    let current_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
-    assert(current_permissions.permission == PERMISSION_NONE, 'permissions not none');
-
-    // Update the permissions, as caller
-    set_caller(permissioning.system);
-    core_actions.update_permission(permissioned.name, PERMISSION_ALL);
-
-    // Check that existing permissions are ALL
-    let new_permissions = get!(world, (permissioning.system, permissioned.system), Permissions);
-
-    assert(new_permissions.permission == PERMISSION_ALL, 'permissions not all');
-}
-
 
 #[test]
-fn test_has_write_access() {
+fn test_can_update_pixel() {
     let (world, core_actions, player_1, player_2) = setup_core_initialized();
     let (paint_actions, _snake_actions) = setup_apps_initialized(world);
 
@@ -127,7 +100,11 @@ fn test_has_write_access() {
     paint_actions
         .put_color(
             DefaultParameters {
-                for_player: ZERO_ADDRESS(), for_system: ZERO_ADDRESS(), position, color
+                player_override: Option::None,
+                system_override: Option::None,
+                area_hint: Option::None,
+                position,
+                color
             }
         );
 
@@ -147,14 +124,16 @@ fn test_has_write_access() {
     let pixel = get!(world, (position.x, position.y), Pixel);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+        .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
+        .is_ok();
 
     assert(has_access == false, 'should not have access');
 
     set_caller(player_1);
 
     let has_access = core_actions
-        .has_write_access(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel, pixel_update);
+        .can_update_pixel(player_1, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
+        .is_ok();
 
     assert(has_access == true, 'should have access');
 }
@@ -207,7 +186,8 @@ fn test_update_pixel() {
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
-    core_actions.update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update);
+    let _ = core_actions
+        .update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update, Option::None, false);
 
     let pixel = get!(world, (x, y), Pixel);
 
@@ -218,35 +198,61 @@ fn test_update_pixel() {
     assert(pixel == changed_pixel, 'pixel was not changed');
 }
 
+#[test]
+#[should_panic(expected: 'only core can override')]
+fn test_get_callers_non_core() {
+    let (world, _core_actions, _player_1, player_2) = setup_core_initialized();
+    let system_override = starknet::contract_address_const::<0x69>();
+
+    // Don't fake the calling contract, so this call fails
+
+    let has_override = DefaultParameters {
+        player_override: Option::Some(player_2),
+        system_override: Option::Some(system_override),
+        area_hint: Option::None,
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
+    let (_player, _system) = get_callers(world, has_override);
+}
 
 #[test]
-fn test_get_player_address() {
-    let (_world, core_actions, player_1, player_2) = setup_core_initialized();
+fn test_get_callers() {
+    let (world, core_actions, player_1, player_2) = setup_core_initialized();
+
+    let system_override = starknet::contract_address_const::<0x69>();
+
+    let no_override = DefaultParameters {
+        player_override: Option::None,
+        system_override: Option::None,
+        area_hint: Option::None,
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
+
+    let has_override = DefaultParameters {
+        player_override: Option::Some(player_2),
+        system_override: Option::Some(system_override),
+        area_hint: Option::None,
+        position: Position { x: 1, y: 1 },
+        color: 0
+    };
 
     // Test with 0 address, we expect the caller
     set_account_contract_address(player_1);
 
-    let addr = core_actions.get_player_address(ZERO_ADDRESS());
-    assert(addr == player_1, 'should return player1');
+    let (player, system) = get_callers(world, no_override);
+    assert(player == player_1, 'should return player1');
+    assert(system == ZERO_ADDRESS(), 'should return zero');
 
-    let addr = core_actions.get_player_address(player_2);
-    assert(addr == player_2, 'should return player2');
+    // impersonate core_actions so the override is allowed
+    set_contract_address(core_actions.contract_address);
+
+    let (player, system) = get_callers(world, has_override);
+    assert(player == player_2, 'should return player_2');
+    assert(system == system_override, 'should return system_override');
 }
 
-
-#[test]
-fn test_get_system_address() {
-    let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, snake_actions) = setup_apps_initialized(world);
-
-    set_caller(paint_actions.contract_address);
-
-    let addr = core_actions.get_system_address(ZERO_ADDRESS());
-    assert(addr == paint_actions.contract_address, 'should return paint_contract');
-
-    let addr = core_actions.get_system_address(snake_actions.contract_address);
-    assert(addr == snake_actions.contract_address, 'should return snake_contract');
-}
 
 // TODO Try alerting with a nonexisting appkey (should panic)
 
@@ -273,15 +279,10 @@ fn test_alert_player() {
     assert_eq!(
         starknet::testing::pop_log(world.contract_address),
         Option::Some(
-            pixelaw::core::actions::actions::Alert {
+            pixelaw::core::events::Alert {
                 position, caller, player, message, timestamp: get_block_timestamp()
             }
         )
     );
-}
-
-fn test_set_instruction(world: IWorldDispatcher, player: ContractAddress, instruction: felt252) {
-    // Implementation for setting an instruction for the player
-    println!("Setting instruction for player {:?}: {}", player, instruction);
 }
 

@@ -5,17 +5,6 @@ use dojo::{
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
 
-use pixelaw::core::{
-    models::{
-        registry::{
-            App, app, app_name, core_actions_address, CoreActionsAddress, Instruction, instruction
-        },
-        pixel::{Pixel, PixelUpdate, pixel}, permissions::{permissions, Permission, Permissions}
-    },
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{get_core_actions, Direction, Position, DefaultParameters}
-};
-
 use pixelaw::{
     apps::{
         paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
@@ -23,8 +12,18 @@ use pixelaw::{
             snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
             ISnakeActionsDispatcherTrait
         }
+    },
+    core::{
+        models::{
+            registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
+            pixel::{Pixel, PixelUpdate, pixel}, area::{r_tree, RTree, area, Area}
+        },
+        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
+        utils::{get_core_actions, Direction, Position, DefaultParameters},
     }
 };
+
+
 use starknet::{
     get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
     testing::{set_block_timestamp, set_account_contract_address},
@@ -34,15 +33,6 @@ use starknet::{
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
 pub const WHITE_COLOR: u32 = 0xFFFFFFFF;
 pub const RED_COLOR: u32 = 0xFF0000FF;
-
-
-pub const PERMISSION_ALL: Permission =
-    Permission { app: true, color: true, owner: true, text: true, timestamp: true, action: true };
-
-pub const PERMISSION_NONE: Permission =
-    Permission {
-        app: false, color: false, owner: false, text: false, timestamp: false, action: false
-    };
 
 
 pub fn set_caller(caller: ContractAddress) {
@@ -70,8 +60,8 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
         app::TEST_CLASS_HASH,
         app_name::TEST_CLASS_HASH,
         core_actions_address::TEST_CLASS_HASH,
-        permissions::TEST_CLASS_HASH,
-        instruction::TEST_CLASS_HASH,
+        r_tree::TEST_CLASS_HASH,
+        area::TEST_CLASS_HASH
     ];
     let world = spawn_test_world(["pixelaw"].span(), models.span());
 
@@ -84,8 +74,8 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
     world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Permissions"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -123,6 +113,9 @@ pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeAc
     // Setup permissions
     world.grant_writer(selector_from_tag!("pixelaw-Snake"), core_address.value);
     world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), core_address.value);
+
+    world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
+    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
 
     (paint_actions, snake_actions)
 }

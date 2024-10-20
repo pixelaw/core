@@ -1,0 +1,22 @@
+kind = "DojoModel"
+class_hash = "0x3d55e23acf8df5ef0c25b76d5a6b7765c241c494af075c7ce3858568bec45f1"
+original_class_hash = "0x3d55e23acf8df5ef0c25b76d5a6b7765c241c494af075c7ce3858568bec45f1"
+abi = "manifests/dev-pop/base/abis/models/pixelaw-AppUser-4eda3c52.json"
+tag = "pixelaw-AppUser"
+qualified_path = "pixelaw::core::models::registry::app_user"
+manifest_name = "pixelaw-AppUser-4eda3c52"
+
+[[members]]
+name = "system"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "player"
+type = "ContractAddress"
+key = true
+
+[[members]]
+name = "action"
+type = "felt252"
+key = false

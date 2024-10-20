@@ -1,6 +1,6 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+use pixelaw::core::models::{pixel::{Pixel, PixelUpdate}, registry::{App}};
+use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
 use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
 
 #[dojo::interface]
@@ -11,6 +11,20 @@ trait IPaintActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     fn init(ref world: IWorldDispatcher);
+
+    fn on_pre_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    ) -> Option<PixelUpdate>;
+
+    fn on_post_update(
+        ref world: IWorldDispatcher,
+        pixel_update: PixelUpdate,
+        app_caller: App,
+        player_caller: ContractAddress
+    );
 
     /// Interacts with a pixel based on default parameters.
     ///
@@ -44,14 +58,13 @@ trait IPaintActions<TContractState> {
     /// * `default_params` - The default parameters including position.
     /// * `image_data` - A span of felt252 representing the image data.
     fn pixel_row(
-        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>,
+        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
     );
 }
 
 pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
-const PIXELS_PER_FELT: u32 = 7;
-const APP_MANIFEST: felt252 = 'BASE/manifests/paint';
+const PIXELS_PER_FELT: u16 = 7;
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod paint_actions {
@@ -60,23 +73,34 @@ mod paint_actions {
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
 
-    use pixelaw::core::models::permissions::Permission;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::utils::{
-        get_core_actions, decode_color, encode_color, subu8, Direction, Position, DefaultParameters,
+        get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position,
+        DefaultParameters,
     };
     use starknet::{
         get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
         contract_address_const,
     };
 
-    use super::IPaintActions;
-    use super::{APP_KEY, APP_ICON, APP_MANIFEST, PIXELS_PER_FELT};
+    use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
-    impl ActionsInteroperability of IInteroperability<ContractState> {
+    impl Actions of super::IPaintActions<ContractState> {
+        /// Initializes the Paint App.
+        ///
+        /// This function registers the app with core actions
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        fn init(ref world: IWorldDispatcher) {
+            let core_actions = pixelaw::core::utils::get_core_actions(world);
+
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        }
+
         /// Hook called before a pixel update.
         ///
         /// # Arguments
@@ -90,9 +114,23 @@ mod paint_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) {
-            // Do nothing
+        ) -> Option<PixelUpdate> {
             let _world = world;
+
+            let mut result = Option::None; //Default is to not allow anything
+
+            // Check which app is calling
+            if app_caller.name == 'snake' {
+                if pixel_update.owner.is_some() || pixel_update.app.is_some() {
+                    // If Snake wants to change the owner or app, we don't allow that.
+                    result = Option::None;
+                } else {
+                    // Anything else is okay unmodified
+                    result = Option::Some(pixel_update);
+                }
+            }
+
+            result
         }
 
         /// Hook called after a pixel update.
@@ -111,35 +149,12 @@ mod paint_actions {
         ) {
             // Do nothing
             let _world = world;
-        }
-    }
 
-    #[abi(embed_v0)]
-    impl ActionsImpl of IPaintActions<ContractState> {
-        /// Initializes the Paint App.
-        ///
-        /// This function registers the app with core actions and sets up initial permissions.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        fn init(ref world: IWorldDispatcher) {
-            let core_actions = pixelaw::core::utils::get_core_actions(world);
-
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-            // // TODO: Replace this with proper granting of permission
-        // core_actions
-        //     .update_permission(
-        //         'snake',
-        //         Permission {
-        //             app: true,
-        //             color: true,
-        //             owner: false,
-        //             text: true,
-        //             timestamp: false,
-        //             action: false,
-        //         },
-        //     );
+            // Check which app is calling
+            if app_caller
+                .name == 'snake' { // TODO Something that happens when Snake tries to update a Paint pixel..
+            // Maybe nice example is to keep a counter of "snakebites" for the paint app
+            }
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -176,8 +191,7 @@ mod paint_actions {
             // Load important variables
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+            let (player, system) = get_callers(world, default_params);
 
             // Load the Pixel
             let mut pixel = get!(world, (position.x, position.y), (Pixel));
@@ -196,7 +210,7 @@ mod paint_actions {
             );
 
             // Update color of the pixel
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -210,6 +224,8 @@ mod paint_actions {
                         owner: Option::Some(player),
                         action: Option::None, // Not using this feature for paint
                     },
+                    Option::None, // TODO area_hint
+                    false
                 );
         }
 
@@ -237,11 +253,11 @@ mod paint_actions {
 
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+
+            let (player, system) = get_callers(world, default_params);
 
             let mut felt_index = 0;
-            let mut pixel_index = 0;
+            let mut pixel_index: u16 = 0;
             let mut felt: u256 = (*image_data.at(felt_index)).into();
             let mut stop = false;
 
@@ -250,7 +266,7 @@ mod paint_actions {
                 // are 0 padded.
                 // We unpack 4 bytes at a time and use them
 
-                core_actions
+                let _ = core_actions
                     .update_pixel(
                         player,
                         system,
@@ -266,6 +282,8 @@ mod paint_actions {
                             owner: Option::Some(player),
                             action: Option::None, // Not using this feature for paint
                         },
+                        Option::None, // area_hint
+                        false
                     );
 
                 pixel_index += 1;
@@ -296,11 +314,12 @@ mod paint_actions {
         fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+
+            let (player, system) = get_callers(world, default_params);
+
             let pixel = get!(world, (position.x, position.y), Pixel);
 
-            let (r, g, b, a) = decode_color(pixel.color);
+            let (r, g, b, a) = decode_rgba(pixel.color);
 
             // If the color is 0,0,0, fading is done.
             if r == 0 && g == 0 && b == 0 {
@@ -311,12 +330,12 @@ mod paint_actions {
             // Fade the color
             let FADE_STEP = 5;
 
-            let new_color = encode_color(
+            let new_color = encode_rgba(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a,
             );
 
             // Update color of the pixel
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -330,6 +349,8 @@ mod paint_actions {
                         owner: Option::Some(player),
                         action: Option::None, // Not using this feature for paint
                     },
+                    Option::None,
+                    false
                 );
 
             let FADE_SECONDS = 4;
@@ -386,7 +407,7 @@ mod paint_actions {
     /// # Returns
     ///
     /// * `u32` - The extracted 32-bit value.
-    fn extract(felt: u256, index: u32) -> u32 {
+    fn extract(felt: u256, index: u16) -> u32 {
         let result: u32 = if index == 0 {
             (felt / TWO_POW_192).try_into().unwrap()
         } else if index == 1 {

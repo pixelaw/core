@@ -1,6 +1,6 @@
 kind = "DojoContract"
-class_hash = "0x17d390af6c3b449b52da5a0969a00006a3b7935ffc08192dc8cefdeb563488f"
-original_class_hash = "0x17d390af6c3b449b52da5a0969a00006a3b7935ffc08192dc8cefdeb563488f"
+class_hash = "0x123a3081ef2ee10896770486a01bbb72fc98dbe1d638b11cd0928516e2f4589"
+original_class_hash = "0x123a3081ef2ee10896770486a01bbb72fc98dbe1d638b11cd0928516e2f4589"
 base_class_hash = "0x0"
 abi = "manifests/dev/base/abis/contracts/pixelaw-actions-16928a49.json"
 reads = []
@@ -15,5 +15,6 @@ systems = [
     "update_pixel",
     "alert_player",
     "set_instruction",
+    "remove_area",
 ]
 manifest_name = "pixelaw-actions-16928a49"

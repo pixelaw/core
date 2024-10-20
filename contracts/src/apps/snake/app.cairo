@@ -1,6 +1,11 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::utils::{Direction, Position, DefaultParameters, starknet_keccak};
-use starknet::{ContractAddress, ClassHash};
+
+
+use pixelaw::core::models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App}};
+use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
+use starknet::{
+    get_caller_address, get_contract_address, get_execution_info, ContractAddress, ClassHash
+};
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -12,9 +17,9 @@ use starknet::{ContractAddress, ClassHash};
 ///
 /// # Returns
 ///
-/// * `Option<(u32, u32)>` - The next position as an `Option`. Returns `None` if the move is
+/// * `Option<(u16, u16)>` - The next position as an `Option`. Returns `None` if the move is
 /// invalid.
-fn next_position(x: u32, y: u32, direction: Direction) -> Option<(u32, u32)> {
+fn next_position(x: u16, y: u16, direction: Direction) -> Option<(u16, u16)> {
     match direction {
         Direction::None(()) => Option::Some((x, y)),
         Direction::Left(()) => { if x == 0 {
@@ -79,8 +84,8 @@ pub struct SnakeSegment {
     pub id: u32,
     pub previous_id: u32,
     pub next_id: u32,
-    pub x: u32,
-    pub y: u32,
+    pub x: u16,
+    pub y: u16,
     pub pixel_original_color: u32,
     pub pixel_original_text: felt252,
     pub pixel_original_app: ContractAddress,
@@ -131,12 +136,13 @@ mod snake_actions {
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{
+        Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait
+    };
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::traits::IInteroperability;
     use pixelaw::core::utils::{
-        get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
-        get_core_actions_address,
+        MOVE_SELECTOR, INTERACT_SELECTOR, get_callers, get_core_actions, Direction, Position,
+        DefaultParameters, starknet_keccak, get_core_actions_address,
     };
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_execution_info,
@@ -158,85 +164,25 @@ mod snake_actions {
     #[derive(Drop, starknet::Event)]
     struct Died {
         owner: ContractAddress,
-        x: u32,
-        y: u32,
+        x: u16,
+        y: u16,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct Moved {
-        owner: ContractAddress,
-        direction: Direction,
+    #[derive(PartialEq, Debug, Drop, starknet::Event)]
+    pub struct Moved {
+        pub owner: ContractAddress,
+        pub direction: Direction,
     }
 
     const SNAKE_MAX_LENGTH: u8 = 255;
 
-    /// Implementation of interoperability hooks for the Snake actions.
-    #[abi(embed_v0)]
-    impl ActionsInteroperability of IInteroperability<ContractState> {
-        /// Hook called before a pixel update.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The proposed update to the pixel.
-        /// * `app_caller` - The app initiating the update.
-        /// * `player_caller` - The player initiating the update.
-        fn on_pre_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            // Do nothing
-            let _world = world;
-        }
-
-        /// Hook called after a pixel update.
-        ///
-        /// If the snake is reverting and the previous app was 'paint', it calls the fade function.
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        /// * `pixel_update` - The update that was applied to the pixel.
-        /// * `app_caller` - The app that performed the update.
-        /// * `player_caller` - The player that performed the update.
-        fn on_post_update(
-            ref world: IWorldDispatcher,
-            pixel_update: PixelUpdate,
-            app_caller: App,
-            player_caller: ContractAddress,
-        ) {
-            let core_actions_address = get_core_actions_address(world);
-            assert!(core_actions_address == get_caller_address(), "caller is not core_actions");
-
-            // When the snake is reverting
-            if pixel_update.app.is_some() && app_caller.system == get_contract_address() {
-                let old_app = pixel_update.app.unwrap();
-                let old_app = get!(world, old_app, (App));
-                if old_app.name == 'paint' {
-                    let pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
-                    let paint_actions = IPaintActionsDispatcher {
-                        contract_address: old_app.system,
-                    };
-                    let params = DefaultParameters {
-                        for_player: pixel.owner,
-                        for_system: old_app.system,
-                        position: Position { x: pixel_update.x, y: pixel_update.y, },
-                        color: pixel_update.color.unwrap(),
-                    };
-                    paint_actions.fade(params);
-                }
-            }
-        }
-    }
 
     /// Implementation of the Snake actions.
     #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
         /// Initializes the Snake App.
         ///
-        /// Registers the app with core actions and sets up initial instructions.
+        /// Registers the app with core actions
         ///
         /// # Arguments
         ///
@@ -245,13 +191,8 @@ mod snake_actions {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-
-            // TODO: Should use something like: starknet_keccak(array!['interact'].span())
-            let INTERACT_SELECTOR =
-                0x476d5e1b17fd9d508bd621909241c5eb4c67380f3651f54873c5c1f2b891f4;
-            let INTERACT_INSTRUCTION = 'select direction for snake';
-            core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
+
 
         /// Starts a new snake or changes the direction of an existing snake.
         ///
@@ -270,20 +211,17 @@ mod snake_actions {
             let core_actions = get_core_actions(world);
             let position = default_params.position;
 
-            let player = core_actions.get_player_address(default_params.for_player);
-            let system = core_actions.get_system_address(default_params.for_system);
+            let (player, system) = get_callers(world, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
             let pixel = get!(world, (position.x, position.y), Pixel);
             let mut snake = get!(world, player, Snake);
-
             // Change direction if snake already exists
             if snake.length > 0 {
                 snake.direction = direction;
                 set!(world, (snake));
                 return snake.first_segment_id;
             }
-
             // TODO: Check if the pixel is unowned or player owned
 
             let mut id = world.uuid();
@@ -322,7 +260,7 @@ mod snake_actions {
             set!(world, (snake, segment));
 
             // Call core_actions to update the color
-            core_actions
+            let _ = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -336,6 +274,8 @@ mod snake_actions {
                         owner: Option::None,
                         action: Option::None, // Not using this feature for snake
                     },
+                    Option::None,
+                    false
                 );
 
             let MOVE_SECONDS = 0;
@@ -345,9 +285,6 @@ mod snake_actions {
 
             // Calldata[0]: Owner address
             calldata.append(player.into());
-
-            // TODO: Should use something like: starknet_keccak(array!['move'].span())
-            let MOVE_SELECTOR = 0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
 
             // Schedule the next move
             core_actions
@@ -382,10 +319,10 @@ mod snake_actions {
             if snake.is_dying {
                 snake.last_segment_id = remove_last_segment(world, core_actions, snake);
                 snake.length -= 1;
-
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
+
                     emit!(
                         world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
                     );
@@ -406,7 +343,7 @@ mod snake_actions {
                 let next_pixel = get!(world, (next_x, next_y), Pixel);
 
                 let has_write_access = core_actions
-                    .has_write_access(
+                    .can_update_pixel(
                         snake.owner,
                         get_contract_address(),
                         next_pixel,
@@ -420,13 +357,17 @@ mod snake_actions {
                             owner: Option::None,
                             action: Option::None, // Not using this feature for snake
                         },
-                    );
+                        Option::None,
+                        false
+                    )
+                    .is_ok();
 
                 // Determine what happens to the snake
                 // MOVE, GROW, SHRINK, DIE
                 if next_pixel.owner == contract_address_const::<0>() {
                     // Snake just moves
                     // Add a new segment on the next pixel and update the snake
+
                     snake
                         .first_segment_id =
                             create_new_segment(
@@ -516,7 +457,7 @@ mod snake_actions {
         let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
 
         // Write the changes to the pixel
-        core_actions
+        let _ = core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
@@ -530,6 +471,8 @@ mod snake_actions {
                     owner: Option::None,
                     action: Option::None, // Not using this feature for snake
                 },
+                Option::None, // TODO area_hint
+                false
             );
 
         let result = last_segment.previous_id;
@@ -583,7 +526,7 @@ mod snake_actions {
         );
 
         // Write the changes to the pixel
-        core_actions
+        let _pu = core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
@@ -597,6 +540,8 @@ mod snake_actions {
                     owner: Option::None,
                     action: Option::None, // Not using this feature for snake
                 },
+                Option::None,
+                false
             );
         id
     }

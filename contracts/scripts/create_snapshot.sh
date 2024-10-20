@@ -67,7 +67,9 @@ echo "sozo build"
 sozo \
   --profile $PROFILE \
   --manifest-path $DEPLOY_SCARB \
-   build
+   build \
+  --typescript \
+  --bindings-output $OUT
 echo "sozo migrate plan"
 #starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
 
@@ -84,18 +86,18 @@ sozo \
   migrate \
   apply
 
-sozo \
-  build \
-  --typescript \
-  --manifest-path $DEPLOY_SCARB \
-  --bindings-output $OUT
+# sozo \
+#   build \
+#   --typescript \
+#   --manifest-path $DEPLOY_SCARB \
+#   --bindings-output $OUT
 
 sleep 1
 
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
 
-CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-Permissions" "pixelaw-QueueItem" "pixelaw-Snake" "pixelaw-Instruction")
+CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-QueueItem" "pixelaw-RTree" "pixelaw-Area" "pixelaw-Snake" "pixelaw-Instruction")
 SNAKE_MODELS=("pixelaw-Snake" "pixelaw-SnakeSegment")
 
 echo "Start Torii"
@@ -190,7 +192,7 @@ done
 
 
 sleep 3
-
+exit 
 echo "Stopping katana and torii"
 pkill -f torii
 pkill -f katana

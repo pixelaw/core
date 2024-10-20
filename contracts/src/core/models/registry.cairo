@@ -5,7 +5,7 @@ use pixelaw::core::actions::{
 };
 use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Debug, Copy, Drop, Serde)]
 #[dojo::model(namespace: "pixelaw", nomapping: true)]
 pub struct App {
     #[key]
@@ -14,6 +14,19 @@ pub struct App {
     pub icon: felt252,
     // Default action for the UI (a function in the system)
     pub action: felt252
+}
+
+pub trait AppCalldataTrait<App> {
+    fn add_to_calldata(self: App, ref calldata: Array<felt252>);
+}
+
+pub impl AppCalldataTraitImpl of AppCalldataTrait<App> {
+    fn add_to_calldata(self: App, ref calldata: Array<felt252>) {
+        calldata.append(self.system.into());
+        calldata.append(self.name.into());
+        calldata.append(self.icon.into());
+        calldata.append(self.action.into());
+    }
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -44,12 +57,3 @@ pub struct CoreActionsAddress {
     pub value: ContractAddress
 }
 
-#[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
-pub struct Instruction {
-    #[key]
-    pub system: ContractAddress,
-    #[key]
-    pub selector: felt252,
-    pub instruction: felt252
-}
