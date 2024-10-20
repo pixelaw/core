@@ -57,12 +57,3 @@ pub struct CoreActionsAddress {
     pub value: ContractAddress
 }
 
-#[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
-pub struct Instruction {
-    #[key]
-    pub system: ContractAddress,
-    #[key]
-    pub selector: felt252,
-    pub instruction: felt252
-}

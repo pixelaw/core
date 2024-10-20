@@ -8,7 +8,7 @@ use pixelaw::core::models::area::{
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
 use pixelaw::core::models::queue::QueueItem;
 
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
+use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 
 use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
 use pixelaw::core::utils;

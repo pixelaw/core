@@ -16,7 +16,7 @@ mod tests {
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address, instruction};
+    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
     use pixelaw::core::tests::helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};

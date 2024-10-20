@@ -182,7 +182,7 @@ mod snake_actions {
     impl ActionsImpl of ISnakeActions<ContractState> {
         /// Initializes the Snake App.
         ///
-        /// Registers the app with core actions and sets up initial instructions.
+        /// Registers the app with core actions
         ///
         /// # Arguments
         ///
@@ -191,9 +191,6 @@ mod snake_actions {
             let core_actions = pixelaw::core::utils::get_core_actions(world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-
-            let INTERACT_INSTRUCTION = 'select direction for snake';
-            core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
 
 

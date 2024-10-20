@@ -286,8 +286,3 @@ fn test_alert_player() {
     );
 }
 
-fn test_set_instruction(world: IWorldDispatcher, player: ContractAddress, instruction: felt252) {
-    // Implementation for setting an instruction for the player
-    println!("Setting instruction for player {:?}: {}", player, instruction);
-}
-

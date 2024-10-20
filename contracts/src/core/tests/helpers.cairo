@@ -15,10 +15,7 @@ use pixelaw::{
     },
     core::{
         models::{
-            registry::{
-                App, app, app_name, core_actions_address, CoreActionsAddress, Instruction,
-                instruction
-            },
+            registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, pixel}, area::{r_tree, RTree, area, Area}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
@@ -63,7 +60,6 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
         app::TEST_CLASS_HASH,
         app_name::TEST_CLASS_HASH,
         core_actions_address::TEST_CLASS_HASH,
-        instruction::TEST_CLASS_HASH,
         r_tree::TEST_CLASS_HASH,
         area::TEST_CLASS_HASH
     ];
@@ -78,7 +74,6 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
     world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Instruction"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
     world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 

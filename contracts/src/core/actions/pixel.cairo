@@ -8,9 +8,7 @@ use pixelaw::core::models::pixel::{
 };
 use pixelaw::core::models::queue::QueueItem;
 
-use pixelaw::core::models::registry::{
-    AppCalldataTrait, App, AppName, CoreActionsAddress, Instruction
-};
+use pixelaw::core::models::registry::{AppCalldataTrait, App, AppName, CoreActionsAddress};
 use pixelaw::core::utils::{
     ON_PRE_UPDATE_HOOK, ON_POST_UPDATE_HOOK, starknet_keccak, get_core_actions_address, Position,
     MAX_DIMENSION, Bounds

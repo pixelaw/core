@@ -120,14 +120,6 @@ pub trait IActions<TContractState> {
         ref world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252,
     );
 
-    /// Sets an instruction for a given selector in a system.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    /// * `selector` - The function selector.
-    /// * `instruction` - The instruction to set.
-    fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252);
 
     fn add_area(
         ref world: IWorldDispatcher,
@@ -152,7 +144,7 @@ pub mod actions {
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
     use pixelaw::core::models::queue::QueueItem;
 
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress, Instruction};
+    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 
     use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
     use starknet::{
@@ -270,14 +262,6 @@ pub mod actions {
                     }
                 ))
             );
-        }
-
-
-        fn set_instruction(ref world: IWorldDispatcher, selector: felt252, instruction: felt252) {
-            let system = get_caller_address();
-            let app = get!(world, system, (App));
-            assert!(app.name != '', "cannot be called by a non-app");
-            set!(world, (Instruction { system, selector, instruction }))
         }
 
 
