@@ -172,6 +172,7 @@ pub mod actions {
         Alert: Alert,
     }
 
+
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         fn init(ref world: IWorldDispatcher) {
@@ -221,7 +222,6 @@ pub mod actions {
             let event = super::queue::schedule_queue(
                 world, timestamp, called_system, selector, calldata
             );
-            println!("sked: {:?}", event);
             emit!(world, (Event::QueueScheduled(event)));
         }
 

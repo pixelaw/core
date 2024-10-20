@@ -65,7 +65,7 @@ fn test_process_queue() {
 
 #[test]
 fn test_queue_full() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (world, _core_actions, player_1, _player_2) = setup_core_initialized();
     let (_, snake_actions) = setup_apps_initialized(world);
 
     let SNAKE_COLOR = 0xFF00FF;
@@ -73,7 +73,9 @@ fn test_queue_full() {
     set_caller(player_1);
     let position = Position { x: 234, y: 432 };
 
-    let event_contract = core_actions.contract_address;
+    // let event_contract = snake_actions.contract_address;
+    // let event_contract = core_actions.contract_address;
+    let event_contract = world.contract_address;
 
     // Pop all the previous events from the log so only the following one will be there
     drop_all_events(event_contract);
@@ -91,10 +93,20 @@ fn test_queue_full() {
             },
             Direction::Right
         );
+    // core_actions.test_event();
+    // snake_actions.snake_test_event();
     // snake_actions.move(player_1);
     // Assert that the correct event was emitted
-    let log = starknet::testing::pop_log_raw(event_contract);
-    println!("log: {:?}", log);
+
+    // Pop the 2 previous events we're not handling right now
+    // println!("log1: {:?}", starknet::testing::pop_log_raw(event_contract));
+    // println!("log2: {:?}", starknet::testing::pop_log_raw(event_contract));
+    // println!("log3: {:?}", starknet::testing::pop_log_raw(event_contract));
+    // println!("log4: {:?}", starknet::testing::pop_log_raw(event_contract));
+
+    let _ = starknet::testing::pop_log_raw(event_contract); // Store Snake model
+    let _ = starknet::testing::pop_log_raw(event_contract); // Store Segment model
+    let _ = starknet::testing::pop_log_raw(event_contract); // Store Pixel model
 
     let called_system = snake_actions.contract_address;
     let selector = SNAKE_MOVE_ENTRYPOINT;
@@ -106,8 +118,13 @@ fn test_queue_full() {
     );
 
     let expected_event = QueueScheduled { id, timestamp, called_system, selector, calldata };
-    assert_eq!(starknet::testing::pop_log(event_contract), Option::Some(expected_event));
-    // let mut calldata: Array<felt252> = ArrayTrait::new();
+    assert(
+        starknet::testing::pop_log(event_contract) == Option::Some(expected_event),
+        'unexpected QueueScheduled'
+    );
+    // let expected_event = pixelaw::core::events::TestEvent { id: 333 };
+// assert_eq!(starknet::testing::pop_log(event_contract), Option::Some(expected_event));
+// let mut calldata: Array<felt252> = ArrayTrait::new();
 // calldata.append('snake');
 // position.serialize(ref calldata);
 // calldata.append('snake');

@@ -141,8 +141,8 @@ mod snake_actions {
     };
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        get_callers, get_core_actions, Direction, Position, DefaultParameters, starknet_keccak,
-        get_core_actions_address,
+        MOVE_SELECTOR, INTERACT_SELECTOR, get_callers, get_core_actions, Direction, Position,
+        DefaultParameters, starknet_keccak, get_core_actions_address,
     };
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_execution_info,
@@ -192,9 +192,6 @@ mod snake_actions {
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
 
-            // TODO: Should use something like: starknet_keccak(array!['interact'].span())
-            let INTERACT_SELECTOR =
-                0x476d5e1b17fd9d508bd621909241c5eb4c67380f3651f54873c5c1f2b891f4;
             let INTERACT_INSTRUCTION = 'select direction for snake';
             core_actions.set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
         }
@@ -292,9 +289,7 @@ mod snake_actions {
             // Calldata[0]: Owner address
             calldata.append(player.into());
 
-            // TODO: Should use something like: starknet_keccak(array!['move'].span())
-            let MOVE_SELECTOR = 0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
-
+            println!("scheduling");
             // Schedule the next move
             core_actions
                 .schedule_queue(
@@ -317,9 +312,7 @@ mod snake_actions {
         /// * `owner` - The contract address of the snake's owner.
         fn move(ref world: IWorldDispatcher, owner: ContractAddress) {
             let core_actions = get_core_actions(world);
-            println!(
-                "snake.move entrypoint: {:?}", get_execution_info().unbox().entry_point_selector
-            );
+
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));
 

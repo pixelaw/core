@@ -43,6 +43,13 @@ pub const ON_POST_UPDATE_HOOK: felt252 =
 pub const SNAKE_MOVE_ENTRYPOINT: felt252 =
     0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
 
+pub const INTERACT_SELECTOR: felt252 =
+    0x476d5e1b17fd9d508bd621909241c5eb4c67380f3651f54873c5c1f2b891f4;
+
+
+pub const MOVE_SELECTOR: felt252 =
+    0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
+
 #[derive(Debug, PartialEq, Serde, Copy, Drop, Introspect)]
 pub enum Direction {
     None: (),

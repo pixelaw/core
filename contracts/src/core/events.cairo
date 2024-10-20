@@ -2,6 +2,7 @@ use pixelaw::core::models::registry::{App};
 use pixelaw::core::utils::{Position};
 use starknet::{ContractAddress};
 
+
 #[derive(Drop, starknet::Event, Debug, PartialEq)]
 pub struct QueueScheduled {
     pub id: felt252,
@@ -30,3 +31,4 @@ pub struct Alert {
     pub message: felt252,
     pub timestamp: u64,
 }
+
