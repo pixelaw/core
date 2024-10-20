@@ -128,7 +128,7 @@ fn test_queue_full() {
     let _log_4 = starknet::testing::pop_log_raw(event_contract); // ?
     let _log_5 = starknet::testing::pop_log_raw(event_contract); // store pixel
     let _log_6 = starknet::testing::pop_log_raw(event_contract); // delete segment?
-    // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processeD
+    // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processed
 
     let expected_processed_event = QueueProcessed { id };
     assert(
@@ -143,7 +143,6 @@ fn test_queue_full() {
 // println!("log5 {:?}", starknet::testing::pop_log_raw(event_contract));
 // println!("log6 {:?}", starknet::testing::pop_log_raw(event_contract));
 // println!("log7 {:?}", starknet::testing::pop_log_raw(event_contract));
-
 
 }
 
