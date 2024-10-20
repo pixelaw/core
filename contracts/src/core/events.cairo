@@ -12,7 +12,7 @@ pub struct QueueScheduled {
     pub calldata: Span<felt252>,
 }
 
-#[derive(Drop, starknet::Event)]
+#[derive(Drop, starknet::Event, Debug, PartialEq)]
 pub struct QueueProcessed {
     pub id: felt252,
 }

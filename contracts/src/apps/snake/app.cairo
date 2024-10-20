@@ -289,7 +289,6 @@ mod snake_actions {
             // Calldata[0]: Owner address
             calldata.append(player.into());
 
-            println!("scheduling");
             // Schedule the next move
             core_actions
                 .schedule_queue(

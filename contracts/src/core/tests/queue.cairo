@@ -10,7 +10,7 @@ use pixelaw::apps::snake::app::{
 };
 
 use pixelaw::core::{
-    events::{QueueScheduled},
+    events::{QueueScheduled, QueueProcessed},
     models::{registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},},
     actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
     utils::{get_core_actions, Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
@@ -65,7 +65,7 @@ fn test_process_queue() {
 
 #[test]
 fn test_queue_full() {
-    let (world, _core_actions, player_1, _player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
     let (_, snake_actions) = setup_apps_initialized(world);
 
     let SNAKE_COLOR = 0xFF00FF;
@@ -82,6 +82,7 @@ fn test_queue_full() {
 
     let timestamp = 1729297000;
     set_block_timestamp(timestamp);
+
     snake_actions
         .interact(
             DefaultParameters {
@@ -93,65 +94,56 @@ fn test_queue_full() {
             },
             Direction::Right
         );
-    // core_actions.test_event();
-    // snake_actions.snake_test_event();
-    // snake_actions.move(player_1);
-    // Assert that the correct event was emitted
 
-    // Pop the 2 previous events we're not handling right now
-    // println!("log1: {:?}", starknet::testing::pop_log_raw(event_contract));
-    // println!("log2: {:?}", starknet::testing::pop_log_raw(event_contract));
-    // println!("log3: {:?}", starknet::testing::pop_log_raw(event_contract));
-    // println!("log4: {:?}", starknet::testing::pop_log_raw(event_contract));
-
+    // Pop the 3 previous events we're not handling right now
     let _ = starknet::testing::pop_log_raw(event_contract); // Store Snake model
     let _ = starknet::testing::pop_log_raw(event_contract); // Store Segment model
     let _ = starknet::testing::pop_log_raw(event_contract); // Store Pixel model
 
+    // Prep the expected event struct
     let called_system = snake_actions.contract_address;
     let selector = SNAKE_MOVE_ENTRYPOINT;
     let calldata: Span<felt252> = array![player_1.into()].span();
-
     let id = poseidon_hash_span(
         array![timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)]
             .span()
     );
+    let expected_scheduled_event = QueueScheduled {
+        id, timestamp, called_system, selector, calldata
+    };
 
-    let expected_event = QueueScheduled { id, timestamp, called_system, selector, calldata };
     assert(
-        starknet::testing::pop_log(event_contract) == Option::Some(expected_event),
+        starknet::testing::pop_log(event_contract) == Option::Some(expected_scheduled_event),
         'unexpected QueueScheduled'
     );
-    // let expected_event = pixelaw::core::events::TestEvent { id: 333 };
-// assert_eq!(starknet::testing::pop_log(event_contract), Option::Some(expected_event));
-// let mut calldata: Array<felt252> = ArrayTrait::new();
-// calldata.append('snake');
-// position.serialize(ref calldata);
-// calldata.append('snake');
-// calldata.append(0);
-// let id = poseidon_hash_span(
-//     array![
-//         0.into(),
-//         core_actions.contract_address.into(),
-//         SPAWN_PIXEL_ENTRYPOINT.into(),
-//         poseidon_hash_span(calldata.span())
-//     ]
-//         .span()
-// );
 
-    // core_actions
-//     .process_queue(
-//         id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span()
-//     );
+    // Pop all the previous events from the log so only the following one will be there
+    drop_all_events(event_contract);
+    core_actions.process_queue(id, timestamp, called_system, selector, calldata);
 
-    // let pixel = get!(world, (position).into(), (Pixel));
+    let _log_0 = starknet::testing::pop_log_raw(event_contract); // store existing segment
+    let _log_1 = starknet::testing::pop_log_raw(event_contract); // store new segment
+    let _log_2 = starknet::testing::pop_log_raw(event_contract); // Store Pixel model new segment
+    let _log_3 = starknet::testing::pop_log_raw(event_contract); // Store Pixel model new segment
+    let _log_4 = starknet::testing::pop_log_raw(event_contract); // ?
+    let _log_5 = starknet::testing::pop_log_raw(event_contract); // store pixel
+    let _log_6 = starknet::testing::pop_log_raw(event_contract); // delete segment?
+    // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processeD
 
-    // // check timestamp
-// assert(pixel.created_at == starknet::get_block_timestamp(), 'incorrect
-// timestamp.created_at');
-// assert(pixel.updated_at == starknet::get_block_timestamp(), 'incorrect
-// timestamp.updated_at');
-// assert(pixel.x == position.x, 'incorrect timestamp.x');
-// assert(pixel.y == position.y, 'incorrect timestamp.y');
+    let expected_processed_event = QueueProcessed { id };
+    assert(
+        starknet::testing::pop_log(event_contract) == Option::Some(expected_processed_event),
+        'unexpected QueueProcessed'
+    );
+    // println!("log0 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log1 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log2 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log3 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log4 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log5 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log6 {:?}", starknet::testing::pop_log_raw(event_contract));
+// println!("log7 {:?}", starknet::testing::pop_log_raw(event_contract));
+
+
 }
 
