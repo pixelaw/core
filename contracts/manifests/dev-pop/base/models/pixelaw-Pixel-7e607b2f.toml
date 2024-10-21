@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x71570f33b7f66331952b84691bb5794ee6b19f43ad729cc654c3930f47c5f0d"
-original_class_hash = "0x71570f33b7f66331952b84691bb5794ee6b19f43ad729cc654c3930f47c5f0d"
+class_hash = "0x6363714e0e5ce09675144935223ff5390e7fefe6ee059a8d62ffc79a3e146ad"
+original_class_hash = "0x6363714e0e5ce09675144935223ff5390e7fefe6ee059a8d62ffc79a3e146ad"
 abi = "manifests/dev-pop/base/abis/models/pixelaw-Pixel-7e607b2f.json"
 tag = "pixelaw-Pixel"
 qualified_path = "pixelaw::core::models::pixel::pixel"
@@ -8,12 +8,12 @@ manifest_name = "pixelaw-Pixel-7e607b2f"
 
 [[members]]
 name = "x"
-type = "u32"
+type = "u16"
 key = true
 
 [[members]]
 name = "y"
-type = "u32"
+type = "u16"
 key = true
 
 [[members]]

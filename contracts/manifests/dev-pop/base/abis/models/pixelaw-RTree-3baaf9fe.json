@@ -363,74 +363,26 @@
   },
   {
     "type": "impl",
-    "name": "permissionsImpl",
-    "interface_name": "pixelaw::core::models::permissions::Ipermissions"
-  },
-  {
-    "type": "enum",
-    "name": "core::bool",
-    "variants": [
-      {
-        "name": "False",
-        "type": "()"
-      },
-      {
-        "name": "True",
-        "type": "()"
-      }
-    ]
+    "name": "r_treeImpl",
+    "interface_name": "pixelaw::core::models::area::Ir_tree"
   },
   {
     "type": "struct",
-    "name": "pixelaw::core::models::permissions::Permission",
+    "name": "pixelaw::core::models::area::RTree",
     "members": [
       {
-        "name": "app",
-        "type": "core::bool"
+        "name": "id",
+        "type": "core::integer::u64"
       },
       {
-        "name": "color",
-        "type": "core::bool"
-      },
-      {
-        "name": "owner",
-        "type": "core::bool"
-      },
-      {
-        "name": "text",
-        "type": "core::bool"
-      },
-      {
-        "name": "timestamp",
-        "type": "core::bool"
-      },
-      {
-        "name": "action",
-        "type": "core::bool"
-      }
-    ]
-  },
-  {
-    "type": "struct",
-    "name": "pixelaw::core::models::permissions::Permissions",
-    "members": [
-      {
-        "name": "allowing_app",
-        "type": "core::starknet::contract_address::ContractAddress"
-      },
-      {
-        "name": "allowed_app",
-        "type": "core::starknet::contract_address::ContractAddress"
-      },
-      {
-        "name": "permission",
-        "type": "pixelaw::core::models::permissions::Permission"
+        "name": "children",
+        "type": "core::felt252"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "pixelaw::core::models::permissions::Ipermissions",
+    "name": "pixelaw::core::models::area::Ir_tree",
     "items": [
       {
         "type": "function",
@@ -438,7 +390,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "pixelaw::core::models::permissions::Permissions"
+            "type": "pixelaw::core::models::area::RTree"
           }
         ],
         "outputs": [],
@@ -448,7 +400,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::models::permissions::permissions::Event",
+    "name": "pixelaw::core::models::area::r_tree::Event",
     "kind": "enum",
     "variants": []
   }

@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x19a1ae61a4fb0ac303e15a4ca4befa5ae3962625eb37f379b941815e321191f"
-original_class_hash = "0x19a1ae61a4fb0ac303e15a4ca4befa5ae3962625eb37f379b941815e321191f"
+class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
+original_class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
 abi = "manifests/dev-pop/base/abis/models/pixelaw-SnakeSegment-302de0d8.json"
 tag = "pixelaw-SnakeSegment"
 qualified_path = "pixelaw::apps::snake::app::snake_segment"
@@ -23,12 +23,12 @@ key = false
 
 [[members]]
 name = "x"
-type = "u32"
+type = "u16"
 key = false
 
 [[members]]
 name = "y"
-type = "u32"
+type = "u16"
 key = false
 
 [[members]]

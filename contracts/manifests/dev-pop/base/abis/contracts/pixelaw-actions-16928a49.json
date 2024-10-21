@@ -28,7 +28,7 @@
     "items": [
       {
         "type": "function",
-        "name": "contract_name",
+        "name": "name",
         "inputs": [],
         "outputs": [
           {
@@ -132,60 +132,16 @@
     "interface_name": "pixelaw::core::actions::IActions"
   },
   {
-    "type": "enum",
-    "name": "core::bool",
-    "variants": [
-      {
-        "name": "False",
-        "type": "()"
-      },
-      {
-        "name": "True",
-        "type": "()"
-      }
-    ]
-  },
-  {
-    "type": "struct",
-    "name": "pixelaw::core::models::permissions::Permission",
-    "members": [
-      {
-        "name": "app",
-        "type": "core::bool"
-      },
-      {
-        "name": "color",
-        "type": "core::bool"
-      },
-      {
-        "name": "owner",
-        "type": "core::bool"
-      },
-      {
-        "name": "text",
-        "type": "core::bool"
-      },
-      {
-        "name": "timestamp",
-        "type": "core::bool"
-      },
-      {
-        "name": "action",
-        "type": "core::bool"
-      }
-    ]
-  },
-  {
     "type": "struct",
     "name": "pixelaw::core::models::pixel::Pixel",
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "app",
@@ -283,11 +239,11 @@
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "color",
@@ -316,6 +272,38 @@
     ]
   },
   {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "enum",
+    "name": "pixelaw::core::models::pixel::PixelUpdateResult",
+    "variants": [
+      {
+        "name": "Ok",
+        "type": "pixelaw::core::models::pixel::PixelUpdate"
+      },
+      {
+        "name": "NotAllowed",
+        "type": "()"
+      },
+      {
+        "name": "Error",
+        "type": "core::felt252"
+      }
+    ]
+  },
+  {
     "type": "struct",
     "name": "core::array::Span::<core::felt252>",
     "members": [
@@ -338,10 +326,6 @@
         "type": "core::felt252"
       },
       {
-        "name": "manifest",
-        "type": "core::felt252"
-      },
-      {
         "name": "icon",
         "type": "core::felt252"
       },
@@ -357,11 +341,79 @@
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
+        "type": "core::integer::u16"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "pixelaw::core::utils::Bounds",
+    "members": [
+      {
+        "name": "x_min",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "y_min",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "x_max",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "y_max",
+        "type": "core::integer::u16"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "pixelaw::core::models::area::Area",
+    "members": [
+      {
+        "name": "id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "app",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "color",
         "type": "core::integer::u32"
+      }
+    ]
+  },
+  {
+    "type": "enum",
+    "name": "core::option::Option::<pixelaw::core::models::area::Area>",
+    "variants": [
+      {
+        "name": "Some",
+        "type": "pixelaw::core::models::area::Area"
+      },
+      {
+        "name": "None",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::array::Span::<pixelaw::core::models::area::Area>",
+    "members": [
+      {
+        "name": "snapshot",
+        "type": "@core::array::Array::<pixelaw::core::models::area::Area>"
       }
     ]
   },
@@ -378,43 +430,7 @@
       },
       {
         "type": "function",
-        "name": "update_permission",
-        "inputs": [
-          {
-            "name": "for_system",
-            "type": "core::felt252"
-          },
-          {
-            "name": "permission",
-            "type": "pixelaw::core::models::permissions::Permission"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      },
-      {
-        "type": "function",
-        "name": "update_app",
-        "inputs": [
-          {
-            "name": "name",
-            "type": "core::felt252"
-          },
-          {
-            "name": "icon",
-            "type": "core::felt252"
-          },
-          {
-            "name": "manifest",
-            "type": "core::felt252"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      },
-      {
-        "type": "function",
-        "name": "has_write_access",
+        "name": "can_update_pixel",
         "inputs": [
           {
             "name": "for_player",
@@ -431,11 +447,51 @@
           {
             "name": "pixel_update",
             "type": "pixelaw::core::models::pixel::PixelUpdate"
+          },
+          {
+            "name": "area_id_hint",
+            "type": "core::option::Option::<core::integer::u64>"
+          },
+          {
+            "name": "allow_modify",
+            "type": "core::bool"
           }
         ],
         "outputs": [
           {
+            "type": "pixelaw::core::models::pixel::PixelUpdateResult"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "update_pixel",
+        "inputs": [
+          {
+            "name": "for_player",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "for_system",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pixel_update",
+            "type": "pixelaw::core::models::pixel::PixelUpdate"
+          },
+          {
+            "name": "area_id",
+            "type": "core::option::Option::<core::integer::u64>"
+          },
+          {
+            "name": "allow_modify",
             "type": "core::bool"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "pixelaw::core::models::pixel::PixelUpdateResult"
           }
         ],
         "state_mutability": "external"
@@ -494,26 +550,6 @@
       },
       {
         "type": "function",
-        "name": "update_pixel",
-        "inputs": [
-          {
-            "name": "for_player",
-            "type": "core::starknet::contract_address::ContractAddress"
-          },
-          {
-            "name": "for_system",
-            "type": "core::starknet::contract_address::ContractAddress"
-          },
-          {
-            "name": "pixel_update",
-            "type": "pixelaw::core::models::pixel::PixelUpdate"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      },
-      {
-        "type": "function",
         "name": "new_app",
         "inputs": [
           {
@@ -527,10 +563,6 @@
           {
             "name": "icon",
             "type": "core::felt252"
-          },
-          {
-            "name": "manifest",
-            "type": "core::felt252"
           }
         ],
         "outputs": [
@@ -539,38 +571,6 @@
           }
         ],
         "state_mutability": "external"
-      },
-      {
-        "type": "function",
-        "name": "get_system_address",
-        "inputs": [
-          {
-            "name": "for_system",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
-        "name": "get_player_address",
-        "inputs": [
-          {
-            "name": "for_player",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "state_mutability": "view"
       },
       {
         "type": "function",
@@ -594,18 +594,74 @@
       },
       {
         "type": "function",
-        "name": "set_instruction",
+        "name": "add_area",
         "inputs": [
           {
-            "name": "selector",
-            "type": "core::felt252"
+            "name": "bounds",
+            "type": "pixelaw::core::utils::Bounds"
           },
           {
-            "name": "instruction",
-            "type": "core::felt252"
+            "name": "owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "color",
+            "type": "core::integer::u32"
+          },
+          {
+            "name": "app",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "pixelaw::core::models::area::Area"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_area",
+        "inputs": [
+          {
+            "name": "area_id",
+            "type": "core::integer::u64"
           }
         ],
         "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "find_area_by_position",
+        "inputs": [
+          {
+            "name": "position",
+            "type": "pixelaw::core::utils::Position"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::option::Option::<pixelaw::core::models::area::Area>"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "find_areas_inside_bounds",
+        "inputs": [
+          {
+            "name": "bounds",
+            "type": "pixelaw::core::utils::Bounds"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Span::<pixelaw::core::models::area::Area>"
+          }
+        ],
         "state_mutability": "external"
       }
     ]
@@ -677,7 +733,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::actions::actions::QueueScheduled",
+    "name": "pixelaw::core::events::QueueScheduled",
     "kind": "struct",
     "members": [
       {
@@ -709,7 +765,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::actions::actions::QueueProcessed",
+    "name": "pixelaw::core::events::QueueProcessed",
     "kind": "struct",
     "members": [
       {
@@ -721,7 +777,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::actions::actions::AppNameUpdated",
+    "name": "pixelaw::core::events::AppNameUpdated",
     "kind": "struct",
     "members": [
       {
@@ -738,7 +794,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::actions::actions::Alert",
+    "name": "pixelaw::core::events::Alert",
     "kind": "struct",
     "members": [
       {
@@ -780,22 +836,22 @@
       },
       {
         "name": "QueueScheduled",
-        "type": "pixelaw::core::actions::actions::QueueScheduled",
+        "type": "pixelaw::core::events::QueueScheduled",
         "kind": "nested"
       },
       {
         "name": "QueueProcessed",
-        "type": "pixelaw::core::actions::actions::QueueProcessed",
+        "type": "pixelaw::core::events::QueueProcessed",
         "kind": "nested"
       },
       {
         "name": "AppNameUpdated",
-        "type": "pixelaw::core::actions::actions::AppNameUpdated",
+        "type": "pixelaw::core::events::AppNameUpdated",
         "kind": "nested"
       },
       {
         "name": "Alert",
-        "type": "pixelaw::core::actions::actions::Alert",
+        "type": "pixelaw::core::events::Alert",
         "kind": "nested"
       }
     ]

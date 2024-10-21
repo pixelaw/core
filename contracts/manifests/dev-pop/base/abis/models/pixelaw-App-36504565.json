@@ -379,10 +379,6 @@
         "type": "core::felt252"
       },
       {
-        "name": "manifest",
-        "type": "core::felt252"
-      },
-      {
         "name": "icon",
         "type": "core::felt252"
       },

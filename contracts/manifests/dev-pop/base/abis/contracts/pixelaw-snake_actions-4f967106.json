@@ -28,7 +28,7 @@
     "items": [
       {
         "type": "function",
-        "name": "contract_name",
+        "name": "name",
         "inputs": [],
         "outputs": [
           {
@@ -128,22 +128,8 @@
   },
   {
     "type": "impl",
-    "name": "ActionsInteroperability",
-    "interface_name": "pixelaw::core::traits::IInteroperability"
-  },
-  {
-    "type": "enum",
-    "name": "core::option::Option::<core::integer::u32>",
-    "variants": [
-      {
-        "name": "Some",
-        "type": "core::integer::u32"
-      },
-      {
-        "name": "None",
-        "type": "()"
-      }
-    ]
+    "name": "ActionsImpl",
+    "interface_name": "pixelaw::apps::snake::app::ISnakeActions"
   },
   {
     "type": "enum",
@@ -152,20 +138,6 @@
       {
         "name": "Some",
         "type": "core::starknet::contract_address::ContractAddress"
-      },
-      {
-        "name": "None",
-        "type": "()"
-      }
-    ]
-  },
-  {
-    "type": "enum",
-    "name": "core::option::Option::<core::felt252>",
-    "variants": [
-      {
-        "name": "Some",
-        "type": "core::felt252"
       },
       {
         "name": "None",
@@ -189,130 +161,15 @@
   },
   {
     "type": "struct",
-    "name": "pixelaw::core::models::pixel::PixelUpdate",
-    "members": [
-      {
-        "name": "x",
-        "type": "core::integer::u32"
-      },
-      {
-        "name": "y",
-        "type": "core::integer::u32"
-      },
-      {
-        "name": "color",
-        "type": "core::option::Option::<core::integer::u32>"
-      },
-      {
-        "name": "owner",
-        "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
-      },
-      {
-        "name": "app",
-        "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
-      },
-      {
-        "name": "text",
-        "type": "core::option::Option::<core::felt252>"
-      },
-      {
-        "name": "timestamp",
-        "type": "core::option::Option::<core::integer::u64>"
-      },
-      {
-        "name": "action",
-        "type": "core::option::Option::<core::felt252>"
-      }
-    ]
-  },
-  {
-    "type": "struct",
-    "name": "pixelaw::core::models::registry::App",
-    "members": [
-      {
-        "name": "system",
-        "type": "core::starknet::contract_address::ContractAddress"
-      },
-      {
-        "name": "name",
-        "type": "core::felt252"
-      },
-      {
-        "name": "manifest",
-        "type": "core::felt252"
-      },
-      {
-        "name": "icon",
-        "type": "core::felt252"
-      },
-      {
-        "name": "action",
-        "type": "core::felt252"
-      }
-    ]
-  },
-  {
-    "type": "interface",
-    "name": "pixelaw::core::traits::IInteroperability",
-    "items": [
-      {
-        "type": "function",
-        "name": "on_pre_update",
-        "inputs": [
-          {
-            "name": "pixel_update",
-            "type": "pixelaw::core::models::pixel::PixelUpdate"
-          },
-          {
-            "name": "app_caller",
-            "type": "pixelaw::core::models::registry::App"
-          },
-          {
-            "name": "player_caller",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      },
-      {
-        "type": "function",
-        "name": "on_post_update",
-        "inputs": [
-          {
-            "name": "pixel_update",
-            "type": "pixelaw::core::models::pixel::PixelUpdate"
-          },
-          {
-            "name": "app_caller",
-            "type": "pixelaw::core::models::registry::App"
-          },
-          {
-            "name": "player_caller",
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      }
-    ]
-  },
-  {
-    "type": "impl",
-    "name": "ActionsImpl",
-    "interface_name": "pixelaw::apps::snake::app::ISnakeActions"
-  },
-  {
-    "type": "struct",
     "name": "pixelaw::core::utils::Position",
     "members": [
       {
         "name": "x",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       },
       {
         "name": "y",
-        "type": "core::integer::u32"
+        "type": "core::integer::u16"
       }
     ]
   },
@@ -321,12 +178,16 @@
     "name": "pixelaw::core::utils::DefaultParameters",
     "members": [
       {
-        "name": "for_player",
-        "type": "core::starknet::contract_address::ContractAddress"
+        "name": "player_override",
+        "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
       },
       {
-        "name": "for_system",
-        "type": "core::starknet::contract_address::ContractAddress"
+        "name": "system_override",
+        "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+      },
+      {
+        "name": "area_hint",
+        "type": "core::option::Option::<core::integer::u64>"
       },
       {
         "name": "position",
@@ -503,12 +364,12 @@
       },
       {
         "name": "x",
-        "type": "core::integer::u32",
+        "type": "core::integer::u16",
         "kind": "data"
       },
       {
         "name": "y",
-        "type": "core::integer::u32",
+        "type": "core::integer::u16",
         "kind": "data"
       }
     ]

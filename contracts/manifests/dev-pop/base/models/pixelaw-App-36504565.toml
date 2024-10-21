@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x34204d56b9f6a93b305e54a27b5e8e593f159f87212fcf39c770020b03bfce5"
-original_class_hash = "0x34204d56b9f6a93b305e54a27b5e8e593f159f87212fcf39c770020b03bfce5"
+class_hash = "0x4107d94a66470b68d2e06102c87937c03cca51fafa84a3a4fc45c95a4d2403c"
+original_class_hash = "0x4107d94a66470b68d2e06102c87937c03cca51fafa84a3a4fc45c95a4d2403c"
 abi = "manifests/dev-pop/base/abis/models/pixelaw-App-36504565.json"
 tag = "pixelaw-App"
 qualified_path = "pixelaw::core::models::registry::app"
@@ -13,11 +13,6 @@ key = true
 
 [[members]]
 name = "name"
-type = "felt252"
-key = false
-
-[[members]]
-name = "manifest"
 type = "felt252"
 key = false
 

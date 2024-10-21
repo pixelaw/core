@@ -363,30 +363,34 @@
   },
   {
     "type": "impl",
-    "name": "instructionImpl",
-    "interface_name": "pixelaw::core::models::registry::Iinstruction"
+    "name": "areaImpl",
+    "interface_name": "pixelaw::core::models::area::Iarea"
   },
   {
     "type": "struct",
-    "name": "pixelaw::core::models::registry::Instruction",
+    "name": "pixelaw::core::models::area::Area",
     "members": [
       {
-        "name": "system",
+        "name": "id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "app",
         "type": "core::starknet::contract_address::ContractAddress"
       },
       {
-        "name": "selector",
-        "type": "core::felt252"
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
-        "name": "instruction",
-        "type": "core::felt252"
+        "name": "color",
+        "type": "core::integer::u32"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "pixelaw::core::models::registry::Iinstruction",
+    "name": "pixelaw::core::models::area::Iarea",
     "items": [
       {
         "type": "function",
@@ -394,7 +398,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "pixelaw::core::models::registry::Instruction"
+            "type": "pixelaw::core::models::area::Area"
           }
         ],
         "outputs": [],
@@ -404,7 +408,7 @@
   },
   {
     "type": "event",
-    "name": "pixelaw::core::models::registry::instruction::Event",
+    "name": "pixelaw::core::models::area::area::Event",
     "kind": "enum",
     "variants": []
   }
