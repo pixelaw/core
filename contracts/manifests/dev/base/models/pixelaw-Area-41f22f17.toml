@@ -1,6 +1,6 @@
 kind = "DojoModel"
-class_hash = "0x7974a29051adec721e79e8d6f107df99d710e9d1948684c8daf9459b9117f6e"
-original_class_hash = "0x7974a29051adec721e79e8d6f107df99d710e9d1948684c8daf9459b9117f6e"
+class_hash = "0x4a51f0c4ffde38ee62c5edda4b8ac89892063623f6cbc0eeadbfb271cac83ae"
+original_class_hash = "0x4a51f0c4ffde38ee62c5edda4b8ac89892063623f6cbc0eeadbfb271cac83ae"
 abi = "manifests/dev/base/abis/models/pixelaw-Area-41f22f17.json"
 tag = "pixelaw-Area"
 qualified_path = "pixelaw::core::models::area::area"
@@ -12,11 +12,16 @@ type = "u64"
 key = true
 
 [[members]]
+name = "app"
+type = "ContractAddress"
+key = false
+
+[[members]]
 name = "owner"
 type = "ContractAddress"
 key = false
 
 [[members]]
-name = "default_color"
+name = "color"
 type = "u32"
 key = false

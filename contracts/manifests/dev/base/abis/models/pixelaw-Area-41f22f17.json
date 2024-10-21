@@ -375,11 +375,15 @@
         "type": "core::integer::u64"
       },
       {
+        "name": "app",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
         "name": "owner",
         "type": "core::starknet::contract_address::ContractAddress"
       },
       {
-        "name": "default_color",
+        "name": "color",
         "type": "core::integer::u32"
       }
     ]

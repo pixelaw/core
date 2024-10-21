@@ -8,22 +8,7 @@
     "ETH": 1111,
     "STRK": 2222
   },
-  "feeToken": {
-    "address": "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-    "name": "ETHER",
-    "symbol": "ETH",
-    "decimals": 18,
-    "storage": {
-      "0x111": "0x1",
-      "0x222": "0x2"
-    }
-  },
-  "universalDeployer": {
-    "address": "0x41a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf",
-    "storage": {
-      "0x10": "0x100"
-    }
-  },
+
   "accounts": {
     "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca": {
       "publicKey": "0x640466ebd2ce505209d3e5c4494b4276ed8f1cde764d757eb48831961f7cdea",
@@ -38,6 +23,35 @@
       "storage": {}
     }
   },
-  "contracts": {},
-  "classes": []
+  "contracts": {
+    "0x29873c310fbefde666dc32a1554fea6bb45eecc84f680f8a2b0a8fbb8cb89af": {
+      "balance": "0xD3C21BCECCEDA1000000",
+      "class": "MyErc20",
+      "storage": {
+        "0x1": "0x1",
+        "0x2": "0x2"
+      }
+    },
+    "0xe29882a1fcba1e7e10cad46212257fea5c752a4f9b1b1ec683c503a2cf5c8a": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf": {
+      "class": "0x07b3e05f48f0c69e4a65ce5e076a66271a527aff2c34ce1083ec6e1526997a69",
+      "storage": {
+        "0x1": "0x1"
+      }
+    }
+  },
+  "classes": [
+    {
+      "class": "./erc20.json",
+      "classHash": "0x8",
+      "name": "MyErc20"
+    },
+    {
+      "name": "UDC",
+      "class": "./universal_deployer.json",
+      "classHash": "0x07b3e05f48f0c69e4a65ce5e076a66271a527aff2c34ce1083ec6e1526997a69"
+    }
+  ]
 }

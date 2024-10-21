@@ -248,6 +248,20 @@
     ]
   },
   {
+    "type": "enum",
+    "name": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>",
+    "variants": [
+      {
+        "name": "Some",
+        "type": "pixelaw::core::models::pixel::PixelUpdate"
+      },
+      {
+        "name": "None",
+        "type": "()"
+      }
+    ]
+  },
+  {
     "type": "struct",
     "name": "pixelaw::core::utils::Position",
     "members": [
@@ -272,6 +286,10 @@
       {
         "name": "system_override",
         "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+      },
+      {
+        "name": "area_hint",
+        "type": "core::option::Option::<core::integer::u64>"
       },
       {
         "name": "position",
@@ -321,7 +339,11 @@
             "type": "core::starknet::contract_address::ContractAddress"
           }
         ],
-        "outputs": [],
+        "outputs": [
+          {
+            "type": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>"
+          }
+        ],
         "state_mutability": "external"
       },
       {

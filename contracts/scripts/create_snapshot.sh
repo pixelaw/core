@@ -97,7 +97,7 @@ sleep 1
 # Setup PixeLAW auth and init
 declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
 
-CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-QueueItem" "pixelaw-RTree" "pixelaw-Area" "pixelaw-Snake" "pixelaw-Instruction")
+CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-QueueItem" "pixelaw-RTree" "pixelaw-Area" "pixelaw-Snake")
 SNAKE_MODELS=("pixelaw-Snake" "pixelaw-SnakeSegment")
 
 echo "Start Torii"
@@ -192,7 +192,7 @@ done
 
 
 sleep 3
-exit 
+exit
 echo "Stopping katana and torii"
 pkill -f torii
 pkill -f katana
