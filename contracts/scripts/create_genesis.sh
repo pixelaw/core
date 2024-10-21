@@ -82,7 +82,7 @@ declare "CORE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.tag=="pix
 declare "PAINT_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.tag=="pixelaw-paint_actions") | .address')
 declare "SNAKE_ACTIONS"=$(cat $MANIFEST | jq -r '.contracts[] | select(.tag=="pixelaw-snake_actions") | .address')
 
-CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-Permissions" "pixelaw-QueueItem" "pixelaw-Snake" "pixelaw-Instruction")
+CORE_MODELS=("pixelaw-App" "pixelaw-AppName" "pixelaw-CoreActionsAddress" "pixelaw-Pixel" "pixelaw-QueueItem" "pixelaw-Snake")
 SNAKE_MODELS=("pixelaw-Snake" "pixelaw-SnakeSegment")
 
 

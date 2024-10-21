@@ -102,7 +102,7 @@ RUN \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
     export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev && cat out/dev/katana.log && \
+    bash scripts/create_snapshot.sh dev && \
     WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
     echo $WORLD_ADDRESS && \
     mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \

@@ -192,12 +192,12 @@ done
 
 
 sleep 3
-exit
+
 echo "Stopping katana and torii"
 pkill -f torii
 pkill -f katana
 
-
+sleep 1
 # Patch the torii DB
 echo "Patching Torii db"
 sqlite3 $TORII_DB  "UPDATE contracts SET head = 0;"
