@@ -2119,16 +2119,7 @@
         }
       ],
       "reads": [],
-      "writes": [
-        "pixelaw-App",
-        "pixelaw-AppName",
-        "pixelaw-CoreActionsAddress",
-        "pixelaw-Pixel",
-        "pixelaw-Permissions",
-        "pixelaw-QueueItem",
-        "pixelaw-Snake",
-        "pixelaw-Instruction"
-      ],
+      "writes": [],
       "init_calldata": [],
       "tag": "pixelaw-actions",
       "systems": [
@@ -2647,9 +2638,7 @@
         }
       ],
       "reads": [],
-      "writes": [
-        "pixelaw-Pixel"
-      ],
+      "writes": [],
       "init_calldata": [],
       "tag": "pixelaw-paint_actions",
       "systems": [
@@ -3068,10 +3057,7 @@
         }
       ],
       "reads": [],
-      "writes": [
-        "pixelaw-Snake",
-        "pixelaw-SnakeSegment"
-      ],
+      "writes": [],
       "init_calldata": [],
       "tag": "pixelaw-snake_actions",
       "systems": [

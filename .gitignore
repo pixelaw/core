@@ -9,5 +9,7 @@ web/public/assets/placeholder/pixel-state.png
 **/**/*.sqlite
 contracts/out
 contracts/target
+contracts/manifests/
+contracts/overlay
 .aider*
 db/

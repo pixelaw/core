@@ -29,16 +29,7 @@ original_class_hash = "0x9e00605511c63fa1b4366de9baf304748f30682ab4d1cc12b51d937
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/pixelaw-actions-16928a49.json"
 reads = []
-writes = [
-    "pixelaw-App",
-    "pixelaw-AppName",
-    "pixelaw-CoreActionsAddress",
-    "pixelaw-Pixel",
-    "pixelaw-Permissions",
-    "pixelaw-QueueItem",
-    "pixelaw-Snake",
-    "pixelaw-Instruction",
-]
+writes = []
 init_calldata = []
 tag = "pixelaw-actions"
 systems = [
@@ -58,7 +49,7 @@ original_class_hash = "0x2cebb25adf8fe48de7d7797e77f82f8eb7b090b1f354bae20c2c895
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/pixelaw-paint_actions-2afb94fe.json"
 reads = []
-writes = ["pixelaw-Pixel"]
+writes = []
 init_calldata = []
 tag = "pixelaw-paint_actions"
 systems = [
@@ -79,10 +70,7 @@ original_class_hash = "0x5e11ee031116bac886f9c4642a25815bd772fc0cee90e43e42da888
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/pixelaw-snake_actions-4f967106.json"
 reads = []
-writes = [
-    "pixelaw-Snake",
-    "pixelaw-SnakeSegment",
-]
+writes = []
 init_calldata = []
 tag = "pixelaw-snake_actions"
 systems = [
