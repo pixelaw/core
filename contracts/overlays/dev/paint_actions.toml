@@ -1,2 +1,2 @@
-tag = "pixelaw-snake_actions"
-writes = ["pixelaw-Snake", "pixelaw-SnakeSegment"]
+tag = "pixelaw-paint_actions"
+writes = ["pixelaw-Pixel"]

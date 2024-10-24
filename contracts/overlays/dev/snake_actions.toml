@@ -1,11 +1,2 @@
-tag = "pixelaw-actions"
-writes = [
-  "pixelaw-App",
-  "pixelaw-AppName",
-  "pixelaw-CoreActionsAddress",
-  "pixelaw-Pixel",
-  "pixelaw-Permissions",
-  "pixelaw-QueueItem",
-  "pixelaw-Snake",
-  "pixelaw-Instruction",
-]
+tag = "pixelaw-snake_actions"
+writes = ["pixelaw-Snake", "pixelaw-SnakeSegment"]
