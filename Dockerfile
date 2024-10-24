@@ -89,7 +89,6 @@ RUN mkdir -p /tmp/contracts
 
 COPY ./contracts /tmp/contracts
 
-
 WORKDIR /tmp/contracts
 
 
