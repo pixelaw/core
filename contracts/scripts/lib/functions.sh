@@ -3,7 +3,6 @@
 export PROFILE=${1:-"dev"}
 export STARKNET_RPC=${2:-"http://127.0.0.1:5050/"}
 
-
 TARGET="target/${PROFILE}"
 OUT="out/$PROFILE"
 GENESIS_TEMPLATE=genesis_template.json
@@ -17,19 +16,6 @@ TORII_DB="$OUT/torii.sqlite"
 TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
-
-check_needed_commands() {
-  commands=("jq" "katana" "starkli" "zip" "sozo" "sqlite3")
-
-  for cmd in "${commands[@]}"; do
-      if ! command -v $cmd &> /dev/null; then
-          echo "Error: $cmd is not available. The scripts need the following commands: ${commands[*]}"
-          exit 1
-      fi
-  done
-
-}
-
 
 start_katana() {
     echo "start_katana"
@@ -55,13 +41,12 @@ start_katana() {
     done
 }
 
-
 start_torii() {
     echo "start_torii"
 
     pkill -f torii
     torii \
-      --world $WORLD \
+      --world $WORLD_ADDRESS \
       --rpc $STARKNET_RPC \
       --database $TORII_DB \
       --events-chunk-size 10000 \
@@ -86,8 +71,6 @@ sozo_rebuild() {
         --bindings-output $OUT
 }
 
-
-
 sozo_migrate() {
     echo "sozo_migrate"
 
@@ -108,7 +91,6 @@ sozo_migrate() {
     sleep 1
 }
 
-
 grant_write_permissions() {
     echo "grant_write_permissions"
     local models=$(jq -r '.models[] | select(.kind == "DojoModel") | .tag' $MANIFEST)
@@ -118,7 +100,6 @@ grant_write_permissions() {
     done
 }
 
-
 init_actions() {
     echo "init_actions"
     local actions=$(jq -r '.contracts[] | select(.kind == "DojoContract") | .tag' $MANIFEST)
@@ -127,7 +108,6 @@ init_actions() {
         sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait $action init
     done
 }
-
 
 prepare_genesis() {
   echo "prepare_genesis"
@@ -145,7 +125,6 @@ prepare_genesis() {
     "$GENESIS_OUT" > temp.json \
     && mv temp.json "$GENESIS_OUT"
 }
-
 
 wait_for_torii_writing() {
   echo "wait_for_torii_writing"
@@ -255,6 +234,18 @@ paint() {
   pixelaw-paint_actions \
   interact \
   -c 0,0,$1,3816652287
+}
+
+check_needed_commands() {
+  commands=("jq" "katana" "starkli" "zip" "sozo" "sqlite3")
+
+  for cmd in "${commands[@]}"; do
+      if ! command -v $cmd &> /dev/null; then
+          echo "Error: $cmd is not available. The scripts need the following commands: ${commands[*]}"
+          exit 1
+      fi
+  done
+
 }
 
 check_needed_commands

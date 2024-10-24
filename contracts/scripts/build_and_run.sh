@@ -27,7 +27,8 @@ sozo_rebuild
 
 sozo_migrate
 
-declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
+#declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
+export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
 start_torii
 

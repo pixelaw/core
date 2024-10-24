@@ -10,9 +10,6 @@ set -uo pipefail
 #    - jq
 ###########################################################
 
-
-
-
 export PROFILE=${1:-"dev"}
 export STARKNET_RPC=${2:-"http://127.0.0.1:5050/"}
 

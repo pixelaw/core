@@ -8,6 +8,7 @@ ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.7.0"
 ARG DOJO_VERSION="1.0.0-alpha.17"
 ARG STARKLI_VERSION="0.1.6"
+
 ARG GENERATE_POPULATED_CORE=false
 
 # Install dependencies
@@ -89,37 +90,18 @@ COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts
 
-## Generate genesis.json for EMPTY core
+## Generate storage_init
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
-    echo $WORLD_ADDRESS && \
-    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-    cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-    cp manifests/dev/deployment/manifest.json /pixelaw/storage_init/$WORLD_ADDRESS/manifest.json && \
-    cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-    cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-    rm -rf out/dev
+    bash scripts/docker_create_snapshot.sh dev
 
 
-## Generate genesis.json for POPULATED core
-RUN if [ "${GENERATE_POPULATED_CORE}" = "true" ]; then \
+RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev-pop && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
-    echo $WORLD_ADDRESS && \
-    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-    rm -rf out/dev-pop
+    bash scripts/docker_create_snapshot.sh dev-pop ${GENERATE_POPULATED_CORE}
+
 
 
 # Stage 2: Put the webapp files in place
