@@ -1,13 +1,7 @@
 #!/bin/bash
 set -uo pipefail
 
-function paint() {
-  sozo \
-  execute \
-  pixelaw-paint_actions \
-  interact \
-  -c 0,0,$1,3816652287
-}
+
 
 # H
 paint 0,0

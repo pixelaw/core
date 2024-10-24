@@ -8,6 +8,7 @@ ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.7.0"
 ARG DOJO_VERSION="1.0.0-alpha.17"
 ARG STARKLI_VERSION="0.1.6"
+ARG GENERATE_POPULATED_CORE=false
 
 # Install dependencies
 RUN apt-get update && \
@@ -59,14 +60,6 @@ RUN source ~/.bashrc
 ENV PATH="/root/.starkli/bin:${PATH}"
 RUN starkliup -v ${STARKLI_VERSION}
 
-##Install Scarb
-#RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.7.0
-##RUN chmod +x ./install.sh
-##RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
-#RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
-#ENV PATH="/root/.local/bin:${PATH}"
-
-
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
@@ -114,7 +107,7 @@ RUN \
 
 
 ## Generate genesis.json for POPULATED core
-RUN \
+RUN if [ "${GENERATE_POPULATED_CORE}" = "true" ]; then \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
