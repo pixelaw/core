@@ -91,7 +91,6 @@ COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts
 
-
 ## Generate storage_init
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
