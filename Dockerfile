@@ -9,7 +9,6 @@ ARG SCARB_VERSION="2.7.0"
 ARG DOJO_VERSION="1.0.0-alpha.17"
 ARG STARKLI_VERSION="0.1.6"
 
-ARG GENERATE_POPULATED_CORE=false
 
 # Install dependencies
 RUN apt-get update && \
@@ -98,6 +97,7 @@ RUN \
     bash scripts/docker_create_snapshot.sh dev
 
 
+ARG GENERATE_POPULATED_CORE=false
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
