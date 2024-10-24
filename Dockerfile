@@ -79,6 +79,7 @@ COPY ./contracts/dojo_dev.toml /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
 COPY ./contracts/Scarb.lock /tmp/dojo_init
 
+
 # Run build separately to cache the dojo/scarb dependencies
 
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
