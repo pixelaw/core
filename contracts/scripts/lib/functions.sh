@@ -82,12 +82,17 @@ sozo_migrate() {
         plan
 
     ## Sozo migrate apply
-    sozo \
+    error_output=$(sozo \
         --profile $PROFILE \
         --manifest-path $DEPLOY_SCARB \
         migrate \
-        apply
+        apply 2>&1)
 
+    if [ $? -ne 0 ]; then
+    printf "$error_output"
+    printf "\nSeed or Dojo version changed, so update the world_address in all relevant places!\n"
+    exit 1
+    fi
     sleep 1
 }
 
