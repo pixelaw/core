@@ -94,14 +94,14 @@ WORKDIR /tmp/contracts
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    bash scripts/docker_create_snapshot.sh dev
+    bash scripts/create_snapshot_docker.sh dev
 
 
 ARG GENERATE_POPULATED_CORE=false
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    bash scripts/docker_create_snapshot.sh dev-pop ${GENERATE_POPULATED_CORE}
+    bash scripts/create_snapshot_docker.sh dev-pop ${GENERATE_POPULATED_CORE}
 
 
 
