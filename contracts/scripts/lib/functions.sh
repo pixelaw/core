@@ -1,7 +1,6 @@
 #!/bin/bash
 
 export PROFILE=${PROFILE:-"dev"}
-export STARKNET_RPC=${STARKNET_RPC:-"http://127.0.0.1:5050/"}
 
 TARGET="target/${PROFILE}"
 OUT="out/$PROFILE"
@@ -45,9 +44,10 @@ start_torii() {
     echo "start_torii"
 
     pkill -f torii
+
     torii \
       --world $WORLD_ADDRESS \
-      --rpc $STARKNET_RPC \
+      --rpc get_rpc_url \
       --database $TORII_DB \
       --events-chunk-size 10000 \
       --allowed-origins "*" \
@@ -258,6 +258,11 @@ check_needed_commands() {
       fi
   done
 
+}
+
+get_rpc_url() {
+    local file_path="dojo_$PROFILE.toml"
+    grep "rpc_url" "$file_path" | head -1 | awk -F '"' '{print $2}'
 }
 
 check_needed_commands

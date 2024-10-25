@@ -11,7 +11,6 @@ set -uo pipefail
 ###########################################################
 
 export PROFILE=${1:-"dev"}
-export STARKNET_RPC=${2:-"http://127.0.0.1:5050/"}
 
 # First do "build and run"
 source ./scripts/build_and_run.sh

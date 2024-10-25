@@ -2,14 +2,17 @@
 set -uo pipefail
 
 export PROFILE=${1:-"sepolia"}
-export STARKNET_RPC=${2:-"https://starknet-sepolia.public.blastapi.io/rpc/v0_7"}
 
 source ./scripts/lib/functions.sh
+
+read -sp "Enter keystore password: " DOJO_KEYSTORE_PASSWORD
+export DOJO_KEYSTORE_PASSWORD
+echo # just to add a newline after the input
 
 #sozo_account_deploy
 #sozo account new deployer.account.json
 #
-#sozo_rebuild
+sozo_rebuild
 #
 #
 #
