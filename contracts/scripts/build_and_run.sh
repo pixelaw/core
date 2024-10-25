@@ -22,17 +22,11 @@ start_katana
 
 sozo_rebuild
 
-
-#starkli account deploy dev-account.json --keystore dev-keystore.json --rpc $STARKNET_RPC
-
 sozo_migrate
 
-#declare "WORLD"=$(cat $MANIFEST | jq -r '.world.address')
 export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
 start_torii
-
-grant_write_permissions
 
 init_actions
 

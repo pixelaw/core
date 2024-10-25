@@ -1,0 +1,14 @@
+kind = "DojoContract"
+class_hash = "0x5e11ee031116bac886f9c4642a25815bd772fc0cee90e43e42da888b1ae72e1"
+original_class_hash = "0x5e11ee031116bac886f9c4642a25815bd772fc0cee90e43e42da888b1ae72e1"
+base_class_hash = "0x0"
+abi = "manifests/sepolia/base/abis/contracts/pixelaw-snake_actions-4f967106.json"
+reads = []
+writes = []
+init_calldata = []
+tag = "pixelaw-snake_actions"
+systems = [
+    "init",
+    "move",
+]
+manifest_name = "pixelaw-snake_actions-4f967106"

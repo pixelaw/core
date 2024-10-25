@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export PROFILE=${1:-"dev"}
-export STARKNET_RPC=${2:-"http://127.0.0.1:5050/"}
+export PROFILE=${PROFILE:-"dev"}
+export STARKNET_RPC=${STARKNET_RPC:-"http://127.0.0.1:5050/"}
 
 TARGET="target/${PROFILE}"
 OUT="out/$PROFILE"
@@ -71,6 +71,22 @@ sozo_rebuild() {
         --bindings-output $OUT
 }
 
+sozo_account_deploy() {
+      sozo \
+          --profile $PROFILE \
+          --manifest-path $DEPLOY_SCARB \
+          account \
+          new \
+          deployer.account.json
+
+      sozo \
+          --profile $PROFILE \
+          --manifest-path $DEPLOY_SCARB \
+          account \
+          deploy \
+          deployer.account.json
+}
+
 sozo_migrate() {
     echo "sozo_migrate"
 
@@ -94,15 +110,6 @@ sozo_migrate() {
     exit 1
     fi
     sleep 1
-}
-
-grant_write_permissions() {
-    echo "grant_write_permissions"
-    local models=$(jq -r '.models[] | select(.kind == "DojoModel") | .tag' $MANIFEST)
-
-    for model in ${models[@]}; do
-        sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE auth grant --wait writer model:$model,pixelaw-actions
-    done
 }
 
 init_actions() {
