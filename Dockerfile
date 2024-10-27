@@ -6,8 +6,9 @@ SHELL ["/bin/bash", "-c"]
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.7.0"
-ARG DOJO_VERSION="1.0.0-alpha.17"
+ARG DOJO_VERSION="1.0.0-alpha.18"
 ARG STARKLI_VERSION="0.1.6"
+
 
 # Install dependencies
 RUN apt-get update && \
@@ -59,14 +60,6 @@ RUN source ~/.bashrc
 ENV PATH="/root/.starkli/bin:${PATH}"
 RUN starkliup -v ${STARKLI_VERSION}
 
-##Install Scarb
-#RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.7.0
-##RUN chmod +x ./install.sh
-##RUN export PATH=$HOME/.local/bin:$PATH && ./install.sh
-#RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> $HOME/.bashrc
-#ENV PATH="/root/.local/bin:${PATH}"
-
-
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
@@ -85,6 +78,7 @@ COPY ./contracts/dojo_dev.toml /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
 COPY ./contracts/Scarb.lock /tmp/dojo_init
 
+
 # Run build separately to cache the dojo/scarb dependencies
 
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
@@ -96,37 +90,19 @@ COPY ./contracts /tmp/contracts
 
 WORKDIR /tmp/contracts
 
-## Generate genesis.json for EMPTY core
+## Generate storage_init
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev/deployment/manifest.json) && \
-    echo $WORLD_ADDRESS && \
-    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-    cp out/dev/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-    cp manifests/dev/deployment/manifest.json /pixelaw/storage_init/$WORLD_ADDRESS/manifest.json && \
-    cp out/dev/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-    cp out/dev/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-    rm -rf out/dev
+    bash scripts/create_snapshot_docker.sh dev
 
 
-## Generate genesis.json for POPULATED core
+ARG GENERATE_POPULATED_CORE=false
 RUN \
     --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD) && \
-    bash scripts/create_snapshot.sh dev-pop && \
-    WORLD_ADDRESS=$(jq -r '.world.address' manifests/dev-pop/deployment/manifest.json) && \
-    echo $WORLD_ADDRESS && \
-    mkdir -p /pixelaw/storage_init/$WORLD_ADDRESS && \
-    cp out/dev-pop/genesis.json /pixelaw/storage_init/$WORLD_ADDRESS/genesis.json && \
-    cp out/dev-pop/katana_db.zip /pixelaw/storage_init/$WORLD_ADDRESS/katana_db.zip && \
-    cp out/dev-pop/torii.sqlite.zip /pixelaw/storage_init/$WORLD_ADDRESS/torii.sqlite.zip && \
-    rm -rf out/dev-pop
+    bash scripts/create_snapshot_docker.sh dev-pop ${GENERATE_POPULATED_CORE}
+
 
 
 # Stage 2: Put the webapp files in place

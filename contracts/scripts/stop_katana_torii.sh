@@ -5,4 +5,4 @@ export PROFILE=${1:-"dev"}
 
 source ./scripts/lib/functions.sh
 
-populate
+kill_katana_torii

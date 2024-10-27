@@ -1,0 +1,405 @@
+[world]
+kind = "WorldContract"
+class_hash = "0x6f38d5d9507c5d9546290e1a27e309efe5a9af3770b6cc1627db4a1b90a7dce"
+original_class_hash = "0x6f38d5d9507c5d9546290e1a27e309efe5a9af3770b6cc1627db4a1b90a7dce"
+abi = "manifests/sepolia/deployment/abis/dojo-world.json"
+address = "0x4adbe4bfe631a95a5ce99d8200a8721b1ac8096ff8941cecddc4e79a7b2d5d5"
+seed = "pixelaw"
+manifest_name = "dojo-world"
+
+[world.metadata]
+profile_name = "sepolia"
+rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+
+[base]
+kind = "Class"
+class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+original_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/sepolia/deployment/abis/dojo-base.json"
+tag = "dojo-base"
+manifest_name = "dojo-base"
+
+[[contracts]]
+kind = "DojoContract"
+address = "0x23fc93581dff74d3d92a445b3f5eb8ea7c41da1e7848f370f244acbbf604a79"
+class_hash = "0x9e00605511c63fa1b4366de9baf304748f30682ab4d1cc12b51d93745f7ed9"
+original_class_hash = "0x9e00605511c63fa1b4366de9baf304748f30682ab4d1cc12b51d93745f7ed9"
+base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/sepolia/deployment/abis/contracts/pixelaw-actions-16928a49.json"
+reads = []
+writes = [
+    "pixelaw-App",
+    "pixelaw-AppName",
+    "pixelaw-CoreActionsAddress",
+    "pixelaw-Pixel",
+    "pixelaw-QueueItem",
+    "pixelaw-Snake",
+    "pixelaw-RTree",
+    "pixelaw-Area",
+]
+init_calldata = []
+tag = "pixelaw-actions"
+systems = [
+    "init",
+    "schedule_queue",
+    "process_queue",
+    "alert_player",
+    "remove_area",
+]
+manifest_name = "pixelaw-actions-16928a49"
+
+[[contracts]]
+kind = "DojoContract"
+address = "0x108da9b46a036a2b1c7bab7b9c1f4fe9b4895ce66b4dcca8580214f0f47b503"
+class_hash = "0x2cebb25adf8fe48de7d7797e77f82f8eb7b090b1f354bae20c2c895d2043461"
+original_class_hash = "0x2cebb25adf8fe48de7d7797e77f82f8eb7b090b1f354bae20c2c895d2043461"
+base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/sepolia/deployment/abis/contracts/pixelaw-paint_actions-2afb94fe.json"
+reads = []
+writes = ["pixelaw-Pixel"]
+init_calldata = []
+tag = "pixelaw-paint_actions"
+systems = [
+    "init",
+    "on_post_update",
+    "interact",
+    "put_color",
+    "pixel_row",
+    "fade",
+]
+manifest_name = "pixelaw-paint_actions-2afb94fe"
+
+[[contracts]]
+kind = "DojoContract"
+address = "0x57531304fc089e7af76d7e29c73ca54583e22e88a9190d725cb9447373864db"
+class_hash = "0x5e11ee031116bac886f9c4642a25815bd772fc0cee90e43e42da888b1ae72e1"
+original_class_hash = "0x5e11ee031116bac886f9c4642a25815bd772fc0cee90e43e42da888b1ae72e1"
+base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/sepolia/deployment/abis/contracts/pixelaw-snake_actions-4f967106.json"
+reads = []
+writes = [
+    "pixelaw-Snake",
+    "pixelaw-SnakeSegment",
+]
+init_calldata = []
+tag = "pixelaw-snake_actions"
+systems = [
+    "init",
+    "move",
+]
+manifest_name = "pixelaw-snake_actions-4f967106"
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x4107d94a66470b68d2e06102c87937c03cca51fafa84a3a4fc45c95a4d2403c"
+original_class_hash = "0x4107d94a66470b68d2e06102c87937c03cca51fafa84a3a4fc45c95a4d2403c"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-App-36504565.json"
+tag = "pixelaw-App"
+qualified_path = "pixelaw::core::models::registry::app"
+manifest_name = "pixelaw-App-36504565"
+
+[[models.members]]
+name = "system"
+type = "ContractAddress"
+key = true
+
+[[models.members]]
+name = "name"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "icon"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "action"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x7d54c34e9b4215ceaada6950e0b521ef3892de01fbaea2c8323e8c2cf3329c8"
+original_class_hash = "0x7d54c34e9b4215ceaada6950e0b521ef3892de01fbaea2c8323e8c2cf3329c8"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-AppName-3b816829.json"
+tag = "pixelaw-AppName"
+qualified_path = "pixelaw::core::models::registry::app_name"
+manifest_name = "pixelaw-AppName-3b816829"
+
+[[models.members]]
+name = "name"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "system"
+type = "ContractAddress"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x3d55e23acf8df5ef0c25b76d5a6b7765c241c494af075c7ce3858568bec45f1"
+original_class_hash = "0x3d55e23acf8df5ef0c25b76d5a6b7765c241c494af075c7ce3858568bec45f1"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-AppUser-4eda3c52.json"
+tag = "pixelaw-AppUser"
+qualified_path = "pixelaw::core::models::registry::app_user"
+manifest_name = "pixelaw-AppUser-4eda3c52"
+
+[[models.members]]
+name = "system"
+type = "ContractAddress"
+key = true
+
+[[models.members]]
+name = "player"
+type = "ContractAddress"
+key = true
+
+[[models.members]]
+name = "action"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x4a51f0c4ffde38ee62c5edda4b8ac89892063623f6cbc0eeadbfb271cac83ae"
+original_class_hash = "0x4a51f0c4ffde38ee62c5edda4b8ac89892063623f6cbc0eeadbfb271cac83ae"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-Area-41f22f17.json"
+tag = "pixelaw-Area"
+qualified_path = "pixelaw::core::models::area::area"
+manifest_name = "pixelaw-Area-41f22f17"
+
+[[models.members]]
+name = "id"
+type = "u64"
+key = true
+
+[[models.members]]
+name = "app"
+type = "ContractAddress"
+key = false
+
+[[models.members]]
+name = "owner"
+type = "ContractAddress"
+key = false
+
+[[models.members]]
+name = "color"
+type = "u32"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x296cfe5fb82a8b03b4aa78e35955bc70971babeb414d70a6a8acc52a4eacab2"
+original_class_hash = "0x296cfe5fb82a8b03b4aa78e35955bc70971babeb414d70a6a8acc52a4eacab2"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-CoreActionsAddress-5379e1ce.json"
+tag = "pixelaw-CoreActionsAddress"
+qualified_path = "pixelaw::core::models::registry::core_actions_address"
+manifest_name = "pixelaw-CoreActionsAddress-5379e1ce"
+
+[[models.members]]
+name = "key"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "value"
+type = "ContractAddress"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x6363714e0e5ce09675144935223ff5390e7fefe6ee059a8d62ffc79a3e146ad"
+original_class_hash = "0x6363714e0e5ce09675144935223ff5390e7fefe6ee059a8d62ffc79a3e146ad"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-Pixel-7e607b2f.json"
+tag = "pixelaw-Pixel"
+qualified_path = "pixelaw::core::models::pixel::pixel"
+manifest_name = "pixelaw-Pixel-7e607b2f"
+
+[[models.members]]
+name = "x"
+type = "u16"
+key = true
+
+[[models.members]]
+name = "y"
+type = "u16"
+key = true
+
+[[models.members]]
+name = "app"
+type = "ContractAddress"
+key = false
+
+[[models.members]]
+name = "color"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "created_at"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "updated_at"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "owner"
+type = "ContractAddress"
+key = false
+
+[[models.members]]
+name = "text"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "action"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x672114a91934388e6a4950f164dc151894579281f4eab56fe439108fd4fca70"
+original_class_hash = "0x672114a91934388e6a4950f164dc151894579281f4eab56fe439108fd4fca70"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-QueueItem-549a17f2.json"
+tag = "pixelaw-QueueItem"
+qualified_path = "pixelaw::core::models::queue::queue_item"
+manifest_name = "pixelaw-QueueItem-549a17f2"
+
+[[models.members]]
+name = "id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "valid"
+type = "bool"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x615da1d9db8eef7b84db6c92211fd202646d12de041b3e6ea6f3a7abec73e49"
+original_class_hash = "0x615da1d9db8eef7b84db6c92211fd202646d12de041b3e6ea6f3a7abec73e49"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-RTree-3baaf9fe.json"
+tag = "pixelaw-RTree"
+qualified_path = "pixelaw::core::models::area::r_tree"
+manifest_name = "pixelaw-RTree-3baaf9fe"
+
+[[models.members]]
+name = "id"
+type = "u64"
+key = true
+
+[[models.members]]
+name = "children"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x5a3afeed7a51a51cab27a99c9d99064fc467ecdb9a8cc606c4d4899dffb7f6c"
+original_class_hash = "0x5a3afeed7a51a51cab27a99c9d99064fc467ecdb9a8cc606c4d4899dffb7f6c"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-Snake-62b876d4.json"
+tag = "pixelaw-Snake"
+qualified_path = "pixelaw::apps::snake::app::snake"
+manifest_name = "pixelaw-Snake-62b876d4"
+
+[[models.members]]
+name = "owner"
+type = "ContractAddress"
+key = true
+
+[[models.members]]
+name = "length"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "first_segment_id"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "last_segment_id"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "direction"
+type = "Direction"
+key = false
+
+[[models.members]]
+name = "color"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "text"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "is_dying"
+type = "bool"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
+original_class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
+abi = "manifests/sepolia/deployment/abis/models/pixelaw-SnakeSegment-302de0d8.json"
+tag = "pixelaw-SnakeSegment"
+qualified_path = "pixelaw::apps::snake::app::snake_segment"
+manifest_name = "pixelaw-SnakeSegment-302de0d8"
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "previous_id"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "next_id"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "x"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "y"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "pixel_original_color"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "pixel_original_text"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "pixel_original_app"
+type = "ContractAddress"
+key = false

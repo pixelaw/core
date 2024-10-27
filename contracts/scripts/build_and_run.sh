@@ -10,27 +10,27 @@ set -uo pipefail
 #    - jq
 ###########################################################
 
+
 export PROFILE=${1:-"dev"}
 
-# First do "build and run"
-source ./scripts/build_and_run.sh
-
-prepare_genesis
-
-wait_for_torii_writing
-
-sleep 3
-
-echo "Stopping katana and torii"
-pkill -f torii
-pkill -f katana
-
-sleep 1
-
-patch_torii_db
-
-zip_databases
+source ./scripts/lib/functions.sh
 
 
+start_katana
 
-echo "Done"
+sozo_rebuild
+
+sozo_migrate
+
+export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
+
+start_torii
+
+init_actions
+
+if [ "$PROFILE" == "dev-pop" ]; then
+    populate
+fi
+
+
+echo "Now running"

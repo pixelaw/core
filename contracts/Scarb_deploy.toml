@@ -1,7 +1,7 @@
 [package]
 cairo-version = "=2.7.0"
 name = "pixelaw"
-version = "0.4.4"
+version = "0.4.6"
 homepage = "https://github.com/pixelaw/core"
 edition = "2024_07"
 
@@ -9,7 +9,7 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.17" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.18" }
 
 [tool.fmt]
 sort-module-level-items = true

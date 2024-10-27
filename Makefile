@@ -10,7 +10,8 @@ DOJO_VERSION = $(shell cat DOJO_VERSION)
 docker_build:
 	echo $$private_key && \
 	docker build -t $(REPO):$(CORE_VERSION) -t $(REPO):latest \
-	--build-arg DOJO_VERSION=$(DOJO_VERSION) \
+	--build-arg DOJO_VERSION=$(DOJO_VERSION)  \
+	--build-arg GENERATE_POPULATED_CORE=false  \
 	--secret id=DOJO_KEYSTORE_PASSWORD \
   --network=host \
    --pull=false \

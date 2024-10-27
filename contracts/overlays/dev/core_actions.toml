@@ -1,0 +1,11 @@
+tag = "pixelaw-actions"
+writes = [
+  "pixelaw-App",
+  "pixelaw-AppName",
+  "pixelaw-CoreActionsAddress",
+  "pixelaw-Pixel",
+  "pixelaw-QueueItem",
+  "pixelaw-Snake",
+  "pixelaw-RTree",
+  "pixelaw-Area",
+]

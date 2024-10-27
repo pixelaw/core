@@ -1,0 +1,47 @@
+kind = "DojoModel"
+class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
+original_class_hash = "0x54ada9d75018f6625c9ec7f35222e0b8a717aa89ea4e3df21c030a3404c1160"
+abi = "manifests/sepolia/base/abis/models/pixelaw-SnakeSegment-302de0d8.json"
+tag = "pixelaw-SnakeSegment"
+qualified_path = "pixelaw::apps::snake::app::snake_segment"
+manifest_name = "pixelaw-SnakeSegment-302de0d8"
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "previous_id"
+type = "u32"
+key = false
+
+[[members]]
+name = "next_id"
+type = "u32"
+key = false
+
+[[members]]
+name = "x"
+type = "u16"
+key = false
+
+[[members]]
+name = "y"
+type = "u16"
+key = false
+
+[[members]]
+name = "pixel_original_color"
+type = "u32"
+key = false
+
+[[members]]
+name = "pixel_original_text"
+type = "felt252"
+key = false
+
+[[members]]
+name = "pixel_original_app"
+type = "ContractAddress"
+key = false
