@@ -35,6 +35,6 @@ jobs:
       - uses: asdf-vm/actions/setup@v3
       - run: |
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
-          asdf install dojo 1.0.0-alpha.18
-          asdf global dojo 1.0.0-alpha.18
+          asdf install dojo 1.0.0-alpha.19
+          asdf global dojo 1.0.0-alpha.19
           sozo test
