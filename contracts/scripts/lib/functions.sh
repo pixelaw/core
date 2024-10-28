@@ -44,10 +44,11 @@ start_torii() {
     echo "start_torii"
 
     pkill -f torii
-
+    local rpc_url=$(get_rpc_url)
+    echo "start_torii: $rpc_url"
     torii \
       --world $WORLD_ADDRESS \
-      --rpc get_rpc_url \
+      --rpc $rpc_url \
       --database $TORII_DB \
       --events-chunk-size 10000 \
       --allowed-origins "*" \
@@ -260,9 +261,10 @@ check_needed_commands() {
 
 }
 
-get_rpc_url() {
-    local file_path="dojo_$PROFILE.toml"
-    grep "rpc_url" "$file_path" | head -1 | awk -F '"' '{print $2}'
-}
+   get_rpc_url() {
+       local file_path="dojo_$PROFILE.toml"
+       local url=$(grep "rpc_url" "$file_path" | head -1 | awk -F '"' '{print $2}')
+       echo $url
+   }
 
 check_needed_commands
