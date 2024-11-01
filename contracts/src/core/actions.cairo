@@ -3,31 +3,29 @@ pub mod area;
 pub mod pixel;
 pub mod queue;
 
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::area::{Area, RTreeNode};
+use pixelaw::core::models::area::{Area};
 use pixelaw::core::models::pixel::{PixelUpdateResult, Pixel, PixelUpdate};
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
-use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
-use pixelaw::core::utils;
-use starknet::{ContractAddress, ClassHash, contract_address_const};
+use pixelaw::core::models::registry::{App};
+use pixelaw::core::utils::{Position, Bounds};
+use starknet::ContractAddress;
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 
-#[dojo::interface]
-pub trait IActions<TContractState> {
+#[starknet::interface]
+pub trait IActions<T> {
     /// Initializes the Pixelaw actions model.
     ///
     /// # Arguments
     ///
     /// * `world` - A reference to the world dispatcher.
-    fn init(ref world: IWorldDispatcher);
+    fn init(ref self: T);
 
 
     // Check if and how a Pixel can be updated, based on given params
     // It checks all ownership (pixel and Area) and hooks
     fn can_update_pixel(
-        ref world: IWorldDispatcher,
+        ref self: T,
         for_player: ContractAddress,
         for_system: ContractAddress,
         pixel: Pixel,
@@ -46,7 +44,7 @@ pub trait IActions<TContractState> {
     /// * `for_system` - The system making the update.
     /// * `pixel_update` - The updates to apply to the pixel.
     fn update_pixel(
-        ref world: IWorldDispatcher,
+        ref self: T,
         for_player: ContractAddress,
         for_system: ContractAddress,
         pixel_update: PixelUpdate,
@@ -66,7 +64,7 @@ pub trait IActions<TContractState> {
     /// * `selector` - The function selector to call in the system.
     /// * `calldata` - The calldata to pass to the function.
     fn process_queue(
-        ref world: IWorldDispatcher,
+        ref self: T,
         id: felt252,
         timestamp: u64,
         called_system: ContractAddress,
@@ -84,7 +82,7 @@ pub trait IActions<TContractState> {
     /// * `selector` - The function selector to call in the system.
     /// * `calldata` - The calldata to pass to the function.
     fn schedule_queue(
-        ref world: IWorldDispatcher,
+        ref self: T,
         timestamp: u64,
         called_system: ContractAddress,
         selector: felt252,
@@ -103,9 +101,7 @@ pub trait IActions<TContractState> {
     /// # Returns
     ///
     /// * `App` - Struct containing the contract address and name fields.
-    fn new_app(
-        ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252,
-    ) -> App;
+    fn new_app(ref self: T, system: ContractAddress, name: felt252, icon: felt252,) -> App;
 
 
     /// Sends an alert to a player.
@@ -116,25 +112,19 @@ pub trait IActions<TContractState> {
     /// * `position` - The position associated with the alert.
     /// * `player` - The player to alert.
     /// * `message` - The message to send.
-    fn alert_player(
-        ref world: IWorldDispatcher, position: Position, player: ContractAddress, message: felt252,
-    );
+    fn alert_player(ref self: T, position: Position, player: ContractAddress, message: felt252,);
 
 
     fn add_area(
-        ref world: IWorldDispatcher,
-        bounds: Bounds,
-        owner: ContractAddress,
-        color: u32,
-        app: ContractAddress
+        ref self: T, bounds: Bounds, owner: ContractAddress, color: u32, app: ContractAddress
     ) -> Area;
-    fn remove_area(ref world: IWorldDispatcher, area_id: u64);
-    fn find_area_by_position(ref world: IWorldDispatcher, position: Position) -> Option<Area>;
-    fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<Area>;
+    fn remove_area(ref self: T, area_id: u64);
+    fn find_area_by_position(ref self: T, position: Position) -> Option<Area>;
+    fn find_areas_inside_bounds(ref self: T, bounds: Bounds) -> Span<Area>;
 }
 
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+#[dojo::contract]
 pub mod actions {
     use core::poseidon::poseidon_hash_span;
     use pixelaw::core::events::{QueueScheduled, QueueProcessed, AppNameUpdated, Alert};
@@ -152,6 +142,7 @@ pub mod actions {
         contract_address_const, syscalls::{call_contract_syscall},
     };
 
+
     use super::{IActions};
 
 
@@ -167,18 +158,22 @@ pub mod actions {
 
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
-        fn init(ref world: IWorldDispatcher) {
-            set!(
-                world,
-                (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
-            );
+        fn init(ref self: ContractState) {
+            let mut world = self.world(@"pixelaw");
+
+            world
+                .write_model(
+                    CoreActionsAddress {
+                        key: super::CORE_ACTIONS_KEY, value: get_contract_address()
+                    }
+                );
 
             // Initialize root RTree
-            set!(world, RTree { id: ROOT_ID, children: 1310762 });
+            world.write_model(RTree { id: ROOT_ID, children: 1310762 });
         }
 
         fn can_update_pixel(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel: Pixel,
@@ -192,7 +187,7 @@ pub mod actions {
         }
 
         fn update_pixel(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             for_player: ContractAddress,
             for_system: ContractAddress,
             pixel_update: PixelUpdate,
@@ -205,7 +200,7 @@ pub mod actions {
         }
 
         fn schedule_queue(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             timestamp: u64,
             called_system: ContractAddress,
             selector: felt252,
@@ -219,7 +214,7 @@ pub mod actions {
 
 
         fn process_queue(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             id: felt252,
             timestamp: u64,
             called_system: ContractAddress,
@@ -235,17 +230,14 @@ pub mod actions {
 
 
         fn new_app(
-            ref world: IWorldDispatcher, system: ContractAddress, name: felt252, icon: felt252,
+            ref self: ContractState, system: ContractAddress, name: felt252, icon: felt252,
         ) -> App {
             super::app::new_app(world, system, name, icon)
         }
 
 
         fn alert_player(
-            ref world: IWorldDispatcher,
-            position: Position,
-            player: ContractAddress,
-            message: felt252,
+            ref self: ContractState, position: Position, player: ContractAddress, message: felt252,
         ) {
             let caller = get_caller_address();
             let app = get!(world, caller, (App));
@@ -266,7 +258,7 @@ pub mod actions {
 
 
         fn add_area(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             bounds: Bounds,
             owner: ContractAddress,
             color: u32,
@@ -275,11 +267,11 @@ pub mod actions {
             super::area::add_area(world, bounds, owner, color, app)
         }
 
-        fn remove_area(ref world: IWorldDispatcher, area_id: u64) {
+        fn remove_area(ref self: ContractState, area_id: u64) {
             super::area::remove_area(world, area_id);
         }
 
-        fn find_area_by_position(ref world: IWorldDispatcher, position: Position,) -> Option<Area> {
+        fn find_area_by_position(ref self: ContractState, position: Position,) -> Option<Area> {
             let result = super::area::find_node_for_position(world, position, ROOT_ID, true);
             match result {
                 0 => Option::None,
@@ -287,7 +279,7 @@ pub mod actions {
             }
         }
 
-        fn find_areas_inside_bounds(ref world: IWorldDispatcher, bounds: Bounds) -> Span<Area> {
+        fn find_areas_inside_bounds(ref self: ContractState, bounds: Bounds) -> Span<Area> {
             let mut result: Array<Area> = array![];
             let mut area_ids: Array<u64> = array![];
             let smallest_node = super::area::find_smallest_node_spanning_bounds(

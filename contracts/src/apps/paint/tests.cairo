@@ -1,24 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use core::traits::TryInto;
-    use dojo::utils::test::{spawn_test_world};
-
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo_cairo_test::{spawn_test_world};
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
     use pixelaw::core::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::pixel::{pixel};
-
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
     use pixelaw::core::tests::helpers::{setup_core_initialized, setup_apps_initialized};
-    use pixelaw::core::utils::{
-        get_core_actions, encode_rgba, decode_rgba, Direction, Position, DefaultParameters
-    };
-
+    use pixelaw::core::utils::{encode_rgba, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
-
 
     #[test]
     #[available_gas(3000000000)]
@@ -43,7 +34,7 @@ mod tests {
                 },
             );
 
-        let pixel_1_1 = get!(world, (1, 1), (Pixel));
+        let pixel_1_1: Pixel = world.get_model((1, 1));
         assert(pixel_1_1.color == color, 'should be the color');
     }
 }
