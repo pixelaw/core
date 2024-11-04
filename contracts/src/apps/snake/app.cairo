@@ -122,8 +122,10 @@ trait ISnakeActions<T> {
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod snake_actions {
+    use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
-    use dojo::world::IWorld;
+    use dojo::world::storage::WorldStorage;
+    use dojo::world::{IWorldDispatcherTrait};
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
@@ -142,22 +144,20 @@ mod snake_actions {
     use super::{APP_KEY, APP_ICON};
     use super::{Snake, SnakeSegment};
 
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        Moved: Moved,
-        Died: Died,
-    }
 
-    #[derive(Drop, starknet::Event)]
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
     struct Died {
+        #[key]
         owner: ContractAddress,
         x: u16,
         y: u16,
     }
 
-    #[derive(PartialEq, Debug, Drop, starknet::Event)]
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
     pub struct Moved {
+        #[key]
         pub owner: ContractAddress,
         pub direction: Direction,
     }
@@ -251,7 +251,8 @@ mod snake_actions {
             };
 
             // Store the dojo model for the Snake
-            set!(world, (snake, segment));
+            world.write_model(@snake);
+            world.write_model(@segment);
 
             // Call core_actions to update the color
             let _ = core_actions
@@ -305,25 +306,26 @@ mod snake_actions {
             let core_actions = get_core_actions(world.dispatcher);
 
             // Load the Snake
-            let mut snake = get!(world, (owner), (Snake));
+            let mut snake: Snake = world.read_model(owner);
 
             assert!(snake.length > 0, "no snake");
-            let first_segment = get!(world, (snake.first_segment_id), SnakeSegment);
+            let first_segment: SnakeSegment = world.read_model(snake.first_segment_id);
 
             // If the snake is dying, handle that
             if snake.is_dying {
-                snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 snake.length -= 1;
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
 
-                    emit!(
-                        world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
-                    );
+                    world
+                        .emit_event(
+                            @Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
+                        );
 
                     // Delete the snake
-                    delete!(world, (snake));
+                    world.erase_model(@snake);
                     return;
                 }
             }
@@ -335,7 +337,7 @@ mod snake_actions {
                 let (next_x, next_y) = next_move.unwrap();
 
                 // Load next pixel
-                let next_pixel = get!(world, (next_x, next_y), Pixel);
+                let next_pixel: Pixel = world.read_model((next_x, next_y));
 
                 let has_write_access = core_actions
                     .can_update_pixel(
@@ -366,9 +368,9 @@ mod snake_actions {
                     snake
                         .first_segment_id =
                             create_new_segment(
-                                world, core_actions, next_pixel, snake, first_segment,
+                                ref world, core_actions, next_pixel, snake, first_segment,
                             );
-                    snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                    snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 } else if !has_write_access {
                     // Snake hit a pixel that is not allowing anything: DIE
                     snake.is_dying = true;
@@ -379,13 +381,13 @@ mod snake_actions {
                     snake
                         .first_segment_id =
                             create_new_segment(
-                                world, core_actions, next_pixel, snake, first_segment,
+                                ref world, core_actions, next_pixel, snake, first_segment,
                             );
 
                     // No growth if max length was reached
                     if snake.length >= SNAKE_MAX_LENGTH {
                         // Revert last segment pixel
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                     } else {
                         snake.length += 1;
                     }
@@ -397,13 +399,15 @@ mod snake_actions {
                         snake.is_dying = true;
                     } else {
                         // Add a new segment
-                        create_new_segment(world, core_actions, next_pixel, snake, first_segment,);
+                        create_new_segment(
+                            ref world, core_actions, next_pixel, snake, first_segment,
+                        );
 
                         // Remove last segment (this is normal for "moving")
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
 
                         // Remove another last segment (for shrinking)
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                     }
                 }
             } else {
@@ -412,7 +416,7 @@ mod snake_actions {
             }
 
             // Save the snake
-            set!(world, (snake));
+            world.write_model(@snake);
 
             // Bot can execute this Queue as soon as possible
             let MOVE_SECONDS = 0;
@@ -446,10 +450,10 @@ mod snake_actions {
     ///
     /// * `u32` - The new `last_segment_id` for the snake.
     fn remove_last_segment(
-        world: IWorldDispatcher, core_actions: ICoreActionsDispatcher, snake: Snake,
+        ref world: WorldStorage, core_actions: ICoreActionsDispatcher, snake: Snake,
     ) -> u32 {
-        let last_segment = get!(world, (snake.last_segment_id), SnakeSegment);
-        let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
+        let last_segment: SnakeSegment = world.read_model(snake.last_segment_id);
+        let pixel: Pixel = world.read_model((last_segment.x, last_segment.y));
 
         // Write the changes to the pixel
         let _ = core_actions
@@ -472,7 +476,7 @@ mod snake_actions {
 
         let result = last_segment.previous_id;
 
-        delete!(world, (last_segment));
+        world.erase_model(@last_segment);
 
         // Return the new last_segment_id for the snake
         result
@@ -492,33 +496,33 @@ mod snake_actions {
     ///
     /// * `u32` - The ID of the new segment created.
     fn create_new_segment(
-        world: IWorldDispatcher,
+        ref world: WorldStorage,
         core_actions: ICoreActionsDispatcher,
         pixel: Pixel,
         snake: Snake,
         mut existing_segment: SnakeSegment,
     ) -> u32 {
-        let id = world.uuid();
+        let id = world.dispatcher.uuid();
 
         // Update the existing Segment
         // It is no longer the first, so now its previous_id will point to the new
         existing_segment.previous_id = id;
-        set!(world, (existing_segment));
+        world.write_model(@existing_segment);
 
         // Save the new Segment
-        set!(
-            world,
-            SnakeSegment {
-                id,
-                previous_id: id, // The first segment has no previous, so it's itself
-                next_id: existing_segment.id,
-                x: pixel.x,
-                y: pixel.y,
-                pixel_original_color: pixel.color,
-                pixel_original_text: pixel.text,
-                pixel_original_app: pixel.app,
-            }
-        );
+        world
+            .write_model(
+                @SnakeSegment {
+                    id,
+                    previous_id: id, // The first segment has no previous, so it's itself
+                    next_id: existing_segment.id,
+                    x: pixel.x,
+                    y: pixel.y,
+                    pixel_original_color: pixel.color,
+                    pixel_original_text: pixel.text,
+                    pixel_original_app: pixel.app,
+                }
+            );
 
         // Write the changes to the pixel
         let _pu = core_actions
