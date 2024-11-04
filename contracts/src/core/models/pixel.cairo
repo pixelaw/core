@@ -5,7 +5,7 @@ use pixelaw::core::utils::{
 use starknet::{ContractAddress, ClassHash};
 
 #[derive(Debug, Copy, Drop, Serde, PartialEq)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct Pixel {
     // System properties
     #[key]

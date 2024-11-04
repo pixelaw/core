@@ -1,11 +1,5 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-
-use pixelaw::core::models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App}};
-use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
-use starknet::{
-    get_caller_address, get_contract_address, get_execution_info, ContractAddress, ClassHash
-};
+use pixelaw::core::utils::{Direction, DefaultParameters};
+use starknet::{ContractAddress};
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -52,7 +46,7 @@ fn next_position(x: u16, y: u16, direction: Direction) -> Option<(u16, u16)> {
 /// * `text` - Any text associated with the snake.
 /// * `is_dying` - A flag indicating whether the snake is dying.
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct Snake {
     #[key]
     pub owner: ContractAddress,
@@ -78,7 +72,7 @@ pub struct Snake {
 /// * `pixel_original_text` - The original text of the pixel.
 /// * `pixel_original_app` - The original app associated with the pixel.
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct SnakeSegment {
     #[key]
     pub id: u32,
@@ -95,14 +89,14 @@ pub const APP_KEY: felt252 = 'snake';
 pub const APP_ICON: felt252 = 'U+1F40D';
 
 /// Interface for Snake actions.
-#[dojo::interface]
-trait ISnakeActions<TContractState> {
+#[starknet::interface]
+trait ISnakeActions<T> {
     /// Initializes the Snake App.
     ///
     /// # Arguments
     ///
     /// * `world` - A reference to the world dispatcher.
-    fn init(ref world: IWorldDispatcher);
+    fn init(ref self: T);
 
     /// Starts or interacts with a snake.
     ///
@@ -115,9 +109,7 @@ trait ISnakeActions<TContractState> {
     /// # Returns
     ///
     /// * `u32` - The ID of the snake's first segment.
-    fn interact(
-        ref world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction,
-    ) -> u32;
+    fn interact(ref self: T, default_params: DefaultParameters, direction: Direction,) -> u32;
 
     /// Moves the snake owned by the specified owner.
     ///
@@ -125,28 +117,24 @@ trait ISnakeActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     /// * `owner` - The contract address of the snake's owner.
-    fn move(ref world: IWorldDispatcher, owner: ContractAddress);
+    fn move(ref self: T, owner: ContractAddress);
 }
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 mod snake_actions {
-    use dojo::model::introspect::Introspect;
-    use pixelaw::apps::paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait};
+    use dojo::model::{ModelStorage};
+    use dojo::world::IWorld;
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
-    use pixelaw::core::models::pixel::{
-        Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait
-    };
-    use pixelaw::core::models::registry::App;
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
+    //use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        MOVE_SELECTOR, INTERACT_SELECTOR, get_callers, get_core_actions, Direction, Position,
-        DefaultParameters, starknet_keccak, get_core_actions_address,
+        MOVE_SELECTOR, get_callers, get_core_actions, Direction, Position, DefaultParameters
     };
     use starknet::{
-        ContractAddress, get_caller_address, get_contract_address, get_execution_info,
-        contract_address_const,
+        ContractAddress, get_contract_address, get_execution_info, contract_address_const,
     };
     use super::ISnakeActions;
     use super::next_position;
@@ -187,8 +175,9 @@ mod snake_actions {
         /// # Arguments
         ///
         /// * `world` - A reference to the world dispatcher.
-        fn init(ref world: IWorldDispatcher) {
-            let core_actions = pixelaw::core::utils::get_core_actions(world);
+        fn init(ref self: ContractState) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = pixelaw::core::utils::get_core_actions(world.dispatcher);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
@@ -206,27 +195,32 @@ mod snake_actions {
         ///
         /// * `u32` - The ID of the snake's first segment.
         fn interact(
-            ref world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction,
+            ref self: ContractState, default_params: DefaultParameters, direction: Direction,
         ) -> u32 {
-            let core_actions = get_core_actions(world);
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(world.dispatcher);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world, default_params);
+            let (player, system) = get_callers(world.dispatcher, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
-            let pixel = get!(world, (position.x, position.y), Pixel);
-            let mut snake = get!(world, player, Snake);
+            let pixel: Pixel = world.read_model((position.x, position.y));
+            let mut snake: Snake = world.read_model(player);
+            //let mut snake = get!(world, player, Snake);
+
             // Change direction if snake already exists
             if snake.length > 0 {
                 snake.direction = direction;
-                set!(world, (snake));
+
+                world.write_model(@snake);
+
                 return snake.first_segment_id;
             }
             // TODO: Check if the pixel is unowned or player owned
 
-            let mut id = world.uuid();
+            let mut id = world.dispatcher.uuid();
             if id == 0 {
-                id = world.uuid();
+                id = world.dispatcher.uuid();
             }
 
             let color = default_params.color;
@@ -306,8 +300,9 @@ mod snake_actions {
         ///
         /// * `world` - A reference to the world dispatcher.
         /// * `owner` - The contract address of the snake's owner.
-        fn move(ref world: IWorldDispatcher, owner: ContractAddress) {
-            let core_actions = get_core_actions(world);
+        fn move(ref self: ContractState, owner: ContractAddress) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(world.dispatcher);
 
             // Load the Snake
             let mut snake = get!(world, (owner), (Snake));

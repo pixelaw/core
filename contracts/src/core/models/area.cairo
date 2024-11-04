@@ -42,7 +42,7 @@ pub const ROOT_ID: u64 = 4294967292; // for ROOT_RTREENODE
 pub const FIRST_ID: u64 = 1310762; // for FIRST_RTREENODE
 
 
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
 pub struct RTree {
     #[key]
@@ -65,7 +65,7 @@ pub struct RTreeNode {
     pub is_area: bool,
 }
 
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
 pub struct Area {
     #[key]

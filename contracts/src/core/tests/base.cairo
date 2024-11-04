@@ -121,7 +121,7 @@ fn test_can_update_pixel() {
     };
 
     set_caller(player_2);
-    let pixel = get!(world, (position.x, position.y), Pixel);
+    let pixel: Pixel = world.read_model((position.x, position.y));
 
     let has_access = core_actions
         .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
