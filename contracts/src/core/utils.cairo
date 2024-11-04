@@ -1,22 +1,13 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY};
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+use dojo::model::{ModelStorage};
+use dojo::world::storage::WorldStorage;
+use pixelaw::core::actions::{IActionsDispatcher, CORE_ACTIONS_KEY};
+use pixelaw::core::models::registry::{CoreActionsAddress};
 use pixelaw::core::models::{
     pixel::{Pixel},
-    {
-        area::{
-            RTreeNode, RTree, Area, RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl,
-            BoundsTraitImpl, ROOT_RTREENODE, ROOT_ID
-        }
-    }
+    {area::{RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl, BoundsTraitImpl}}
 };
-use starknet::{
-    ContractAddress, contract_address_const, get_tx_info, get_caller_address, ClassHash,
-    get_contract_address
-};
-use super::models::area::Packable;
-use super::models::area::RTreeTrait;
+use starknet::{ContractAddress, contract_address_const, get_tx_info, get_contract_address};
+
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
 pub const POW_2_64: u128 = 0x10000000000000000_u128;
@@ -123,12 +114,12 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
 // Returns the current (account and system) callers
 // Taking into account overrides from DefaultParams
 pub fn get_callers(
-    world: IWorldDispatcher, params: DefaultParameters
+    ref world: WorldStorage, params: DefaultParameters
 ) -> (ContractAddress, ContractAddress) {
     let mut player = contract_address_const::<0>();
     let mut system = contract_address_const::<0>();
 
-    let core_address = get_core_actions_address(world);
+    let core_address = get_core_actions_address(ref world);
     let caller_contract = get_contract_address();
 
     if let Option::Some(override) = params.player_override {
@@ -180,13 +171,13 @@ pub fn get_position(direction: Direction, position: Position) -> Position {
     }
 }
 /// Returns the PixeLAW Core actions as Dispatcher, ready to use
-pub fn get_core_actions_address(world: IWorldDispatcher) -> ContractAddress {
-    let address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
+pub fn get_core_actions_address(ref world: WorldStorage) -> ContractAddress {
+    let address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
     address.value
 }
 
-pub fn get_core_actions(world: IWorldDispatcher) -> IActionsDispatcher {
-    let address = get_core_actions_address(world);
+pub fn get_core_actions(ref world: WorldStorage) -> IActionsDispatcher {
+    let address = get_core_actions_address(ref world);
     IActionsDispatcher { contract_address: address }
 }
 
@@ -222,8 +213,8 @@ pub fn decode_rgba(self: u32) -> (u8, u8, u8, u8) {
 }
 
 
-pub fn is_pixel_color(world: IWorldDispatcher, position: Position, color: u32) -> bool {
-    let pixel: Pixel = get!(world, (position.x, position.y), (Pixel));
+pub fn is_pixel_color(ref world: WorldStorage, position: Position, color: u32) -> bool {
+    let pixel: Pixel = world.read_model((position.x, position.y));
     pixel.color == color
 }
 

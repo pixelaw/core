@@ -86,7 +86,7 @@ mod paint_actions {
         /// * `world` - A reference to the world dispatcher.
         fn init(ref self: ContractState) {
             let mut world = self.world(@"pixelaw");
-            let core_actions = pixelaw::core::utils::get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
@@ -181,9 +181,9 @@ mod paint_actions {
         fn put_color(ref self: ContractState, default_params: DefaultParameters) {
             let mut world = self.world(@"pixelaw");
             // Load important variables
-            let core_actions = get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
-            let (player, system) = get_callers(world.dispatcher, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             // Load the Pixel
             let mut pixel: Pixel = world.read_model((position.x, position.y));
@@ -242,10 +242,10 @@ mod paint_actions {
                 return;
             }
 
-            let core_actions = get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world.dispatcher, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             let mut felt_index = 0;
             let mut pixel_index: u16 = 0;
@@ -304,10 +304,10 @@ mod paint_actions {
         /// * `default_params` - The default parameters including position and color.
         fn fade(ref self: ContractState, default_params: DefaultParameters) {
             let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world.dispatcher, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             let pixel: Pixel = world.read_model((position.x, position.y));
 

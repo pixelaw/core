@@ -1,8 +1,5 @@
-use pixelaw::core::utils::{
-    MASK_16, MASK_32, MASK_64, MASK_96, POW_2_16, POW_2_30, POW_2_31, POW_2_32, POW_2_48, POW_2_64,
-    POW_2_96, MAX_DIMENSION
-};
-use starknet::{ContractAddress, ClassHash};
+use pixelaw::core::utils::{MAX_DIMENSION};
+use starknet::{ContractAddress};
 
 #[derive(Debug, Copy, Drop, Serde, PartialEq)]
 #[dojo::model]

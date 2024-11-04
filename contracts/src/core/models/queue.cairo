@@ -1,5 +1,3 @@
-use starknet::{ContractAddress, ClassHash};
-
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct QueueItem {

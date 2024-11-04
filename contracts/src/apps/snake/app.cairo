@@ -177,7 +177,7 @@ mod snake_actions {
         /// * `world` - A reference to the world dispatcher.
         fn init(ref self: ContractState) {
             let mut world = self.world(@"pixelaw");
-            let core_actions = pixelaw::core::utils::get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
@@ -198,10 +198,10 @@ mod snake_actions {
             ref self: ContractState, default_params: DefaultParameters, direction: Direction,
         ) -> u32 {
             let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world.dispatcher, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
             let pixel: Pixel = world.read_model((position.x, position.y));
@@ -303,7 +303,7 @@ mod snake_actions {
         /// * `owner` - The contract address of the snake's owner.
         fn move(ref self: ContractState, owner: ContractAddress) {
             let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(world.dispatcher);
+            let core_actions = get_core_actions(ref world);
 
             // Load the Snake
             let mut snake: Snake = world.read_model(owner);

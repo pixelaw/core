@@ -1,9 +1,4 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::actions::{
-    IActionsDispatcher as ICoreActionsDispatcher,
-    IActionsDispatcherTrait as ICoreActionsDispatcherTrait
-};
-use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info};
+use starknet::{ContractAddress};
 
 #[derive(Debug, Copy, Drop, Serde)]
 #[dojo::model]

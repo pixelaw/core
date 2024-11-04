@@ -3,13 +3,11 @@ pub mod area;
 pub mod pixel;
 pub mod queue;
 
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::area::{Area, RTreeNode};
+use pixelaw::core::models::area::{Area};
 use pixelaw::core::models::pixel::{PixelUpdateResult, Pixel, PixelUpdate};
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
-use pixelaw::core::utils::{Position, MAX_DIMENSION, Bounds};
-use pixelaw::core::utils;
-use starknet::{ContractAddress, ClassHash, contract_address_const};
+use pixelaw::core::models::registry::{App};
+use pixelaw::core::utils::{Position, Bounds};
+use starknet::{ContractAddress};
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
@@ -128,45 +126,35 @@ pub trait IActions<T> {
 
 #[dojo::contract(namespace: "pixelaw", nomapping: true)]
 pub mod actions {
-    use core::poseidon::poseidon_hash_span;
-    use pixelaw::core::events::{QueueScheduled, QueueProcessed, AppNameUpdated, Alert};
+    use dojo::event::EventStorage;
+    use dojo::model::{ModelStorage};
+    use pixelaw::core::events::{QueueScheduled, QueueProcessed, Alert};
     use pixelaw::core::models::area::{
-        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
+        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTree, Area, RTreeNodePackableImpl
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
-    use pixelaw::core::models::queue::QueueItem;
 
-    use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
 
-    use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
-    use starknet::{
-        ContractAddress, get_caller_address, get_contract_address, get_tx_info,
-        contract_address_const, syscalls::{call_contract_syscall},
-    };
+    use pixelaw::core::models::registry::{App, CoreActionsAddress};
 
+    use pixelaw::core::utils::{Position, Bounds};
+    use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use super::{IActions};
-
-
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    pub enum Event {
-        QueueScheduled: QueueScheduled,
-        QueueProcessed: QueueProcessed,
-        AppNameUpdated: AppNameUpdated,
-        Alert: Alert,
-    }
 
 
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         fn init(ref self: ContractState) {
-            set!(
-                world,
-                (CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() })
-            );
+            let mut world = self.world(@"pixelaw");
+            world
+                .write_model(
+                    @CoreActionsAddress {
+                        key: super::CORE_ACTIONS_KEY, value: get_contract_address()
+                    }
+                );
 
             // Initialize root RTree
-            set!(world, RTree { id: ROOT_ID, children: 1310762 });
+            world.write_model(@RTree { id: ROOT_ID, children: 1310762 });
         }
 
         fn can_update_pixel(
@@ -178,8 +166,9 @@ pub mod actions {
             area_id_hint: Option<u64>,
             allow_modify: bool
         ) -> PixelUpdateResult {
+            let mut world = self.world(@"pixelaw");
             super::pixel::can_update_pixel(
-                world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
+                ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
             )
         }
 
@@ -191,8 +180,9 @@ pub mod actions {
             area_id: Option<u64>,
             allow_modify: bool
         ) -> PixelUpdateResult {
+            let mut world = self.world(@"pixelaw");
             super::pixel::update_pixel(
-                world, for_player, for_system, pixel_update, area_id, allow_modify
+                ref world, for_player, for_system, pixel_update, area_id, allow_modify
             )
         }
 
@@ -203,10 +193,11 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>,
         ) {
-            let event = super::queue::schedule_queue(
-                world, timestamp, called_system, selector, calldata
+            let mut world = self.world(@"pixelaw");
+            let event: QueueScheduled = super::queue::schedule_queue(
+                ref world, timestamp, called_system, selector, calldata
             );
-            emit!(world, (Event::QueueScheduled(event)));
+            world.emit_event(@event);
         }
 
 
@@ -218,39 +209,41 @@ pub mod actions {
             selector: felt252,
             calldata: Span<felt252>,
         ) {
-            let event = super::queue::process_queue(
-                world, id, timestamp, called_system, selector, calldata
+            let mut world = self.world(@"pixelaw");
+            let event: QueueProcessed = super::queue::process_queue(
+                ref world, id, timestamp, called_system, selector, calldata
             );
 
-            emit!(world, (Event::QueueProcessed(event)));
+            world.emit_event(@event);
         }
 
 
         fn new_app(
             ref self: ContractState, system: ContractAddress, name: felt252, icon: felt252,
         ) -> App {
-            super::app::new_app(world, system, name, icon)
+            let mut world = self.world(@"pixelaw");
+            super::app::new_app(ref world, system, name, icon)
         }
 
 
         fn alert_player(
             ref self: ContractState, position: Position, player: ContractAddress, message: felt252,
         ) {
+            let mut world = self.world(@"pixelaw");
             let caller = get_caller_address();
-            let app = get!(world, caller, (App));
+            let app: App = world.read_model(caller);
             assert!(app.name != '', "cannot be called by a non-app");
-            emit!(
-                world,
-                (Event::Alert(
-                    Alert {
+
+            world
+                .emit_event(
+                    @Alert {
                         position,
                         caller,
                         player,
                         message,
                         timestamp: starknet::get_block_timestamp()
                     }
-                ))
-            );
+                );
         }
 
 
@@ -261,33 +254,39 @@ pub mod actions {
             color: u32,
             app: ContractAddress
         ) -> Area {
-            super::area::add_area(world, bounds, owner, color, app)
+            let mut world = self.world(@"pixelaw");
+            super::area::add_area(ref world, bounds, owner, color, app)
         }
 
         fn remove_area(ref self: ContractState, area_id: u64) {
-            super::area::remove_area(world, area_id);
+            let mut world = self.world(@"pixelaw");
+            super::area::remove_area(ref world, area_id);
         }
 
         fn find_area_by_position(ref self: ContractState, position: Position,) -> Option<Area> {
-            let result = super::area::find_node_for_position(world, position, ROOT_ID, true);
+            let mut world = self.world(@"pixelaw");
+            let result = super::area::find_node_for_position(ref world, position, ROOT_ID, true);
             match result {
                 0 => Option::None,
-                _ => Option::Some(get!(world, (result), (Area)))
+                _ => Option::Some(world.read_model(result))
             }
         }
 
         fn find_areas_inside_bounds(ref self: ContractState, bounds: Bounds) -> Span<Area> {
+            let mut world = self.world(@"pixelaw");
             let mut result: Array<Area> = array![];
             let mut area_ids: Array<u64> = array![];
             let smallest_node = super::area::find_smallest_node_spanning_bounds(
-                world, bounds, ROOT_ID, false
+                ref world, bounds, ROOT_ID, false
             );
-            super::area::find_nodes_inside_bounds(world, ref area_ids, bounds, smallest_node, true);
+            super::area::find_nodes_inside_bounds(
+                ref world, ref area_ids, bounds, smallest_node, true
+            );
             if area_ids.len() == 0 {
                 return result.span();
             }
             for area_id in area_ids {
-                result.append(get!(world, area_id, (Area)));
+                result.append(world.read_model(area_id));
             };
             result.span()
         }
