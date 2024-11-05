@@ -2,21 +2,25 @@ use core::{traits::TryInto, poseidon::poseidon_hash_span};
 
 use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
+    world::{WorldStorage, WorldStorageTrait, IWorld, World, IWorldDispatcher},
+    model::{ModelStorage, ModelValueStorage, ModelStorageTest}, event::EventStorage,
+    tests::helpers::{WorldStorageTrait, IUpgradeableWorldDispatcherTrait}
 };
-
+use dojo_cairo_test::{
+    WorldStorageTestTrait, spawn_test_world, NamespaceDef, TestResource, ContractDefTrait
+};
 use pixelaw::{
     apps::{
         paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
         snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
+            m_Snake, Snake, m_SnakeSegment, SnakeSegment, m_SnakeActions, ISnakeActionsDispatcher,
             ISnakeActionsDispatcherTrait
         }
     },
     core::{
         models::{
-            registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
-            pixel::{Pixel, PixelUpdate, pixel}, area::{r_tree, RTree, area, Area}
+            registry::{App, m_App, m_App_name, m_CoreActionsAddress, CoreActionsAddress},
+            pixel::{Pixel, PixelUpdate, m_Pixel}, area::{m_RTree, RTree, m_Area, Area}
         },
         actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{get_core_actions, Direction, Position, DefaultParameters},
@@ -45,7 +49,7 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
 }
 
 pub fn setup_core_initialized() -> (
-    IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress
+    WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress
 ) {
     let (world, core_actions, player_1, player_2) = setup_core();
 
@@ -54,28 +58,41 @@ pub fn setup_core_initialized() -> (
     (world, core_actions, player_1, player_2)
 }
 
-pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
-    let mut models = array![
-        pixel::TEST_CLASS_HASH,
-        app::TEST_CLASS_HASH,
-        app_name::TEST_CLASS_HASH,
-        core_actions_address::TEST_CLASS_HASH,
-        r_tree::TEST_CLASS_HASH,
-        area::TEST_CLASS_HASH
-    ];
-    let world = spawn_test_world(["pixelaw"].span(), models.span());
+fn namespace_def() -> NamespaceDef {
+    let ndef = NamespaceDef {
+        namespace: "ns", resources: [
+            TestResource::Model(m_Pixel::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_App::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_AppName::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_CoreActionsAddress::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_RTree::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_Area::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_Snake::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Event(actions::e_Moved::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Contract(
+                ContractDefTrait::new(actions::TEST_CLASS_HASH, "actions")
+                    .with_writer_of([dojo::utils::bytearray_hash(@"ns")].span())
+            )
+        ].span()
+    };
 
-    let core_actions_address = world
-        .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
+    ndef
+}
+
+pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
+    let mut world: WorldStorage = spawn_test_world([namespace_def()].span());
+
+    let (core_actions_address, _) = world.dns(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
-    // Setup permissions
-    world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
+    // FIXME: Setup permissions
+    // world.dispatcher.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -86,7 +103,7 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
 
 
 pub fn setup_apps_initialized(
-    world: IWorldDispatcher
+    world: WorldStorage
 ) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
     let (paint_actions, snake_actions) = setup_apps(world);
 
@@ -96,11 +113,8 @@ pub fn setup_apps_initialized(
     (paint_actions, snake_actions)
 }
 
-pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
-    let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
-
-    world.register_model((snake::TEST_CLASS_HASH).try_into().unwrap());
-    world.register_model((snake_segment::TEST_CLASS_HASH).try_into().unwrap());
+pub fn setup_apps(world: WorldStorage) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
 
     let paint_actions_address = world
         .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
