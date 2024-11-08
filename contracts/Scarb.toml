@@ -5,19 +5,27 @@ version = "0.4.7"
 homepage = "https://github.com/pixelaw/core"
 edition = "2024_07"
 
-[cairo]
-sierra-replace-ids = true
+[[target.starknet-contract]]
+sierra = true
+# It's important to keep this, since it's used by Sozo to check the world version.
+build-external-contracts = ["dojo::world::world_contract::world"]
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-rc.1" }
+dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.0.0-rc.1" }
 starknet = "2.8.4"
+
+[dev-dependencies]
+# This package is required to run tests and add dojo utilities to your project in test only.
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.0.0-rc.1" }
+
+[features]
+default = []
 
 [tool.fmt]
 sort-module-level-items = true
 
 [lib]
 #[[target.dojo]]
-
 
 [profile.dev-pop]
 

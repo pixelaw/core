@@ -124,7 +124,7 @@ pub trait IActions<T> {
 }
 
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+#[dojo::contract]
 pub mod actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
@@ -133,7 +133,6 @@ pub mod actions {
         BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTree, Area, RTreeNodePackableImpl
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
-
 
     use pixelaw::core::models::registry::{App, CoreActionsAddress};
 

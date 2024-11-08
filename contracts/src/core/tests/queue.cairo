@@ -145,4 +145,3 @@ fn test_queue_full() {
 // println!("log7 {:?}", starknet::testing::pop_log_raw(event_contract));
 
 }
-

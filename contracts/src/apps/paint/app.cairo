@@ -1,4 +1,3 @@
-//use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
 use pixelaw::core::utils::{DefaultParameters};
 use starknet::{ContractAddress};
@@ -58,10 +57,9 @@ pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u16 = 7;
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+#[dojo::contract]
 mod paint_actions {
     use dojo::model::{ModelStorage};
-    // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait,};
 
@@ -158,7 +156,9 @@ mod paint_actions {
         /// * `default_params` - The default parameters including position and color.
         fn interact(ref self: ContractState, default_params: DefaultParameters) {
             let mut world = self.world(@"pixelaw");
+            println!("default_params: {:?}", default_params);
             let position = default_params.position;
+            println!("position: {:?}", position);
 
             // Load the Pixel
             let mut pixel: Pixel = world.read_model((position.x, position.y));

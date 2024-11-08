@@ -1,9 +1,5 @@
-use core::fmt::Display;
-
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
-
+use dojo_cairo_test::{spawn_test_world, deploy_contract};
 use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
     world::{IWorldDispatcher, IWorldDispatcherTrait}
 };
 use pixelaw::core::utils;

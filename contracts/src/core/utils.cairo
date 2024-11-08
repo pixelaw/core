@@ -66,13 +66,13 @@ pub struct Bounds {
 }
 
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde, Debug)]
 pub struct DefaultParameters {
+    pub position: Position,
+    pub color: u32,
     pub player_override: Option<ContractAddress>,
     pub system_override: Option<ContractAddress>,
     pub area_hint: Option<u64>,
-    pub position: Position,
-    pub color: u32
 }
 
 

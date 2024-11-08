@@ -120,7 +120,7 @@ trait ISnakeActions<T> {
     fn move(ref self: T, owner: ContractAddress);
 }
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+#[dojo::contract]
 mod snake_actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
@@ -131,7 +131,6 @@ mod snake_actions {
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
-    //use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         MOVE_SELECTOR, get_callers, get_core_actions, Direction, Position, DefaultParameters
     };

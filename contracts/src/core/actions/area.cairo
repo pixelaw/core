@@ -1,6 +1,5 @@
 use dojo::model::{ModelStorage};
 use dojo::world::storage::WorldStorage;
-//use dojo::{world::{IWorldDispatcher, IWorldDispatcherTrait}};
 use pixelaw::core::{
     utils::{Bounds, Position, MAX_DIMENSION},
     models::{
@@ -544,4 +543,3 @@ fn update_ancestors(
     // Update the parents
     update_ancestors(ref world, ancestors, level - 1, parent_updated_children);
 }
-
