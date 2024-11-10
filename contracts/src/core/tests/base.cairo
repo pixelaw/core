@@ -1,6 +1,8 @@
 use core::fmt::Display;
 
 use core::{traits::TryInto, poseidon::poseidon_hash_span};
+use dojo::model::{ModelStorage};
+use dojo::world::storage::WorldStorage;
 
 use dojo::{
     utils::test::{spawn_test_world, deploy_contract},
@@ -43,12 +45,12 @@ use starknet::{
 #[test]
 fn test_init_core_actions() {
     let (world, core_actions, _player_1, _player_2) = setup_core();
-    let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
+    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
     assert(core_address.value == ZERO_ADDRESS(), 'should be 0');
 
     core_actions.init();
 
-    let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
+    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
     assert(core_address.value != ZERO_ADDRESS(), 'should not be 0');
 }
 
@@ -60,8 +62,8 @@ fn test_register_new_app() {
     let _new_app1: App = core_actions.new_app(mock_app1_system, app_name, '');
     // TODO check return values
 
-    let loaded_app1_name = get!(world, app_name, (AppName));
-    let loaded_app1 = get!(world, loaded_app1_name.system, (App));
+    let loaded_app1_name: AppName = world.read_model(app_name);
+    let loaded_app1: App = world.read_model(loaded_app1_name.system);
     assert(loaded_app1.name == app_name, 'App name incorrect');
     assert(loaded_app1.system == mock_app1_system, 'App system incorrect');
 }
@@ -182,14 +184,14 @@ fn test_update_pixel() {
         action: Option::Some(action)
     };
 
-    let pixel = get!(world, (x, y), Pixel);
+    let pixel: Pixel = world.read_model((x, y));
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
     let _ = core_actions
         .update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update, Option::None, false);
 
-    let pixel = get!(world, (x, y), Pixel);
+    let pixel: Pixel = world.read_model((x, y));
 
     // TODO properly test created_at and updated_at (if we even keep them like this)
     changed_pixel.created_at = pixel.created_at;
@@ -201,7 +203,7 @@ fn test_update_pixel() {
 #[test]
 #[should_panic(expected: 'only core can override')]
 fn test_get_callers_non_core() {
-    let (world, _core_actions, _player_1, player_2) = setup_core_initialized();
+    let (mut world, _core_actions, _player_1, player_2) = setup_core_initialized();
     let system_override = starknet::contract_address_const::<0x69>();
 
     // Don't fake the calling contract, so this call fails
@@ -213,12 +215,12 @@ fn test_get_callers_non_core() {
         position: Position { x: 1, y: 1 },
         color: 0
     };
-    let (_player, _system) = get_callers(world, has_override);
+    let (_player, _system) = get_callers(ref world, has_override);
 }
 
 #[test]
 fn test_get_callers() {
-    let (world, core_actions, player_1, player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, player_2) = setup_core_initialized();
 
     let system_override = starknet::contract_address_const::<0x69>();
 
@@ -241,14 +243,14 @@ fn test_get_callers() {
     // Test with 0 address, we expect the caller
     set_account_contract_address(player_1);
 
-    let (player, system) = get_callers(world, no_override);
+    let (player, system) = get_callers(ref world, no_override);
     assert(player == player_1, 'should return player1');
     assert(system == ZERO_ADDRESS(), 'should return zero');
 
     // impersonate core_actions so the override is allowed
     set_contract_address(core_actions.contract_address);
 
-    let (player, system) = get_callers(world, has_override);
+    let (player, system) = get_callers(ref world, has_override);
     assert(player == player_2, 'should return player_2');
     assert(system == system_override, 'should return system_override');
 }
@@ -270,14 +272,14 @@ fn test_alert_player() {
     set_caller(caller);
 
     // Pop all the previous events from the log so only the following one will be there
-    drop_all_events(world.contract_address);
+    drop_all_events(world.dispatcher.contract_address);
 
     // Call the action
     core_actions.alert_player(position, player, message);
 
     // Assert that the correct event was emitted
     assert_eq!(
-        starknet::testing::pop_log(world.contract_address),
+        starknet::testing::pop_log(world.dispatcher.contract_address),
         Option::Some(
             pixelaw::core::events::Alert {
                 position, caller, player, message, timestamp: get_block_timestamp()
