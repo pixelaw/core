@@ -58,8 +58,8 @@ pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u16 = 7;
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
-mod paint_actions {
+#[dojo::contract]
+pub mod paint_actions {
     use dojo::model::{ModelStorage};
     // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 

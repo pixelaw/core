@@ -1,9 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use core::traits::TryInto;
     use dojo::utils::test::{spawn_test_world};
 
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };

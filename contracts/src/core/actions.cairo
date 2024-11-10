@@ -124,7 +124,7 @@ pub trait IActions<T> {
 }
 
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
+#[dojo::contract]
 pub mod actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};

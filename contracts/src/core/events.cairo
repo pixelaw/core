@@ -2,7 +2,7 @@ use pixelaw::core::utils::{Position};
 use starknet::{ContractAddress};
 
 
-#[derive(Drop, Debug, PartialEq)]
+#[derive(Drop, Debug, PartialEq, Serde)]
 #[dojo::event]
 pub struct QueueScheduled {
     #[key]
@@ -13,7 +13,7 @@ pub struct QueueScheduled {
     pub calldata: Span<felt252>,
 }
 
-#[derive(Drop, Debug, PartialEq)]
+#[derive(Drop, Debug, PartialEq, Serde)]
 #[dojo::event]
 pub struct QueueProcessed {
     #[key]
@@ -22,7 +22,7 @@ pub struct QueueProcessed {
 }
 
 
-#[derive(Drop, Debug, PartialEq)]
+#[derive(Drop, Debug, PartialEq, Serde)]
 #[dojo::event]
 pub struct Alert {
     #[key]

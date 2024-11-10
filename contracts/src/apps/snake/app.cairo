@@ -120,8 +120,8 @@ trait ISnakeActions<T> {
     fn move(ref self: T, owner: ContractAddress);
 }
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
-mod snake_actions {
+#[dojo::contract]
+pub mod snake_actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
     use dojo::world::storage::WorldStorage;

@@ -53,7 +53,21 @@ pub fn setup_core_initialized() -> (
 
     (world, core_actions, player_1, player_2)
 }
+fn namespace_def() -> NamespaceDef {
+        let ndef = NamespaceDef {
+            namespace: "ns", resources: [
+                TestResource::Model(m_Position::TEST_CLASS_HASH.try_into().unwrap()),
+                TestResource::Model(m_Moves::TEST_CLASS_HASH.try_into().unwrap()),
+                TestResource::Event(actions::e_Moved::TEST_CLASS_HASH.try_into().unwrap()),
+                TestResource::Contract(
+                    ContractDefTrait::new(actions::TEST_CLASS_HASH, "actions")
+                        .with_writer_of([dojo::utils::bytearray_hash(@"ns")].span())
+                )
+            ].span()
+        };
 
+        ndef
+    }
 pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
     let mut models = array![
         pixel::TEST_CLASS_HASH,
@@ -63,6 +77,8 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
         r_tree::TEST_CLASS_HASH,
         area::TEST_CLASS_HASH
     ];
+            let ndef = namespace_def();
+            let mut world = spawn_test_world([ndef].span());
     let world = spawn_test_world(["pixelaw"].span(), models.span());
 
     let core_actions_address = world
