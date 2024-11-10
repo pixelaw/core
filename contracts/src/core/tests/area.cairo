@@ -136,12 +136,12 @@ fn test_adding_containing() {
 
 #[test]
 fn test_remove() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(a1.id);
 
-    assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) == 0, 'should not find 1');
+    assert(find_node_for_position(ref world, POSITION_2, ROOT_ID, true) == 0, 'should not find 1');
 }
 
 
@@ -156,15 +156,15 @@ fn test_remove_nonarea() {
 
 #[test]
 fn test_adding() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let not_found = find_node_for_position(world, POSITION_1, ROOT_ID, true); // has_area=true
+    let not_found = find_node_for_position(ref world, POSITION_1, ROOT_ID, true); // has_area=true
 
     assert(not_found == 0, 'should not find');
 
-    let found = find_node_for_position(world, POSITION_2, ROOT_ID, true); // has_area=true
+    let found = find_node_for_position(ref world, POSITION_2, ROOT_ID, true); // has_area=true
 
     assert(found != 0, 'should find');
 
@@ -201,9 +201,9 @@ fn test_adding() {
     // print_tree(world, ROOT_ID, "");
     // println!("------------------ ------------- -----------------");
 
-    assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
-    assert(find_node_for_position(world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');
-    assert(find_node_for_position(world, POSITION_15, ROOT_ID, true) != 0, 'should find 3');
+    assert(find_node_for_position(ref world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
+    assert(find_node_for_position(ref world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');
+    assert(find_node_for_position(ref world, POSITION_15, ROOT_ID, true) != 0, 'should find 3');
 
     let areas = core_actions
         .find_areas_inside_bounds(Bounds { x_min: 30, y_min: 30, x_max: 45, y_max: 45 });

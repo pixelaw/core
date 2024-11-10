@@ -1,7 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use dojo::utils::test::{spawn_test_world};
+    use core::traits::TryInto;
 
+    use dojo::model::{ModelStorage};
+    use dojo::utils::test::{spawn_test_world};
+    use dojo::world::storage::WorldStorage;
+
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use pixelaw::apps::paint::app::{
         paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
     };
@@ -16,7 +21,6 @@ mod tests {
     };
 
     use starknet::{contract_address_const, testing::set_account_contract_address};
-
 
     #[test]
     #[available_gas(3000000000)]
@@ -41,7 +45,7 @@ mod tests {
                 },
             );
 
-        let pixel_1_1 = get!(world, (1, 1), (Pixel));
+        let pixel_1_1: Pixel = world.read_model((1, 1));
         assert(pixel_1_1.color == color, 'should be the color');
     }
 }
