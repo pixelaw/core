@@ -4,7 +4,7 @@ use pixelaw::core::utils::{DefaultParameters};
 use starknet::{ContractAddress};
 
 #[starknet::interface]
-trait IPaintActions<T> {
+pub trait IPaintActions<T> {
     /// Initializes the Paint App.
     ///
     /// # Arguments

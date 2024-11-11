@@ -90,7 +90,7 @@ pub const APP_ICON: felt252 = 'U+1F40D';
 
 /// Interface for Snake actions.
 #[starknet::interface]
-trait ISnakeActions<T> {
+pub trait ISnakeActions<T> {
     /// Initializes the Snake App.
     ///
     /// # Arguments
