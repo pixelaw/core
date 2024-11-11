@@ -232,6 +232,7 @@ pub mod actions {
             let mut world = self.world(@"pixelaw");
             let caller = get_caller_address();
             let app: App = world.read_model(caller);
+            println!("{:?} .. ", app);
             assert!(app.name != '', "cannot be called by a non-app");
 
             world

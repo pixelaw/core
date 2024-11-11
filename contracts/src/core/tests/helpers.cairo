@@ -1,10 +1,4 @@
-use dojo::{
-    world::{WorldStorage, WorldStorageTrait, //IWorld, IWorldDispatcher
-    },
-    model::{ //ModelStorage, ModelValueStorage, ModelStorageTest
-    },
-    //event::EventStorage
-};
+use dojo::{world::{WorldStorage, WorldStorageTrait},};
 use dojo_cairo_test::{
     spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
     WorldStorageTestTrait
@@ -12,7 +6,7 @@ use dojo_cairo_test::{
 
 use pixelaw::{
     apps::{
-        paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
+        paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
         snake::app::{
             m_Snake, m_SnakeSegment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait,
             snake_actions
@@ -20,21 +14,15 @@ use pixelaw::{
     },
     core::{
         models::{
-            registry::{m_App, m_AppName, m_CoreActionsAddress, //CoreActionsAddress
-            },
-            pixel::{m_Pixel}, area::{m_RTree, m_Area}
+            registry::{m_App, m_AppName, m_CoreActionsAddress}, pixel::{m_Pixel},
+            area::{m_RTree, m_Area}
         },
-        actions::{IActionsDispatcher, IActionsDispatcherTrait, //CORE_ACTIONS_KEY
-        },
-        utils::{Position, // DefaultParameters
-        },
+        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait}, utils::{Position},
     }
 };
 
 
-use starknet::{
-    contract_address_const, ContractAddress, //testing::{ set_account_contract_address},
-};
+use starknet::{contract_address_const, ContractAddress};
 
 
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
@@ -63,16 +51,23 @@ pub fn setup_core_initialized() -> (
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: "ns", resources: [
-            TestResource::Model(m_Pixel::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_App::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_AppName::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_CoreActionsAddress::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_RTree::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_Area::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_Snake::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Event(snake_actions::e_Moved::TEST_CLASS_HASH.try_into().unwrap()),
+        namespace: "pixelaw", resources: [
+            TestResource::Model(m_Pixel::TEST_CLASS_HASH),
+            TestResource::Model(m_App::TEST_CLASS_HASH),
+            TestResource::Model(m_AppName::TEST_CLASS_HASH),
+            TestResource::Model(m_CoreActionsAddress::TEST_CLASS_HASH),
+            TestResource::Model(m_RTree::TEST_CLASS_HASH),
+            TestResource::Model(m_Area::TEST_CLASS_HASH),
+            TestResource::Model(m_Snake::TEST_CLASS_HASH),
+            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_QueueProcessed::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
+            TestResource::Event(snake_actions::e_Moved::TEST_CLASS_HASH),
+            TestResource::Event(snake_actions::e_Died::TEST_CLASS_HASH),
+            TestResource::Contract(actions::TEST_CLASS_HASH),
+            TestResource::Contract(snake_actions::TEST_CLASS_HASH),
+            TestResource::Contract(paint_actions::TEST_CLASS_HASH),
         ].span()
     };
 
@@ -81,23 +76,23 @@ fn namespace_def() -> NamespaceDef {
 
 fn core_contract_defs() -> Span<ContractDef> {
     [
-        ContractDefTrait::new(@"ns", @"actions")
-            .with_writer_of([dojo::utils::bytearray_hash(@"ns")].span())
+        ContractDefTrait::new(@"pixelaw", @"actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
     ].span()
 }
 
 fn app_contract_defs() -> Span<ContractDef> {
     [
-        ContractDefTrait::new(@"ns", @"paint_actions")
-            .with_writer_of([dojo::utils::bytearray_hash(@"ns")].span()),
-        ContractDefTrait::new(@"ns", @"snake_actions")
-            .with_writer_of([dojo::utils::bytearray_hash(@"ns")].span())
+        ContractDefTrait::new(@"pixelaw", @"paint_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
+        ContractDefTrait::new(@"pixelaw", @"snake_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
     ].span()
 }
 
 
 pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
-    let mut world: WorldStorage = spawn_test_world([namespace_def()].span());
+    let mut world = spawn_test_world([namespace_def()].span());
 
     world.sync_perms_and_inits(core_contract_defs());
 
@@ -139,9 +134,9 @@ pub fn setup_apps_initialized(
         setup_apps(
         world
     );
-
     paint_actions.init();
     snake_actions.init();
+    println!("inted");
 
     (paint_actions, snake_actions)
 }

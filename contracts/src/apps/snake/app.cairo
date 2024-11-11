@@ -147,7 +147,7 @@ pub mod snake_actions {
 
     #[derive(Copy, Drop, Serde)]
     #[dojo::event]
-    struct Died {
+    pub struct Died {
         #[key]
         owner: ContractAddress,
         x: u16,
