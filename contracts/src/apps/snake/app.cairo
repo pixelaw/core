@@ -90,7 +90,7 @@ pub const APP_ICON: felt252 = 'U+1F40D';
 
 /// Interface for Snake actions.
 #[starknet::interface]
-trait ISnakeActions<T> {
+pub trait ISnakeActions<T> {
     /// Initializes the Snake App.
     ///
     /// # Arguments
@@ -121,7 +121,7 @@ trait ISnakeActions<T> {
 }
 
 #[dojo::contract]
-mod snake_actions {
+pub mod snake_actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
     use dojo::world::storage::WorldStorage;
@@ -146,7 +146,7 @@ mod snake_actions {
 
     #[derive(Copy, Drop, Serde)]
     #[dojo::event]
-    struct Died {
+    pub struct Died {
         #[key]
         owner: ContractAddress,
         x: u16,

@@ -3,7 +3,7 @@ use pixelaw::core::utils::{DefaultParameters};
 use starknet::{ContractAddress};
 
 #[starknet::interface]
-trait IPaintActions<T> {
+pub trait IPaintActions<T> {
     /// Initializes the Paint App.
     ///
     /// # Arguments
@@ -58,7 +58,7 @@ const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u16 = 7;
 
 #[dojo::contract]
-mod paint_actions {
+pub mod paint_actions {
     use dojo::model::{ModelStorage};
 
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait,};

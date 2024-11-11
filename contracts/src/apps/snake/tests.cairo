@@ -1,25 +1,15 @@
 #[cfg(test)]
 mod tests {
     use dojo::model::{ModelStorage};
-    use dojo::utils::test::{spawn_test_world};
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use pixelaw::apps::paint::app::{
-        paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait
-    };
 
-    use pixelaw::apps::snake::app::{
-        snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
-    };
-    use pixelaw::apps::snake::app::{Snake};
-    use pixelaw::core::actions::{
-        actions as core_actions, IActionsDispatcher, IActionsDispatcherTrait
-    };
+    use pixelaw::apps::paint::app::{IPaintActionsDispatcherTrait};
 
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-    use pixelaw::core::models::pixel::{pixel};
-    use pixelaw::core::models::registry::{app, app_name, core_actions_address};
+    use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
+
+    use pixelaw::core::models::pixel::{Pixel};
+
     use pixelaw::core::tests::helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
-    use pixelaw::core::utils::{get_core_actions, Direction, Position, DefaultParameters};
+    use pixelaw::core::utils::{Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 
 
@@ -39,7 +29,7 @@ mod tests {
         set_account_contract_address(player1);
         let pixel: Pixel = world.read_model((1, 1));
         assert(pixel.color != SNAKE_COLOR, 'wrong pixel color for 1,1');
-
+        println!("1");
         // Spawn the snake
         snake_actions
             .interact(
@@ -52,13 +42,14 @@ mod tests {
                 },
                 Direction::Right
             );
-
+        println!("2");
         let pixel: Pixel = world.read_model((1, 1));
         assert(pixel.color == SNAKE_COLOR, 'wrong pixel color for 1,1');
 
         // Move the snake
         snake_actions.move(player1);
 
+        println!("3");
         // TODO check if there is a QueueScheduled event and if its correct
 
         // Check if the pixel is blank again at 1,1
@@ -69,6 +60,7 @@ mod tests {
         let pixel2_1: Pixel = world.read_model((2, 1));
         assert(pixel2_1.color == SNAKE_COLOR, 'wrong pixel color 2,1');
 
+        println!("4");
         // Move right (head at 3,1 now)
         snake_actions.move(player1);
 
@@ -88,6 +80,7 @@ mod tests {
                 }
             );
 
+        println!("5");
         // Grow right (head at 4,1 now) -> on top of the painted. Snake should grow
         snake_actions.move(player1);
 
@@ -117,24 +110,31 @@ mod tests {
                 }
             );
 
+        println!("6");
         set_caller(player1);
 
         // Hit the pixel
         snake_actions.move(player1);
 
+        println!("7");
         // Shrink the tail
         snake_actions.move(player1);
 
+        println!("8");
         // Check that 4,1 is not snake color
         let pixel4_1: Pixel = world.read_model((4, 1));
         assert(pixel4_1.color != SNAKE_COLOR, 'wrong pixel color for 4,1');
 
+        println!("9");
         // Shrink the head / die
         snake_actions.move(player1);
+
+        println!("10");
         // Check that 5,1 is not snake color
         let pixel5_1: Pixel = world.read_model((5, 1));
         assert(pixel5_1.color != SNAKE_COLOR, 'wrong pixel color for 5,1');
 
+        println!("11");
         // Spawn the snake again at 3,1 so it grows from the paint at 4,1
         snake_actions
             .interact(
@@ -154,6 +154,7 @@ mod tests {
         // Moved to 4,1, it should now grow
         snake_actions.move(player1);
 
+        println!("8");
         // Now turn it Up so it runs into the border
         snake_actions
             .interact(
@@ -173,6 +174,7 @@ mod tests {
         // Ran into 4,! - it should die
         snake_actions.move(player1);
 
+        println!("9");
         let pixel4_0: Pixel = world.read_model((4, 0));
         let pixel4_1: Pixel = world.read_model((4, 1));
         assert(pixel4_0.color == SNAKE_COLOR, 'wrong pixel color for 4,0');
@@ -185,11 +187,14 @@ mod tests {
         assert(pixel4_0.color == SNAKE_COLOR, 'wrong pixel color for 4,0');
         assert(pixel4_1.color != SNAKE_COLOR, 'wrong pixel color for 4,1');
 
+        println!("10");
         snake_actions.move(player1);
 
         let pixel4_0: Pixel = world.read_model((4, 0));
         let pixel4_1: Pixel = world.read_model((4, 1));
         assert(pixel4_0.color != SNAKE_COLOR, 'wrong pixel color for 4,0');
         assert(pixel4_1.color != SNAKE_COLOR, 'wrong pixel color for 4,1');
+
+        println!("11");
     }
 }
