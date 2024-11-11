@@ -156,9 +156,7 @@ mod paint_actions {
         /// * `default_params` - The default parameters including position and color.
         fn interact(ref self: ContractState, default_params: DefaultParameters) {
             let mut world = self.world(@"pixelaw");
-            println!("default_params: {:?}", default_params);
             let position = default_params.position;
-            println!("position: {:?}", position);
 
             // Load the Pixel
             let mut pixel: Pixel = world.read_model((position.x, position.y));

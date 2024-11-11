@@ -65,14 +65,14 @@ pub struct Bounds {
     pub y_max: u16
 }
 
-
+// NOTE: somehow currently Option doesn't work with calldata parsing issues
 #[derive(Copy, Drop, Serde, Debug)]
 pub struct DefaultParameters {
     pub position: Position,
     pub color: u32,
-    pub player_override: Option<ContractAddress>,
-    pub system_override: Option<ContractAddress>,
-    pub area_hint: Option<u64>,
+    pub player_override: ContractAddress,
+    pub system_override: ContractAddress,
+    pub area_hint: u64,
 }
 
 
@@ -122,15 +122,15 @@ pub fn get_callers(
     let core_address = get_core_actions_address(ref world);
     let caller_contract = get_contract_address();
 
-    if let Option::Some(override) = params.player_override {
+    if params.player_override != contract_address_const::<0>() {
         assert(caller_contract == core_address, 'only core can override');
-        player = override;
+        player = params.player_override;
     } else {
         player = get_tx_info().unbox().account_contract_address;
     }
-    if let Option::Some(override) = params.system_override {
+    if params.system_override != contract_address_const::<0>() {
         assert(caller_contract == core_address, 'only core can override');
-        system = override;
+        system = params.system_override;
     } else {
         system = caller_contract;
     }
