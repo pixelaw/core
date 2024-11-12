@@ -5,7 +5,7 @@ target/
 
 contracts/out
 contracts/target
-contracts/manifests/dev*
+contracts/manifest_dev.json
 
 *.account.json
 *.keystore.json
