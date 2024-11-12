@@ -19,6 +19,8 @@ source scripts/lib/functions.sh
 
 scripts/create_snapshot.sh $PROFILE
 
+export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
+
 STORAGE_INIT_WORLD="/pixelaw/storage_init/$WORLD_ADDRESS"
 
 echo $WORLD_ADDRESS
@@ -30,4 +32,6 @@ cp manifest_$PROFILE.json $STORAGE_INIT_WORLD/manifest.json
 
 cp $KATANA_DB_ZIP $STORAGE_INIT_WORLD/katana_db.zip
 cp $TORII_DB_ZIP $STORAGE_INIT_WORLD/torii.sqlite.zip
-#rm -rf $OUT
+
+rm -rf $OUT
+
