@@ -140,7 +140,7 @@ wait_for_torii_writing() {
   prev_size=$(du -b "$TORII_LOG" | cut -f1)
 
   while true; do
-      sleep 10
+      sleep 5
       new_size=$(du -b "$TORII_LOG" | cut -f1)
       if [ $new_size -eq $prev_size ]; then
           break

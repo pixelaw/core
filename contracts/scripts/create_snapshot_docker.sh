@@ -26,7 +26,7 @@ echo $WORLD_ADDRESS
 mkdir -p $STORAGE_INIT_WORLD
 
 cp $GENESIS_OUT $STORAGE_INIT_WORLD/genesis.json
-cp manifests/$PROFILE/deployment/manifest.json $STORAGE_INIT_WORLD/manifest.json
+cp manifest_$PROFILE.json $STORAGE_INIT_WORLD/manifest.json
 
 cp $KATANA_DB_ZIP $STORAGE_INIT_WORLD/katana_db.zip
 cp $TORII_DB_ZIP $STORAGE_INIT_WORLD/torii.sqlite.zip

@@ -25,7 +25,7 @@ echo "Stopping katana and torii"
 pkill -f torii
 pkill -f katana
 
-sleep 1
+sleep 2
 
 patch_torii_db
 
