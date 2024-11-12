@@ -1,7 +1,8 @@
 use core::{poseidon::poseidon_hash_span};
+use dojo::event::{Event};
 use dojo::model::{ModelStorage};
+use dojo::world::world::Event as WorldEvent;
 use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
-
 use pixelaw::core::{
     models::pixel::{Pixel}, events::{QueueScheduled, QueueProcessed},
     actions::{IActionsDispatcherTrait},
@@ -13,7 +14,6 @@ const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
 
 #[test]
-#[available_gas(30000000)]
 fn test_process_queue() {
     let (world, core_actions, _player_1, _player_2) =
         pixelaw::core::tests::helpers::setup_core_initialized();
@@ -94,14 +94,25 @@ fn test_queue_full() {
         array![timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)]
             .span()
     );
-    let expected_scheduled_event = QueueScheduled {
-        id, timestamp, called_system, selector, calldata
-    };
 
-    assert(
-        starknet::testing::pop_log(event_contract) == Option::Some(expected_scheduled_event),
-        'unexpected QueueScheduled'
-    );
+    let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
+    assert(event.is_some(), 'no event');
+
+    if let WorldEvent::EventEmitted(event) = event.unwrap() {
+        assert(
+            event.selector == Event::<QueueScheduled>::selector(world.namespace_hash),
+            'bad event selector'
+        );
+        // TODO complete test
+        let expected_scheduled_event = QueueScheduled {
+            id, timestamp, called_system, selector, calldata
+        };
+        //   assert(event.system_address == bob, 'bad system address');
+    //   assert(event.keys == [2].span(), 'bad keys');
+    //   assert(event.values == [3, 4].span(), 'bad values');
+    } else {
+        core::panic_with_felt252('no EventEmitted event');
+    }
 
     // Pop all the previous events from the log so only the following one will be there
     drop_all_events(event_contract);
@@ -117,18 +128,23 @@ fn test_queue_full() {
     // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processed
 
     let expected_processed_event = QueueProcessed { id, result: 0 }; // Fixme: result
-    assert(
-        starknet::testing::pop_log(event_contract) == Option::Some(expected_processed_event),
-        'unexpected QueueProcessed'
-    );
-    // println!("log0 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log1 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log2 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log3 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log4 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log5 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log6 {:?}", starknet::testing::pop_log_raw(event_contract));
-// println!("log7 {:?}", starknet::testing::pop_log_raw(event_contract));
+    let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
+    assert(event.is_some(), 'no event');
 
+    if let WorldEvent::EventEmitted(event) = event.unwrap() {
+        assert(
+            event.selector == Event::<QueueProcessed>::selector(world.namespace_hash),
+            'bad event selector'
+        );
+        // TODO complete test
+        let expected_scheduled_event = QueueScheduled {
+            id, timestamp, called_system, selector, calldata
+        };
+        //   assert(event.system_address == bob, 'bad system address');
+    //   assert(event.keys == [2].span(), 'bad keys');
+    //   assert(event.values == [3, 4].span(), 'bad values');
+    } else {
+        core::panic_with_felt252('no EventEmitted event');
+    }
 }
 

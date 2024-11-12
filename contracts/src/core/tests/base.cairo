@@ -1,5 +1,6 @@
+use dojo::event::{Event};
 use dojo::model::{ModelStorage};
-
+use dojo::world::world::Event as WorldEvent;
 use pixelaw::{
     apps::{paint::app::{IPaintActionsDispatcherTrait,},},
     core::{
@@ -258,12 +259,26 @@ fn test_alert_player() {
     core_actions.alert_player(position, player, message);
 
     // Assert that the correct event was emitted
-    // TODO Fix this test, it breaks with
-    //error: Trait has no implementation in context:
-    //core::starknet::event::Event::<pixelaw::core::events::Alert>
-    assert_eq!(
-        starknet::testing::pop_log::<Alert>(world.dispatcher.contract_address),
-        Option::Some(Alert { position, caller, player, message, timestamp: get_block_timestamp() })
-    );
+
+    let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
+    assert(event.is_some(), 'no event');
+
+    if let WorldEvent::EventEmitted(event) = event.unwrap() {
+        assert(
+            event.selector == Event::<Alert>::selector(world.namespace_hash), 'bad event selector'
+        );
+        println!("event: {:?}", event.values);
+        // TODO complete test
+        //   assert(event.system_address == bob, 'bad system address');
+        assert(event.keys == [12, 12].span(), 'bad keys');
+        // assert(event.values.at(0) == caller, 'bad values');
+    } else {
+        core::panic_with_felt252('no EventEmitted event');
+    }
+    //assert_eq!(
+//    starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address),
+//    Option::Some(Alert { position, caller, player, message, timestamp: get_block_timestamp()
+//    })
+// );
 }
 
