@@ -1,24 +1,15 @@
 use core::poseidon::poseidon_hash_span;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::events::{QueueScheduled, QueueProcessed, AppNameUpdated, Alert};
-use pixelaw::core::models::area::{
-    BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
-};
 
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
-use pixelaw::core::models::queue::QueueItem;
+use dojo::world::storage::WorldStorage;
 
-use pixelaw::core::models::registry::{App, AppName, CoreActionsAddress};
+use pixelaw::core::events::{QueueScheduled, QueueProcessed};
+use pixelaw::core::models::area::{BoundsTraitImpl, RTreeTraitImpl, RTreeNodePackableImpl};
 
-use pixelaw::core::utils::{get_core_actions_address, Position, MAX_DIMENSION, Bounds};
-use pixelaw::core::utils;
-use starknet::{
-    ContractAddress, get_caller_address, get_contract_address, get_tx_info, contract_address_const,
-    syscalls::{call_contract_syscall},
-};
+
+use starknet::{ContractAddress, syscalls::{call_contract_syscall},};
 
 pub fn schedule_queue(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     timestamp: u64,
     called_system: ContractAddress,
     selector: felt252,
@@ -39,7 +30,7 @@ pub fn schedule_queue(
 
 
 pub fn process_queue(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     id: felt252,
     timestamp: u64,
     called_system: ContractAddress,
@@ -61,7 +52,8 @@ pub fn process_queue(
     // Make the call itself
     let _result = call_contract_syscall(called_system, selector, calldata);
 
-    QueueProcessed { id }
+    // TODO complete proper passing of the result
+    QueueProcessed { id, result: 0 }
     // Tell the offchain schedulers that this one is done
 
 }

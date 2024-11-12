@@ -1,33 +1,28 @@
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
-
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
+use dojo::{world::{WorldStorage, WorldStorageTrait},};
+use dojo_cairo_test::{
+    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
+    WorldStorageTestTrait
 };
 
 use pixelaw::{
     apps::{
         paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
         snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
-            ISnakeActionsDispatcherTrait
+            m_Snake, m_SnakeSegment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait,
+            snake_actions
         }
     },
     core::{
         models::{
-            registry::{App, app, app_name, core_actions_address, CoreActionsAddress},
-            pixel::{Pixel, PixelUpdate, pixel}, area::{r_tree, RTree, area, Area}
+            registry::{m_App, m_AppName, m_CoreActionsAddress}, pixel::{m_Pixel},
+            area::{m_RTree, m_Area}
         },
-        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{get_core_actions, Direction, Position, DefaultParameters},
+        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait}, utils::{Position},
     }
 };
 
 
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address},
-};
+use starknet::{contract_address_const, ContractAddress};
 
 
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
@@ -45,7 +40,7 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
 }
 
 pub fn setup_core_initialized() -> (
-    IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress
+    WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress
 ) {
     let (world, core_actions, player_1, player_2) = setup_core();
 
@@ -54,28 +49,63 @@ pub fn setup_core_initialized() -> (
     (world, core_actions, player_1, player_2)
 }
 
-pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, ContractAddress) {
-    let mut models = array![
-        pixel::TEST_CLASS_HASH,
-        app::TEST_CLASS_HASH,
-        app_name::TEST_CLASS_HASH,
-        core_actions_address::TEST_CLASS_HASH,
-        r_tree::TEST_CLASS_HASH,
-        area::TEST_CLASS_HASH
-    ];
-    let world = spawn_test_world(["pixelaw"].span(), models.span());
+fn namespace_def() -> NamespaceDef {
+    let ndef = NamespaceDef {
+        namespace: "pixelaw", resources: [
+            TestResource::Model(m_Pixel::TEST_CLASS_HASH),
+            TestResource::Model(m_App::TEST_CLASS_HASH),
+            TestResource::Model(m_AppName::TEST_CLASS_HASH),
+            TestResource::Model(m_CoreActionsAddress::TEST_CLASS_HASH),
+            TestResource::Model(m_RTree::TEST_CLASS_HASH),
+            TestResource::Model(m_Area::TEST_CLASS_HASH),
+            TestResource::Model(m_Snake::TEST_CLASS_HASH),
+            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_QueueProcessed::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
+            TestResource::Event(snake_actions::e_Moved::TEST_CLASS_HASH),
+            TestResource::Event(snake_actions::e_Died::TEST_CLASS_HASH),
+            TestResource::Contract(actions::TEST_CLASS_HASH),
+            TestResource::Contract(snake_actions::TEST_CLASS_HASH),
+            TestResource::Contract(paint_actions::TEST_CLASS_HASH),
+        ].span()
+    };
 
-    let core_actions_address = world
-        .deploy_contract('salt1', actions::TEST_CLASS_HASH.try_into().unwrap());
+    ndef
+}
+
+fn core_contract_defs() -> Span<ContractDef> {
+    [
+        ContractDefTrait::new(@"pixelaw", @"actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
+    ].span()
+}
+
+fn app_contract_defs() -> Span<ContractDef> {
+    [
+        ContractDefTrait::new(@"pixelaw", @"paint_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
+        ContractDefTrait::new(@"pixelaw", @"snake_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
+    ].span()
+}
+
+
+pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
+    let mut world = spawn_test_world([namespace_def()].span());
+
+    world.sync_perms_and_inits(core_contract_defs());
+
+    let (core_actions_address, _) = world.dns(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
-    // Setup permissions
-    world.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
+    // FIXME: Setup permissions
+    // world.dispatcher.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
+    // world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -85,37 +115,27 @@ pub fn setup_core() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress, C
 }
 
 
-pub fn setup_apps_initialized(
-    world: IWorldDispatcher
-) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
-    let (paint_actions, snake_actions) = setup_apps(world);
+pub fn setup_apps(world: WorldStorage) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+    world.sync_perms_and_inits(app_contract_defs());
 
-    paint_actions.init();
-    snake_actions.init();
+    let (paint_actions_address, _) = world.dns(@"paint_actions").unwrap();
+    let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
+
+    let (snake_actions_address, _) = world.dns(@"snake_actions").unwrap();
+    let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
     (paint_actions, snake_actions)
 }
 
-pub fn setup_apps(world: IWorldDispatcher) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
-    let core_address = get!(world, CORE_ACTIONS_KEY, (CoreActionsAddress));
-
-    world.register_model((snake::TEST_CLASS_HASH).try_into().unwrap());
-    world.register_model((snake_segment::TEST_CLASS_HASH).try_into().unwrap());
-
-    let paint_actions_address = world
-        .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
-    let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
-
-    let snake_actions_address = world
-        .deploy_contract('salt4', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
-    let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
-
-    // Setup permissions
-    world.grant_writer(selector_from_tag!("pixelaw-Snake"), core_address.value);
-    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), core_address.value);
-
-    world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
-    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
+pub fn setup_apps_initialized(
+    world: WorldStorage
+) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+    let (paint_actions, snake_actions): (IPaintActionsDispatcher, ISnakeActionsDispatcher) =
+        setup_apps(
+        world
+    );
+    paint_actions.init();
+    snake_actions.init();
 
     (paint_actions, snake_actions)
 }

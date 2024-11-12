@@ -1,27 +1,23 @@
-use core::poseidon::poseidon_hash_span;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::area::{
-    BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTreeNode, RTree, Area, RTreeNodePackableImpl
-};
-use pixelaw::core::models::pixel::{
-    Pixel, PixelUpdate, PixelUpdateTrait, PixelUpdateResult, PixelUpdateResultTrait
-};
-use pixelaw::core::models::queue::QueueItem;
+use dojo::model::{ModelStorage};
+use dojo::world::storage::WorldStorage;
 
-use pixelaw::core::models::registry::{AppCalldataTrait, App, AppName, CoreActionsAddress};
+//use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use pixelaw::core::models::area::{BoundsTraitImpl, RTreeTraitImpl, Area, RTreeNodePackableImpl};
+use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateTrait, PixelUpdateResult};
+
+
+use pixelaw::core::models::registry::{AppCalldataTrait, App};
 use pixelaw::core::utils::{
-    ON_PRE_UPDATE_HOOK, ON_POST_UPDATE_HOOK, starknet_keccak, get_core_actions_address, Position,
-    MAX_DIMENSION, Bounds
+    ON_PRE_UPDATE_HOOK, ON_POST_UPDATE_HOOK, get_core_actions_address, Position,
 };
-use pixelaw::core::utils;
 use starknet::{
-    ContractAddress, get_caller_address, get_contract_address, get_tx_info, contract_address_const,
+    ContractAddress, get_contract_address, get_tx_info, contract_address_const,
     syscalls::{call_contract_syscall},
 };
 
 
 pub fn can_update_pixel(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     for_player: ContractAddress,
     for_system: ContractAddress,
     pixel: Pixel,
@@ -36,7 +32,7 @@ pub fn can_update_pixel(
 
     // Load the area
     let area_result = super::area::find_area_for_position(
-        world, Position { x: pixel.x, y: pixel.y }, area_id_hint
+        ref world, Position { x: pixel.x, y: pixel.y }, area_id_hint
     );
     if let Option::Some(area) = area_result {
         // Return true if the player is owner of the area
@@ -65,14 +61,14 @@ pub fn can_update_pixel(
     // We can still try to call the hook on the pixel's App and see if that allows anything
 
     // Retrieve the App for the calling system
-    let mut caller_app = get!(world, for_system, (App));
+    let mut caller_app: App = world.read_model(for_system);
 
     // 2. Return the result of the hook call
-    call_on_pre_update(world, pixel.app, pixel_update, caller_app, for_player, allow_modify)
+    call_on_pre_update(ref world, pixel.app, pixel_update, caller_app, for_player, allow_modify)
 }
 
 pub fn update_pixel(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     for_player: ContractAddress,
     for_system: ContractAddress,
     pixel_update: PixelUpdate,
@@ -85,13 +81,13 @@ pub fn update_pixel(
     // validate that for_player is not different from the actual caller unless the
     // calling contract is the core.
     // TODO is there an exploit by doing this through a hook then?
-    validate_callers(world, for_player);
+    validate_callers(ref world, for_player);
 
     // Load the pixel
-    let mut pixel = get!(world, (pixel_update.x, pixel_update.y), (Pixel));
+    let mut pixel: Pixel = world.read_model((pixel_update.x, pixel_update.y));
 
     let update_result = can_update_pixel(
-        world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
+        ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
     );
 
     // println!("update_pixel {:?}", update_result);
@@ -110,13 +106,13 @@ pub fn update_pixel(
         pixel.updated_at = now;
     }
     // Store the Pixel
-    set!(world, (pixel));
+    world.write_model(@pixel);
     // Call on_post_update if the pixel has an app
     if pixel.app != contract_address_const::<0>() {
-        let mut caller_app = get!(world, for_system, (App));
+        let mut caller_app: App = world.read_model(for_system);
 
         if let Result::Err(err) =
-            call_on_post_update(world, pixel.app, pixel_update, caller_app, for_player) {
+            call_on_post_update(ref world, pixel.app, pixel_update, caller_app, for_player) {
             return PixelUpdateResult::Error(err);
         }
     }
@@ -151,7 +147,7 @@ fn apply_pixel_update(ref pixel: Pixel, pixel_update: PixelUpdate) {
 }
 
 fn call_on_pre_update(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     contract_address: ContractAddress,
     pixel_update: PixelUpdate,
     app_caller: App,
@@ -190,7 +186,7 @@ fn call_on_pre_update(
 }
 
 fn call_on_post_update(
-    world: IWorldDispatcher,
+    ref world: WorldStorage,
     contract_address: ContractAddress,
     pixel_update: PixelUpdate,
     app_caller: App,
@@ -278,8 +274,8 @@ fn determine_app(pixel: Pixel, area_result: Option<Area>) -> ContractAddress {
     result
 }
 
-fn validate_callers(world: IWorldDispatcher, for_player: ContractAddress) {
-    let core_address = get_core_actions_address(world);
+fn validate_callers(ref world: WorldStorage, for_player: ContractAddress) {
+    let core_address = get_core_actions_address(ref world);
 
     let caller_account = get_tx_info().unbox().account_contract_address;
     let caller_contract = get_contract_address();

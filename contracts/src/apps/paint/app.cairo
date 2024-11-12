@@ -1,29 +1,23 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{Pixel, PixelUpdate}, registry::{App}};
-use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
-use starknet::{get_caller_address, get_contract_address, get_execution_info, ContractAddress};
+//use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
+use pixelaw::core::utils::{DefaultParameters};
+use starknet::{ContractAddress};
 
-#[dojo::interface]
-trait IPaintActions<TContractState> {
+#[starknet::interface]
+pub trait IPaintActions<T> {
     /// Initializes the Paint App.
     ///
     /// # Arguments
     ///
     /// * `world` - A reference to the world dispatcher.
-    fn init(ref world: IWorldDispatcher);
+    fn init(ref self: T);
 
     fn on_pre_update(
-        ref world: IWorldDispatcher,
-        pixel_update: PixelUpdate,
-        app_caller: App,
-        player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
     ) -> Option<PixelUpdate>;
 
     fn on_post_update(
-        ref world: IWorldDispatcher,
-        pixel_update: PixelUpdate,
-        app_caller: App,
-        player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
     );
 
     /// Interacts with a pixel based on default parameters.
@@ -32,7 +26,7 @@ trait IPaintActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     /// * `default_params` - The default parameters including position and color.
-    fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters);
+    fn interact(ref self: T, default_params: DefaultParameters);
 
     /// Applies a color to a specified position.
     ///
@@ -40,7 +34,7 @@ trait IPaintActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     /// * `default_params` - The default parameters including position and color.
-    fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters);
+    fn put_color(ref self: T, default_params: DefaultParameters);
 
     /// Initiates the fading process for a pixel.
     ///
@@ -48,7 +42,7 @@ trait IPaintActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     /// * `default_params` - The default parameters including position and color.
-    fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters);
+    fn fade(ref self: T, default_params: DefaultParameters);
 
     /// Updates a row of pixels with provided image data.
     ///
@@ -57,37 +51,32 @@ trait IPaintActions<TContractState> {
     /// * `world` - A reference to the world dispatcher.
     /// * `default_params` - The default parameters including position.
     /// * `image_data` - A span of felt252 representing the image data.
-    fn pixel_row(
-        ref world: IWorldDispatcher, default_params: DefaultParameters, image_data: Span<felt252>
-    );
+    fn pixel_row(ref self: T, default_params: DefaultParameters, image_data: Span<felt252>);
 }
 
 pub const APP_KEY: felt252 = 'paint';
 const APP_ICON: felt252 = 'U+1F58C';
 const PIXELS_PER_FELT: u16 = 7;
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
-mod paint_actions {
-    use pixelaw::core::actions::{
-        IActionsDispatcher as ICoreActionsDispatcher,
-        IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
-    };
+#[dojo::contract]
+pub mod paint_actions {
+    use dojo::model::{ModelStorage};
+    // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
+
+    use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait,};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, Direction, Position,
-        DefaultParameters,
+        get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, DefaultParameters,
     };
-    use starknet::{
-        get_tx_info, get_caller_address, get_contract_address, get_execution_info, ContractAddress,
-        contract_address_const,
-    };
+    use starknet::{get_contract_address, ContractAddress, contract_address_const,};
+    use super::IPaintActions;
 
     use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
-    impl Actions of super::IPaintActions<ContractState> {
+    impl Actions of IPaintActions<ContractState> {
         /// Initializes the Paint App.
         ///
         /// This function registers the app with core actions
@@ -95,8 +84,9 @@ mod paint_actions {
         /// # Arguments
         ///
         /// * `world` - A reference to the world dispatcher.
-        fn init(ref world: IWorldDispatcher) {
-            let core_actions = pixelaw::core::utils::get_core_actions(world);
+        fn init(ref self: ContractState) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
@@ -110,12 +100,12 @@ mod paint_actions {
         /// * `app_caller` - The app initiating the update.
         /// * `player_caller` - The player initiating the update.
         fn on_pre_update(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
         ) -> Option<PixelUpdate> {
-            let _world = world;
+            let mut _world = self.world(@"pixelaw");
 
             let mut result = Option::None; //Default is to not allow anything
 
@@ -142,13 +132,13 @@ mod paint_actions {
         /// * `app_caller` - The app that performed the update.
         /// * `player_caller` - The player that performed the update.
         fn on_post_update(
-            ref world: IWorldDispatcher,
+            ref self: ContractState,
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
         ) {
             // Do nothing
-            let _world = world;
+            //let mut _world = self.world(@"pixelaw");
 
             // Check which app is calling
             if app_caller
@@ -166,11 +156,12 @@ mod paint_actions {
         ///
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
-        fn interact(ref world: IWorldDispatcher, default_params: DefaultParameters) {
+        fn interact(ref self: ContractState, default_params: DefaultParameters) {
+            let mut world = self.world(@"pixelaw");
             let position = default_params.position;
 
             // Load the Pixel
-            let mut pixel = get!(world, (position.x, position.y), (Pixel));
+            let mut pixel: Pixel = world.read_model((position.x, position.y));
 
             if pixel.color == default_params.color {
                 self.fade(default_params);
@@ -187,14 +178,15 @@ mod paint_actions {
         ///
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
-        fn put_color(ref world: IWorldDispatcher, default_params: DefaultParameters) {
+        fn put_color(ref self: ContractState, default_params: DefaultParameters) {
+            let mut world = self.world(@"pixelaw");
             // Load important variables
-            let core_actions = get_core_actions(world);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
-            let (player, system) = get_callers(world, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             // Load the Pixel
-            let mut pixel = get!(world, (position.x, position.y), (Pixel));
+            let mut pixel: Pixel = world.read_model((position.x, position.y));
 
             // TODO: Load Paint App Settings like the fade step time
             // For example for the cooldown feature
@@ -239,10 +231,9 @@ mod paint_actions {
         /// * `default_params` - The default parameters including position.
         /// * `image_data` - A span of felt252 representing the image data.
         fn pixel_row(
-            ref world: IWorldDispatcher,
-            default_params: DefaultParameters,
-            image_data: Span<felt252>,
+            ref self: ContractState, default_params: DefaultParameters, image_data: Span<felt252>,
         ) {
+            let mut world = self.world(@"pixelaw");
             // row_length determines how many pixels are in a row
             // row_offset determines how far to the right the position started. Next row will
             // continue (x - offset) to the left
@@ -251,10 +242,10 @@ mod paint_actions {
                 return;
             }
 
-            let core_actions = get_core_actions(world);
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             let mut felt_index = 0;
             let mut pixel_index: u16 = 0;
@@ -311,19 +302,21 @@ mod paint_actions {
         ///
         /// * `world` - A reference to the world dispatcher.
         /// * `default_params` - The default parameters including position and color.
-        fn fade(ref world: IWorldDispatcher, default_params: DefaultParameters) {
-            let core_actions = get_core_actions(world);
+        fn fade(ref self: ContractState, default_params: DefaultParameters) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
-            let pixel = get!(world, (position.x, position.y), Pixel);
+            let pixel: Pixel = world.read_model((position.x, position.y));
 
             let (r, g, b, a) = decode_rgba(pixel.color);
 
             // If the color is 0,0,0, fading is done.
             if r == 0 && g == 0 && b == 0 {
-                delete!(world, (pixel));
+                world.erase_model(@pixel);
+                //delete!(world, (pixel));
                 return;
             }
 

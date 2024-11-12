@@ -1,10 +1,6 @@
-use core::starknet::storage_access::StorePacking;
-use pixelaw::core::utils::{
-    MASK_16, MASK_32, MASK_64, MASK_96, POW_2_16, POW_2_30, POW_2_31, POW_2_32, POW_2_48, POW_2_64,
-    POW_2_96, MAX_DIMENSION
-};
+use pixelaw::core::utils::{MAX_DIMENSION};
 use pixelaw::core::utils::{min, max, Bounds, Position};
-use starknet::{ContractAddress, ClassHash};
+use starknet::{ContractAddress};
 
 pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
 pub const TWO_POW_124: u256 = 0x10000000000000000000000000000000;
@@ -42,7 +38,7 @@ pub const ROOT_ID: u64 = 4294967292; // for ROOT_RTREENODE
 pub const FIRST_ID: u64 = 1310762; // for FIRST_RTREENODE
 
 
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
 pub struct RTree {
     #[key]
@@ -65,7 +61,7 @@ pub struct RTreeNode {
     pub is_area: bool,
 }
 
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 #[derive(Copy, Drop, Serde, Debug, PartialEq, Introspect)]
 pub struct Area {
     #[key]

@@ -1,12 +1,7 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::actions::{
-    IActionsDispatcher as ICoreActionsDispatcher,
-    IActionsDispatcherTrait as ICoreActionsDispatcherTrait
-};
-use starknet::{ContractAddress, get_caller_address, ClassHash, get_contract_address, get_tx_info};
+use starknet::{ContractAddress};
 
 #[derive(Debug, Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct App {
     #[key]
     pub system: ContractAddress,
@@ -30,7 +25,7 @@ pub impl AppCalldataTraitImpl of AppCalldataTrait<App> {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct AppUser {
     #[key]
     pub system: ContractAddress,
@@ -42,7 +37,7 @@ pub struct AppUser {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct AppName {
     #[key]
     pub name: felt252,
@@ -50,7 +45,7 @@ pub struct AppName {
 }
 
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct CoreActionsAddress {
     #[key]
     pub key: felt252,

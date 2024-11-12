@@ -1,45 +1,16 @@
-use core::fmt::Display;
-
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
-
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
-};
-use pixelaw::core::utils;
-
 use pixelaw::{
     core::{
+        utils,
         models::{
-            registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-            pixel::{Pixel, PixelUpdate, pixel},
             area::{
                 Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
                 RTreeNodePackableImpl, ChildrenPackableImpl
             }
         },
-        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters, MAX_DIMENSION},
-        actions::area::{print_tree, find_node_for_position},
-        tests::helpers::{
-            setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-            set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
-        },
+        actions::{IActionsDispatcherTrait}, utils::{Bounds, Position},
+        actions::area::{find_node_for_position},
+        tests::helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,},
     },
-    apps::{
-        paint::app::{
-            paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait,
-            APP_KEY as PAINT_APP_KEY
-        },
-        snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
-            ISnakeActionsDispatcherTrait, APP_KEY as SNAKE_APP_KEY
-        }
-    }
-};
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
 };
 
 
@@ -136,12 +107,12 @@ fn test_adding_containing() {
 
 #[test]
 fn test_remove() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(a1.id);
 
-    assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) == 0, 'should not find 1');
+    assert(find_node_for_position(ref world, POSITION_2, ROOT_ID, true) == 0, 'should not find 1');
 }
 
 
@@ -156,15 +127,15 @@ fn test_remove_nonarea() {
 
 #[test]
 fn test_adding() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
-    let not_found = find_node_for_position(world, POSITION_1, ROOT_ID, true); // has_area=true
+    let not_found = find_node_for_position(ref world, POSITION_1, ROOT_ID, true); // has_area=true
 
     assert(not_found == 0, 'should not find');
 
-    let found = find_node_for_position(world, POSITION_2, ROOT_ID, true); // has_area=true
+    let found = find_node_for_position(ref world, POSITION_2, ROOT_ID, true); // has_area=true
 
     assert(found != 0, 'should find');
 
@@ -201,9 +172,9 @@ fn test_adding() {
     // print_tree(world, ROOT_ID, "");
     // println!("------------------ ------------- -----------------");
 
-    assert(find_node_for_position(world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
-    assert(find_node_for_position(world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');
-    assert(find_node_for_position(world, POSITION_15, ROOT_ID, true) != 0, 'should find 3');
+    assert(find_node_for_position(ref world, POSITION_2, ROOT_ID, true) != 0, 'should find 2');
+    assert(find_node_for_position(ref world, POSITION_3, ROOT_ID, true) != 0, 'should find 3');
+    assert(find_node_for_position(ref world, POSITION_15, ROOT_ID, true) != 0, 'should find 3');
 
     let areas = core_actions
         .find_areas_inside_bounds(Bounds { x_min: 30, y_min: 30, x_max: 45, y_max: 45 });

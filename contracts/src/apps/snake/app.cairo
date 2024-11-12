@@ -1,11 +1,5 @@
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-
-use pixelaw::core::models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App}};
-use pixelaw::core::utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters};
-use starknet::{
-    get_caller_address, get_contract_address, get_execution_info, ContractAddress, ClassHash
-};
+use pixelaw::core::utils::{Direction, DefaultParameters};
+use starknet::{ContractAddress};
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -52,7 +46,7 @@ fn next_position(x: u16, y: u16, direction: Direction) -> Option<(u16, u16)> {
 /// * `text` - Any text associated with the snake.
 /// * `is_dying` - A flag indicating whether the snake is dying.
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct Snake {
     #[key]
     pub owner: ContractAddress,
@@ -78,7 +72,7 @@ pub struct Snake {
 /// * `pixel_original_text` - The original text of the pixel.
 /// * `pixel_original_app` - The original app associated with the pixel.
 #[derive(Copy, Drop, Serde)]
-#[dojo::model(namespace: "pixelaw", nomapping: true)]
+#[dojo::model]
 pub struct SnakeSegment {
     #[key]
     pub id: u32,
@@ -95,14 +89,14 @@ pub const APP_KEY: felt252 = 'snake';
 pub const APP_ICON: felt252 = 'U+1F40D';
 
 /// Interface for Snake actions.
-#[dojo::interface]
-trait ISnakeActions<TContractState> {
+#[starknet::interface]
+pub trait ISnakeActions<T> {
     /// Initializes the Snake App.
     ///
     /// # Arguments
     ///
     /// * `world` - A reference to the world dispatcher.
-    fn init(ref world: IWorldDispatcher);
+    fn init(ref self: T);
 
     /// Starts or interacts with a snake.
     ///
@@ -115,9 +109,7 @@ trait ISnakeActions<TContractState> {
     /// # Returns
     ///
     /// * `u32` - The ID of the snake's first segment.
-    fn interact(
-        ref world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction,
-    ) -> u32;
+    fn interact(ref self: T, default_params: DefaultParameters, direction: Direction,) -> u32;
 
     /// Moves the snake owned by the specified owner.
     ///
@@ -125,28 +117,26 @@ trait ISnakeActions<TContractState> {
     ///
     /// * `world` - A reference to the world dispatcher.
     /// * `owner` - The contract address of the snake's owner.
-    fn move(ref world: IWorldDispatcher, owner: ContractAddress);
+    fn move(ref self: T, owner: ContractAddress);
 }
 
-#[dojo::contract(namespace: "pixelaw", nomapping: true)]
-mod snake_actions {
-    use dojo::model::introspect::Introspect;
-    use pixelaw::apps::paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait};
+#[dojo::contract]
+pub mod snake_actions {
+    use dojo::event::EventStorage;
+    use dojo::model::{ModelStorage};
+    use dojo::world::storage::WorldStorage;
+    use dojo::world::{IWorldDispatcherTrait};
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
-    use pixelaw::core::models::pixel::{
-        Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait
-    };
-    use pixelaw::core::models::registry::App;
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
+    //use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        MOVE_SELECTOR, INTERACT_SELECTOR, get_callers, get_core_actions, Direction, Position,
-        DefaultParameters, starknet_keccak, get_core_actions_address,
+        MOVE_SELECTOR, get_callers, get_core_actions, Direction, Position, DefaultParameters
     };
     use starknet::{
-        ContractAddress, get_caller_address, get_contract_address, get_execution_info,
-        contract_address_const,
+        ContractAddress, get_contract_address, get_execution_info, contract_address_const,
     };
     use super::ISnakeActions;
     use super::next_position;
@@ -154,22 +144,20 @@ mod snake_actions {
     use super::{APP_KEY, APP_ICON};
     use super::{Snake, SnakeSegment};
 
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        Moved: Moved,
-        Died: Died,
-    }
 
-    #[derive(Drop, starknet::Event)]
-    struct Died {
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    pub struct Died {
+        #[key]
         owner: ContractAddress,
         x: u16,
         y: u16,
     }
 
-    #[derive(PartialEq, Debug, Drop, starknet::Event)]
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
     pub struct Moved {
+        #[key]
         pub owner: ContractAddress,
         pub direction: Direction,
     }
@@ -187,8 +175,9 @@ mod snake_actions {
         /// # Arguments
         ///
         /// * `world` - A reference to the world dispatcher.
-        fn init(ref world: IWorldDispatcher) {
-            let core_actions = pixelaw::core::utils::get_core_actions(world);
+        fn init(ref self: ContractState) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
@@ -206,27 +195,32 @@ mod snake_actions {
         ///
         /// * `u32` - The ID of the snake's first segment.
         fn interact(
-            ref world: IWorldDispatcher, default_params: DefaultParameters, direction: Direction,
+            ref self: ContractState, default_params: DefaultParameters, direction: Direction,
         ) -> u32 {
-            let core_actions = get_core_actions(world);
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
             let position = default_params.position;
 
-            let (player, system) = get_callers(world, default_params);
+            let (player, system) = get_callers(ref world, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
-            let pixel = get!(world, (position.x, position.y), Pixel);
-            let mut snake = get!(world, player, Snake);
+            let pixel: Pixel = world.read_model((position.x, position.y));
+            let mut snake: Snake = world.read_model(player);
+            //let mut snake = get!(world, player, Snake);
+
             // Change direction if snake already exists
             if snake.length > 0 {
                 snake.direction = direction;
-                set!(world, (snake));
+
+                world.write_model(@snake);
+
                 return snake.first_segment_id;
             }
             // TODO: Check if the pixel is unowned or player owned
 
-            let mut id = world.uuid();
+            let mut id = world.dispatcher.uuid();
             if id == 0 {
-                id = world.uuid();
+                id = world.dispatcher.uuid();
             }
 
             let color = default_params.color;
@@ -257,7 +251,8 @@ mod snake_actions {
             };
 
             // Store the dojo model for the Snake
-            set!(world, (snake, segment));
+            world.write_model(@snake);
+            world.write_model(@segment);
 
             // Call core_actions to update the color
             let _ = core_actions
@@ -306,29 +301,31 @@ mod snake_actions {
         ///
         /// * `world` - A reference to the world dispatcher.
         /// * `owner` - The contract address of the snake's owner.
-        fn move(ref world: IWorldDispatcher, owner: ContractAddress) {
-            let core_actions = get_core_actions(world);
+        fn move(ref self: ContractState, owner: ContractAddress) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
 
             // Load the Snake
-            let mut snake = get!(world, (owner), (Snake));
+            let mut snake: Snake = world.read_model(owner);
 
             assert!(snake.length > 0, "no snake");
-            let first_segment = get!(world, (snake.first_segment_id), SnakeSegment);
+            let first_segment: SnakeSegment = world.read_model(snake.first_segment_id);
 
             // If the snake is dying, handle that
             if snake.is_dying {
-                snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 snake.length -= 1;
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y, };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
 
-                    emit!(
-                        world, Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
-                    );
+                    world
+                        .emit_event(
+                            @Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
+                        );
 
                     // Delete the snake
-                    delete!(world, (snake));
+                    world.erase_model(@snake);
                     return;
                 }
             }
@@ -340,7 +337,7 @@ mod snake_actions {
                 let (next_x, next_y) = next_move.unwrap();
 
                 // Load next pixel
-                let next_pixel = get!(world, (next_x, next_y), Pixel);
+                let next_pixel: Pixel = world.read_model((next_x, next_y));
 
                 let has_write_access = core_actions
                     .can_update_pixel(
@@ -371,9 +368,9 @@ mod snake_actions {
                     snake
                         .first_segment_id =
                             create_new_segment(
-                                world, core_actions, next_pixel, snake, first_segment,
+                                ref world, core_actions, next_pixel, snake, first_segment,
                             );
-                    snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                    snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 } else if !has_write_access {
                     // Snake hit a pixel that is not allowing anything: DIE
                     snake.is_dying = true;
@@ -384,13 +381,13 @@ mod snake_actions {
                     snake
                         .first_segment_id =
                             create_new_segment(
-                                world, core_actions, next_pixel, snake, first_segment,
+                                ref world, core_actions, next_pixel, snake, first_segment,
                             );
 
                     // No growth if max length was reached
                     if snake.length >= SNAKE_MAX_LENGTH {
                         // Revert last segment pixel
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                     } else {
                         snake.length += 1;
                     }
@@ -402,13 +399,15 @@ mod snake_actions {
                         snake.is_dying = true;
                     } else {
                         // Add a new segment
-                        create_new_segment(world, core_actions, next_pixel, snake, first_segment,);
+                        create_new_segment(
+                            ref world, core_actions, next_pixel, snake, first_segment,
+                        );
 
                         // Remove last segment (this is normal for "moving")
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
 
                         // Remove another last segment (for shrinking)
-                        snake.last_segment_id = remove_last_segment(world, core_actions, snake);
+                        snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                     }
                 }
             } else {
@@ -417,7 +416,7 @@ mod snake_actions {
             }
 
             // Save the snake
-            set!(world, (snake));
+            world.write_model(@snake);
 
             // Bot can execute this Queue as soon as possible
             let MOVE_SECONDS = 0;
@@ -451,10 +450,10 @@ mod snake_actions {
     ///
     /// * `u32` - The new `last_segment_id` for the snake.
     fn remove_last_segment(
-        world: IWorldDispatcher, core_actions: ICoreActionsDispatcher, snake: Snake,
+        ref world: WorldStorage, core_actions: ICoreActionsDispatcher, snake: Snake,
     ) -> u32 {
-        let last_segment = get!(world, (snake.last_segment_id), SnakeSegment);
-        let pixel = get!(world, (last_segment.x, last_segment.y), Pixel);
+        let last_segment: SnakeSegment = world.read_model(snake.last_segment_id);
+        let pixel: Pixel = world.read_model((last_segment.x, last_segment.y));
 
         // Write the changes to the pixel
         let _ = core_actions
@@ -477,7 +476,7 @@ mod snake_actions {
 
         let result = last_segment.previous_id;
 
-        delete!(world, (last_segment));
+        world.erase_model(@last_segment);
 
         // Return the new last_segment_id for the snake
         result
@@ -497,33 +496,33 @@ mod snake_actions {
     ///
     /// * `u32` - The ID of the new segment created.
     fn create_new_segment(
-        world: IWorldDispatcher,
+        ref world: WorldStorage,
         core_actions: ICoreActionsDispatcher,
         pixel: Pixel,
         snake: Snake,
         mut existing_segment: SnakeSegment,
     ) -> u32 {
-        let id = world.uuid();
+        let id = world.dispatcher.uuid();
 
         // Update the existing Segment
         // It is no longer the first, so now its previous_id will point to the new
         existing_segment.previous_id = id;
-        set!(world, (existing_segment));
+        world.write_model(@existing_segment);
 
         // Save the new Segment
-        set!(
-            world,
-            SnakeSegment {
-                id,
-                previous_id: id, // The first segment has no previous, so it's itself
-                next_id: existing_segment.id,
-                x: pixel.x,
-                y: pixel.y,
-                pixel_original_color: pixel.color,
-                pixel_original_text: pixel.text,
-                pixel_original_app: pixel.app,
-            }
-        );
+        world
+            .write_model(
+                @SnakeSegment {
+                    id,
+                    previous_id: id, // The first segment has no previous, so it's itself
+                    next_id: existing_segment.id,
+                    x: pixel.x,
+                    y: pixel.y,
+                    pixel_original_color: pixel.color,
+                    pixel_original_text: pixel.text,
+                    pixel_original_app: pixel.app,
+                }
+            );
 
         // Write the changes to the pixel
         let _pu = core_actions

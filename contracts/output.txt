@@ -1,0 +1,43 @@
+testing test(pixelaw_unittest) pixelaw v0.4.7 (/home/caspar/Development/core/contracts/Scarb.toml)
+[2m2024-11-05T21:31:51.933657Z[0m [33m WARN[0m [1mSubcommand[0m[1m{[0m[3mname[0m[2m=[0m"Test"[1m}[0m[2m:[0m [2mlog[0m[2m:[0m Function `pixelaw::core::tests::helpers::setup_apps` has semantic diagnostics in its body:
+error[E0002]: Method `deploy_contract` not found on type `dojo::world::storage::WorldStorage`. Did you import the correct trait and impl?
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:120:10
+        .deploy_contract('salt3', paint_actions::TEST_CLASS_HASH.try_into().unwrap());
+         ^*************^
+
+error[E0002]: Method `deploy_contract` not found on type `dojo::world::storage::WorldStorage`. Did you import the correct trait and impl?
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:124:10
+        .deploy_contract('salt4', snake_actions::TEST_CLASS_HASH.try_into().unwrap());
+         ^*************^
+
+error[E0002]: Method `grant_writer` could not be called on type `dojo::world::storage::WorldStorage`.
+Candidate `IWorld::grant_writer` inference failed with: Trait has no implementation in context: dojo::world::iworld::IWorld::<dojo::world::storage::WorldStorage>.
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:128:11
+    world.grant_writer(selector_from_tag!("pixelaw-Snake"), core_address.value);
+          ^**********^
+
+error[E0002]: Method `grant_writer` could not be called on type `dojo::world::storage::WorldStorage`.
+Candidate `IWorld::grant_writer` inference failed with: Trait has no implementation in context: dojo::world::iworld::IWorld::<dojo::world::storage::WorldStorage>.
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:129:11
+    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), core_address.value);
+          ^**********^
+
+error[E0002]: Method `grant_writer` could not be called on type `dojo::world::storage::WorldStorage`.
+Candidate `IWorld::grant_writer` inference failed with: Trait has no implementation in context: dojo::world::iworld::IWorld::<dojo::world::storage::WorldStorage>.
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:131:11
+    world.grant_writer(selector_from_tag!("pixelaw-Snake"), snake_actions_address);
+          ^**********^
+
+error[E0002]: Method `grant_writer` could not be called on type `dojo::world::storage::WorldStorage`.
+Candidate `IWorld::grant_writer` inference failed with: Trait has no implementation in context: dojo::world::iworld::IWorld::<dojo::world::storage::WorldStorage>.
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:132:11
+    world.grant_writer(selector_from_tag!("pixelaw-SnakeSegment"), snake_actions_address);
+          ^**********^
+
+warning[E0001]: Unused variable. Consider ignoring by prefixing with `_`.
+ --> /home/caspar/Development/core/contracts/src/core/tests/helpers.cairo:117:9
+    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
+        ^**********^
+
+    
+error: failed to compile

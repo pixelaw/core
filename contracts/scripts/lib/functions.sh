@@ -9,12 +9,13 @@ GENESIS_OUT="$OUT/genesis.json"
 KATANA_LOG="$OUT/katana.log"
 KATANA_DB="$OUT/katana_db"
 KATANA_DB_ZIP="$OUT/katana_db.zip"
-MANIFEST="manifests/$PROFILE/deployment/manifest.json"
+MANIFEST="manifest_$PROFILE.json"
 TYPESCRIPT="$OUT/typescript"
 TORII_DB="$OUT/torii.sqlite"
 TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
+#DEPLOY_SCARB="Scarb.toml"
 
 start_katana() {
     echo "start_katana"
@@ -29,9 +30,10 @@ start_katana() {
     katana \
       --genesis $GENESIS_TEMPLATE \
       --invoke-max-steps 4294967295 \
-      --disable-fee \
       --db-dir $KATANA_DB \
-      --allowed-origins "*" \
+      --http.cors_origins "*" \
+      --dev \
+      --dev.no-fee \
      > $KATANA_LOG 2>&1 &
 
     # Wait for logfile to exist and not be empty
@@ -91,19 +93,12 @@ sozo_account_deploy() {
 sozo_migrate() {
     echo "sozo_migrate"
 
-    ## Sozo migrate plan
-    sozo \
-        --profile $PROFILE \
-        --manifest-path $DEPLOY_SCARB \
-        migrate \
-        plan
 
     ## Sozo migrate apply
     error_output=$(sozo \
         --profile $PROFILE \
         --manifest-path $DEPLOY_SCARB \
-        migrate \
-        apply 2>&1)
+        migrate  2>&1)
 
     if [ $? -ne 0 ]; then
     printf "$error_output"
@@ -128,7 +123,7 @@ prepare_genesis() {
   # Copy the template to the output file
   cat "$GENESIS_TEMPLATE" > "$GENESIS_OUT"
 
-  last_block=$(starkli block)
+  last_block=$(starkli block --rpc http://127.0.0.1:5050)
 
   jq \
     --arg block_number "$(echo $last_block | jq -r '.block_number')" \
