@@ -123,7 +123,7 @@ prepare_genesis() {
   # Copy the template to the output file
   cat "$GENESIS_TEMPLATE" > "$GENESIS_OUT"
 
-  last_block=$(starkli block)
+  last_block=$(starkli block --rpc http://127.0.0.1:5050)
 
   jq \
     --arg block_number "$(echo $last_block | jq -r '.block_number')" \
@@ -140,7 +140,7 @@ wait_for_torii_writing() {
   prev_size=$(du -b "$TORII_LOG" | cut -f1)
 
   while true; do
-      sleep 5
+      sleep 10
       new_size=$(du -b "$TORII_LOG" | cut -f1)
       if [ $new_size -eq $prev_size ]; then
           break
