@@ -146,6 +146,7 @@ pub mod actions {
     impl ActionsImpl of IActions<ContractState> {
         fn init(ref self: ContractState) {
             let mut world = self.world(@"pixelaw");
+
             world
                 .write_model(
                     @CoreActionsAddress {
@@ -222,6 +223,7 @@ pub mod actions {
             ref self: ContractState, system: ContractAddress, name: felt252, icon: felt252,
         ) -> App {
             let mut world = self.world(@"pixelaw");
+
             super::app::new_app(ref world, system, name, icon)
         }
 
@@ -232,7 +234,7 @@ pub mod actions {
             let mut world = self.world(@"pixelaw");
             let caller = get_caller_address();
             let app: App = world.read_model(caller);
-            println!("{:?} .. ", app);
+
             assert!(app.name != '', "cannot be called by a non-app");
 
             world

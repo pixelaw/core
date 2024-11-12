@@ -1,28 +1,14 @@
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
-
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
-};
-
-use pixelaw::apps::snake::app::{
-    snake_actions, snake, snake_segment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait
-};
+use core::{poseidon::poseidon_hash_span};
+use dojo::model::{ModelStorage};
+use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
 
 use pixelaw::core::{
-    events::{QueueScheduled, QueueProcessed},
-    models::{registry::{app, app_name, core_actions_address}, pixel::{Pixel, PixelUpdate, pixel},},
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait},
-    utils::{get_core_actions, Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
-    tests::helpers::{
-        setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
-    }
+    models::pixel::{Pixel}, events::{QueueScheduled, QueueProcessed},
+    actions::{IActionsDispatcherTrait},
+    utils::{Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
+    tests::helpers::{setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,}
 };
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address},
-};
+use starknet::{testing::{set_block_timestamp},};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
 
@@ -53,7 +39,7 @@ fn test_process_queue() {
             id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span()
         );
 
-    let pixel = get!(world, (position).into(), (Pixel));
+    let pixel: Pixel = world.read_model((position.x, position.y));
 
     // check timestamp
     assert(pixel.created_at == starknet::get_block_timestamp(), 'incorrect timestamp.created_at');
@@ -75,7 +61,7 @@ fn test_queue_full() {
 
     // let event_contract = snake_actions.contract_address;
     // let event_contract = core_actions.contract_address;
-    let event_contract = world.contract_address;
+    let event_contract = world.dispatcher.contract_address;
 
     // Pop all the previous events from the log so only the following one will be there
     drop_all_events(event_contract);
@@ -130,7 +116,7 @@ fn test_queue_full() {
     let _log_6 = starknet::testing::pop_log_raw(event_contract); // delete segment?
     // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processed
 
-    let expected_processed_event = QueueProcessed { id };
+    let expected_processed_event = QueueProcessed { id, result: 0 }; // Fixme: result
     assert(
         starknet::testing::pop_log(event_contract) == Option::Some(expected_processed_event),
         'unexpected QueueProcessed'

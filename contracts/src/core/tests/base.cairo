@@ -1,44 +1,24 @@
-use core::fmt::Display;
-
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
 use dojo::model::{ModelStorage};
-use dojo::world::storage::WorldStorage;
-
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
-};
-
-use pixelaw::core::{
-    models::{
-        registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait, pixel},
-    },
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{get_callers, get_core_actions, Direction, Position, DefaultParameters},
-    tests::helpers::{
-        setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
-    }
-};
 
 use pixelaw::{
-    apps::{
-        paint::app::{
-            paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait,
-            APP_KEY as PAINT_APP_KEY
+    apps::{paint::app::{IPaintActionsDispatcherTrait,},},
+    core::{
+        models::{
+            registry::{App, AppName, CoreActionsAddress},
+            pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
         },
-        snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
-            ISnakeActionsDispatcherTrait, APP_KEY as SNAKE_APP_KEY
-        }
+        events::{Alert}, actions::{IActionsDispatcherTrait, CORE_ACTIONS_KEY},
+        utils::{get_callers, Position, DefaultParameters},
+        tests::helpers::{
+            setup_core, setup_core_initialized, setup_apps_initialized, ZERO_ADDRESS, set_caller,
+            drop_all_events, TEST_POSITION, RED_COLOR,
+        },
     }
 };
+
 use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{
-        set_block_timestamp, set_account_contract_address, set_caller_address, set_contract_address
-    },
+    get_block_timestamp, contract_address_const,
+    testing::{set_account_contract_address, set_contract_address},
 };
 
 
@@ -278,13 +258,12 @@ fn test_alert_player() {
     core_actions.alert_player(position, player, message);
 
     // Assert that the correct event was emitted
+    // TODO Fix this test, it breaks with
+    //error: Trait has no implementation in context:
+    //core::starknet::event::Event::<pixelaw::core::events::Alert>
     assert_eq!(
-        starknet::testing::pop_log(world.dispatcher.contract_address),
-        Option::Some(
-            pixelaw::core::events::Alert {
-                position, caller, player, message, timestamp: get_block_timestamp()
-            }
-        )
+        starknet::testing::pop_log::<Alert>(world.dispatcher.contract_address),
+        Option::Some(Alert { position, caller, player, message, timestamp: get_block_timestamp() })
     );
 }
 

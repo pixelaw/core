@@ -34,6 +34,7 @@ pub fn new_app(
 
     // Store both associations
     world.write_model(@app_name);
+    world.write_model(@app);
 
     // Return the system association
     app

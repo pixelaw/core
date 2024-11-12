@@ -1,46 +1,16 @@
-use core::fmt::Display;
-
-use core::{traits::TryInto, poseidon::poseidon_hash_span};
-
-use dojo::{
-    utils::test::{spawn_test_world, deploy_contract},
-    world::{IWorldDispatcher, IWorldDispatcherTrait}
-};
-use pixelaw::core::utils::{MAX_DIMENSION};
-
-use pixelaw::core::{
-    models::{
-        registry::{App, AppName, app, app_name, core_actions_address, CoreActionsAddress},
-        pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateResultTrait, pixel},
-        area::{
-            Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
-            RTreeNodePackableImpl, ChildrenPackableImpl
-        }
-    },
-    actions::{actions, IActionsDispatcher, IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-    utils::{Bounds, get_core_actions, Direction, Position, DefaultParameters},
-    tests::helpers::{
-        setup_core, setup_core_initialized, setup_apps, setup_apps_initialized, ZERO_ADDRESS,
-        set_caller, drop_all_events, TEST_POSITION, WHITE_COLOR, RED_COLOR,
-    }
-};
-
+use dojo::model::{ModelStorage};
 use pixelaw::{
-    apps::{
-        paint::app::{
-            paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait,
-            APP_KEY as PAINT_APP_KEY
+    core::{
+        models::{
+            pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
+            area::{Area, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
-        snake::app::{
-            snake, Snake, snake_segment, SnakeSegment, snake_actions, ISnakeActionsDispatcher,
-            ISnakeActionsDispatcherTrait, APP_KEY as SNAKE_APP_KEY
-        }
+        actions::{IActionsDispatcherTrait}, utils::{MAX_DIMENSION, Bounds, Position},
+        tests::helpers::{setup_core_initialized, ZERO_ADDRESS, set_caller, WHITE_COLOR,}
     }
 };
-use starknet::{
-    get_block_timestamp, contract_address_const, ClassHash, ContractAddress,
-    testing::{set_block_timestamp, set_account_contract_address, set_caller_address},
-};
+
+
 const BOUNDS_1: Bounds = Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 };
 const POSITION_1: Position = Position { x: 1, y: 1 };
 
@@ -80,7 +50,7 @@ fn test_add_new_pixel_in_owned_area() {
 
     set_caller(player_2);
 
-    let pixel = get!(world, (POSITION_1.x, POSITION_1.y), Pixel);
+    let pixel: Pixel = world.read_model((POSITION_1.x, POSITION_1.y));
 
     // Setup PixelUpdate
     let pixel_update = PixelUpdate {

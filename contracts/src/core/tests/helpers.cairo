@@ -136,7 +136,6 @@ pub fn setup_apps_initialized(
     );
     paint_actions.init();
     snake_actions.init();
-    println!("inted");
 
     (paint_actions, snake_actions)
 }
