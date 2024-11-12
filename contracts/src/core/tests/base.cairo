@@ -18,8 +18,7 @@ use pixelaw::{
 };
 
 use starknet::{
-    get_block_timestamp, contract_address_const,
-    testing::{set_account_contract_address, set_contract_address},
+    contract_address_const, testing::{set_account_contract_address, set_contract_address},
 };
 
 
@@ -259,7 +258,6 @@ fn test_alert_player() {
     core_actions.alert_player(position, player, message);
 
     // Assert that the correct event was emitted
-
     let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
     assert(event.is_some(), 'no event');
 
@@ -267,18 +265,13 @@ fn test_alert_player() {
         assert(
             event.selector == Event::<Alert>::selector(world.namespace_hash), 'bad event selector'
         );
-        println!("event: {:?}", event.values);
+
         // TODO complete test
-        //   assert(event.system_address == bob, 'bad system address');
+        assert(event.system_address == core_actions.contract_address, 'bad system address');
         assert(event.keys == [12, 12].span(), 'bad keys');
         // assert(event.values.at(0) == caller, 'bad values');
     } else {
         core::panic_with_felt252('no EventEmitted event');
     }
-    //assert_eq!(
-//    starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address),
-//    Option::Some(Alert { position, caller, player, message, timestamp: get_block_timestamp()
-//    })
-// );
 }
 

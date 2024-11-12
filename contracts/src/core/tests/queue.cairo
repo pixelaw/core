@@ -59,8 +59,6 @@ fn test_queue_full() {
     set_caller(player_1);
     let position = Position { x: 234, y: 432 };
 
-    // let event_contract = snake_actions.contract_address;
-    // let event_contract = core_actions.contract_address;
     let event_contract = world.dispatcher.contract_address;
 
     // Pop all the previous events from the log so only the following one will be there
@@ -103,12 +101,13 @@ fn test_queue_full() {
             event.selector == Event::<QueueScheduled>::selector(world.namespace_hash),
             'bad event selector'
         );
-        // TODO complete test
-        let expected_scheduled_event = QueueScheduled {
+
+        let _expected_scheduled_event = QueueScheduled {
             id, timestamp, called_system, selector, calldata
         };
-        //   assert(event.system_address == bob, 'bad system address');
-    //   assert(event.keys == [2].span(), 'bad keys');
+        assert(event.system_address == core_actions.contract_address, 'bad system address');
+        assert(*event.keys.at(0) == id, 'bad keys');
+        // TODO complete test
     //   assert(event.values == [3, 4].span(), 'bad values');
     } else {
         core::panic_with_felt252('no EventEmitted event');
@@ -127,22 +126,19 @@ fn test_queue_full() {
     let _log_6 = starknet::testing::pop_log_raw(event_contract); // delete segment?
     // let _log_7 = starknet::testing::pop_log_raw(event_contract); // processed
 
-    let expected_processed_event = QueueProcessed { id, result: 0 }; // Fixme: result
     let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
     assert(event.is_some(), 'no event');
 
     if let WorldEvent::EventEmitted(event) = event.unwrap() {
+        let _expected_processed_event = QueueProcessed { id, result: 0 }; // Fixme: result
         assert(
             event.selector == Event::<QueueProcessed>::selector(world.namespace_hash),
             'bad event selector'
         );
         // TODO complete test
-        let expected_scheduled_event = QueueScheduled {
-            id, timestamp, called_system, selector, calldata
-        };
-        //   assert(event.system_address == bob, 'bad system address');
-    //   assert(event.keys == [2].span(), 'bad keys');
-    //   assert(event.values == [3, 4].span(), 'bad values');
+        assert(event.system_address == core_actions.contract_address, 'bad system address');
+        assert(*event.keys.at(0) == id, 'bad keys');
+        //   assert(event.values == [3, 4].span(), 'bad values');
     } else {
         core::panic_with_felt252('no EventEmitted event');
     }
