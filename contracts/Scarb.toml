@@ -19,7 +19,10 @@ dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0" }
 sort-module-level-items = true
 
 [lib]
-#[[target.dojo]]
+
+[[target.starknet-contract]]
+sierra = true
+build-external-contracts = ["dojo::world::world_contract::world"]
 
 
 [profile.dev-pop]
