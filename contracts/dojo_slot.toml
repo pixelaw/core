@@ -16,3 +16,19 @@ rpc_url = "https://api.cartridge.gg/x/pixelaw-dev/katana/"
 account_address = "0x75aab901b406698604a33f1c81c6487b8de3b2d7ad2456cf01658b68b12aa5"
 private_key = "0x74825107c10098a1a991b1419e0afad3afc9e9ba4d16dec23995916cdca4366"
 world_address = "0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34"
+
+[writers]
+"pixelaw-App" = ["pixelaw-actions"]
+"pixelaw-AppName" = ["pixelaw-actions"]
+"pixelaw-AppUser" = ["pixelaw-actions"]
+"pixelaw-CoreActionsAddress" = ["pixelaw-actions"]
+"pixelaw-Pixel" = [
+  "pixelaw-actions",
+  "pixelaw-paint_actions",
+  "pixelaw-snake_actions",
+]
+"pixelaw-QueueItem" = ["pixelaw-actions"]
+"pixelaw-Snake" = ["pixelaw-actions", "pixelaw-snake_actions"]
+"pixelaw-RTree" = ["pixelaw-actions"]
+"pixelaw-Area" = ["pixelaw-actions"]
+"pixelaw-SnakeSegment" = ["pixelaw-snake_actions"]

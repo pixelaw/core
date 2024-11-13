@@ -4,9 +4,9 @@
 target/
 
 contracts/out
+contracts/db
 contracts/target
 contracts/manifest_dev.json
 
 *.account.json
 *.keystore.json
-

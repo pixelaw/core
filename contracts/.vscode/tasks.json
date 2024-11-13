@@ -4,7 +4,7 @@
     {
       "label": "Start Katana",
       "type": "shell",
-      "command": "katana --disable-fee --allowed-origins '*' --db-dir db/katana",
+      "command": "katana --http.cors_origins '*' --db-dir db/katana",
       "isBackground": true,
       "problemMatcher": [],
       "presentation": {
@@ -16,7 +16,7 @@
     {
       "label": "Start Torii",
       "type": "shell",
-      "command": "torii --world 0x263ae44e5414519a5c5a135cccaf3d9d7ee196d37e8de47a178da91f3de9b34 --database db/torii --allowed-origins '*'",
+      "command": "torii --world 0x06f130c8e150882e39cbe878c650c8f35c86579180dbc77d0c1cbe169449b5f6 --http.cors_origins '*' --db-dir db/torii",
       "isBackground": true,
       "problemMatcher": [],
       "presentation": {
