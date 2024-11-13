@@ -17,3 +17,19 @@ rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 keystore_path = "accounts/deployer.keystore.json"
 account_address = "0x02c306e30b02a1a734bc770af37b32619911f1cfd6ccecb93c5899632f379da9"
 world_address = "0x4adbe4bfe631a95a5ce99d8200a8721b1ac8096ff8941cecddc4e79a7b2d5d5"
+
+[writers]
+"pixelaw-App" = ["pixelaw-actions"]
+"pixelaw-AppName" = ["pixelaw-actions"]
+"pixelaw-AppUser" = ["pixelaw-actions"]
+"pixelaw-CoreActionsAddress" = ["pixelaw-actions"]
+"pixelaw-Pixel" = [
+  "pixelaw-actions",
+  "pixelaw-paint_actions",
+  "pixelaw-snake_actions",
+]
+"pixelaw-QueueItem" = ["pixelaw-actions"]
+"pixelaw-Snake" = ["pixelaw-actions", "pixelaw-snake_actions"]
+"pixelaw-RTree" = ["pixelaw-actions"]
+"pixelaw-Area" = ["pixelaw-actions"]
+"pixelaw-SnakeSegment" = ["pixelaw-snake_actions"]
