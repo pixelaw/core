@@ -1,5 +1,5 @@
 #!/bin/bash
-set -uo pipefail
+#set -uo pipefail
 
 ###########################################################
 # Prerequisites for running this script:
@@ -30,7 +30,5 @@ sleep 2
 patch_torii_db
 
 zip_databases
-
-
 
 echo "Done"

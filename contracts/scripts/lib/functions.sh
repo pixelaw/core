@@ -11,8 +11,8 @@ KATANA_DB="$OUT/katana_db"
 KATANA_DB_ZIP="$OUT/katana_db.zip"
 MANIFEST="manifest_$PROFILE.json"
 TYPESCRIPT="$OUT/typescript"
-TORII_DB="$OUT/torii.sqlite"
-TORII_DB_ZIP="$OUT/torii.sqlite.zip"
+TORII_DB="$OUT/torii_db.sqlite"
+TORII_DB_ZIP="$OUT/torii_db.zip"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
 #DEPLOY_SCARB="Scarb.toml"
@@ -51,9 +51,9 @@ start_torii() {
     torii \
       --world $WORLD_ADDRESS \
       --rpc $rpc_url \
-      --database $TORII_DB \
-      --events-chunk-size 10000 \
-      --allowed-origins "*" \
+      --db-dir $TORII_DB \
+      --indexing.events_chunk_size 10000 \
+      --http.cors_origins "*" \
      > $TORII_LOG 2>&1 &
 }
 
@@ -136,7 +136,8 @@ prepare_genesis() {
 
 wait_for_torii_writing() {
   echo "wait_for_torii_writing"
-
+  echo $(du -b "$TORII_LOG")
+  cat $TORII_LOG
   prev_size=$(du -b "$TORII_LOG" | cut -f1)
 
   while true; do
@@ -256,10 +257,10 @@ check_needed_commands() {
 
 }
 
-   get_rpc_url() {
-       local file_path="dojo_$PROFILE.toml"
-       local url=$(grep "rpc_url" "$file_path" | head -1 | awk -F '"' '{print $2}')
-       echo $url
-   }
+get_rpc_url() {
+   local file_path="dojo_$PROFILE.toml"
+   local url=$(grep "rpc_url" "$file_path" | head -1 | awk -F '"' '{print $2}')
+   echo $url
+}
 
 check_needed_commands
