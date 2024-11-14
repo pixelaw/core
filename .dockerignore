@@ -3,7 +3,7 @@
 ./web/.env
 ./contracts/target
 ./contracts/out
-./contracts/manifests
+./contracts/accounts
 ./contracts/.vscode
 
 

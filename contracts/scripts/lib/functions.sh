@@ -11,20 +11,27 @@ KATANA_DB="$OUT/katana_db"
 KATANA_DB_ZIP="$OUT/katana_db.zip"
 MANIFEST="manifest_$PROFILE.json"
 TYPESCRIPT="$OUT/typescript"
-TORII_DB="$OUT/torii_db.sqlite"
-TORII_DB_ZIP="$OUT/torii_db.zip"
+TORII_DB="$OUT/torii.sqlite"
+TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
 #DEPLOY_SCARB="Scarb.toml"
 
-start_katana() {
-    echo "start_katana"
 
+
+clear_katana() {
+    echo "clear_katana"
     pkill -f katana
 
     mkdir -p $OUT
 
     rm -rf $KATANA_DB
+}
+
+start_katana() {
+    echo "start_katana"
+
+    pkill -f katana
 
     # Start Katana
     katana \
@@ -41,6 +48,16 @@ start_katana() {
      sleep 1
     done
 }
+
+clear_torii() {
+    echo "clear_torii"
+    pkill -f torii
+
+    mkdir -p $OUT
+
+    rm -rf $TORII_DB
+}
+
 
 start_torii() {
     echo "start_torii"
@@ -154,11 +171,12 @@ wait_for_torii_writing() {
 zip_databases() {
 
   echo "zip_databases"
+  pushd $OUT
+  zip -1 -r katana_db.zip katana_db/
 
-  zip -1 -r $KATANA_DB_ZIP $KATANA_DB
+  zip -1 torii.sqlite.zip torii.sqlite*
 
-  zip -1 $TORII_DB_ZIP $TORII_DB
-
+  popd
 
 }
 

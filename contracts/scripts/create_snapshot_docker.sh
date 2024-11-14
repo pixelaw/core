@@ -1,9 +1,10 @@
 #!/bin/bash
-#set -euxo pipefail
+set -euxo pipefail
 
 echo $1
 PROFILE=$1
-GENERATE_POPULATED_CORE=$2
+GENERATE_POPULATED_CORE=${2:-"false"}
+
 
 ## We stop execution if PROFILE is "dev-pop" and GENERATE_POPULATED_CORE is false or not set
 if [ "$PROFILE" = "dev-pop" ] && [ "$GENERATE_POPULATED_CORE" != "true" ]; then
@@ -27,7 +28,8 @@ echo $WORLD_ADDRESS
 
 mkdir -p $STORAGE_INIT_WORLD
 
-cp $GENESIS_OUT $STORAGE_INIT_WORLD/genesis.json
+#cp $GENESIS_OUT $STORAGE_INIT_WORLD/genesis.json
+cp $GENESIS_TEMPLATE $STORAGE_INIT_WORLD/genesis.json
 cp manifest_$PROFILE.json $STORAGE_INIT_WORLD/manifest.json
 
 cp $KATANA_DB_ZIP $STORAGE_INIT_WORLD/katana_db.zip

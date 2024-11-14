@@ -15,6 +15,8 @@ export PROFILE=${1:-"dev"}
 
 source ./scripts/lib/functions.sh
 
+clear_katana
+clear_torii
 
 start_katana
 
@@ -34,3 +36,7 @@ fi
 
 
 echo "Now running"
+
+start_katana
+
+start_torii
