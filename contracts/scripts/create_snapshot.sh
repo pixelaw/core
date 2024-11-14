@@ -15,10 +15,6 @@ export PROFILE=${1:-"dev"}
 # First do "build and run"
 source ./scripts/build_and_run.sh
 
-prepare_genesis
-
-wait_for_torii_writing
-
 sleep 3
 
 echo "Stopping katana and torii"
@@ -26,8 +22,6 @@ pkill -f torii
 pkill -f katana
 
 sleep 2
-
-patch_torii_db
 
 zip_databases
 

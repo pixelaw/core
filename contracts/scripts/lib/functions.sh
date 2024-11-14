@@ -12,10 +12,8 @@ KATANA_DB_ZIP="$OUT/katana_db.zip"
 MANIFEST="manifest_$PROFILE.json"
 TYPESCRIPT="$OUT/typescript"
 TORII_DB="$OUT/torii.sqlite"
-TORII_DB_ZIP="$OUT/torii.sqlite.zip"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
-#DEPLOY_SCARB="Scarb.toml"
 
 
 
@@ -134,39 +132,7 @@ init_actions() {
     done
 }
 
-prepare_genesis() {
-  echo "prepare_genesis"
 
-  # Copy the template to the output file
-  cat "$GENESIS_TEMPLATE" > "$GENESIS_OUT"
-
-  last_block=$(starkli block --rpc http://127.0.0.1:5050)
-
-  jq \
-    --arg block_number "$(echo $last_block | jq -r '.block_number')" \
-    --arg parent_hash "$(echo $last_block | jq -r '.parent_hash')" \
-    --arg timestamp "$(echo $last_block | jq -r '.timestamp')" \
-    '.parentHash = $parent_hash | .timestamp = ($timestamp | tonumber) | .number = ($block_number | tonumber)' \
-    "$GENESIS_OUT" > temp.json \
-    && mv temp.json "$GENESIS_OUT"
-}
-
-wait_for_torii_writing() {
-  echo "wait_for_torii_writing"
-  echo $(du -b "$TORII_LOG")
-  cat $TORII_LOG
-  prev_size=$(du -b "$TORII_LOG" | cut -f1)
-
-  while true; do
-      sleep 5
-      new_size=$(du -b "$TORII_LOG" | cut -f1)
-      if [ $new_size -eq $prev_size ]; then
-          break
-      else
-          prev_size=$new_size
-      fi
-  done
-}
 
 zip_databases() {
 
@@ -174,17 +140,11 @@ zip_databases() {
   pushd $OUT
   zip -1 -r katana_db.zip katana_db/
 
-  zip -1 torii.sqlite.zip torii.sqlite*
-
   popd
 
 }
 
-patch_torii_db() {
-  echo "patch_torii_db"
-  sqlite3 $TORII_DB  "UPDATE contracts SET head = 0;"
 
-}
 
 kill_katana_torii() {
   pkill -f katana

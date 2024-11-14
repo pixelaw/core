@@ -34,9 +34,5 @@ if [ "$PROFILE" == "dev-pop" ]; then
     populate
 fi
 
-
 echo "Now running"
 
-start_katana
-
-start_torii

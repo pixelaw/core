@@ -2,8 +2,8 @@ module.exports = {
   apps : [{
     name: 'katana',
     script: '/pixelaw/scripts/katana_start.sh',
-    out_file: '/pixelaw/log/katana.log.json',
-    error_file: '/pixelaw/log/katana.log.json',
+    out_file: '/pixelaw/log/katana.log',
+    error_file: '/pixelaw/log/katana.log',
     merge_logs: true,
     time: true
   },{

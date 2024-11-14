@@ -13,7 +13,6 @@ if [ ! -f "$GENESIS" ]; then
   mkdir -p $STORAGE_DIR
   touch $KATANA_LOG && touch $TORII_LOG
   unzip $KATANA_DB_ZIP -d $STORAGE_DIR
-  unzip $TORII_DB_ZIP -d $STORAGE_DIR
 
   cp "$STORAGE_INIT_DIR/genesis.json" $GENESIS
 
