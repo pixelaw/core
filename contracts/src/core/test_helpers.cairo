@@ -1,5 +1,4 @@
-
-use dojo::{world::{WorldStorage, WorldStorageTrait},};
+use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 use dojo_cairo_test::{
     spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
     WorldStorageTestTrait
@@ -139,6 +138,38 @@ pub fn setup_apps_initialized(
     snake_actions.init();
 
     (paint_actions, snake_actions)
+}
+
+
+pub fn update_test_world(ref world: WorldStorage, namespaces_defs: Span<NamespaceDef>) {
+    for ns in namespaces_defs {
+        let namespace = ns.namespace.clone();
+
+        // TODO make this failsafe
+        // world.dispatcher.register_namespace(namespace.clone());
+
+        for r in ns
+            .resources
+            .clone() {
+                match r {
+                    TestResource::Event(ch) => {
+                        world
+                            .dispatcher
+                            .register_event(namespace.clone(), (*ch).try_into().unwrap());
+                    },
+                    TestResource::Model(ch) => {
+                        world
+                            .dispatcher
+                            .register_model(namespace.clone(), (*ch).try_into().unwrap());
+                    },
+                    TestResource::Contract(ch) => {
+                        world
+                            .dispatcher
+                            .register_contract(*ch, namespace.clone(), (*ch).try_into().unwrap());
+                    }
+                }
+            }
+    };
 }
 
 pub fn drop_all_events(address: ContractAddress) {

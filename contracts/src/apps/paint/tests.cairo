@@ -1,13 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use starknet::{contract_address_const, testing::set_account_contract_address};
-
     use dojo::model::{ModelStorage};
 
     use pixelaw::apps::paint::app::{IPaintActionsDispatcherTrait};
     use pixelaw::core::models::pixel::{Pixel};
     use pixelaw::core::test_helpers::{setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{encode_rgba, DefaultParameters, Position};
+    use starknet::{contract_address_const, testing::set_account_contract_address};
 
     #[test]
     #[available_gas(3000000000)]
