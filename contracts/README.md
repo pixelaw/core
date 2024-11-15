@@ -187,3 +187,4 @@ The App is also tracking score for each Player.
       - UI then calls the functions with only the hash value
     - Reveal
       - there will be 2 params: "rv_NAME" (the actual param) and "rs_NAME" (the used salt)
+
