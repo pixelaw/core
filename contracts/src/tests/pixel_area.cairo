@@ -6,7 +6,7 @@ use pixelaw::{
             area::{Area, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{IActionsDispatcherTrait}, utils::{MAX_DIMENSION, Bounds, Position},
-        tests::helpers::{setup_core_initialized, ZERO_ADDRESS, set_caller, WHITE_COLOR,}
+        test_helpers::{setup_core_initialized, ZERO_ADDRESS, set_caller, WHITE_COLOR,}
     }
 };
 

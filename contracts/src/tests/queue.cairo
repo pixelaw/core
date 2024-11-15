@@ -7,7 +7,7 @@ use pixelaw::core::{
     models::pixel::{Pixel}, events::{QueueScheduled, QueueProcessed},
     actions::{IActionsDispatcherTrait},
     utils::{Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
-    tests::helpers::{setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,}
+    test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,}
 };
 use starknet::{testing::{set_block_timestamp},};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
@@ -16,7 +16,7 @@ const SPAWN_PIXEL_ENTRYPOINT: felt252 =
 #[test]
 fn test_process_queue() {
     let (world, core_actions, _player_1, _player_2) =
-        pixelaw::core::tests::helpers::setup_core_initialized();
+        pixelaw::core::test_helpers::setup_core_initialized();
     let position = Position { x: 0, y: 0 };
 
     let mut calldata: Array<felt252> = ArrayTrait::new();

@@ -8,7 +8,7 @@ mod tests {
 
     use pixelaw::core::models::pixel::{Pixel};
 
-    use pixelaw::core::tests::helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
+    use pixelaw::core::test_helpers::{set_caller, setup_core_initialized, setup_apps_initialized};
     use pixelaw::core::utils::{Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 

@@ -10,7 +10,7 @@ use pixelaw::{
         },
         events::{Alert}, actions::{IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{get_callers, Position, DefaultParameters},
-        tests::helpers::{
+        test_helpers::{
             setup_core, setup_core_initialized, setup_apps_initialized, ZERO_ADDRESS, set_caller,
             drop_all_events, TEST_POSITION, RED_COLOR,
         },

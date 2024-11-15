@@ -9,7 +9,7 @@ use pixelaw::{
         },
         actions::{IActionsDispatcherTrait}, utils::{Bounds, Position},
         actions::area::{find_node_for_position},
-        tests::helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,},
+        test_helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,},
     },
 };
 

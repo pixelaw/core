@@ -3,7 +3,7 @@ use pixelaw::{
     core::{
         models::{area::{RTreeNodePackableImpl, ChildrenPackableImpl}},
         utils::{Position, DefaultParameters},
-        tests::helpers::{setup_core_initialized, setup_apps_initialized, set_caller,}
+        test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,}
     }
 };
 
