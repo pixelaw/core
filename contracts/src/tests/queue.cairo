@@ -1,4 +1,3 @@
-use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,};
 use core::{poseidon::poseidon_hash_span};
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
@@ -9,14 +8,16 @@ use pixelaw::core::{
     actions::{IActionsDispatcherTrait},
     utils::{Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
 };
+use pixelaw_test_helpers::{
+    setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,
+};
 use starknet::{testing::{set_block_timestamp},};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
 
 #[test]
 fn test_process_queue() {
-    let (world, core_actions, _player_1, _player_2) =
-        setup_core_initialized();
+    let (world, core_actions, _player_1, _player_2) = setup_core_initialized();
     let position = Position { x: 0, y: 0 };
 
     let mut calldata: Array<felt252> = ArrayTrait::new();

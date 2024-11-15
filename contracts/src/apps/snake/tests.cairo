@@ -7,9 +7,9 @@ mod tests {
     use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
 
     use pixelaw::core::models::pixel::{Pixel};
+    use pixelaw::core::utils::{Direction, Position, DefaultParameters};
 
     use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller};
-    use pixelaw::core::utils::{Direction, Position, DefaultParameters};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 
 

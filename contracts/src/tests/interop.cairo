@@ -1,4 +1,3 @@
-use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,};
 use pixelaw::{
     apps::paint::app::{IPaintActionsDispatcherTrait},
     core::{
@@ -6,6 +5,7 @@ use pixelaw::{
         utils::{Position, DefaultParameters},
     }
 };
+use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,};
 
 #[test]
 fn test_app_permissions() {
