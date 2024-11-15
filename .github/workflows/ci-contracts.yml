@@ -12,7 +12,7 @@ on:
 
 defaults:
   run:
-    working-directory: contracts
+    working-directory: .
 
 env:
   CARGO_TERM_COLOR: always
@@ -27,7 +27,7 @@ jobs:
         with:
           scarb-version: "2.7.0"
       - run: |
-          scarb fmt --check
+          cd contracts && scarb fmt --check
   core-test:
     runs-on: ubuntu-latest
     steps:
@@ -37,4 +37,4 @@ jobs:
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
           asdf install dojo 1.0.0
           asdf global dojo 1.0.0
-          sozo test
+          cd contracts && sozo test
