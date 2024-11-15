@@ -1,9 +1,9 @@
+use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,};
 use pixelaw::{
     apps::paint::app::{IPaintActionsDispatcherTrait},
     core::{
         models::{area::{RTreeNodePackableImpl, ChildrenPackableImpl}},
         utils::{Position, DefaultParameters},
-        test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,}
     }
 };
 

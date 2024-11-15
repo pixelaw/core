@@ -13,6 +13,7 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0" }
 starknet = "2.8.4"
 
 [dev-dependencies]
+pixelaw_test_helpers = { path = "../test_helpers" }
 dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0" }
 
 [tool.fmt]

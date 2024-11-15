@@ -10,15 +10,14 @@ use pixelaw::{
         },
         events::{Alert}, actions::{IActionsDispatcherTrait, CORE_ACTIONS_KEY},
         utils::{get_callers, Position, DefaultParameters},
-        test_helpers::{
-            setup_core, setup_core_initialized, setup_apps_initialized, ZERO_ADDRESS, set_caller,
-            drop_all_events, TEST_POSITION, RED_COLOR,
-        },
     }
 };
-
 use starknet::{
     contract_address_const, testing::{set_account_contract_address, set_contract_address},
+};
+use pixelaw_test_helpers::{
+    setup_core, setup_core_initialized, setup_apps_initialized, ZERO_ADDRESS, set_caller,
+    drop_all_events, TEST_POSITION, RED_COLOR,
 };
 
 

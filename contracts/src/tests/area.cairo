@@ -9,10 +9,9 @@ use pixelaw::{
         },
         actions::{IActionsDispatcherTrait}, utils::{Bounds, Position},
         actions::area::{find_node_for_position},
-        test_helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,},
     },
 };
-
+use pixelaw_test_helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,};
 
 // Declare constants for bounds and positions
 const BOUNDS_1: Bounds = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };

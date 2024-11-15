@@ -1,4 +1,5 @@
 use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
+
 use dojo_cairo_test::{
     spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
     WorldStorageTestTrait

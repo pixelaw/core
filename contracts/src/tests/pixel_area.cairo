@@ -1,3 +1,4 @@
+use pixelaw_test_helpers::{setup_core_initialized, ZERO_ADDRESS, set_caller, WHITE_COLOR,};
 use dojo::model::{ModelStorage};
 use pixelaw::{
     core::{
@@ -6,10 +7,8 @@ use pixelaw::{
             area::{Area, RTreeNodePackableImpl, ChildrenPackableImpl}
         },
         actions::{IActionsDispatcherTrait}, utils::{MAX_DIMENSION, Bounds, Position},
-        test_helpers::{setup_core_initialized, ZERO_ADDRESS, set_caller, WHITE_COLOR,}
     }
 };
-
 const BOUNDS_1: Bounds = Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 };
 const POSITION_1: Position = Position { x: 1, y: 1 };
 
