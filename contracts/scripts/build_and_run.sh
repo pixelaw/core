@@ -22,11 +22,13 @@ start_katana
 
 sozo_rebuild
 
-sozo_migrate
-
 export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
 start_torii
+
+sozo_migrate
+
+
 
 init_actions
 

@@ -9,9 +9,9 @@ mappings = {}
 
 [env]
 rpc_url = "http://localhost:5050/"
-account_address = "0x3c4dd268780ef738920c801edc3a75b6337bc17558c74795b530c0ff502486"
-private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
-world_address = "0x5729e109ed70ce4f33e3164505c78476e9fec57874b69467cdf0ba51636085"
+account_address = "0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec"
+private_key = "0xc5b2fcab997346f3ea1c00b002ecf6f382c5f9c9659a3894eb783c5320f912"
+world_address = "0x6fcc123bc71415fb6a2bca515ceb69aa95c486c34f07b92aae29627b126bf2f"
 
 [writers]
 "pixelaw-App" = ["pixelaw-actions"]

@@ -33,12 +33,13 @@ start_katana() {
 
     # Start Katana
     katana \
-      --genesis $GENESIS_TEMPLATE \
       --invoke-max-steps 4294967295 \
       --db-dir $KATANA_DB \
       --http.cors_origins "*" \
       --dev \
+      --dev.seed 0 \
       --dev.no-fee \
+      --dev.accounts 10 \
      > $KATANA_LOG 2>&1 &
 
     # Wait for logfile to exist and not be empty
@@ -62,12 +63,11 @@ start_torii() {
 
     pkill -f torii
     local rpc_url=$(get_rpc_url)
-    echo "start_torii: $rpc_url"
+    echo "start_torii: $rpc_url $WORLD_ADDRESS"
     torii \
       --world $WORLD_ADDRESS \
       --rpc $rpc_url \
       --db-dir $TORII_DB \
-      --indexing.events_chunk_size 10000 \
       --http.cors_origins "*" \
      > $TORII_LOG 2>&1 &
 }
@@ -125,7 +125,7 @@ sozo_migrate() {
 
 init_actions() {
     echo "init_actions"
-    local actions=$(jq -r '.contracts[] | select(.kind == "DojoContract") | .tag' $MANIFEST)
+    local actions=$(jq -r '.contracts[] | .tag' $MANIFEST)
 
     for action in ${actions[@]}; do
         sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait $action init
