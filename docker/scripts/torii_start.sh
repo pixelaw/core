@@ -9,6 +9,5 @@ done
 torii \
   --rpc "http://0.0.0.0:5050" \
   --world $WORLD_ADDRESS \
-  --db-dir $TORII_DB \
-  --indexing.events_chunk_size 10000 \
-  --http.cors_origins "*"
+  --http.cors_origins "*" \
+  --db-dir $TORII_DB
