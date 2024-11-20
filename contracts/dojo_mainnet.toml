@@ -13,9 +13,9 @@ default = "pixelaw"
 mappings = {}
 
 [env]
-rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
-keystore_path = "accounts/sepolia.deployer.keystore.json"
-account_address = "0xbacdf8ccd3aa527cab838e5ea45e045dbb0e12e2da4434579df99d9233253b"
+rpc_url = "https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
+keystore_path = "accounts/mainnet.deployer.keystore.json"
+account_address = "0x4aa593eb99f87dec06e41881035fec158556c1b151197bbf256d6e47c77115d"
 #world_address = "0x6f130c8e150882e39cbe878c650c8f35c86579180dbc77d0c1cbe169449b5f6"
 
 [writers]

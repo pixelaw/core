@@ -19,3 +19,4 @@ sozo_rebuild
 sozo_migrate
 
 init_actions
+

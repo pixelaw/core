@@ -15,7 +15,17 @@ TORII_DB="$OUT/torii.sqlite"
 TORII_LOG="$OUT/torii.log"
 DEPLOY_SCARB="Scarb_deploy.toml"
 
+ETH_ADDR=0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
+STRK_ADR=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d
 
+declare -A rpc
+
+# Populate associative array with key-value pairs
+rpc["dev"]="http://localhost:5050/"
+rpc["sepolia"]="https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+rpc["mainnet"]="https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
+
+export STARKNET_RPC="${rpc[$PROFILE]}"
 
 clear_katana() {
     echo "clear_katana"
@@ -108,18 +118,13 @@ sozo_account_deploy() {
 sozo_migrate() {
     echo "sozo_migrate"
 
+    sozo \
+      --profile $PROFILE \
+      --manifest-path $DEPLOY_SCARB \
+      migrate \
+       --wait
 
-    ## Sozo migrate apply
-    error_output=$(sozo \
-        --profile $PROFILE \
-        --manifest-path $DEPLOY_SCARB \
-        migrate  2>&1)
 
-    if [ $? -ne 0 ]; then
-    printf "$error_output"
-    printf "\nSeed or Dojo version changed, so update the world_address in all relevant places!\n"
-    exit 1
-    fi
     sleep 1
 }
 
