@@ -9,5 +9,5 @@ contracts/target
 contracts/manifest_dev.json
 contracts/manifest_dev-pop.json
 
-*.account.json
+
 *.keystore.json
