@@ -1,7 +1,7 @@
 [package]
 cairo-version = "=2.8.4"
 name = "pixelaw_test_helpers"
-version = "0.5.7"
+version = "0.5.8"
 homepage = "https://github.com/pixelaw/core"
 edition = "2024_07"
 
