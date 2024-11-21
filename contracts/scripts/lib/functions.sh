@@ -22,6 +22,7 @@ declare -A rpc
 
 # Populate associative array with key-value pairs
 rpc["dev"]="http://localhost:5050/"
+rpc["dev-pop"]="http://localhost:5050/"
 rpc["sepolia"]="https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 rpc["mainnet"]="https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
 
