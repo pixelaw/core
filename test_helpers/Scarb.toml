@@ -9,8 +9,8 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.2" }
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.2" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.3" }
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.3" }
 starknet = "2.8.4"
 
 [tool.fmt]
