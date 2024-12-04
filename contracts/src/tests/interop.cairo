@@ -46,7 +46,6 @@ fn test_hooks() {
             },
         );
 
-
     snake_actions
         .interact(
             DefaultParameters {
