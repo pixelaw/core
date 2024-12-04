@@ -23,6 +23,9 @@ world_address = "0x01869796b1c25976fc5f4b08ca84995945aa68a8850d3739c96e4c9994456
   "pixelaw-paint_actions",
   "pixelaw-snake_actions",
 ]
+"pixelaw-QueueScheduled" = ["pixelaw-actions"]
+"pixelaw-QueueProcessed" = ["pixelaw-actions"]
+"pixelaw-Alert" = ["pixelaw-actions"]
 "pixelaw-QueueItem" = ["pixelaw-actions"]
 "pixelaw-Snake" = ["pixelaw-actions", "pixelaw-snake_actions"]
 "pixelaw-RTree" = ["pixelaw-actions"]
