@@ -1,3 +1,4 @@
+use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
 use pixelaw::core::utils::{Direction, DefaultParameters};
 use starknet::{ContractAddress};
 
@@ -91,6 +92,15 @@ pub const APP_ICON: felt252 = 'U+1F40D';
 /// Interface for Snake actions.
 #[starknet::interface]
 pub trait ISnakeActions<T> {
+    fn on_pre_update(
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+    ) -> Option<PixelUpdate>;
+
+    fn on_post_update(
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+    );
+
+
     /// Initializes the Snake App.
     ///
     /// # Arguments
@@ -131,7 +141,8 @@ pub mod snake_actions {
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
-    //use pixelaw::core::models::registry::App;
+
+    use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         MOVE_SELECTOR, get_callers, get_core_actions, Direction, Position, DefaultParameters
     };
@@ -168,6 +179,40 @@ pub mod snake_actions {
     /// Implementation of the Snake actions.
     #[abi(embed_v0)]
     impl ActionsImpl of ISnakeActions<ContractState> {
+        /// Hook called before a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The proposed update to the pixel.
+        /// * `app_caller` - The app initiating the update.
+        /// * `player_caller` - The player initiating the update.
+        fn on_pre_update(
+            ref self: ContractState,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) -> Option<PixelUpdate> {
+            //Default is to not allow anything
+            Option::None
+        }
+
+        /// Hook called after a pixel update.
+        ///
+        /// # Arguments
+        ///
+        /// * `world` - A reference to the world dispatcher.
+        /// * `pixel_update` - The update that was applied to the pixel.
+        /// * `app_caller` - The app that performed the update.
+        /// * `player_caller` - The player that performed the update.
+        fn on_post_update(
+            ref self: ContractState,
+            pixel_update: PixelUpdate,
+            app_caller: App,
+            player_caller: ContractAddress,
+        ) { // No action
+        }
+
         /// Initializes the Snake App.
         ///
         /// Registers the app with core actions
