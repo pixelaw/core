@@ -1,7 +1,7 @@
 [package]
 cairo-version = "=2.8.4"
 name = "pixelaw_test_helpers"
-version = "0.5.15"
+version = "0.5.16"
 homepage = "https://github.com/pixelaw/core"
 edition = "2024_07"
 
@@ -9,8 +9,8 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.4" }
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.4" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.5" }
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.5" }
 starknet = "2.8.4"
 
 [tool.fmt]
