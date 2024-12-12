@@ -61,3 +61,5 @@ sozo build
 
 # git commands
 git commit -am "Bump dojo to v$next_version"
+
+echo "Done, don't forget to push!"
