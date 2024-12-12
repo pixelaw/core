@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 if [ ! -f VERSION ]; then
     echo "VERSION file does not exist"
@@ -29,3 +29,4 @@ echo $1 > VERSION
 git commit -am "Prepare v$1"
 git tag -a "v$1" -m "Version $1"
 
+echo "Done, don't forget to push!"
