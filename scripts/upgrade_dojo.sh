@@ -27,7 +27,6 @@ rm -f contracts/Scarb.lock
 # Find all files containing the previous version
 mapfile -t files < <(git grep -rl -- "$prev_version")
 
-
 for file in "${files[@]}"; do
     echo "Processing file: $file"
     tmp_file=$(mktemp)
@@ -59,3 +58,6 @@ asdf install dojo "$next_version"
 # Rebuild
 cd contracts
 sozo build
+
+# git commands
+git commit -am "Bump dojo to v$next_version"

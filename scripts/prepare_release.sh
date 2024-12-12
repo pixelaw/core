@@ -11,6 +11,13 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+# Check that git commit is empty
+if ! git diff-index --quiet HEAD --; then
+    echo "There are uncommitted changes. Please commit or stash them before running this script."
+    exit 1
+fi
+
+
 prev_version=$(cat VERSION)
 next_version=$1
 
@@ -18,7 +25,7 @@ find . -type f -name "*.toml" -exec sed -i'' -e "s/version = \"$prev_version\"/v
 
 echo $1 > VERSION
 
-# Uncommented git commands
+# git commands
 git commit -am "Prepare v$1"
 git tag -a "v$1" -m "Version $1"
 
