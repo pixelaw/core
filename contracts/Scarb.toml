@@ -9,12 +9,12 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.5" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.6" }
 starknet = "2.8.4"
 
 [dev-dependencies]
 pixelaw_test_helpers = { path = "../test_helpers" }
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.5" }
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.6" }
 
 [tool.fmt]
 sort-module-level-items = true
