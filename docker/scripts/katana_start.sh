@@ -1,6 +1,7 @@
 #!/bin/bash
 source /root/.bashrc
 katana \
+  --chain-id $WORLD_ID \
   --http.addr 0.0.0.0 \
   --invoke-max-steps 4294967295 \
   --dev \
