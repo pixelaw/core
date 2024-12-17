@@ -27,8 +27,9 @@ fi
 echo "ready"
 
 # Keep the container running
-#tail -f /dev/null
-
+if [ "$PREVENT_EXIT" == "1" ]; then
+  tail -f /dev/null
+fi
 
 
 
