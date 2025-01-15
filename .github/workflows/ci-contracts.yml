@@ -1,5 +1,4 @@
 name: ci-contracts
-runs-on: self-hosted
 on:
   push:
     branches: [main]
@@ -24,7 +23,7 @@ env:
 
 jobs:
   cairofmt:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
@@ -33,7 +32,7 @@ jobs:
       - run: |
           cd contracts && scarb fmt --check
   core-test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - uses: asdf-vm/actions/setup@v3
