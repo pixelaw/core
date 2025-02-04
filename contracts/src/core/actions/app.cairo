@@ -29,6 +29,8 @@ pub fn new_app(
     app.name = name;
     app.icon = icon;
 
+// TODO add plugin
+
     // Associate name with system
     app_name.system = system;
 
