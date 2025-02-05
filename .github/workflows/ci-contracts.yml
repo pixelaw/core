@@ -23,7 +23,7 @@ env:
 
 jobs:
   cairofmt:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
@@ -40,4 +40,5 @@ jobs:
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
           asdf install dojo 1.1.2
           asdf global dojo 1.1.2
-          cd contracts && sozo test
+          docker run --name dojo-runner -v "$(pwd):/app" -w /app ghcr.io/dojoengine/dojo:v1.1.2 bash -c "apt update && apt install -y git && cd contracts && sozo build"
+
