@@ -23,12 +23,12 @@ env:
 
 jobs:
   cairofmt:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
         with:
-          scarb-version: "2.8.4"
+          scarb-version: "2.9.2"
       - run: |
           cd contracts && scarb fmt --check
   core-test:
