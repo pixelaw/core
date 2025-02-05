@@ -7,9 +7,9 @@ mod tests {
     use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
 
     use pixelaw::core::models::pixel::{Pixel};
-    use pixelaw::core::utils::{Direction, Position, DefaultParameters};
+    use pixelaw::core::utils::{DefaultParameters, Direction, Position};
 
-    use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller};
+    use pixelaw_test_helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
     use starknet::{contract_address_const, testing::set_account_contract_address};
 
 
@@ -38,9 +38,9 @@ mod tests {
                     system_override: Option::None,
                     area_hint: Option::None,
                     position: Position { x: 1, y: 1 },
-                    color: SNAKE_COLOR
+                    color: SNAKE_COLOR,
                 },
-                Direction::Right
+                Direction::Right,
             );
 
         let pixel: Pixel = world.read_model((1, 1));
@@ -74,8 +74,8 @@ mod tests {
                     system_override: Option::None,
                     area_hint: Option::None,
                     position: Position { x: 4, y: 1 },
-                    color: 0xF0F0F0
-                }
+                    color: 0xF0F0F0,
+                },
             );
 
         // Grow right (head at 4,1 now) -> on top of the painted. Snake should grow
@@ -103,8 +103,8 @@ mod tests {
                     system_override: Option::None,
                     area_hint: Option::None,
                     position: Position { x: 6, y: 1 },
-                    color: 0xF0F0F0
-                }
+                    color: 0xF0F0F0,
+                },
             );
 
         set_caller(player1);
@@ -134,9 +134,9 @@ mod tests {
                     system_override: Option::None,
                     area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
-                    color: SNAKE_COLOR
+                    color: SNAKE_COLOR,
                 },
-                Direction::Right
+                Direction::Right,
             );
 
         let pixel3_1: Pixel = world.read_model((3, 1));
@@ -153,9 +153,9 @@ mod tests {
                     system_override: Option::None,
                     area_hint: Option::None,
                     position: Position { x: 3, y: 1 },
-                    color: SNAKE_COLOR
+                    color: SNAKE_COLOR,
                 },
-                Direction::Up
+                Direction::Up,
             );
 
         // Move up to 4,0

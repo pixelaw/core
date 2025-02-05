@@ -2,11 +2,11 @@ use pixelaw::{
     apps::paint::app::{IPaintActionsDispatcherTrait},
     apps::snake::app::{ISnakeActionsDispatcherTrait},
     core::{
-        models::{area::{RTreeNodePackableImpl, ChildrenPackableImpl}},
-        utils::{Position, DefaultParameters, Direction},
-    }
+        models::{area::{ChildrenPackableImpl, RTreeNodePackableImpl}},
+        utils::{DefaultParameters, Direction, Position},
+    },
 };
-use pixelaw_test_helpers::{setup_core_initialized, setup_apps_initialized, set_caller,};
+use pixelaw_test_helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
 
 #[test]
 fn test_app_permissions() {
@@ -31,7 +31,7 @@ fn test_hooks() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position: Position { x: 123, y: 321 },
-                color: 0xFF00FFFF
+                color: 0xFF00FFFF,
             },
         );
 
@@ -42,7 +42,7 @@ fn test_hooks() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position: Position { x: 123, y: 321 },
-                color: 0xAF00FFFF
+                color: 0xAF00FFFF,
             },
         );
 
@@ -53,8 +53,8 @@ fn test_hooks() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position: Position { x: 223, y: 321 },
-                color: 0xAF00FFFF
+                color: 0xAF00FFFF,
             },
-            Direction::Right
+            Direction::Right,
         );
 }

@@ -3,5 +3,5 @@
 pub struct QueueItem {
     #[key]
     pub id: felt252,
-    pub valid: bool
+    pub valid: bool,
 }

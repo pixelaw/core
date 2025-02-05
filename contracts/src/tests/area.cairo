@@ -1,17 +1,16 @@
 use pixelaw::{
     core::{
-        utils,
+        actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},
         models::{
             area::{
-                Area, ROOT_ID, FIRST_RTREENODE, ROOT_RTREENODE_EMPTY, ROOT_RTREENODE, RTreeNode,
-                RTreeNodePackableImpl, ChildrenPackableImpl
-            }
+                Area, ChildrenPackableImpl, FIRST_RTREENODE, ROOT_ID, ROOT_RTREENODE,
+                ROOT_RTREENODE_EMPTY, RTreeNode, RTreeNodePackableImpl,
+            },
         },
-        actions::{IActionsDispatcherTrait}, utils::{Bounds, Position},
-        actions::area::{find_node_for_position},
+        utils, utils::{Bounds, Position},
     },
 };
-use pixelaw_test_helpers::{setup_core_initialized, ZERO_ADDRESS, WHITE_COLOR,};
+use pixelaw_test_helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
 
 // Declare constants for bounds and positions
 const BOUNDS_1: Bounds = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };
@@ -54,7 +53,7 @@ fn test_area_packing() {
     let rect_in = RTreeNode {
         bounds: utils::Bounds { x_min: 123, y_min: 321, x_max: 456, y_max: 654 },
         is_leaf: false,
-        is_area: true
+        is_area: true,
     };
 
     let id = rect_in.pack();
@@ -74,11 +73,11 @@ fn test_adding_overlapping() {
     let _a2: Area = core_actions
         .add_area(
             Bounds {
-                x_min: 15, y_min: 15, x_max: 25, y_max: 25
+                x_min: 15, y_min: 15, x_max: 25, y_max: 25,
             }, // These bounds are overlapping the prior
             player_1,
             WHITE_COLOR,
-            ZERO_ADDRESS()
+            ZERO_ADDRESS(),
         );
 }
 
@@ -96,11 +95,11 @@ fn test_adding_containing() {
     let _a2: Area = core_actions
         .add_area(
             Bounds {
-                x_min: 5, y_min: 5, x_max: 25, y_max: 25
+                x_min: 5, y_min: 5, x_max: 25, y_max: 25,
             }, // These bounds are containing the prior (so all corners are not inside another area)
             player_1,
             WHITE_COLOR,
-            ZERO_ADDRESS()
+            ZERO_ADDRESS(),
         );
 }
 

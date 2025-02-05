@@ -1,5 +1,5 @@
+use pixelaw::core::utils::{Bounds, Position, max, min};
 use pixelaw::core::utils::{MAX_DIMENSION};
-use pixelaw::core::utils::{min, max, Bounds, Position};
 use starknet::{ContractAddress};
 
 pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
@@ -14,24 +14,21 @@ const MASK_15: u64 = 0x7FFF;
 const MASK_62: u64 = 0x3fffffffffffffff;
 const MASK_1: u64 = 0x1;
 
-pub const ROOT_RTREENODE_EMPTY: RTreeNode =
-    RTreeNode {
-        bounds: Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
-        is_leaf: true,
-        is_area: false
-    };
+pub const ROOT_RTREENODE_EMPTY: RTreeNode = RTreeNode {
+    bounds: Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
+    is_leaf: true,
+    is_area: false,
+};
 
-pub const ROOT_RTREENODE: RTreeNode =
-    RTreeNode {
-        bounds: Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
-        is_leaf: false,
-        is_area: false
-    };
+pub const ROOT_RTREENODE: RTreeNode = RTreeNode {
+    bounds: Bounds { x_min: 0, y_min: 0, x_max: MAX_DIMENSION, y_max: MAX_DIMENSION },
+    is_leaf: false,
+    is_area: false,
+};
 
-pub const FIRST_RTREENODE: RTreeNode =
-    RTreeNode {
-        bounds: Bounds { x_min: 0, y_min: 0, x_max: 10, y_max: 10 }, is_leaf: true, is_area: false
-    };
+pub const FIRST_RTREENODE: RTreeNode = RTreeNode {
+    bounds: Bounds { x_min: 0, y_min: 0, x_max: 10, y_max: 10 }, is_leaf: true, is_area: false,
+};
 
 pub const ROOT_EMPTY_ID: u64 = 4294967294; // for ROOT_RTREENODE_EMPTY
 pub const ROOT_ID: u64 = 4294967292; // for ROOT_RTREENODE
@@ -51,7 +48,7 @@ pub struct RTree {
     // y_max: u16   << 2
     // is_leaf: 1   << 1
     // is_area: 1
-    pub children: felt252
+    pub children: felt252,
 }
 
 #[derive(Copy, Drop, Serde, Debug, PartialEq)]
@@ -68,7 +65,7 @@ pub struct Area {
     pub id: u64,
     pub app: ContractAddress,
     pub owner: ContractAddress,
-    pub color: u32
+    pub color: u32,
 }
 
 pub trait RTreeTrait<RTree> {
@@ -144,7 +141,7 @@ pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
                 && self.x_max <= MAX_DIMENSION
                 && self.y_min <= MAX_DIMENSION
                 && self.y_max <= MAX_DIMENSION,
-            'invalid bounds'
+            'invalid bounds',
         );
     }
 
@@ -175,7 +172,7 @@ pub impl BoundsTraitImpl of BoundsTrait<Bounds> {
             x_min: min(self.x_min, other.x_min),
             y_min: min(self.y_min, other.y_min),
             x_max: max(self.x_max, other.x_max),
-            y_max: max(self.y_max, other.y_max)
+            y_max: max(self.y_max, other.y_max),
         }
     }
 }
@@ -241,11 +238,11 @@ pub impl RTreeNodePackableImpl of Packable<RTreeNode, u64> {
             + (self.bounds.y_max.into() * TWO_POW_2)
             + (match self.is_leaf {
                 true => 2,
-                false => 0
+                false => 0,
             })
             + (match self.is_area {
                 true => 1,
-                false => 0
+                false => 0,
             })
     }
 
@@ -254,7 +251,7 @@ pub impl RTreeNodePackableImpl of Packable<RTreeNode, u64> {
             x_min: ((self / TWO_POW_47) & MASK_15).try_into().unwrap(),
             y_min: ((self / TWO_POW_32) & MASK_15).try_into().unwrap(),
             x_max: ((self / TWO_POW_17) & MASK_15).try_into().unwrap(),
-            y_max: ((self / TWO_POW_2) & MASK_15).try_into().unwrap()
+            y_max: ((self / TWO_POW_2) & MASK_15).try_into().unwrap(),
         };
 
         let is_leaf: bool = ((self / 2) & MASK_1) == 1;

@@ -8,7 +8,7 @@ pub struct App {
     pub name: felt252,
     pub icon: felt252,
     // Default action for the UI (a function in the system)
-    pub action: felt252
+    pub action: felt252,
 }
 
 pub trait AppCalldataTrait<App> {
@@ -32,7 +32,7 @@ pub struct AppUser {
     #[key]
     pub player: ContractAddress,
     // Default action for the UI (a function in the system)
-    pub action: felt252
+    pub action: felt252,
     // TODO maybe other generic App/User specific settings can go here.
 }
 
@@ -41,7 +41,7 @@ pub struct AppUser {
 pub struct AppName {
     #[key]
     pub name: felt252,
-    pub system: ContractAddress
+    pub system: ContractAddress,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -49,6 +49,6 @@ pub struct AppName {
 pub struct CoreActionsAddress {
     #[key]
     pub key: felt252,
-    pub value: ContractAddress
+    pub value: ContractAddress,
 }
 

@@ -4,14 +4,13 @@ use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
 use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
 use pixelaw::core::{
-    models::pixel::{Pixel}, events::{QueueScheduled, QueueProcessed},
-    actions::{IActionsDispatcherTrait},
-    utils::{Direction, Position, DefaultParameters, SNAKE_MOVE_ENTRYPOINT},
+    actions::{IActionsDispatcherTrait}, events::{QueueProcessed, QueueScheduled},
+    models::pixel::{Pixel}, utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
 use pixelaw_test_helpers::{
-    setup_core_initialized, setup_apps_initialized, set_caller, drop_all_events,
+    drop_all_events, set_caller, setup_apps_initialized, setup_core_initialized,
 };
-use starknet::{testing::{set_block_timestamp},};
+use starknet::{testing::{set_block_timestamp}};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
 
@@ -30,14 +29,14 @@ fn test_process_queue() {
             0.into(),
             core_actions.contract_address.into(),
             SPAWN_PIXEL_ENTRYPOINT.into(),
-            poseidon_hash_span(calldata.span())
+            poseidon_hash_span(calldata.span()),
         ]
-            .span()
+            .span(),
     );
 
     core_actions
         .process_queue(
-            id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span()
+            id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span(),
         );
 
     let pixel: Pixel = world.read_model((position.x, position.y));
@@ -75,9 +74,9 @@ fn test_queue_full() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position,
-                color: SNAKE_COLOR
+                color: SNAKE_COLOR,
             },
-            Direction::Right
+            Direction::Right,
         );
 
     // Pop the 3 previous events we're not handling right now
@@ -91,7 +90,7 @@ fn test_queue_full() {
     let calldata: Span<felt252> = array![player_1.into()].span();
     let id = poseidon_hash_span(
         array![timestamp.into(), called_system.into(), selector, poseidon_hash_span(calldata)]
-            .span()
+            .span(),
     );
 
     let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
@@ -100,11 +99,11 @@ fn test_queue_full() {
     if let WorldEvent::EventEmitted(event) = event.unwrap() {
         assert(
             event.selector == Event::<QueueScheduled>::selector(world.namespace_hash),
-            'bad event selector'
+            'bad event selector',
         );
 
         let _expected_scheduled_event = QueueScheduled {
-            id, timestamp, called_system, selector, calldata
+            id, timestamp, called_system, selector, calldata,
         };
         assert(event.system_address == core_actions.contract_address, 'bad system address');
         assert(*event.keys.at(0) == id, 'bad keys');
@@ -134,7 +133,7 @@ fn test_queue_full() {
         let _expected_processed_event = QueueProcessed { id, result: 0 }; // Fixme: result
         assert(
             event.selector == Event::<QueueProcessed>::selector(world.namespace_hash),
-            'bad event selector'
+            'bad event selector',
         );
         // TODO complete test
         assert(event.system_address == core_actions.contract_address, 'bad system address');

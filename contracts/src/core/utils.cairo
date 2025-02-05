@@ -1,12 +1,12 @@
 use dojo::model::{ModelStorage};
 use dojo::world::storage::WorldStorage;
-use pixelaw::core::actions::{IActionsDispatcher, CORE_ACTIONS_KEY};
+use pixelaw::core::actions::{CORE_ACTIONS_KEY, IActionsDispatcher};
 use pixelaw::core::models::registry::{CoreActionsAddress};
 use pixelaw::core::models::{
     pixel::{Pixel},
-    {area::{RTreeTraitImpl, RTreeNodePackableImpl, ChildrenPackableImpl, BoundsTraitImpl}}
+    {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
 };
-use starknet::{ContractAddress, contract_address_const, get_tx_info, get_contract_address};
+use starknet::{ContractAddress, contract_address_const, get_contract_address, get_tx_info};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
@@ -53,7 +53,7 @@ pub enum Direction {
 #[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
 pub struct Position {
     pub x: u16,
-    pub y: u16
+    pub y: u16,
 }
 
 
@@ -62,7 +62,7 @@ pub struct Bounds {
     pub x_min: u16,
     pub y_min: u16,
     pub x_max: u16,
-    pub y_max: u16
+    pub y_max: u16,
 }
 
 
@@ -72,7 +72,7 @@ pub struct DefaultParameters {
     pub system_override: Option<ContractAddress>,
     pub area_hint: Option<u64>,
     pub position: Position,
-    pub color: u32
+    pub color: u32,
 }
 
 
@@ -114,7 +114,7 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
 // Returns the current (account and system) callers
 // Taking into account overrides from DefaultParams
 pub fn get_callers(
-    ref world: WorldStorage, params: DefaultParameters
+    ref world: WorldStorage, params: DefaultParameters,
 ) -> (ContractAddress, ContractAddress) {
     let mut player = contract_address_const::<0>();
     let mut system = contract_address_const::<0>();
@@ -208,7 +208,7 @@ pub fn decode_rgba(self: u32) -> (u8, u8, u8, u8) {
         r.try_into().unwrap_or(0),
         g.try_into().unwrap_or(0),
         b.try_into().unwrap_or(0),
-        a.try_into().unwrap_or(0xFF)
+        a.try_into().unwrap_or(0xFF),
     )
 }
 

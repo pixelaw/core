@@ -4,9 +4,9 @@ pub mod pixel;
 pub mod queue;
 
 use pixelaw::core::models::area::{Area};
-use pixelaw::core::models::pixel::{PixelUpdateResult, Pixel, PixelUpdate};
+use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
 use pixelaw::core::models::registry::{App};
-use pixelaw::core::utils::{Position, Bounds};
+use pixelaw::core::utils::{Bounds, Position};
 use starknet::{ContractAddress};
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
@@ -31,7 +31,7 @@ pub trait IActions<T> {
         pixel: Pixel,
         pixel_update: PixelUpdate,
         area_id_hint: Option<u64>,
-        allow_modify: bool
+        allow_modify: bool,
     ) -> PixelUpdateResult;
 
 
@@ -49,7 +49,7 @@ pub trait IActions<T> {
         for_system: ContractAddress,
         pixel_update: PixelUpdate,
         area_id: Option<u64>,
-        allow_modify: bool
+        allow_modify: bool,
     ) -> PixelUpdateResult;
 
 
@@ -101,7 +101,7 @@ pub trait IActions<T> {
     /// # Returns
     ///
     /// * `App` - Struct containing the contract address and name fields.
-    fn new_app(ref self: T, system: ContractAddress, name: felt252, icon: felt252,) -> App;
+    fn new_app(ref self: T, system: ContractAddress, name: felt252, icon: felt252) -> App;
 
 
     /// Sends an alert to a player.
@@ -112,11 +112,11 @@ pub trait IActions<T> {
     /// * `position` - The position associated with the alert.
     /// * `player` - The player to alert.
     /// * `message` - The message to send.
-    fn alert_player(ref self: T, position: Position, player: ContractAddress, message: felt252,);
+    fn alert_player(ref self: T, position: Position, player: ContractAddress, message: felt252);
 
 
     fn add_area(
-        ref self: T, bounds: Bounds, owner: ContractAddress, color: u32, app: ContractAddress
+        ref self: T, bounds: Bounds, owner: ContractAddress, color: u32, app: ContractAddress,
     ) -> Area;
     fn remove_area(ref self: T, area_id: u64);
     fn find_area_by_position(ref self: T, position: Position) -> Option<Area>;
@@ -128,16 +128,16 @@ pub trait IActions<T> {
 pub mod actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
-    use pixelaw::core::events::{QueueScheduled, QueueProcessed, Alert};
+    use pixelaw::core::events::{Alert, QueueProcessed, QueueScheduled};
     use pixelaw::core::models::area::{
-        BoundsTraitImpl, RTreeTraitImpl, ROOT_ID, RTree, Area, RTreeNodePackableImpl
+        Area, BoundsTraitImpl, ROOT_ID, RTree, RTreeNodePackableImpl, RTreeTraitImpl,
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
 
 
     use pixelaw::core::models::registry::{App, CoreActionsAddress};
 
-    use pixelaw::core::utils::{Position, Bounds};
+    use pixelaw::core::utils::{Bounds, Position};
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use super::{IActions};
 
@@ -150,8 +150,8 @@ pub mod actions {
             world
                 .write_model(
                     @CoreActionsAddress {
-                        key: super::CORE_ACTIONS_KEY, value: get_contract_address()
-                    }
+                        key: super::CORE_ACTIONS_KEY, value: get_contract_address(),
+                    },
                 );
 
             // Initialize root RTree
@@ -165,11 +165,11 @@ pub mod actions {
             pixel: Pixel,
             pixel_update: PixelUpdate,
             area_id_hint: Option<u64>,
-            allow_modify: bool
+            allow_modify: bool,
         ) -> PixelUpdateResult {
             let mut world = self.world(@"pixelaw");
             super::pixel::can_update_pixel(
-                ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
+                ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify,
             )
         }
 
@@ -179,11 +179,11 @@ pub mod actions {
             for_system: ContractAddress,
             pixel_update: PixelUpdate,
             area_id: Option<u64>,
-            allow_modify: bool
+            allow_modify: bool,
         ) -> PixelUpdateResult {
             let mut world = self.world(@"pixelaw");
             super::pixel::update_pixel(
-                ref world, for_player, for_system, pixel_update, area_id, allow_modify
+                ref world, for_player, for_system, pixel_update, area_id, allow_modify,
             )
         }
 
@@ -196,7 +196,7 @@ pub mod actions {
         ) {
             let mut world = self.world(@"pixelaw");
             let event: QueueScheduled = super::queue::schedule_queue(
-                ref world, timestamp, called_system, selector, calldata
+                ref world, timestamp, called_system, selector, calldata,
             );
             world.emit_event(@event);
         }
@@ -212,7 +212,7 @@ pub mod actions {
         ) {
             let mut world = self.world(@"pixelaw");
             let event: QueueProcessed = super::queue::process_queue(
-                ref world, id, timestamp, called_system, selector, calldata
+                ref world, id, timestamp, called_system, selector, calldata,
             );
 
             world.emit_event(@event);
@@ -244,8 +244,8 @@ pub mod actions {
                         caller,
                         player,
                         message,
-                        timestamp: starknet::get_block_timestamp()
-                    }
+                        timestamp: starknet::get_block_timestamp(),
+                    },
                 );
         }
 
@@ -255,7 +255,7 @@ pub mod actions {
             bounds: Bounds,
             owner: ContractAddress,
             color: u32,
-            app: ContractAddress
+            app: ContractAddress,
         ) -> Area {
             let mut world = self.world(@"pixelaw");
             super::area::add_area(ref world, bounds, owner, color, app)
@@ -266,12 +266,12 @@ pub mod actions {
             super::area::remove_area(ref world, area_id);
         }
 
-        fn find_area_by_position(ref self: ContractState, position: Position,) -> Option<Area> {
+        fn find_area_by_position(ref self: ContractState, position: Position) -> Option<Area> {
             let mut world = self.world(@"pixelaw");
             let result = super::area::find_node_for_position(ref world, position, ROOT_ID, true);
             match result {
                 0 => Option::None,
-                _ => Option::Some(world.read_model(result))
+                _ => Option::Some(world.read_model(result)),
             }
         }
 
@@ -280,10 +280,10 @@ pub mod actions {
             let mut result: Array<Area> = array![];
             let mut area_ids: Array<u64> = array![];
             let smallest_node = super::area::find_smallest_node_spanning_bounds(
-                ref world, bounds, ROOT_ID, false
+                ref world, bounds, ROOT_ID, false,
             );
             super::area::find_nodes_inside_bounds(
-                ref world, ref area_ids, bounds, smallest_node, true
+                ref world, ref area_ids, bounds, smallest_node, true,
             );
             if area_ids.len() == 0 {
                 return result.span();

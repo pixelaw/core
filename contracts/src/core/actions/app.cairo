@@ -1,10 +1,10 @@
 use dojo::model::{ModelStorage};
 
 use dojo::world::storage::WorldStorage;
-use pixelaw::core::models::area::{BoundsTraitImpl, RTreeTraitImpl, RTreeNodePackableImpl};
+use pixelaw::core::models::area::{BoundsTraitImpl, RTreeNodePackableImpl, RTreeTraitImpl};
 
 use pixelaw::core::models::registry::{App, AppName};
-use starknet::{ContractAddress, get_caller_address, contract_address_const,};
+use starknet::{ContractAddress, contract_address_const, get_caller_address};
 
 pub fn new_app(
     ref world: WorldStorage, system: ContractAddress, name: felt252, icon: felt252,
@@ -29,7 +29,7 @@ pub fn new_app(
     app.name = name;
     app.icon = icon;
 
-// TODO add plugin
+    // TODO add plugin
 
     // Associate name with system
     app_name.system = system;

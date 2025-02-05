@@ -13,11 +13,11 @@ pub trait IPaintActions<T> {
     fn init(ref self: T);
 
     fn on_pre_update(
-        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     ) -> Option<PixelUpdate>;
 
     fn on_post_update(
-        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     );
 
     /// Interacts with a pixel based on default parameters.
@@ -63,17 +63,17 @@ pub mod paint_actions {
     use dojo::model::{ModelStorage};
     // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 
-    use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait,};
+    use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        get_callers, get_core_actions, decode_rgba, encode_rgba, subu8, DefaultParameters,
+        DefaultParameters, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
     };
-    use starknet::{get_contract_address, ContractAddress, contract_address_const,};
+    use starknet::{ContractAddress, contract_address_const, get_contract_address};
     use super::IPaintActions;
 
-    use super::{APP_KEY, APP_ICON, PIXELS_PER_FELT};
+    use super::{APP_ICON, APP_KEY, PIXELS_PER_FELT};
 
     #[abi(embed_v0)]
     impl Actions of IPaintActions<ContractState> {
@@ -198,7 +198,7 @@ pub mod paint_actions {
                     || pixel.owner == player
                     || starknet::get_block_timestamp()
                     - pixel.timestamp >= COOLDOWN_SECS,
-                "Cooldown not over"
+                "Cooldown not over",
             );
 
             // Update color of the pixel
@@ -214,10 +214,10 @@ pub mod paint_actions {
                         text: Option::None,
                         app: Option::Some(system),
                         owner: Option::Some(player),
-                        action: Option::None, // Not using this feature for paint
+                        action: Option::None // Not using this feature for paint
                     },
                     Option::None, // TODO area_hint
-                    false
+                    false,
                 );
         }
 
@@ -265,16 +265,16 @@ pub mod paint_actions {
                             x: position.x + pixel_index,
                             y: position.y,
                             color: Option::Some(
-                                extract(felt.into(), pixel_index % PIXELS_PER_FELT)
+                                extract(felt.into(), pixel_index % PIXELS_PER_FELT),
                             ),
                             timestamp: Option::None,
                             text: Option::None,
                             app: Option::Some(system),
                             owner: Option::Some(player),
-                            action: Option::None, // Not using this feature for paint
+                            action: Option::None // Not using this feature for paint
                         },
                         Option::None, // area_hint
-                        false
+                        false,
                     );
 
                 pixel_index += 1;
@@ -340,10 +340,10 @@ pub mod paint_actions {
                         text: Option::None,
                         app: Option::Some(system),
                         owner: Option::Some(player),
-                        action: Option::None, // Not using this feature for paint
+                        action: Option::None // Not using this feature for paint
                     },
                     Option::None,
-                    false
+                    false,
                 );
 
             let FADE_SECONDS = 4;
@@ -373,7 +373,7 @@ pub mod paint_actions {
                     queue_timestamp, // When to fade next
                     THIS_CONTRACT_ADDRESS, // This contract address
                     0x89ce6748d77414b79f2312bb20f6e67d3aa4a9430933a0f461fedc92983084, // Selector for fade
-                    calldata.span(), // The prepared calldata
+                    calldata.span() // The prepared calldata
                 );
         }
     }

@@ -2,11 +2,11 @@ use core::poseidon::poseidon_hash_span;
 
 use dojo::world::storage::WorldStorage;
 
-use pixelaw::core::events::{QueueScheduled, QueueProcessed};
-use pixelaw::core::models::area::{BoundsTraitImpl, RTreeTraitImpl, RTreeNodePackableImpl};
+use pixelaw::core::events::{QueueProcessed, QueueScheduled};
+use pixelaw::core::models::area::{BoundsTraitImpl, RTreeNodePackableImpl, RTreeTraitImpl};
 
 
-use starknet::{ContractAddress, syscalls::{call_contract_syscall},};
+use starknet::{ContractAddress, syscalls::{call_contract_syscall}};
 
 pub fn schedule_queue(
     ref world: WorldStorage,

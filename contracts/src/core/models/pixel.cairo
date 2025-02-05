@@ -17,7 +17,7 @@ pub struct Pixel {
     pub timestamp: u64,
     pub owner: ContractAddress,
     pub text: felt252,
-    pub action: felt252
+    pub action: felt252,
 }
 
 
@@ -25,7 +25,7 @@ pub struct Pixel {
 pub enum PixelUpdateResult {
     Ok: PixelUpdate,
     NotAllowed,
-    Error: felt252
+    Error: felt252,
 }
 
 pub trait PixelUpdateResultTrait<PixelUpdateResult> {
@@ -67,7 +67,7 @@ pub struct PixelUpdate {
     pub app: Option<ContractAddress>,
     pub text: Option<felt252>,
     pub timestamp: Option<u64>,
-    pub action: Option<felt252>
+    pub action: Option<felt252>,
 }
 
 

@@ -2,16 +2,16 @@ use dojo::model::{ModelStorage};
 use dojo::world::storage::WorldStorage;
 
 //use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::area::{BoundsTraitImpl, RTreeTraitImpl, Area, RTreeNodePackableImpl};
-use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateTrait, PixelUpdateResult};
+use pixelaw::core::models::area::{Area, BoundsTraitImpl, RTreeNodePackableImpl, RTreeTraitImpl};
+use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateTrait};
 
 
-use pixelaw::core::models::registry::{AppCalldataTrait, App};
+use pixelaw::core::models::registry::{App, AppCalldataTrait};
 use pixelaw::core::utils::{
-    ON_PRE_UPDATE_HOOK, ON_POST_UPDATE_HOOK, get_core_actions_address, Position,
+    ON_POST_UPDATE_HOOK, ON_PRE_UPDATE_HOOK, Position, get_core_actions_address,
 };
 use starknet::{
-    ContractAddress, get_contract_address, get_tx_info, contract_address_const,
+    ContractAddress, contract_address_const, get_contract_address, get_tx_info,
     syscalls::{call_contract_syscall},
 };
 
@@ -23,7 +23,7 @@ pub fn can_update_pixel(
     pixel: Pixel,
     pixel_update: PixelUpdate,
     area_id_hint: Option<u64>,
-    allow_modify: bool
+    allow_modify: bool,
 ) -> PixelUpdateResult {
     // 1. Is there an owner of pixel or area?
     if pixel.owner == for_player {
@@ -32,7 +32,7 @@ pub fn can_update_pixel(
 
     // Load the area
     let area_result = super::area::find_area_for_position(
-        ref world, Position { x: pixel.x, y: pixel.y }, area_id_hint
+        ref world, Position { x: pixel.x, y: pixel.y }, area_id_hint,
     );
     if let Option::Some(area) = area_result {
         // Return true if the player is owner of the area
@@ -73,7 +73,7 @@ pub fn update_pixel(
     for_system: ContractAddress,
     pixel_update: PixelUpdate,
     area_id_hint: Option<u64>,
-    allow_modify: bool
+    allow_modify: bool,
 ) -> PixelUpdateResult {
     // Check if the pixel_update values are valid (x and y)
     pixel_update.validate();
@@ -87,13 +87,13 @@ pub fn update_pixel(
     let mut pixel: Pixel = world.read_model((pixel_update.x, pixel_update.y));
 
     let update_result = can_update_pixel(
-        ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify
+        ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify,
     );
 
     // println!("update_pixel {:?}", update_result);
     let new_pixel_update = match update_result {
         PixelUpdateResult::Error(_) | PixelUpdateResult::NotAllowed => { return update_result; },
-        PixelUpdateResult::Ok(result) => result
+        PixelUpdateResult::Ok(result) => result,
     };
 
     apply_pixel_update(ref pixel, new_pixel_update);
@@ -152,7 +152,7 @@ fn call_on_pre_update(
     pixel_update: PixelUpdate,
     app_caller: App,
     for_player: ContractAddress,
-    allow_modify: bool
+    allow_modify: bool,
 ) -> PixelUpdateResult {
     let mut calldata: Array<felt252> = array![];
     let mut result = PixelUpdateResult::Ok(pixel_update);
@@ -190,7 +190,7 @@ fn call_on_post_update(
     contract_address: ContractAddress,
     pixel_update: PixelUpdate,
     app_caller: App,
-    for_player: ContractAddress
+    for_player: ContractAddress,
 ) -> Result<(), felt252> {
     let mut calldata: Array<felt252> = array![];
     let mut result = Result::Ok(());

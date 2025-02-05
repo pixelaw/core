@@ -18,7 +18,7 @@ pub struct QueueScheduled {
 pub struct QueueProcessed {
     #[key]
     pub id: felt252,
-    pub result: felt252
+    pub result: felt252,
 }
 
 

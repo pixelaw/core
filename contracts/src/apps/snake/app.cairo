@@ -1,5 +1,5 @@
 use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
-use pixelaw::core::utils::{Direction, DefaultParameters};
+use pixelaw::core::utils::{DefaultParameters, Direction};
 use starknet::{ContractAddress};
 
 /// Calculates the next position based on the current coordinates and direction.
@@ -93,11 +93,11 @@ pub const APP_ICON: felt252 = 'U+1F40D';
 #[starknet::interface]
 pub trait ISnakeActions<T> {
     fn on_pre_update(
-        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     ) -> Option<PixelUpdate>;
 
     fn on_post_update(
-        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     );
 
 
@@ -119,7 +119,7 @@ pub trait ISnakeActions<T> {
     /// # Returns
     ///
     /// * `u32` - The ID of the snake's first segment.
-    fn interact(ref self: T, default_params: DefaultParameters, direction: Direction,) -> u32;
+    fn interact(ref self: T, default_params: DefaultParameters, direction: Direction) -> u32;
 
     /// Moves the snake owned by the specified owner.
     ///
@@ -144,15 +144,15 @@ pub mod snake_actions {
 
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        MOVE_SELECTOR, get_callers, get_core_actions, Direction, Position, DefaultParameters
+        DefaultParameters, Direction, MOVE_SELECTOR, Position, get_callers, get_core_actions,
     };
     use starknet::{
-        ContractAddress, get_contract_address, get_execution_info, contract_address_const,
+        ContractAddress, contract_address_const, get_contract_address, get_execution_info,
     };
     use super::ISnakeActions;
     use super::next_position;
 
-    use super::{APP_KEY, APP_ICON};
+    use super::{APP_ICON, APP_KEY};
     use super::{Snake, SnakeSegment};
 
 
@@ -312,10 +312,10 @@ pub mod snake_actions {
                         text: Option::Some(text),
                         app: Option::Some(get_contract_address()),
                         owner: Option::None,
-                        action: Option::None, // Not using this feature for snake
+                        action: Option::None // Not using this feature for snake
                     },
                     Option::None,
-                    false
+                    false,
                 );
 
             let MOVE_SECONDS = 0;
@@ -332,7 +332,7 @@ pub mod snake_actions {
                     queue_timestamp, // When to move next
                     THIS_CONTRACT_ADDRESS, // This contract address
                     MOVE_SELECTOR, // The move function
-                    calldata.span(), // The prepared calldata
+                    calldata.span() // The prepared calldata
                 );
 
             id
@@ -361,12 +361,12 @@ pub mod snake_actions {
                 snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 snake.length -= 1;
                 if snake.length == 0 {
-                    let position = Position { x: first_segment.x, y: first_segment.y, };
+                    let position = Position { x: first_segment.x, y: first_segment.y };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
 
                     world
                         .emit_event(
-                            @Died { owner: snake.owner, x: first_segment.x, y: first_segment.y }
+                            @Died { owner: snake.owner, x: first_segment.x, y: first_segment.y },
                         );
 
                     // Delete the snake
@@ -397,10 +397,10 @@ pub mod snake_actions {
                             text: Option::Some(snake.text),
                             app: Option::Some(get_contract_address()),
                             owner: Option::None,
-                            action: Option::None, // Not using this feature for snake
+                            action: Option::None // Not using this feature for snake
                         },
                         Option::None,
-                        false
+                        false,
                     )
                     .is_ok();
 
@@ -478,7 +478,7 @@ pub mod snake_actions {
                     queue_timestamp, // When to move next
                     THIS_CONTRACT_ADDRESS, // This contract address
                     get_execution_info().unbox().entry_point_selector, // This selector
-                    calldata.span(), // The prepared calldata
+                    calldata.span() // The prepared calldata
                 );
         }
     }
@@ -513,10 +513,10 @@ pub mod snake_actions {
                     text: Option::Some(last_segment.pixel_original_text),
                     app: Option::Some(last_segment.pixel_original_app),
                     owner: Option::None,
-                    action: Option::None, // Not using this feature for snake
+                    action: Option::None // Not using this feature for snake
                 },
                 Option::None, // TODO area_hint
-                false
+                false,
             );
 
         let result = last_segment.previous_id;
@@ -566,7 +566,7 @@ pub mod snake_actions {
                     pixel_original_color: pixel.color,
                     pixel_original_text: pixel.text,
                     pixel_original_app: pixel.app,
-                }
+                },
             );
 
         // Write the changes to the pixel
@@ -582,10 +582,10 @@ pub mod snake_actions {
                     text: Option::Some(snake.text),
                     app: Option::Some(get_contract_address()),
                     owner: Option::None,
-                    action: Option::None, // Not using this feature for snake
+                    action: Option::None // Not using this feature for snake
                 },
                 Option::None,
-                false
+                false,
             );
         id
     }

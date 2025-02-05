@@ -2,19 +2,19 @@ use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
 use pixelaw::{
-    apps::{paint::app::{IPaintActionsDispatcherTrait,},},
+    apps::{paint::app::{IPaintActionsDispatcherTrait}},
     core::{
+        actions::{CORE_ACTIONS_KEY, IActionsDispatcherTrait}, events::{Alert},
         models::{
-            registry::{App, AppName, CoreActionsAddress},
             pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
+            registry::{App, AppName, CoreActionsAddress},
         },
-        events::{Alert}, actions::{IActionsDispatcherTrait, CORE_ACTIONS_KEY},
-        utils::{get_callers, Position, DefaultParameters},
-    }
+        utils::{DefaultParameters, Position, get_callers},
+    },
 };
 use pixelaw_test_helpers::{
-    setup_core, setup_core_initialized, setup_apps_initialized, ZERO_ADDRESS, set_caller,
-    drop_all_events, TEST_POSITION, RED_COLOR,
+    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps_initialized,
+    setup_core, setup_core_initialized,
 };
 use starknet::{
     contract_address_const, testing::{set_account_contract_address, set_contract_address},
@@ -60,8 +60,8 @@ fn test_paint_interaction() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position: TEST_POSITION,
-                color: RED_COLOR
-            }
+                color: RED_COLOR,
+            },
         );
 }
 
@@ -85,8 +85,8 @@ fn test_can_update_pixel() {
                 system_override: Option::None,
                 area_hint: Option::None,
                 position,
-                color
-            }
+                color,
+            },
         );
 
     // Setup PixelUpdate
@@ -98,7 +98,7 @@ fn test_can_update_pixel() {
         app: Option::Some(paint_actions.contract_address),
         text: Option::None,
         timestamp: Option::None,
-        action: Option::None
+        action: Option::None,
     };
 
     set_caller(player_2);
@@ -145,11 +145,11 @@ fn test_update_pixel() {
         timestamp: 0,
         action: 0,
         created_at: 0,
-        updated_at: 0
+        updated_at: 0,
     };
 
     let mut changed_pixel = Pixel {
-        x, y, color, app, owner, text, timestamp, action, created_at: 0, updated_at: 0
+        x, y, color, app, owner, text, timestamp, action, created_at: 0, updated_at: 0,
     };
 
     let pixel_update = PixelUpdate {
@@ -160,7 +160,7 @@ fn test_update_pixel() {
         app: Option::Some(app),
         text: Option::Some(text),
         timestamp: Option::Some(timestamp),
-        action: Option::Some(action)
+        action: Option::Some(action),
     };
 
     let pixel: Pixel = world.read_model((x, y));
@@ -192,7 +192,7 @@ fn test_get_callers_non_core() {
         system_override: Option::Some(system_override),
         area_hint: Option::None,
         position: Position { x: 1, y: 1 },
-        color: 0
+        color: 0,
     };
     let (_player, _system) = get_callers(ref world, has_override);
 }
@@ -208,7 +208,7 @@ fn test_get_callers() {
         system_override: Option::None,
         area_hint: Option::None,
         position: Position { x: 1, y: 1 },
-        color: 0
+        color: 0,
     };
 
     let has_override = DefaultParameters {
@@ -216,7 +216,7 @@ fn test_get_callers() {
         system_override: Option::Some(system_override),
         area_hint: Option::None,
         position: Position { x: 1, y: 1 },
-        color: 0
+        color: 0,
     };
 
     // Test with 0 address, we expect the caller
@@ -262,7 +262,7 @@ fn test_alert_player() {
 
     if let WorldEvent::EventEmitted(event) = event.unwrap() {
         assert(
-            event.selector == Event::<Alert>::selector(world.namespace_hash), 'bad event selector'
+            event.selector == Event::<Alert>::selector(world.namespace_hash), 'bad event selector',
         );
 
         // TODO complete test

@@ -2,15 +2,15 @@ use dojo::model::{ModelStorage};
 use dojo::world::storage::WorldStorage;
 //use dojo::{world::{IWorldDispatcher, IWorldDispatcherTrait}};
 use pixelaw::core::{
-    utils::{Bounds, Position, MAX_DIMENSION},
     models::{
         area::{
-            RTreeNode, RTree, Area, RTreeTrait, RTreeTraitImpl, RTreeNodePackableImpl,
-            ChildrenPackableImpl, BoundsTraitImpl, ROOT_ID
-        }
-    }
+            Area, BoundsTraitImpl, ChildrenPackableImpl, ROOT_ID, RTree, RTreeNode,
+            RTreeNodePackableImpl, RTreeTrait, RTreeTraitImpl,
+        },
+    },
+    utils::{Bounds, MAX_DIMENSION, Position},
 };
-use starknet::{ContractAddress,};
+use starknet::{ContractAddress};
 use super::super::models::area::BoundsTrait;
 
 pub fn remove_area(ref world: WorldStorage, area_id: u64) {
@@ -26,7 +26,7 @@ pub fn add_area(
     bounds: Bounds,
     owner: ContractAddress,
     color: u32,
-    app: ContractAddress
+    app: ContractAddress,
 ) -> Area {
     // Add node in the RTree index
     let id = add_area_node(ref world, bounds);
@@ -42,12 +42,12 @@ pub fn add_area(
 }
 
 pub fn find_area_for_position(
-    ref world: WorldStorage, position: Position, node_hint: Option<u64>
+    ref world: WorldStorage, position: Position, node_hint: Option<u64>,
 ) -> Option<Area> {
     let mut result = Option::None;
 
     let found_area_id = find_node_for_position(
-        ref world, position, node_hint.unwrap_or(ROOT_ID), true
+        ref world, position, node_hint.unwrap_or(ROOT_ID), true,
     );
     if found_area_id != 0 {
         let area: Area = world.read_model(found_area_id);
@@ -57,7 +57,7 @@ pub fn find_area_for_position(
 }
 
 pub fn find_node_for_position(
-    ref world: WorldStorage, position: Position, node_id: u64, has_area: bool
+    ref world: WorldStorage, position: Position, node_id: u64, has_area: bool,
 ) -> u64 {
     let node: RTreeNode = node_id.unpack();
 
@@ -119,7 +119,7 @@ pub fn find_nodes_inside_bounds(
     ref result: Array<u64>,
     search_bounds: Bounds,
     node_id: u64,
-    only_area: bool
+    only_area: bool,
 ) {
     // Load
     let treenode: RTree = world.read_model(node_id);
@@ -192,7 +192,7 @@ pub fn remove_area_node(ref world: WorldStorage, area_id: u64) {
         // BUT we should be shrinking the ancestor nodes recursively!
         world
             .write_model(
-                @RTree { id: parent_node_id, children: parent_updated_children.span().pack() }
+                @RTree { id: parent_node_id, children: parent_updated_children.span().pack() },
             );
     }
 }
@@ -390,7 +390,7 @@ fn check_area_containing(ref world: WorldStorage, bounds: Bounds, node_id: u64) 
 
 // TODO testing
 pub fn find_smallest_node_spanning_bounds(
-    ref world: WorldStorage, bounds: Bounds, node_id: u64, is_area: bool
+    ref world: WorldStorage, bounds: Bounds, node_id: u64, is_area: bool,
 ) -> u64 {
     let node: RTreeNode = node_id.unpack();
     let mut result: u64 = ROOT_ID;
@@ -430,33 +430,33 @@ fn check_area_overlap(ref world: WorldStorage, bounds: Bounds) {
     // Check that each of the 4 corners are not inside of an existing area
     assert(
         find_node_for_position(
-            ref world, Position { x: bounds.x_min, y: bounds.y_min }, node_search_id, true
+            ref world, Position { x: bounds.x_min, y: bounds.y_min }, node_search_id, true,
         ) == 0,
-        'overlap topleft'
+        'overlap topleft',
     );
     assert(
         find_node_for_position(
-            ref world, Position { x: bounds.x_max, y: bounds.y_min }, node_search_id, true
+            ref world, Position { x: bounds.x_max, y: bounds.y_min }, node_search_id, true,
         ) == 0,
-        'overlap topright'
+        'overlap topright',
     );
     assert(
         find_node_for_position(
-            ref world, Position { x: bounds.x_min, y: bounds.y_max }, node_search_id, true
+            ref world, Position { x: bounds.x_min, y: bounds.y_max }, node_search_id, true,
         ) == 0,
-        'overlap bottomleft'
+        'overlap bottomleft',
     );
     assert(
         find_node_for_position(
-            ref world, Position { x: bounds.x_max, y: bounds.y_max }, node_search_id, true
+            ref world, Position { x: bounds.x_max, y: bounds.y_max }, node_search_id, true,
         ) == 0,
-        'overlap bottomright'
+        'overlap bottomright',
     );
 }
 
 // Splits the current node, and those above it if needed
 fn update_ancestors(
-    ref world: WorldStorage, ancestors: Span<u64>, level: usize, updated_children: Array<u64>
+    ref world: WorldStorage, ancestors: Span<u64>, level: usize, updated_children: Array<u64>,
 ) {
     // Step 1: Identify Node to update
     let mut current_node_id = *ancestors[level];
@@ -475,7 +475,7 @@ fn update_ancestors(
             let updated_node_id = current_node.pack();
             world
                 .write_model(
-                    @RTree { id: updated_node_id, children: updated_children.span().pack() }
+                    @RTree { id: updated_node_id, children: updated_children.span().pack() },
                 );
 
             let parent_node_id = *ancestors[level - 1];
@@ -489,7 +489,7 @@ fn update_ancestors(
             // This is root, and the ID has to stay the same (bounds will never change)
             world
                 .write_model(
-                    @RTree { id: current_node_id, children: updated_children.span().pack() }
+                    @RTree { id: current_node_id, children: updated_children.span().pack() },
                 );
         }
 
@@ -507,7 +507,7 @@ fn update_ancestors(
     current_node.bounds = current_spanningbounds;
     let updated_node_id = current_node.pack();
     let sibling_node = RTreeNode {
-        bounds: sibling_spanningbounds, is_leaf: current_node.is_leaf, is_area: false
+        bounds: sibling_spanningbounds, is_leaf: current_node.is_leaf, is_area: false,
     };
     let sibling_node_id = sibling_node.pack();
 
