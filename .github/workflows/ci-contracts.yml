@@ -1,4 +1,5 @@
 name: ci-contracts
+
 on:
   push:
     branches: [main]
@@ -23,7 +24,7 @@ env:
 
 jobs:
   cairofmt:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: software-mansion/setup-scarb@v1
@@ -32,7 +33,7 @@ jobs:
       - run: |
           cd contracts && scarb fmt --check
   core-test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: asdf-vm/actions/setup@v3
@@ -40,5 +41,4 @@ jobs:
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
           asdf install dojo 1.1.2
           asdf global dojo 1.1.2
-          docker run --name dojo-runner -v "$(pwd):/app" -w /app ghcr.io/dojoengine/dojo:v1.1.2 bash -c "apt update && apt install -y git && cd contracts && sozo build"
-
+          cd contracts && sozo test
