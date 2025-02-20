@@ -1,6 +1,6 @@
 
 # Stage 4: Install runtime
-FROM node:22-bookworm-slim AS dojo
+FROM node:23-bookworm-slim AS dojo
 
 SHELL ["/bin/bash", "-c"]
 
