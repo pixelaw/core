@@ -49,19 +49,31 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - uses: depot/build-push-action@v1
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: |
             GENERATE_POPULATED_CORE=true
             DOJO_VERSION=${{ env.DOJO_VERSION }}
           push: true
-          #          FIXME: Currently arm64 is failing on node-gyp compilation
-          platforms: linux/amd64,linux/arm64
-          secrets: |
-            DOJO_KEYSTORE_PASSWORD=${{ secrets.DOJO_KEYSTORE_PASSWORD }}
+          platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+#      - uses: depot/build-push-action@v1
+#        with:
+#          context: .
+#          build-args: |
+#            GENERATE_POPULATED_CORE=true
+#            DOJO_VERSION=${{ env.DOJO_VERSION }}
+#          push: true
+#          #          FIXME: Currently arm64 is failing on node-gyp compilation
+#          platforms: linux/amd64,linux/arm64
+#          secrets: |
+#            DOJO_KEYSTORE_PASSWORD=${{ secrets.DOJO_KEYSTORE_PASSWORD }}
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create GitHub Release
         env:
