@@ -7,8 +7,10 @@ on:
 
 
 env:
+  CARGO_TERM_COLOR: always
   IMAGE_NAME: ${{ github.repository }}
   REGISTRY: ghcr.io
+  RUST_VERSION: 1.81.0
   DEPLOY_NAME: demo
 
 jobs:
