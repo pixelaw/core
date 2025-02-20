@@ -78,8 +78,6 @@ COPY ./contracts/dojo_dev.toml /tmp/dojo_init
 COPY ./contracts/Scarb.toml /tmp/dojo_init
 COPY ./contracts/Scarb.lock /tmp/dojo_init
 
-# Remove the test_helpers from the warmup, not necessary and complicating
-RUN sed -i '/^pixelaw_test_helpers/d' /tmp/dojo_init/Scarb.toml
 
 # Run build separately to cache the dojo/scarb dependencies
 
@@ -87,10 +85,8 @@ RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     cd /tmp/dojo_init && sozo build
 
 RUN mkdir -p /tmp/contracts
-RUN mkdir -p /tmp/test_helpers
 
 COPY ./contracts /tmp/contracts
-COPY ./test_helpers /tmp/test_helpers
 
 WORKDIR /tmp/contracts
 

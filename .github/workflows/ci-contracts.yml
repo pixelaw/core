@@ -5,13 +5,11 @@ on:
     branches: [main]
     paths:
       - "contracts/**"
-      - "test_helpers/**"
       - ".github/workflows/ci-contracts.yml"
   pull_request:
     branches: [main]
     paths:
       - "contracts/**"
-      - "test_helpers/**"
       - ".github/workflows/ci-contracts.yml"
 
 defaults:
