@@ -38,5 +38,7 @@ jobs:
       - run: |
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
           asdf install dojo 1.2.1
+          asdf install scarb 2.9.2
           asdf global dojo 1.2.1
-          cd contracts && which scarb && sozo test
+          asdf global scarb 2.9.2
+          cd contracts && sozo test
