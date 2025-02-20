@@ -1,29 +1,30 @@
-use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
+use dojo::world::{IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 
 use dojo_cairo_test::{
-    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
-    WorldStorageTestTrait
+    ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait,
+    spawn_test_world,
 };
 
 use pixelaw::{
     apps::{
-        paint::app::{paint_actions, IPaintActionsDispatcher, IPaintActionsDispatcherTrait},
+        paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait, paint_actions},
         snake::app::{
-            m_Snake, m_SnakeSegment, ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait,
-            snake_actions
-        }
+            ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait, m_Snake, m_SnakeSegment,
+            snake_actions,
+        },
     },
     core::{
+        actions::{IActionsDispatcher, IActionsDispatcherTrait, actions},
         models::{
-            registry::{m_App, m_AppName, m_CoreActionsAddress}, pixel::{m_Pixel},
-            area::{m_RTree, m_Area}
+            area::{m_Area, m_RTree}, pixel::{m_Pixel},
+            registry::{m_App, m_AppName, m_CoreActionsAddress},
         },
-        actions::{actions, IActionsDispatcher, IActionsDispatcherTrait}, utils::{Position},
-    }
+        utils::{Position},
+    },
 };
 
 
-use starknet::{contract_address_const, ContractAddress};
+use starknet::{ContractAddress, contract_address_const};
 
 
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
@@ -41,7 +42,7 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
 }
 
 pub fn setup_core_initialized() -> (
-    WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress
+    WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress,
 ) {
     let (world, core_actions, player_1, player_2) = setup_core();
 
@@ -52,7 +53,8 @@ pub fn setup_core_initialized() -> (
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: "pixelaw", resources: [
+        namespace: "pixelaw",
+        resources: [
             TestResource::Model(m_Pixel::TEST_CLASS_HASH),
             TestResource::Model(m_App::TEST_CLASS_HASH),
             TestResource::Model(m_AppName::TEST_CLASS_HASH),
@@ -69,7 +71,8 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Contract(actions::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
             TestResource::Contract(paint_actions::TEST_CLASS_HASH),
-        ].span()
+        ]
+            .span(),
     };
 
     ndef
@@ -79,7 +82,8 @@ fn core_contract_defs() -> Span<ContractDef> {
     [
         ContractDefTrait::new(@"pixelaw", @"actions")
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
-    ].span()
+    ]
+        .span()
 }
 
 fn app_contract_defs() -> Span<ContractDef> {
@@ -87,8 +91,9 @@ fn app_contract_defs() -> Span<ContractDef> {
         ContractDefTrait::new(@"pixelaw", @"paint_actions")
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
         ContractDefTrait::new(@"pixelaw", @"snake_actions")
-            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span())
-    ].span()
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
+    ]
+        .span()
 }
 
 
@@ -129,11 +134,11 @@ pub fn setup_apps(world: WorldStorage) -> (IPaintActionsDispatcher, ISnakeAction
 }
 
 pub fn setup_apps_initialized(
-    world: WorldStorage
+    world: WorldStorage,
 ) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
     let (paint_actions, snake_actions): (IPaintActionsDispatcher, ISnakeActionsDispatcher) =
         setup_apps(
-        world
+        world,
     );
     paint_actions.init();
     snake_actions.init();
@@ -149,27 +154,30 @@ pub fn update_test_world(ref world: WorldStorage, namespaces_defs: Span<Namespac
         // TODO make this failsafe
         // world.dispatcher.register_namespace(namespace.clone());
 
-        for r in ns
-            .resources
-            .clone() {
-                match r {
-                    TestResource::Event(ch) => {
-                        world
-                            .dispatcher
-                            .register_event(namespace.clone(), (*ch).try_into().unwrap());
-                    },
-                    TestResource::Model(ch) => {
-                        world
-                            .dispatcher
-                            .register_model(namespace.clone(), (*ch).try_into().unwrap());
-                    },
-                    TestResource::Contract(ch) => {
-                        world
-                            .dispatcher
-                            .register_contract(*ch, namespace.clone(), (*ch).try_into().unwrap());
-                    }
-                }
+        for r in ns.resources.clone() {
+            match r {
+                TestResource::Event(ch) => {
+                    world.dispatcher.register_event(namespace.clone(), (*ch).try_into().unwrap());
+                },
+                TestResource::Model(ch) => {
+                    world.dispatcher.register_model(namespace.clone(), (*ch).try_into().unwrap());
+                },
+                TestResource::Contract(ch) => {
+                    world
+                        .dispatcher
+                        .register_contract(*ch, namespace.clone(), (*ch).try_into().unwrap());
+                },
+                TestResource::Library((_ch, _name, _version)) => {// FIXME somehow cannot call "register_library", for later fix when we're using
+                // libraries world
+                //     .register_library(
+                //         namespace.clone(),
+                //         (*ch).try_into().unwrap(),
+                //         (*name).clone(),
+                //         (*version).clone(),
+                //     );
+                },
             }
+        }
     };
 }
 

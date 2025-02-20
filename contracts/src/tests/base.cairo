@@ -1,6 +1,10 @@
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
+use pixelaw::tests::test_helpers::{
+    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps_initialized,
+    setup_core, setup_core_initialized,
+};
 use pixelaw::{
     apps::{paint::app::{IPaintActionsDispatcherTrait}},
     core::{
@@ -11,10 +15,6 @@ use pixelaw::{
         },
         utils::{DefaultParameters, Position, get_callers},
     },
-};
-use pixelaw_test_helpers::{
-    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps_initialized,
-    setup_core, setup_core_initialized,
 };
 use starknet::{
     contract_address_const, testing::{set_account_contract_address, set_contract_address},

@@ -8,4 +8,5 @@ mod tests {
     mod interop;
     mod pixel_area;
     mod queue;
+    pub mod test_helpers;
 }

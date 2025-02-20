@@ -6,7 +6,7 @@ mod tests {
     use pixelaw::core::models::pixel::{Pixel};
     use pixelaw::core::utils::{DefaultParameters, Position, encode_rgba};
 
-    use pixelaw_test_helpers::{setup_apps_initialized, setup_core_initialized};
+    use pixelaw::tests::test_helpers::{setup_apps_initialized, setup_core_initialized};
     use starknet::{contract_address_const, testing::set_account_contract_address};
     #[test]
     #[available_gas(3000000000)]

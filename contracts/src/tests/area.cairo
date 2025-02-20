@@ -1,3 +1,4 @@
+use pixelaw::tests::test_helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
 use pixelaw::{
     core::{
         actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},
@@ -10,7 +11,6 @@ use pixelaw::{
         utils, utils::{Bounds, Position},
     },
 };
-use pixelaw_test_helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
 
 // Declare constants for bounds and positions
 const BOUNDS_1: Bounds = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };

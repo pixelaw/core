@@ -7,7 +7,7 @@ use pixelaw::core::{
     actions::{IActionsDispatcherTrait}, events::{QueueProcessed, QueueScheduled},
     models::pixel::{Pixel}, utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
-use pixelaw_test_helpers::{
+use pixelaw::tests::test_helpers::{
     drop_all_events, set_caller, setup_apps_initialized, setup_core_initialized,
 };
 use starknet::{testing::{set_block_timestamp}};

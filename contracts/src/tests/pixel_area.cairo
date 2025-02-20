@@ -1,4 +1,5 @@
 use dojo::model::{ModelStorage};
+use pixelaw::tests::test_helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core_initialized};
 use pixelaw::{
     core::{
         actions::{IActionsDispatcherTrait},
@@ -9,7 +10,6 @@ use pixelaw::{
         utils::{Bounds, MAX_DIMENSION, Position},
     },
 };
-use pixelaw_test_helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core_initialized};
 const BOUNDS_1: Bounds = Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 };
 const POSITION_1: Position = Position { x: 1, y: 1 };
 

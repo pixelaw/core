@@ -1,3 +1,4 @@
+use pixelaw::tests::test_helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
 use pixelaw::{
     apps::paint::app::{IPaintActionsDispatcherTrait},
     apps::snake::app::{ISnakeActionsDispatcherTrait},
@@ -6,7 +7,6 @@ use pixelaw::{
         utils::{DefaultParameters, Direction, Position},
     },
 };
-use pixelaw_test_helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
 
 #[test]
 fn test_app_permissions() {
