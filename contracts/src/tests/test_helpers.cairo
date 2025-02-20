@@ -167,7 +167,9 @@ pub fn update_test_world(ref world: WorldStorage, namespaces_defs: Span<Namespac
                         .dispatcher
                         .register_contract(*ch, namespace.clone(), (*ch).try_into().unwrap());
                 },
-                TestResource::Library((_ch, _name, _version)) => {// FIXME somehow cannot call "register_library", for later fix when we're using
+                TestResource::Library((
+                    _ch, _name, _version,
+                )) => { // FIXME somehow cannot call "register_library", for later fix when we're using
                 // libraries world
                 //     .register_library(
                 //         namespace.clone(),
