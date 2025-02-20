@@ -41,4 +41,4 @@ jobs:
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
           asdf install dojo 1.2.1
           asdf global dojo 1.2.1
-          cd contracts && sozo test
+          cd contracts && which scarb && sozo test
