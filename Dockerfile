@@ -1,6 +1,12 @@
 
-# Stage 4: Install runtime
-FROM node:23-bookworm-slim AS dojo
+# Since glibc in bookworm is too old for dojo, have to make our own nodejs based on ubuntu
+# TODO: Replace FROM node:23-bookworm-slim AS dojo
+
+FROM sitespeedio/node:ubuntu-24-04-nodejs-22.13.0 AS nodejs
+RUN npm install -g yarn
+
+
+FROM nodejs AS dojo
 
 SHELL ["/bin/bash", "-c"]
 
