@@ -168,7 +168,7 @@ init_actions() {
 zip_databases() {
 
   echo "zip_databases"
-  pushd $OUT
+  pushd $STORAGE_DIR
   zip -1 -r katana_db.zip katana_db/
 
   popd
