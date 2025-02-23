@@ -11,7 +11,7 @@ mappings = {}
 rpc_url = "http://localhost:5050/"
 account_address = "0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec"
 private_key = "0xc5b2fcab997346f3ea1c00b002ecf6f382c5f9c9659a3894eb783c5320f912"
-world_address = "0x2bf4d3aa0dced89d37d8c3b4ff6a05895c0af32ff3baf9b02abf8504e53eaad"
+world_address = "0x005a247732e3a59737fea5504ed776c6e79eae8b6b2317402ab36b6d3cc508e6"
 
 [writers]
 "pixelaw-App" = ["pixelaw-actions"]

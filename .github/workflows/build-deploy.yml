@@ -70,3 +70,30 @@ jobs:
           TAG=${{ github.ref }}
           VERSION=${TAG#refs/tags/}
           gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
+
+  populateImage:
+    runs-on: ubuntu-24.04
+    needs: buildImage
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull the built image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+
+      - name: Populate the Docker image
+        run: |
+          # Add your commands to modify the Docker image here
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:populateed
+
+      - name: Push the populated image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:populated

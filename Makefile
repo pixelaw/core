@@ -7,6 +7,16 @@ CORE_VERSION = $(shell cat VERSION)
 DOJO_VERSION = $(shell cat DOJO_VERSION)
 
 
+docker_build_populate:
+	echo $$private_key && \
+	docker build -f populate.Dockerfile -t $(REPO):$(CORE_VERSION)-populated \
+	--build-arg DOJO_VERSION=$(DOJO_VERSION)  \
+	--build-arg GENERATE_POPULATED_CORE=false  \
+	--secret id=DOJO_KEYSTORE_PASSWORD \
+  --network=host \
+   --pull=false \
+	--progress=plain .
+
 docker_build:
 	echo $$private_key && \
 	docker build -t $(REPO):$(CORE_VERSION) -t $(REPO):latest \

@@ -1,7 +1,7 @@
 
-export STORAGE_DIR="/pixelaw/storage/$WORLD_ADDRESS"
+export STORAGE_DIR="/pixelaw/storage"
 export LOG_DIR="/pixelaw/log"
-export STORAGE_INIT_DIR="/pixelaw/storage_init/$WORLD_ADDRESS"
+export STORAGE_INIT_DIR="/pixelaw/storage_init"
 export KATANA_DB_ZIP="$STORAGE_INIT_DIR/katana_db.zip"
 export KATANA_DB="$STORAGE_DIR/katana_db"
 export TORII_DB="$STORAGE_DIR/torii.sqlite"

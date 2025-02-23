@@ -9,8 +9,5 @@ start_katana
 
 start_torii
 
-populate
+echo "Now running "
 
-kill_katana_torii
-
-zip_databases

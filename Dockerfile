@@ -67,6 +67,13 @@ ENV PATH="/root/.starkli/bin:${PATH}"
 RUN starkliup -v ${STARKLI_VERSION}
 
 
+
+# Stage 2: Put the webapp files in place
+FROM ghcr.io/pixelaw/web:0.5.3 AS web
+
+FROM ghcr.io/pixelaw/server:0.5.1 AS server
+
+
 # Stage 4: Setup runtime
 FROM dojo AS builder
 
@@ -79,22 +86,21 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
                 curl --fail http://localhost:8080 || \
                 exit 1
 
-COPY ./dojo_init /tmp/dojo_init
-COPY ./contracts/dojo_dev.toml /tmp/dojo_init
-COPY ./contracts/Scarb.toml /tmp/dojo_init
-COPY ./contracts/Scarb.lock /tmp/dojo_init
+COPY ./dojo_init /pixelaw/contracts/dojo_init
+COPY ./contracts/dojo_dev.toml /pixelaw/contracts/dojo_init
+COPY ./contracts/Scarb.toml /pixelaw/contracts/dojo_init
+COPY ./contracts/Scarb.lock /pixelaw/contracts/dojo_init
 
 
 # Run build separately to cache the dojo/scarb dependencies
 
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
-    cd /tmp/dojo_init && sozo build
+    cd /pixelaw/contracts/dojo_init && sozo build
 
-RUN mkdir -p /tmp/contracts
 
-COPY ./contracts /tmp/contracts
+COPY ./contracts /pixelaw/contracts
 
-WORKDIR /tmp/contracts
+WORKDIR /pixelaw/contracts
 
 ## Generate storage_init
 RUN \
@@ -103,25 +109,9 @@ RUN \
     bash scripts/create_snapshot_docker.sh dev
 
 
-ARG GENERATE_POPULATED_CORE=false
-RUN \
-    --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
-    --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
-    bash scripts/create_snapshot_docker.sh dev-pop ${GENERATE_POPULATED_CORE}
-
-
-
-# Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.5.3 AS web
-
-FROM ghcr.io/pixelaw/server:0.5.1 AS server
-
-
-FROM dojo AS runner
+# Install the final system
 
 WORKDIR /pixelaw
-COPY --from=builder /root/ /root/
-COPY --from=builder /pixelaw .
 COPY --from=web /app/dist /pixelaw/web/
 COPY --from=server /app server/
 

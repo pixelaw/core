@@ -3,17 +3,9 @@ set -euxo pipefail
 
 echo $1
 PROFILE=$1
-GENERATE_POPULATED_CORE=${2:-"false"}
-
-## We stop execution if PROFILE is "dev-pop" and GENERATE_POPULATED_CORE is false or not set
-if [ "$PROFILE" = "dev-pop" ] && [ "$GENERATE_POPULATED_CORE" != "true" ]; then
-  echo "Exiting because PROFILE is dev-pop and GENERATE_POPULATED_CORE is not true or is unset."
-  exit 0
-fi
 
 export DOJO_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
 export STARKNET_KEYSTORE_PASSWORD=$(cat /run/secrets/DOJO_KEYSTORE_PASSWORD)
-
 
 source scripts/lib/functions.sh
 
@@ -21,9 +13,7 @@ scripts/create_snapshot.sh $PROFILE
 
 export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
-STORAGE_INIT_WORLD="/pixelaw/storage_init/$WORLD_ADDRESS"
-
-echo $WORLD_ADDRESS
+STORAGE_INIT_WORLD="/pixelaw/storage_init"
 
 mkdir -p $STORAGE_INIT_WORLD
 
