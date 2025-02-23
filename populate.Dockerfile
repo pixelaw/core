@@ -8,7 +8,7 @@ RUN \
     unzip /pixelaw/storage_init/katana_db.zip -d /pixelaw/storage && \
     cd /pixelaw/contracts && \
     export WORLD_ADDRESS=$(jq -r '.world.address' manifest_dev.json) && \
-    scripts/populate.sh && \
+    STORAGE_DIR=/pixelaw/storage scripts/populate.sh && \
     rm -rf /pixelaw/storage
 
 
