@@ -11,7 +11,7 @@ FROM nodejs AS dojo
 SHELL ["/bin/bash", "-c"]
 
 ARG ASDF_VERSION="v0.14.1"
-ARG SCARB_VERSION="2.7.0"
+ARG SCARB_VERSION="2.9.2"
 ARG DOJO_VERSION="1.2.1"
 ARG STARKLI_VERSION="0.3.5"
 
@@ -34,11 +34,6 @@ RUN apt-get update && \
 
 RUN yarn global add ts-node pm2
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-
-#RUN if [ -z "$DOJO_VERSION" ]; then echo "DOJO_VERSION argument is required" && exit 1; fi
 RUN \
     git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
     chmod +x $HOME/.asdf/asdf.sh && \
