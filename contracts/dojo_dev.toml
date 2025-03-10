@@ -19,7 +19,6 @@ world_address = "0x005a247732e3a59737fea5504ed776c6e79eae8b6b2317402ab36b6d3cc50
 "pixelaw-AppUser" = ["pixelaw-actions"]
 "pixelaw-CoreActionsAddress" = ["pixelaw-actions"]
 "pixelaw-QueueScheduled" = ["pixelaw-actions"]
-"pixelaw-QueueProcessed" = ["pixelaw-actions"]
 "pixelaw-Alert" = ["pixelaw-actions"]
 "pixelaw-Pixel" = [
   "pixelaw-actions",

@@ -128,15 +128,12 @@ pub trait IActions<T> {
 pub mod actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
-    use pixelaw::core::events::{Alert, QueueProcessed, QueueScheduled};
+    use pixelaw::core::events::{Alert, QueueScheduled};
     use pixelaw::core::models::area::{
         Area, BoundsTraitImpl, ROOT_ID, RTree, RTreeNodePackableImpl, RTreeTraitImpl,
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
-
-
     use pixelaw::core::models::registry::{App, CoreActionsAddress};
-
     use pixelaw::core::utils::{Bounds, Position};
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use super::{IActions};
@@ -211,11 +208,10 @@ pub mod actions {
             calldata: Span<felt252>,
         ) {
             let mut world = self.world(@"pixelaw");
-            let event: QueueProcessed = super::queue::process_queue(
+            super::queue::process_queue(
                 ref world, id, timestamp, called_system, selector, calldata,
             );
 
-            world.emit_event(@event);
         }
 
 
