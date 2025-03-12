@@ -16,7 +16,7 @@ use pixelaw::{
     core::{
         actions::{IActionsDispatcher, IActionsDispatcherTrait, actions},
         models::{
-            area::{m_Area, m_RTree}, pixel::{m_Pixel},queue::{m_QueueItem},
+            area::{m_Area, m_RTree}, pixel::{m_Pixel}, queue::{m_QueueItem},
             registry::{m_App, m_AppName, m_CoreActionsAddress},
         },
         utils::{Position},

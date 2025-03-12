@@ -107,7 +107,7 @@ pub fn update_pixel(
     }
     // Store the Pixel
     world.write_model(@pixel);
-    
+
     // Call on_post_update if the pixel has an app
     if pixel.app != contract_address_const::<0>() {
         let mut caller_app: App = world.read_model(for_system);

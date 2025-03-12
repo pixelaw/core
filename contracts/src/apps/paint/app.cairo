@@ -328,7 +328,7 @@ pub mod paint_actions {
 
             // Update color of the pixel
             // TODO check results?
-            let _result  = core_actions
+            let _result = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -340,13 +340,12 @@ pub mod paint_actions {
                         text: Option::None,
                         app: Option::Some(system),
                         owner: Option::Some(player),
-                        action: Option::None
+                        action: Option::None,
                     },
                     Option::None,
                     false,
-                ).unwrap();
-
-
+                )
+                .unwrap();
 
             let FADE_SECONDS = 0;
 

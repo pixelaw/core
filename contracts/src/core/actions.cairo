@@ -211,7 +211,6 @@ pub mod actions {
             super::queue::process_queue(
                 ref world, id, timestamp, called_system, selector, calldata,
             );
-
         }
 
 
