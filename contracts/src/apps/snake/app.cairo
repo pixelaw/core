@@ -132,7 +132,6 @@ pub trait ISnakeActions<T> {
 
 #[dojo::contract]
 pub mod snake_actions {
-    use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
     use dojo::world::storage::WorldStorage;
     use dojo::world::{IWorldDispatcherTrait};
@@ -155,23 +154,6 @@ pub mod snake_actions {
     use super::{APP_ICON, APP_KEY};
     use super::{Snake, SnakeSegment};
 
-
-    #[derive(Copy, Drop, Serde)]
-    #[dojo::event]
-    pub struct Died {
-        #[key]
-        owner: ContractAddress,
-        x: u16,
-        y: u16,
-    }
-
-    #[derive(Copy, Drop, Serde)]
-    #[dojo::event]
-    pub struct Moved {
-        #[key]
-        pub owner: ContractAddress,
-        pub direction: Direction,
-    }
 
     const SNAKE_MAX_LENGTH: u8 = 255;
 
@@ -363,11 +345,6 @@ pub mod snake_actions {
                 if snake.length == 0 {
                     let position = Position { x: first_segment.x, y: first_segment.y };
                     core_actions.alert_player(position, snake.owner, 'Snake died here');
-
-                    world
-                        .emit_event(
-                            @Died { owner: snake.owner, x: first_segment.x, y: first_segment.y },
-                        );
 
                     // Delete the snake
                     world.erase_model(@snake);

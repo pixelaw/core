@@ -65,7 +65,7 @@ pub mod paint_actions {
 
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
 
-    use pixelaw::core::models::pixel::{Pixel, PixelUpdate};
+    use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         DefaultParameters, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
@@ -190,7 +190,7 @@ pub mod paint_actions {
 
             // TODO: Load Paint App Settings like the fade step time
             // For example for the cooldown feature
-            let COOLDOWN_SECS = 5;
+            let COOLDOWN_SECS = 0;
 
             // Check if 5 seconds have passed or if the sender is the owner
             assert!(
@@ -316,19 +316,19 @@ pub mod paint_actions {
             // If the color is 0,0,0, fading is done.
             if r == 0 && g == 0 && b == 0 {
                 world.erase_model(@pixel);
-                //delete!(world, (pixel));
                 return;
             }
 
             // Fade the color
-            let FADE_STEP = 5;
+            let FADE_STEP = 50;
 
             let new_color = encode_rgba(
                 subu8(r, FADE_STEP), subu8(g, FADE_STEP), subu8(b, FADE_STEP), a,
             );
 
             // Update color of the pixel
-            let _ = core_actions
+            // TODO check results?
+            let _result  = core_actions
                 .update_pixel(
                     player,
                     system,
@@ -340,13 +340,15 @@ pub mod paint_actions {
                         text: Option::None,
                         app: Option::Some(system),
                         owner: Option::Some(player),
-                        action: Option::None // Not using this feature for paint
+                        action: Option::None
                     },
                     Option::None,
                     false,
-                );
+                ).unwrap();
 
-            let FADE_SECONDS = 4;
+
+
+            let FADE_SECONDS = 0;
 
             // Implement fading by scheduling a new fade call
             let queue_timestamp = starknet::get_block_timestamp() + FADE_SECONDS;
@@ -355,11 +357,16 @@ pub mod paint_actions {
             let THIS_CONTRACT_ADDRESS = get_contract_address();
 
             // Prepare calldata
-            // Calldata[0]: Calling player
+            // Calldata[0]: player_override option:None
+            calldata.append(0x0);
             calldata.append(player.into());
 
             // Calldata[1]: Calling system
+            calldata.append(0x0);
             calldata.append(THIS_CONTRACT_ADDRESS.into());
+
+            // Calldata[2]: Area Hint
+            calldata.append(0x1);
 
             // Calldata[2,3]: Position[x,y]
             calldata.append(position.x.into());

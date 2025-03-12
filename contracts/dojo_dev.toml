@@ -30,3 +30,4 @@ world_address = "0x005a247732e3a59737fea5504ed776c6e79eae8b6b2317402ab36b6d3cc50
 "pixelaw-RTree" = ["pixelaw-actions"]
 "pixelaw-Area" = ["pixelaw-actions"]
 "pixelaw-SnakeSegment" = ["pixelaw-snake_actions"]
+

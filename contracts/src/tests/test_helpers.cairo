@@ -16,7 +16,7 @@ use pixelaw::{
     core::{
         actions::{IActionsDispatcher, IActionsDispatcherTrait, actions},
         models::{
-            area::{m_Area, m_RTree}, pixel::{m_Pixel},
+            area::{m_Area, m_RTree}, pixel::{m_Pixel},queue::{m_QueueItem},
             registry::{m_App, m_AppName, m_CoreActionsAddress},
         },
         utils::{Position},
@@ -63,6 +63,7 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Area::TEST_CLASS_HASH),
             TestResource::Model(m_Snake::TEST_CLASS_HASH),
             TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
+            TestResource::Model(m_QueueItem::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueProcessed::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),

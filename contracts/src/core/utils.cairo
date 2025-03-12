@@ -6,7 +6,7 @@ use pixelaw::core::models::{
     pixel::{Pixel},
     {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
 };
-use starknet::{ContractAddress, contract_address_const, get_contract_address, get_tx_info};
+use starknet::{ContractAddress, contract_address_const, get_caller_address,get_contract_address, get_tx_info};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
@@ -120,16 +120,19 @@ pub fn get_callers(
     let mut system = contract_address_const::<0>();
 
     let core_address = get_core_actions_address(ref world);
+    // let caller_contract = get_caller_address();
     let caller_contract = get_contract_address();
-
+    
     if let Option::Some(override) = params.player_override {
-        assert(caller_contract == core_address, 'only core can override');
+        // TODO this doesnt work when queue
+        assert(get_caller_address() == core_address, 'only core can override');
         player = override;
     } else {
         player = get_tx_info().unbox().account_contract_address;
     }
+
     if let Option::Some(override) = params.system_override {
-        assert(caller_contract == core_address, 'only core can override');
+        assert(get_caller_address() == core_address, 'only core can override');
         system = override;
     } else {
         system = caller_contract;
@@ -185,7 +188,7 @@ pub fn subu8(nr: u8, sub: u8) -> u8 {
     if nr >= sub {
         return nr - sub;
     } else {
-        return 0x000000FF;
+        return 0;
     }
 }
 
