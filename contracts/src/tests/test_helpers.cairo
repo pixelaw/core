@@ -67,8 +67,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueProcessed::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
-            TestResource::Event(snake_actions::e_Moved::TEST_CLASS_HASH),
-            TestResource::Event(snake_actions::e_Died::TEST_CLASS_HASH),
             TestResource::Contract(actions::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
             TestResource::Contract(paint_actions::TEST_CLASS_HASH),

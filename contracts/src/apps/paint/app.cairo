@@ -55,7 +55,7 @@ pub trait IPaintActions<T> {
 }
 
 pub const APP_KEY: felt252 = 'paint';
-const APP_ICON: felt252 = 'U+1F58C';
+const APP_ICON: felt252 = 0xf09f8ea8;   // 🎨
 const PIXELS_PER_FELT: u16 = 7;
 
 #[dojo::contract]

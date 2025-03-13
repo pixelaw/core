@@ -87,7 +87,7 @@ pub struct SnakeSegment {
 }
 
 pub const APP_KEY: felt252 = 'snake';
-pub const APP_ICON: felt252 = 'U+1F40D';
+const APP_ICON: felt252 = 0xf09f908d;   // 🐍
 
 /// Interface for Snake actions.
 #[starknet::interface]
