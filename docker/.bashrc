@@ -18,7 +18,7 @@ alias server_start="/pixelaw/scripts/server_start.sh"
 
 alias deploy_local="/pixelaw/tools/local_deploy.sh"
 
-alias klog="tail -f $KATANA_LOG -n 50"
+alias klog="tail -f $KATANA_LOG -n 50 | grep -v \"DEBUG\""
 alias tlog="tail -f $TORII_LOG -n 50"
 alias slog="tail -f $SERVER_LOG -n 50"
 

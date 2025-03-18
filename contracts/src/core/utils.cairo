@@ -68,7 +68,7 @@ pub struct Bounds {
 }
 
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde, Introspect, Debug)]
 pub struct DefaultParameters {
     pub player_override: Option<ContractAddress>,
     pub system_override: Option<ContractAddress>,

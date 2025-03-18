@@ -2,7 +2,7 @@
 .idea
 .env
 target/
-
+bindings/
 contracts/out
 contracts/db
 contracts/target

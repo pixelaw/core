@@ -58,7 +58,7 @@ pub impl PixelUpdateResultTraitImpl of PixelUpdateResultTrait<PixelUpdateResult>
     }
 }
 
-#[derive(PartialEq, Debug, Default, Copy, Drop, Serde)]
+#[derive(PartialEq, Debug, Default, Copy, Drop, Serde, Introspect)]
 pub struct PixelUpdate {
     pub x: u16, // only 15 bits used, to a max of 32767
     pub y: u16, // only 15 bits used, to a max of 32767
