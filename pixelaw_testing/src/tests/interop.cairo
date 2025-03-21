@@ -1,7 +1,6 @@
-use pixelaw::tests::test_helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
+use pixelaw_testing::helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
 use pixelaw::{
-    apps::paint::app::{IPaintActionsDispatcherTrait},
-    apps::snake::app::{ISnakeActionsDispatcherTrait},
+    apps::paint::{IPaintActionsDispatcherTrait}, apps::snake::{ISnakeActionsDispatcherTrait},
     core::{
         models::{area::{ChildrenPackableImpl, RTreeNodePackableImpl}},
         utils::{DefaultParameters, Direction, Position},

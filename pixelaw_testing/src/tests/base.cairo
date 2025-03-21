@@ -1,12 +1,12 @@
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
-use pixelaw::tests::test_helpers::{
+use pixelaw_testing::helpers::{
     RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps_initialized,
     setup_core, setup_core_initialized,
 };
 use pixelaw::{
-    apps::{paint::app::{IPaintActionsDispatcherTrait}},
+    apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
         actions::{CORE_ACTIONS_KEY, IActionsDispatcherTrait}, events::{Alert},
         models::{

@@ -1,4 +1,4 @@
-use pixelaw::tests::test_helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
+use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
 use pixelaw::{
     core::{
         actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},

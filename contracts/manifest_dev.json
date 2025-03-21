@@ -2095,7 +2095,7 @@
         {
           "type": "impl",
           "name": "Actions",
-          "interface_name": "pixelaw::apps::paint::app::IPaintActions"
+          "interface_name": "pixelaw::apps::paint::IPaintActions"
         },
         {
           "type": "enum",
@@ -2279,7 +2279,7 @@
         },
         {
           "type": "interface",
-          "name": "pixelaw::apps::paint::app::IPaintActions",
+          "name": "pixelaw::apps::paint::IPaintActions",
           "items": [
             {
               "type": "function",
@@ -2485,7 +2485,7 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::paint::app::paint_actions::Event",
+          "name": "pixelaw::apps::paint::paint_actions::Event",
           "kind": "enum",
           "variants": [
             {
@@ -2572,7 +2572,7 @@
         {
           "type": "impl",
           "name": "ActionsImpl",
-          "interface_name": "pixelaw::apps::snake::app::ISnakeActions"
+          "interface_name": "pixelaw::apps::snake::ISnakeActions"
         },
         {
           "type": "enum",
@@ -2772,7 +2772,7 @@
         },
         {
           "type": "interface",
-          "name": "pixelaw::apps::snake::app::ISnakeActions",
+          "name": "pixelaw::apps::snake::ISnakeActions",
           "items": [
             {
               "type": "function",
@@ -2958,7 +2958,7 @@
         },
         {
           "type": "event",
-          "name": "pixelaw::apps::snake::app::snake_actions::Event",
+          "name": "pixelaw::apps::snake::snake_actions::Event",
           "kind": "enum",
           "variants": [
             {

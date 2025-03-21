@@ -1,0 +1,41 @@
+[package]
+cairo-version = "=2.9.2"
+name = "pixelaw_testing"
+version = "0.6.19"
+homepage = "https://github.com/pixelaw/core"
+edition = "2024_07"
+
+[cairo]
+sierra-replace-ids = true
+
+[dependencies]
+pixelaw = { path = "../contracts" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.3.0" }
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.3.0" }
+starknet = "2.9.2"
+cairo_test = "=2.9.2"
+
+
+[[target.starknet-contract]]
+build-external-contracts = [
+  "dojo::world::world_contract::world",
+  "pixelaw::core::models::pixel::m_Pixel",
+  "pixelaw::core::models::area::m_Area",
+  "pixelaw::core::models::queue::m_QueueItem",
+  "pixelaw::core::models::registry::m_App",
+  "pixelaw::core::models::registry::m_AppName",
+  "pixelaw::core::models::registry::m_CoreActionsAddress",
+  "pixelaw::core::models::area::m_RTree",
+  "pixelaw::apps::snake::m_Snake",
+  "pixelaw::apps::snake::m_SnakeSegment",
+  "pixelaw::core::events::e_QueueScheduled",
+  "pixelaw::core::events::e_Alert",
+  "pixelaw::core::actions::actions",
+  "pixelaw::apps::paint::paint_actions",
+  "pixelaw::apps::snake::snake_actions"
+]
+
+
+
+
+[lib]

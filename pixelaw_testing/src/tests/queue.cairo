@@ -2,12 +2,12 @@ use core::{poseidon::poseidon_hash_span};
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
-use pixelaw::apps::snake::app::{ISnakeActionsDispatcherTrait};
+use pixelaw::apps::snake::{ISnakeActionsDispatcherTrait};
 use pixelaw::core::{
     actions::{IActionsDispatcherTrait}, events::{QueueProcessed, QueueScheduled},
     models::pixel::{Pixel}, utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
-use pixelaw::tests::test_helpers::{
+use pixelaw_testing::helpers::{
     drop_all_events, set_caller, setup_apps_initialized, setup_core_initialized,
 };
 use starknet::{testing::{set_block_timestamp}};

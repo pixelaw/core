@@ -7,8 +7,8 @@ use dojo_cairo_test::{
 
 use pixelaw::{
     apps::{
-        paint::app::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait, paint_actions},
-        snake::app::{
+        paint::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait, paint_actions},
+        snake::{
             ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait, m_Snake, m_SnakeSegment,
             snake_actions,
         },
@@ -65,7 +65,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
             TestResource::Model(m_QueueItem::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
-            TestResource::Event(pixelaw::core::events::e_QueueProcessed::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
             TestResource::Contract(actions::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
