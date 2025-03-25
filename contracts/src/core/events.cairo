@@ -15,15 +15,6 @@ pub struct QueueScheduled {
 
 #[derive(Drop, Debug, PartialEq, Serde)]
 #[dojo::event]
-pub struct QueueProcessed {
-    #[key]
-    pub id: felt252,
-    pub result: felt252,
-}
-
-
-#[derive(Drop, Debug, PartialEq, Serde)]
-#[dojo::event]
 pub struct Alert {
     #[key]
     pub position: Position,
