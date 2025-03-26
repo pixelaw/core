@@ -29,6 +29,11 @@ jobs:
         run: |
           echo DOJO_VERSION=$(cat DOJO_VERSION) >> "$GITHUB_ENV"
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -88,7 +93,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
