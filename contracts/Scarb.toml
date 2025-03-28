@@ -25,6 +25,7 @@ sort-module-level-items = true
 [[target.starknet-contract]]
 sierra = true
 build-external-contracts = ["dojo::world::world_contract::world"]
+allowed-libfuncs-list.name = "experimental"
 
 [features]
 default = []
