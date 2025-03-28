@@ -8,7 +8,7 @@ use starknet::{ContractAddress};
 pub struct PlayerPosition {
     #[key]
     pub position: Position,
-    pub player: felt252,
+    pub player: ContractAddress,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -18,7 +18,7 @@ pub struct Player {
     pub owner: ContractAddress,
     pub name: felt252,
     pub position: Position,
-    pub text: felt252,
+    pub emoji: felt252,
     pub pixel_original_text: felt252,
     pub pixel_original_app: ContractAddress,
 }
@@ -49,7 +49,7 @@ pub trait IPlayerActions<T> {
     /// * `default_params` - The default parameters including position and color.
     fn interact(ref self: T, default_params: DefaultParameters);
 
-    fn configure(ref self: T, default_params: DefaultParameters, text: Emoji);
+    fn configure(ref self: T, default_params: DefaultParameters, emoji: Emoji);
 }
 
 pub const APP_KEY: felt252 = 'player';
@@ -69,7 +69,7 @@ pub mod player_actions {
     use super::IPlayerActions;
 
     use super::{APP_ICON, APP_KEY};
-    use super::{Player};
+    use super::{Player, PlayerPosition};
 
     #[abi(embed_v0)]
     impl Actions of IPlayerActions<ContractState> {
@@ -122,7 +122,7 @@ pub mod player_actions {
         }
 
         fn configure(
-            ref self: ContractState, default_params: DefaultParameters, text: Emoji,
+            ref self: ContractState, default_params: DefaultParameters, emoji: Emoji,
         ) { // TODO
         }
 
@@ -169,6 +169,13 @@ pub mod player_actions {
             let mut moveto_pixel: Pixel = world.read_model((new_pos.x, new_pos.y));
 
             // TODO Check if there is a Player on the destination pixel (then cannot move there)
+            let moveto_player: PlayerPosition = world.read_model((new_pos.x, new_pos.y));
+
+            if moveto_player.player != contract_address_const::<0x0>() {
+                // Another Player is already here. Whoops.
+                // TODO for now panic so it doesnt cost gas
+                panic!("Another player is here");
+            }
 
             // Move to the new position
             core_actions
@@ -180,7 +187,7 @@ pub mod player_actions {
                         y: new_pos.y,
                         color: Option::None,
                         timestamp: Option::None,
-                        text: Option::Some(player.text),
+                        text: Option::Some(player.emoji),
                         app: Option::Some(get_contract_address()),
                         owner: Option::None,
                         action: Option::None,
