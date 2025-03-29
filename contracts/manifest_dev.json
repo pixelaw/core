@@ -2516,8 +2516,8 @@
       ]
     },
     {
-      "address": "0x6b8008420aed25802c73b059ab8bdee13fc35cb8dcace016911cec30d9b50f2",
-      "class_hash": "0x464f7266a093cc698408077d4d68369b1eb3ba7359130df8da9992407db7738",
+      "address": "0x149a06a9b5868fb947e069cd78406b80e4ea649aab7e6ffa00d1c1159312e1c",
+      "class_hash": "0x7ad7e767ce10fe919ec796b6378e2883dfe8d992a156805decf521bc1f53f09",
       "abi": [
         {
           "type": "impl",
@@ -2830,7 +2830,7 @@
                   "type": "pixelaw::core::utils::DefaultParameters"
                 },
                 {
-                  "name": "text",
+                  "name": "emoji",
                   "type": "pixelaw::core::utils::Emoji"
                 }
               ],
@@ -3484,15 +3484,15 @@
     },
     {
       "members": [],
-      "class_hash": "0x432fd672c5a432c9f406960430ae8a8c21576f5029cf309a5c98b71bcb4c024",
+      "class_hash": "0x395b62128cde2e0fefc308e6d657daef30c3d8622214e67717dcabd57587ba4",
       "tag": "pixelaw-Player",
       "selector": "0x30a1b371016270e1d0c33e176d9d07ab01d801d8b1f0e1fd1d45534137f2ce"
     },
     {
       "members": [],
-      "class_hash": "0x3f8166fd27369a7152b3561508043c31f7bae168a0da0f0308827a87202201",
-      "tag": "pixelaw-PlayerPosition",
-      "selector": "0x73eb330bcc1a4f81c4fc81954739bd7f92036a846d6d039e1ce7fea19b9ed1c"
+      "class_hash": "0x6de0aeb49279527fc665c92e927b54bc6c0c24c59046fe24e87730c4a434cce",
+      "tag": "pixelaw-PositionPlayer",
+      "selector": "0x7a71117629f37cebec5ec1f4930ee80bddaa90188845ffce91d2e3b001c429c"
     },
     {
       "members": [],

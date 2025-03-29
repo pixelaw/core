@@ -64,7 +64,7 @@ RUN starkliup -v ${STARKLI_VERSION}
 
 
 # Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/web:0.5.3 AS web
+FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
 
 FROM ghcr.io/pixelaw/server:0.5.1 AS server
 
@@ -107,7 +107,7 @@ RUN \
 # Install the final system
 
 WORKDIR /pixelaw
-COPY --from=web /app/dist /pixelaw/web/
+COPY --from=web /pixelaw/web/ /pixelaw/web/
 COPY --from=server /app server/
 
 COPY docker/scripts/ /pixelaw/scripts/

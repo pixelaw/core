@@ -5,7 +5,7 @@ use starknet::{ContractAddress};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
-pub struct PlayerPosition {
+pub struct PositionPlayer {
     #[key]
     pub position: Position,
     pub player: ContractAddress,
@@ -17,10 +17,13 @@ pub struct Player {
     #[key]
     pub owner: ContractAddress,
     pub name: felt252,
-    pub position: Position,
     pub emoji: felt252,
-    pub pixel_original_text: felt252,
+    pub position: Position,
+    pub color: u32,
+    pub pixel_original_color: u32,
     pub pixel_original_app: ContractAddress,
+    pub pixel_original_text: felt252,
+    pub pixel_original_action: felt252,
 }
 
 
@@ -69,7 +72,7 @@ pub mod player_actions {
     use super::IPlayerActions;
 
     use super::{APP_ICON, APP_KEY};
-    use super::{Player, PlayerPosition};
+    use super::{Player, PositionPlayer};
 
     #[abi(embed_v0)]
     impl Actions of IPlayerActions<ContractState> {
@@ -124,6 +127,7 @@ pub mod player_actions {
         fn configure(
             ref self: ContractState, default_params: DefaultParameters, emoji: Emoji,
         ) { // TODO
+            println!("TODO Configure")
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -137,47 +141,94 @@ pub mod player_actions {
         /// * `default_params` - The default parameters including position and color.
         fn interact(ref self: ContractState, default_params: DefaultParameters) {
             let mut world = self.world(@"pixelaw");
-            let position = default_params.position;
+            let clicked_position = default_params.position;
 
             let core_actions = get_core_actions(ref world);
             let (playerAddress, system) = get_callers(ref world, default_params);
 
-            // Load the Pixel
-            let mut pixel: Pixel = world.read_model((position.x, position.y));
-
             // Load Player
             let mut player: Player = world.read_model(playerAddress);
+            let mut positionPlayer: PositionPlayer = world.read_model(player.position);
 
             // Check if Player exists yet
-            // TODO its either a bug or feature... when Player is on 0,0 it can "teleport"
+            // Its either a bug or feature... when Player is on 0,0 it can "teleport"
             if player.position.x == 0 && player.position.y == 0 {
-                // Player is probably new, just handle that
-                player.position = position;
+                // just try to create the Player on the Pixel clicked, if it panics its ok
+                core_actions
+                    .update_pixel(
+                        playerAddress,
+                        get_contract_address(),
+                        PixelUpdate {
+                            x: clicked_position.x,
+                            y: clicked_position.y,
+                            color: Option::Some(default_params.color),
+                            timestamp: Option::None,
+                            text: Option::Some(0xefb88ff09fa78de2808de29980efb88f), // ️👶
+                            app: Option::Some(get_contract_address()),
+                            owner: Option::None,
+                            action: Option::None,
+                        },
+                        Option::None,
+                        false,
+                    )
+                    .unwrap();
+
+                player.position = clicked_position;
+                player.color = default_params.color;
+                player.emoji = 0xefb88ff09fa78de2808de29980efb88f; // ️👶
                 world.write_model(@player);
+
+                positionPlayer.player = playerAddress;
+                world.write_model(@positionPlayer);
+
+                println!("Created new Player");
                 return;
             }
 
             // Determine if Player is on the Pixel clicked or not
-            if (position == player.position) {
-                core_actions.alert_player(position, playerAddress, 'Interacted with Player :-)');
-                return;
+            if (clicked_position == player.position) {
+                // TODO this is not supposed to happen, most likely a UI malfunction
+                // since the action is supposed to be "configure" for the Player's Pixel
+                panic!("Supposed to use 'configure'");
             }
 
-            let new_pos = move_towards(player.position, position);
+            // Restore the previous pixel
+            // We do this first so we can overwrite player.pixel_original_* later
+            core_actions
+                .update_pixel(
+                    playerAddress,
+                    get_contract_address(),
+                    PixelUpdate {
+                        x: player.position.x,
+                        y: player.position.y,
+                        color: Option::Some(player.pixel_original_color),
+                        timestamp: Option::None,
+                        text: Option::Some(player.pixel_original_text),
+                        app: Option::Some(player.pixel_original_app),
+                        owner: Option::None,
+                        action: Option::Some(player.pixel_original_action),
+                    },
+                    Option::None, // TODO area_hint
+                    false,
+                )
+                .unwrap();
+
+            let new_pos = move_towards(player.position, clicked_position);
 
             // Load pixel we want to move to
             let mut moveto_pixel: Pixel = world.read_model((new_pos.x, new_pos.y));
 
-            // TODO Check if there is a Player on the destination pixel (then cannot move there)
-            let moveto_player: PlayerPosition = world.read_model((new_pos.x, new_pos.y));
+            // Check if there is a Player on the destination pixel (then cannot move there)
+            let mut moveto_playerpos: PositionPlayer = world.read_model(new_pos);
 
-            if moveto_player.player != contract_address_const::<0x0>() {
+            if moveto_playerpos.player != contract_address_const::<0x0>() {
                 // Another Player is already here. Whoops.
                 // TODO for now panic so it doesnt cost gas
                 panic!("Another player is here");
             }
 
             // Move to the new position
+            // TODO Provide better feedback if it fails (maybe because of a hook)
             core_actions
                 .update_pixel(
                     playerAddress,
@@ -185,12 +236,12 @@ pub mod player_actions {
                     PixelUpdate {
                         x: new_pos.x,
                         y: new_pos.y,
-                        color: Option::None,
+                        color: Option::Some(player.color),
                         timestamp: Option::None,
                         text: Option::Some(player.emoji),
                         app: Option::Some(get_contract_address()),
                         owner: Option::None,
-                        action: Option::None,
+                        action: Option::Some('configure'),
                     },
                     Option::None,
                     false,
@@ -200,31 +251,22 @@ pub mod player_actions {
             player.position = new_pos;
             player.pixel_original_text = moveto_pixel.text;
             player.pixel_original_app = moveto_pixel.app;
+            player.pixel_original_color = moveto_pixel.color;
+            player.pixel_original_action = moveto_pixel.action;
 
             world.write_model(@player);
 
-            // Restore the previous pixel
-            let _ = core_actions
-                .update_pixel(
-                    playerAddress,
-                    get_contract_address(),
-                    PixelUpdate {
-                        x: pixel.x,
-                        y: pixel.y,
-                        color: Option::None,
-                        timestamp: Option::None,
-                        text: Option::Some(player.pixel_original_text),
-                        app: Option::Some(player.pixel_original_app),
-                        owner: Option::None,
-                        action: Option::None,
-                    },
-                    Option::None, // TODO area_hint
-                    false,
-                );
+            // Write the old and new PositionPlayer
+            moveto_playerpos.player = playerAddress;
+            world.write_model(@moveto_playerpos);
 
-            println!("Clicked outside Player, moving!")
+            positionPlayer.player = contract_address_const::<0x0>();
+            world.write_model(@positionPlayer);
+
+            println!("Moving Player!")
         }
     }
+
     fn move_towards(player: Position, click: Position) -> Position {
         let mut new_x = player.x;
         let mut new_y = player.y;

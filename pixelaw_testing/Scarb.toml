@@ -26,13 +26,16 @@ build-external-contracts = [
   "pixelaw::core::models::registry::m_AppName",
   "pixelaw::core::models::registry::m_CoreActionsAddress",
   "pixelaw::core::models::area::m_RTree",
+  "pixelaw::apps::player::m_Player",
+  "pixelaw::apps::player::m_PositionPlayer",
   "pixelaw::apps::snake::m_Snake",
   "pixelaw::apps::snake::m_SnakeSegment",
   "pixelaw::core::events::e_QueueScheduled",
   "pixelaw::core::events::e_Alert",
   "pixelaw::core::actions::actions",
   "pixelaw::apps::paint::paint_actions",
-  "pixelaw::apps::snake::snake_actions"
+  "pixelaw::apps::snake::snake_actions",
+  "pixelaw::apps::player::player_actions"
 ]
 
 

@@ -15,7 +15,7 @@ use starknet::{contract_address_const, testing::set_account_contract_address};
 #[available_gas(3000000000)]
 fn test_playthrough() {
     let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, snake_actions) = setup_apps_initialized(world);
+    let (paint_actions, snake_actions, _player_actions) = setup_apps_initialized(world);
 
     let SNAKE_COLOR = 0xFF00FF;
 

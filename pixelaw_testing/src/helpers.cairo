@@ -12,6 +12,10 @@ use pixelaw::{
             ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait, m_Snake, m_SnakeSegment,
             snake_actions,
         },
+        player::{
+            IPlayerActionsDispatcher, IPlayerActionsDispatcherTrait, m_Player, m_PositionPlayer,
+            player_actions,
+        },
     },
     core::{
         actions::{IActionsDispatcher, IActionsDispatcherTrait, actions},
@@ -64,11 +68,14 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Snake::TEST_CLASS_HASH),
             TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
             TestResource::Model(m_QueueItem::TEST_CLASS_HASH),
+            TestResource::Model(m_Player::TEST_CLASS_HASH),
+            TestResource::Model(m_PositionPlayer::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
             TestResource::Contract(actions::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
             TestResource::Contract(paint_actions::TEST_CLASS_HASH),
+            TestResource::Contract(player_actions::TEST_CLASS_HASH),
         ]
             .span(),
     };
@@ -89,6 +96,8 @@ fn app_contract_defs() -> Span<ContractDef> {
         ContractDefTrait::new(@"pixelaw", @"paint_actions")
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
         ContractDefTrait::new(@"pixelaw", @"snake_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
+        ContractDefTrait::new(@"pixelaw", @"player_actions")
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
     ]
         .span()
@@ -119,7 +128,9 @@ pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, Contr
 }
 
 
-pub fn setup_apps(world: WorldStorage) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
+pub fn setup_apps(
+    world: WorldStorage,
+) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
     world.sync_perms_and_inits(app_contract_defs());
 
     let (paint_actions_address, _) = world.dns(@"paint_actions").unwrap();
@@ -128,20 +139,26 @@ pub fn setup_apps(world: WorldStorage) -> (IPaintActionsDispatcher, ISnakeAction
     let (snake_actions_address, _) = world.dns(@"snake_actions").unwrap();
     let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
-    (paint_actions, snake_actions)
+    let (player_actions_address, _) = world.dns(@"player_actions").unwrap();
+    let player_actions = IPlayerActionsDispatcher { contract_address: player_actions_address };
+
+    (paint_actions, snake_actions, player_actions)
 }
 
 pub fn setup_apps_initialized(
     world: WorldStorage,
-) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher) {
-    let (paint_actions, snake_actions): (IPaintActionsDispatcher, ISnakeActionsDispatcher) =
+) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
+    let (
+        paint_actions, snake_actions, player_actions,
+    ): (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) =
         setup_apps(
         world,
     );
     paint_actions.init();
     snake_actions.init();
+    player_actions.init();
 
-    (paint_actions, snake_actions)
+    (paint_actions, snake_actions, player_actions)
 }
 
 

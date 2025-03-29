@@ -4,6 +4,7 @@ pub mod helpers;
 mod tests {
     mod app_paint;
     mod app_snake;
+    mod app_player;
     mod area;
     mod base;
     mod interop;

@@ -51,7 +51,7 @@ fn test_register_new_app() {
 #[test]
 fn test_paint_interaction() {
     let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions) = setup_apps_initialized(world);
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
 
     paint_actions
         .interact(
@@ -69,7 +69,7 @@ fn test_paint_interaction() {
 #[test]
 fn test_can_update_pixel() {
     let (world, core_actions, player_1, player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions) = setup_apps_initialized(world);
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
 
     // Scenario:
     // Check if Player2 can change Player1's pixel
@@ -240,7 +240,7 @@ fn test_get_callers() {
 #[test]
 fn test_alert_player() {
     let (world, core_actions, player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions) = setup_apps_initialized(world);
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
 
     // Prep params
     let position = Position { x: 12, y: 12 };

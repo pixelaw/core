@@ -12,7 +12,7 @@ use starknet::{contract_address_const, testing::set_account_contract_address};
 fn test_paint_actions() {
     // Deploy everything
     let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions) = setup_apps_initialized(world);
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);
