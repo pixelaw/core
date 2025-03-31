@@ -11,7 +11,7 @@ pub struct PositionPlayer {
     pub player: ContractAddress,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Debug, Copy, Drop, Serde, Introspect)]
 #[dojo::model]
 pub struct Player {
     #[key]
@@ -124,10 +124,17 @@ pub mod player_actions {
         ) { // No action
         }
 
-        fn configure(
-            ref self: ContractState, default_params: DefaultParameters, emoji: Emoji,
-        ) { // TODO
-            println!("TODO Configure")
+        fn configure(ref self: ContractState, default_params: DefaultParameters, emoji: Emoji) {
+            // TODO maybe check if the pixel clicked was the actual player position? maybe not..
+
+            let mut world = self.world(@"pixelaw");
+
+            let (playerAddress, _system) = get_callers(ref world, default_params);
+
+            // Load Player
+            let mut player: Player = world.read_model(playerAddress);
+            player.emoji = emoji.value;
+            world.write_model(@player);
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -144,7 +151,7 @@ pub mod player_actions {
             let clicked_position = default_params.position;
 
             let core_actions = get_core_actions(ref world);
-            let (playerAddress, system) = get_callers(ref world, default_params);
+            let (playerAddress, _system) = get_callers(ref world, default_params);
 
             // Load Player
             let mut player: Player = world.read_model(playerAddress);

@@ -52,9 +52,9 @@ pub enum Direction {
     Down: (),
 }
 
-#[derive(Debug, Serde, Copy, Drop)]
+#[derive(Debug, Copy, Drop, Serde, Introspect)]
 pub struct Emoji {
-    value: felt252,
+    pub value: felt252,
 }
 
 #[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
