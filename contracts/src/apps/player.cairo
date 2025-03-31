@@ -126,15 +126,39 @@ pub mod player_actions {
 
         fn configure(ref self: ContractState, default_params: DefaultParameters, emoji: Emoji) {
             // TODO maybe check if the pixel clicked was the actual player position? maybe not..
-
             let mut world = self.world(@"pixelaw");
+
+            let core_actions = get_core_actions(ref world);
 
             let (playerAddress, _system) = get_callers(ref world, default_params);
 
             // Load Player
             let mut player: Player = world.read_model(playerAddress);
+            //let mut positionPlayer: PositionPlayer = world.read_model(player.position);
+
+            // Overwrite the emoji on the player
             player.emoji = emoji.value;
             world.write_model(@player);
+
+            // Overwrite the text of the pixel
+            core_actions
+                .update_pixel(
+                    playerAddress,
+                    get_contract_address(),
+                    PixelUpdate {
+                        x: player.position.x,
+                        y: player.position.y,
+                        color: Option::None,
+                        timestamp: Option::None,
+                        text: Option::Some(emoji.value),
+                        app: Option::None,
+                        owner: Option::None,
+                        action: Option::None,
+                    },
+                    Option::None,
+                    false,
+                )
+                .unwrap();
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -220,19 +244,27 @@ pub mod player_actions {
                 )
                 .unwrap();
 
-            let new_pos = move_towards(player.position, clicked_position);
+            let moveto_pos = move_towards(player.position, clicked_position);
 
             // Load pixel we want to move to
-            let mut moveto_pixel: Pixel = world.read_model((new_pos.x, new_pos.y));
+            let mut moveto_pixel: Pixel = world.read_model((moveto_pos.x, moveto_pos.y));
 
             // Check if there is a Player on the destination pixel (then cannot move there)
-            let mut moveto_playerpos: PositionPlayer = world.read_model(new_pos);
+            let mut moveto_playerpos: PositionPlayer = world.read_model(moveto_pos);
 
             if moveto_playerpos.player != contract_address_const::<0x0>() {
                 // Another Player is already here. Whoops.
                 // TODO for now panic so it doesnt cost gas
                 panic!("Another player is here");
             }
+
+            player.position = moveto_pos;
+            player.pixel_original_text = moveto_pixel.text;
+            player.pixel_original_app = moveto_pixel.app;
+            player.pixel_original_color = moveto_pixel.color;
+            player.pixel_original_action = moveto_pixel.action;
+
+            world.write_model(@player);
 
             // Move to the new position
             // TODO Provide better feedback if it fails (maybe because of a hook)
@@ -241,8 +273,8 @@ pub mod player_actions {
                     playerAddress,
                     get_contract_address(),
                     PixelUpdate {
-                        x: new_pos.x,
-                        y: new_pos.y,
+                        x: moveto_pos.x,
+                        y: moveto_pos.y,
                         color: Option::Some(player.color),
                         timestamp: Option::None,
                         text: Option::Some(player.emoji),
@@ -254,14 +286,6 @@ pub mod player_actions {
                     false,
                 )
                 .unwrap();
-
-            player.position = new_pos;
-            player.pixel_original_text = moveto_pixel.text;
-            player.pixel_original_app = moveto_pixel.app;
-            player.pixel_original_color = moveto_pixel.color;
-            player.pixel_original_action = moveto_pixel.action;
-
-            world.write_model(@player);
 
             // Write the old and new PositionPlayer
             moveto_playerpos.player = playerAddress;
