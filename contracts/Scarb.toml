@@ -1,5 +1,5 @@
 [package]
-cairo-version = "=2.9.2"
+cairo-version = "=2.9.4"
 name = "pixelaw"
 version = "0.6.24"
 homepage = "https://github.com/pixelaw/core"
@@ -9,13 +9,13 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.3.0" }
-starknet = "2.9.2"
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.4.0" }
+starknet = "2.9.4"
 
 [dev-dependencies]
-#cairo_test = "2.9.2"
+#cairo_test = "2.9.4"
 #pixelaw_test_helpers = { path = "../test_helpers" }
-#dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.3.0" }
+#dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.4.0" }
 
 [tool.fmt]
 sort-module-level-items = true
