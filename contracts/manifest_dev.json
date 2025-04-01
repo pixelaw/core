@@ -1,7 +1,7 @@
 {
   "world": {
-    "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
-    "address": "0x5a247732e3a59737fea5504ed776c6e79eae8b6b2317402ab36b6d3cc508e6",
+    "class_hash": "0x75fc75bcd1a7f8b4bf64b74978b0f89c8cee44bb755c1dae6f82284756451ec",
+    "address": "0x1d09b5e00f376337603943fc12715e439e91c0039f353b1cc48bb278dfa99d5",
     "seed": "pixelaw",
     "name": "pixelaw",
     "entrypoints": [
@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x74d62337ea2319f3e65d75cda97bc8691a3e0e6c5efc12ceb3e982c3caf62f8",
-      "class_hash": "0x55422c132e78eb30d4e09ac1bba77b25fca2adb86c23ae960434afbedc4ba31",
+      "address": "0x52cf765ad094d9edb5787f47cfd3a0682ff35006995e8146b55e73c3c600be4",
+      "class_hash": "0x57045b4433b2cbae0e955c27d092cd263446ddfc31a010708f23794bcbbabdb",
       "abi": [
         {
           "type": "impl",
@@ -2039,8 +2039,8 @@
       ]
     },
     {
-      "address": "0x6e711360660572983b4cec43e0efbc22144904db0be0e31acd4e80014a81b57",
-      "class_hash": "0x4ce5738cae4033afa7bd0ab5ca5dc26bb7cfa8379a01b09b2cfc4133fefc50d",
+      "address": "0x791c2b4d55dd46c2c99354170313decde21604a2f649081775f1f2c07311c37",
+      "class_hash": "0x133c76fbb8ec66c375cde15b9b7fae247f8e3c6195f43ec2baca29e93d871e2",
       "abi": [
         {
           "type": "impl",
@@ -2516,8 +2516,8 @@
       ]
     },
     {
-      "address": "0x3ea24b6502e3580b658299bb36d82b1842308e842322315e0649caed781eca5",
-      "class_hash": "0x7ad7d4f99a6597c7a80d320c138709cc986451abe53013b8e1d98489948c0f8",
+      "address": "0x2bf086779665ff1b2b4c84d73084bca9fa8ab83e14a6cd22c7e36b2c093001b",
+      "class_hash": "0x59b49acc75cd97801e44445d3cc9af55c6636e8f1620fae0dd97af9bf0fd445",
       "abi": [
         {
           "type": "impl",
@@ -2967,8 +2967,8 @@
       ]
     },
     {
-      "address": "0x6f45c80c05395f5bb354db77566f7ab475481259b46601ba4326b2332ddacbe",
-      "class_hash": "0x5f45b612fc5a83e7c178ec1ec1a56eecf4bb9a986ca1288d24308b3c5777b29",
+      "address": "0x22d9b4160410f17fc5cdfc216cab42a8ee4870e6e8122f76ef7b61443c379eb",
+      "class_hash": "0x207e81098ffac63fb0c1dfd4229ffaba6b882f26aab2151cf24545366ed8489",
       "abi": [
         {
           "type": "impl",
@@ -3442,79 +3442,79 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x69c806377ce49ee16eb6611f8a2918cab562ffd3e572fc57974956daf68ef77",
+      "class_hash": "0x3277207fce5103f94e14d6a4ff3bff9c2167d84c4d8cee75e4c5d7c4240589c",
       "tag": "pixelaw-App",
       "selector": "0x3650456503601ce448928ac87c54e3a6e95e76d725a59c95c7201324c9b2b74"
     },
     {
       "members": [],
-      "class_hash": "0x5b2db85c691a4a3583660598d506a61050156f8ae224fe1c03de114a65500f9",
+      "class_hash": "0x7afa370c6115105b8e50bfbea180c34f19d9815c53788bb8b5159fffdadbd69",
       "tag": "pixelaw-AppName",
       "selector": "0x3b816829f5d924b5acc1c44d28b6b61b4edd94e62444c536b2bdc85c0e70a2a"
     },
     {
       "members": [],
-      "class_hash": "0x5944128880d7bcd6e3efb666cf27b674f2494beeafcc0f1c26a87a84aa62eef",
+      "class_hash": "0x31952b38270b14ad63a2c7dd656b72e38cc63cce19e13684f35307c0e432769",
       "tag": "pixelaw-AppUser",
       "selector": "0x4eda3c525958eca36164ba6f96e2b7591304838960197934ac8ae0a4b08b20f"
     },
     {
       "members": [],
-      "class_hash": "0x1c5ccb0f02d7239e6873da890f8b60609e9b09df0ffa48132198a984da05e",
+      "class_hash": "0x32f32c05a337949bf091c11221b8d629e30e7f3e9de7baf8e367bb651ac7485",
       "tag": "pixelaw-Area",
       "selector": "0x41f22f1725b6e571bd66653e79fd700d80cc35c56f9dc5d663802e57478194"
     },
     {
       "members": [],
-      "class_hash": "0x6336b1cf57d40512193891849a69e7e128b697578061068430078c560983265",
+      "class_hash": "0x5e84ac0ba7ad9f83bcd5a9623562b22170daa59f96ff2c7d941274364ac2763",
       "tag": "pixelaw-CoreActionsAddress",
       "selector": "0x5379e1ce3a70cb70f1e96dae1b142164574f33d4e32cebdb965b5aec30222c5"
     },
     {
       "members": [],
-      "class_hash": "0x6504f1f88a814ef873367365f678125b36c5325f057d591dd748267a8bbc806",
+      "class_hash": "0x39e50141cbf5917855043d556ca7df6f6cf6ccbb4b78190c34ed0632854958b",
       "tag": "pixelaw-Dummy",
       "selector": "0x252cb2801257ae924f3f4741d013509d14d57145968637863e6278424d0759c"
     },
     {
       "members": [],
-      "class_hash": "0x2123dffc88b2c9fa4a96d047535f41ab43cd5d6eabbf3053666b7bfe013298",
+      "class_hash": "0x758a60dcbbda6e92d82a7925437569a68fdf6fa18edb77e6a8e415105f70125",
       "tag": "pixelaw-Pixel",
       "selector": "0x7e607b2fbb4cfb3fb9d1258fa2ff3aa94f17b3820e42bf1e6a43e2de3f5772e"
     },
     {
       "members": [],
-      "class_hash": "0x395b62128cde2e0fefc308e6d657daef30c3d8622214e67717dcabd57587ba4",
+      "class_hash": "0x22bfded3a57f902a7b0d3d1cae64ff4cce3e26fa48499c585c6a6933f083437",
       "tag": "pixelaw-Player",
       "selector": "0x30a1b371016270e1d0c33e176d9d07ab01d801d8b1f0e1fd1d45534137f2ce"
     },
     {
       "members": [],
-      "class_hash": "0x6de0aeb49279527fc665c92e927b54bc6c0c24c59046fe24e87730c4a434cce",
+      "class_hash": "0x5f04e7685186dc6b6a38d75dc6f38672144b6703bdea6547612136532cf7661",
       "tag": "pixelaw-PositionPlayer",
       "selector": "0x7a71117629f37cebec5ec1f4930ee80bddaa90188845ffce91d2e3b001c429c"
     },
     {
       "members": [],
-      "class_hash": "0x3b0515dfc0d09a190026b1880720cce4dba0beeea1c70ceb271cd8334b52161",
+      "class_hash": "0x57bb10e6c057ac469ce11f1770286ed9f4737e4460679777842a2ea49c72fbc",
       "tag": "pixelaw-QueueItem",
       "selector": "0x549a17f23ab80595d9abd4d989a3d4bf0c1987ebc08ad48aecab0f1e8c311b4"
     },
     {
       "members": [],
-      "class_hash": "0x670fbb3ca4a5cc0e78e92951c7dd3013d453d820be28b50fb444c27d48d299",
+      "class_hash": "0x5cf7901005db5b4088cceca22e648d1f4c6d350b73651f4a437d1c4f532367b",
       "tag": "pixelaw-RTree",
       "selector": "0x3baaf9fe25823e8928b6fc6400e28e98d4b7618ff56faf269a11f3400a1c105"
     },
     {
       "members": [],
-      "class_hash": "0x73ac593426727a6f9c24318ee9dc8c6b14d4baaaa471acbbed757db4dc37ce4",
+      "class_hash": "0x766eaf879a10707a7d9c95575bf3d21068c6f4971a680ce170ddbde0157e9c1",
       "tag": "pixelaw-Snake",
       "selector": "0x62b876d4cd94e88d2c363c3515ce2c9e8af1badad47a8dc96966543970658c1"
     },
     {
       "members": [],
-      "class_hash": "0x56c4a4bf147324133ddcd1410b2997d9495fbcfc9a6f5c98ca53b9b64eef82a",
+      "class_hash": "0x345b3a4154730abba3588a18a4bab010ef83ce5750c07608cebb51e17b0aa79",
       "tag": "pixelaw-SnakeSegment",
       "selector": "0x302de0d87f8997cb65a4f7edb9a792706446961826bd4a16cbfb47fa09146ed"
     }
@@ -3522,15 +3522,16 @@
   "events": [
     {
       "members": [],
-      "class_hash": "0x2d78ab0a0a6c395def4742913ada143407a416b43af4946ab417b2505de9d77",
+      "class_hash": "0x16ec6175a9b597b0c3ac5b70f8a41f7d54e0d291f4fa93e0e436cfead9a8aa7",
       "tag": "pixelaw-Alert",
       "selector": "0x2a2938533e310a064aa2181f2cbb5914d80ac492be60f23fd358a49f47c26a2"
     },
     {
       "members": [],
-      "class_hash": "0x3ae8e6d38248c75be91fc47863a14e2999cb6416bf85ce6f97231ccd8f4a9ea",
+      "class_hash": "0x1c581acd62b7983967827adb6d5578d12c515544f6eee1a5044336525baeb09",
       "tag": "pixelaw-QueueScheduled",
       "selector": "0x32e74bc9762cc0dcdb6c7b67b35ded5b22a785e7c924673d6163369e6c6f769"
     }
   ],
   "external_contracts": []
+}
