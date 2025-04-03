@@ -10,4 +10,6 @@ katana \
   --dev.accounts 10 \
   --block-time 2000 \
   --db-dir $KATANA_DB \
-  --http.cors_origins "*"
+  --http.cors_origins "*" \
+  --explorer \
+  --explorer.addr 0.0.0.0
