@@ -8,6 +8,4 @@ contracts/db
 contracts/target
 contracts/manifest_dev.json
 
-bindings/
-
 *.keystore.json
