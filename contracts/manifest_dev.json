@@ -1313,7 +1313,7 @@
   "contracts": [
     {
       "address": "0x52cf765ad094d9edb5787f47cfd3a0682ff35006995e8146b55e73c3c600be4",
-      "class_hash": "0x57045b4433b2cbae0e955c27d092cd263446ddfc31a010708f23794bcbbabdb",
+      "class_hash": "0x67ed50c56d0cd630a5b8e41258257a822b591c0ec3c9273ec89cd3b50027de2",
       "abi": [
         {
           "type": "impl",
@@ -1534,11 +1534,11 @@
             },
             {
               "name": "NotAllowed",
-              "type": "()"
+              "type": "pixelaw::core::models::pixel::PixelUpdate"
             },
             {
               "name": "Error",
-              "type": "core::felt252"
+              "type": "(pixelaw::core::models::pixel::PixelUpdate, core::felt252)"
             }
           ]
         },
@@ -2040,7 +2040,7 @@
     },
     {
       "address": "0x791c2b4d55dd46c2c99354170313decde21604a2f649081775f1f2c07311c37",
-      "class_hash": "0x133c76fbb8ec66c375cde15b9b7fae247f8e3c6195f43ec2baca29e93d871e2",
+      "class_hash": "0x20a7586e0128d7ebef88f4d025081d879172f2df94f1ab7bd3467834d7384e7",
       "abi": [
         {
           "type": "impl",
@@ -2517,7 +2517,7 @@
     },
     {
       "address": "0x2bf086779665ff1b2b4c84d73084bca9fa8ab83e14a6cd22c7e36b2c093001b",
-      "class_hash": "0x59b49acc75cd97801e44445d3cc9af55c6636e8f1620fae0dd97af9bf0fd445",
+      "class_hash": "0x534bc50e95c222752b7e4cc5686ad693813bc9876682bfb41494fca82efe3bf",
       "abi": [
         {
           "type": "impl",
@@ -2968,7 +2968,7 @@
     },
     {
       "address": "0x22d9b4160410f17fc5cdfc216cab42a8ee4870e6e8122f76ef7b61443c379eb",
-      "class_hash": "0x207e81098ffac63fb0c1dfd4229ffaba6b882f26aab2151cf24545366ed8489",
+      "class_hash": "0x6e14561b92cb2f44bdb7a2bfa2e97a1c6fa2d1551099ea3979a4c7e39419fd1",
       "abi": [
         {
           "type": "impl",

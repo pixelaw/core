@@ -101,12 +101,6 @@ pub trait ISnakeActions<T> {
     );
 
 
-    /// Initializes the Snake App.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    fn init(ref self: T);
 
     /// Starts or interacts with a snake.
     ///
@@ -157,6 +151,12 @@ pub mod snake_actions {
 
     const SNAKE_MAX_LENGTH: u8 = 255;
 
+        fn dojo_init(ref self: ContractState) {
+            let mut world = self.world(@"pixelaw");
+            let core_actions = get_core_actions(ref world);
+
+            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        }
 
     /// Implementation of the Snake actions.
     #[abi(embed_v0)]
@@ -195,19 +195,6 @@ pub mod snake_actions {
         ) { // No action
         }
 
-        /// Initializes the Snake App.
-        ///
-        /// Registers the app with core actions
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        fn init(ref self: ContractState) {
-            let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(ref world);
-
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-        }
 
 
         /// Starts a new snake or changes the direction of an existing snake.

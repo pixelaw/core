@@ -29,12 +29,6 @@ pub struct Player {
 
 #[starknet::interface]
 pub trait IPlayerActions<T> {
-    /// Initializes the Player App.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    fn init(ref self: T);
 
     fn on_pre_update(
         ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
@@ -73,22 +67,17 @@ pub mod player_actions {
 
     use super::{APP_ICON, APP_KEY};
     use super::{Player, PositionPlayer};
-
-    #[abi(embed_v0)]
-    impl Actions of IPlayerActions<ContractState> {
-        /// Initializes the Player App.
-        ///
-        /// This function registers the app with core actions
-        ///
-        /// # Arguments
-        ///
-        /// * `world` - A reference to the world dispatcher.
-        fn init(ref self: ContractState) {
+        fn dojo_init(ref self: ContractState) {
             let mut world = self.world(@"pixelaw");
             let core_actions = get_core_actions(ref world);
 
             core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
         }
+    #[abi(embed_v0)]
+    impl Actions of IPlayerActions<ContractState> {
+
+
+
 
         /// Hook called before a pixel update.
         ///
