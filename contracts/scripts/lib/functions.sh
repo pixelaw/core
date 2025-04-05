@@ -30,7 +30,7 @@ rpc["mainnet"]="https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
 
 export STARKNET_RPC="${rpc[$PROFILE]}"
 
-export WORLD_ADDRESS=$(jq -r '.world.address' manifest_$PROFILE.json)
+export WORLD_ADDRESS=$(cat ../WORLD_ADDRESS)
 
 clear_katana() {
     echo "clear_katana"
@@ -153,15 +153,15 @@ sozo_migrate() {
 
     sleep 1
 }
-
-init_actions() {
-    echo "init_actions"
-    local actions=$(jq -r '.contracts[] | .tag' $MANIFEST)
-
-    for action in ${actions[@]}; do
-        sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait $action init
-    done
-}
+#
+#init_actions() {
+#    echo "init_actions"
+#    local actions=$(jq -r '.contracts[] | .tag' $MANIFEST)
+#
+#    for action in ${actions[@]}; do
+#        sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait $action init
+#    done
+#}
 
 
 

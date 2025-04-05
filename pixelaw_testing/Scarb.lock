@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "dojo"
 version = "1.4.0"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#e4702479ec9cf0f01d6927d36f0a3910cf6cb3e3"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
 dependencies = [
  "dojo_plugin",
 ]
@@ -12,7 +12,7 @@ dependencies = [
 [[package]]
 name = "dojo_cairo_test"
 version = "1.0.12"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#e4702479ec9cf0f01d6927d36f0a3910cf6cb3e3"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
 dependencies = [
  "dojo",
 ]
@@ -20,18 +20,18 @@ dependencies = [
 [[package]]
 name = "dojo_plugin"
 version = "2.9.4"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#e4702479ec9cf0f01d6927d36f0a3910cf6cb3e3"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
 
 [[package]]
 name = "pixelaw"
-version = "0.6.22"
+version = "0.6.27"
 dependencies = [
  "dojo",
 ]
 
 [[package]]
 name = "pixelaw_testing"
-version = "0.6.22"
+version = "0.6.27"
 dependencies = [
  "dojo",
  "dojo_cairo_test",

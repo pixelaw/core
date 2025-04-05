@@ -22,7 +22,7 @@ start_katana
 
 sozo_rebuild
 
-export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
+#export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
 start_torii
 
@@ -30,7 +30,7 @@ sozo_migrate
 
 
 
-init_actions
+#init_actions
 
 if [ "$PROFILE" == "dev-pop" ]; then
     populate

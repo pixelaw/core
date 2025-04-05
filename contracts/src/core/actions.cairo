@@ -14,12 +14,6 @@ pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[starknet::interface]
 pub trait IActions<T> {
-    /// Initializes the Pixelaw actions model.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    fn init(ref self: T);
 
 
     // Check if and how a Pixel can be updated, based on given params
@@ -138,23 +132,20 @@ pub mod actions {
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use super::{IActions};
 
+    fn dojo_init(ref self: ContractState) {
+        let mut world = self.world(@"pixelaw");
+
+        world
+            .write_model(
+                @CoreActionsAddress { key: super::CORE_ACTIONS_KEY, value: get_contract_address() },
+            );
+
+        // Initialize root RTree
+        world.write_model(@RTree { id: ROOT_ID, children: 1310762 });
+    }
 
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
-        fn init(ref self: ContractState) {
-            let mut world = self.world(@"pixelaw");
-
-            world
-                .write_model(
-                    @CoreActionsAddress {
-                        key: super::CORE_ACTIONS_KEY, value: get_contract_address(),
-                    },
-                );
-
-            // Initialize root RTree
-            world.write_model(@RTree { id: ROOT_ID, children: 1310762 });
-        }
-
         fn can_update_pixel(
             ref self: ContractState,
             for_player: ContractAddress,

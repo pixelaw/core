@@ -101,7 +101,6 @@ pub trait ISnakeActions<T> {
     );
 
 
-
     /// Starts or interacts with a snake.
     ///
     /// # Arguments
@@ -151,12 +150,12 @@ pub mod snake_actions {
 
     const SNAKE_MAX_LENGTH: u8 = 255;
 
-        fn dojo_init(ref self: ContractState) {
-            let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(ref world);
+    fn dojo_init(ref self: ContractState) {
+        let mut world = self.world(@"pixelaw");
+        let core_actions = get_core_actions(ref world);
 
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-        }
+        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+    }
 
     /// Implementation of the Snake actions.
     #[abi(embed_v0)]
@@ -194,7 +193,6 @@ pub mod snake_actions {
             player_caller: ContractAddress,
         ) { // No action
         }
-
 
 
         /// Starts a new snake or changes the direction of an existing snake.

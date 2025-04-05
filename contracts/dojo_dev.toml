@@ -33,6 +33,9 @@ world_address = "0x01d09b5e00f376337603943fc12715e439e91c0039f353b1cc48bb278dfa9
 "pixelaw-Player" = ["pixelaw-player_actions"]
 "pixelaw-PositionPlayer" = ["pixelaw-player_actions"]
 
+[migration]
+order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions"]
+
 [init_call_args]
 "pixelaw-actions" = []
 "pixelaw-snake_actions" = []

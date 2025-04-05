@@ -92,7 +92,8 @@ pub fn update_pixel(
 
     // println!("update_pixel {:?}", update_result);
     let new_pixel_update = match update_result {
-        PixelUpdateResult::Error(_) | PixelUpdateResult::NotAllowed => { return update_result; },
+        PixelUpdateResult::Error((_, _)) => { return update_result; },
+        PixelUpdateResult::NotAllowed => { return update_result; },
         PixelUpdateResult::Ok(result) => result,
     };
 

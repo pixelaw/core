@@ -11,7 +11,7 @@ source scripts/lib/functions.sh
 
 scripts/create_snapshot.sh $PROFILE
 
-export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
+#export WORLD_ADDRESS=$(cat $MANIFEST | jq -r '.world.address')
 
 STORAGE_INIT_WORLD="/pixelaw/storage_init"
 

@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x52cf765ad094d9edb5787f47cfd3a0682ff35006995e8146b55e73c3c600be4",
-      "class_hash": "0x67ed50c56d0cd630a5b8e41258257a822b591c0ec3c9273ec89cd3b50027de2",
+      "address": "0x5386eb3153d91bd740a4e17933f26056ce10faddf9a06f56a2c23c0c4794cb5",
+      "class_hash": "0x52757fb1282d1defd4d2d934323b73772fe79d5025a9fa648aebec64168802a",
       "abi": [
         {
           "type": "impl",
@@ -1364,6 +1364,13 @@
               "state_mutability": "view"
             }
           ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
         },
         {
           "type": "impl",
@@ -1662,13 +1669,6 @@
           "items": [
             {
               "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
               "name": "can_update_pixel",
               "inputs": [
                 {
@@ -1906,13 +1906,6 @@
           ]
         },
         {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
-        },
-        {
           "type": "impl",
           "name": "WorldProviderImpl",
           "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
@@ -2024,7 +2017,7 @@
       "tag": "pixelaw-actions",
       "selector": "0x16928a49cfd8cf14e9f41e9d8f873890d1ab7d23b9a312d8a72f4031159876f",
       "systems": [
-        "init",
+        "dojo_init",
         "can_update_pixel",
         "update_pixel",
         "process_queue",
@@ -2039,8 +2032,8 @@
       ]
     },
     {
-      "address": "0x791c2b4d55dd46c2c99354170313decde21604a2f649081775f1f2c07311c37",
-      "class_hash": "0x20a7586e0128d7ebef88f4d025081d879172f2df94f1ab7bd3467834d7384e7",
+      "address": "0x25580b72b5091d895b70da8694b5e0558f09af2576f687659c7bf15400be1b7",
+      "class_hash": "0x4ecd1bfed5512e2bffeb1aecbe6bbfd6996aac20dec4eb2f32a5569b9dd167b",
       "abi": [
         {
           "type": "impl",
@@ -2091,6 +2084,13 @@
               "state_mutability": "view"
             }
           ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
         },
         {
           "type": "impl",
@@ -2283,13 +2283,6 @@
           "items": [
             {
               "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
               "name": "on_pre_update",
               "inputs": [
                 {
@@ -2385,13 +2378,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -2505,7 +2491,7 @@
       "tag": "pixelaw-paint_actions",
       "selector": "0x2afb94fee3f58a7234658d0fd5366da8a9c48a4978cc6fff464344d2720123d",
       "systems": [
-        "init",
+        "dojo_init",
         "on_pre_update",
         "on_post_update",
         "interact",
@@ -2516,8 +2502,8 @@
       ]
     },
     {
-      "address": "0x2bf086779665ff1b2b4c84d73084bca9fa8ab83e14a6cd22c7e36b2c093001b",
-      "class_hash": "0x534bc50e95c222752b7e4cc5686ad693813bc9876682bfb41494fca82efe3bf",
+      "address": "0x240b61a370cb965fa24e2686ae3c681e2f6c38c24be2db9b9a2b7d6d06ed1b6",
+      "class_hash": "0xe18a71a5f9b5e99dd093a4090419bd006bc63d348c9cf2becded207c88874e",
       "abi": [
         {
           "type": "impl",
@@ -2568,6 +2554,13 @@
               "state_mutability": "view"
             }
           ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
         },
         {
           "type": "impl",
@@ -2760,13 +2753,6 @@
           "items": [
             {
               "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
               "name": "on_pre_update",
               "inputs": [
                 {
@@ -2838,13 +2824,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -2958,7 +2937,7 @@
       "tag": "pixelaw-player_actions",
       "selector": "0x3523bab59c7ec5121909430b7315002180cb06076e33136f89c5d0ac830eddc",
       "systems": [
-        "init",
+        "dojo_init",
         "on_pre_update",
         "on_post_update",
         "interact",
@@ -2967,8 +2946,8 @@
       ]
     },
     {
-      "address": "0x22d9b4160410f17fc5cdfc216cab42a8ee4870e6e8122f76ef7b61443c379eb",
-      "class_hash": "0x6e14561b92cb2f44bdb7a2bfa2e97a1c6fa2d1551099ea3979a4c7e39419fd1",
+      "address": "0x7b3530c1955f9b560018a156f5b5d806ce7778ac157a80e92d5874b68624a67",
+      "class_hash": "0x76067acd9999206eb8859f3dd3ce038794956bebd212a9f2791a6b9b7571cf6",
       "abi": [
         {
           "type": "impl",
@@ -3019,6 +2998,13 @@
               "state_mutability": "view"
             }
           ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
         },
         {
           "type": "impl",
@@ -3271,13 +3257,6 @@
             },
             {
               "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
               "name": "interact",
               "inputs": [
                 {
@@ -3309,13 +3288,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -3429,9 +3401,9 @@
       "tag": "pixelaw-snake_actions",
       "selector": "0x4f96710669719291ad9660428d2dc9c921f129b75ddf0f70e8bf5837ea4157e",
       "systems": [
+        "dojo_init",
         "on_pre_update",
         "on_post_update",
-        "init",
         "interact",
         "move",
         "upgrade"

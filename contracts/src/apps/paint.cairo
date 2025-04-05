@@ -5,7 +5,6 @@ use starknet::{ContractAddress};
 
 #[starknet::interface]
 pub trait IPaintActions<T> {
-
     fn on_pre_update(
         ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     ) -> Option<PixelUpdate>;
@@ -67,18 +66,14 @@ pub mod paint_actions {
     use super::IPaintActions;
 
     use super::{APP_ICON, APP_KEY, PIXELS_PER_FELT};
-        fn dojo_init(ref self: ContractState) {
-            let mut world = self.world(@"pixelaw");
-            let core_actions = get_core_actions(ref world);
+    fn dojo_init(ref self: ContractState) {
+        let mut world = self.world(@"pixelaw");
+        let core_actions = get_core_actions(ref world);
 
-            core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
-        }
+        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+    }
     #[abi(embed_v0)]
     impl Actions of IPaintActions<ContractState> {
-
-
-
-
         /// Hook called before a pixel update.
         ///
         /// # Arguments

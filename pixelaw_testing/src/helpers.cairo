@@ -154,9 +154,7 @@ pub fn setup_apps_initialized(
         setup_apps(
         world,
     );
-    paint_actions.init();
-    snake_actions.init();
-    player_actions.init();
+
 
     (paint_actions, snake_actions, player_actions)
 }
