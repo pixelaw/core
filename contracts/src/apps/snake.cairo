@@ -282,7 +282,7 @@ pub mod snake_actions {
             world.write_model(@segment);
 
             // Call core_actions to update the color
-            let _ = core_actions
+            core_actions
                 .update_pixel(
                     player,
                     system,
@@ -298,7 +298,8 @@ pub mod snake_actions {
                     },
                     Option::None,
                     false,
-                );
+                )
+                .unwrap();
 
             let MOVE_SECONDS = 0;
             let queue_timestamp = starknet::get_block_timestamp() + MOVE_SECONDS;
@@ -478,7 +479,7 @@ pub mod snake_actions {
         let pixel: Pixel = world.read_model((last_segment.x, last_segment.y));
 
         // Write the changes to the pixel
-        let _ = core_actions
+        core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
@@ -494,7 +495,8 @@ pub mod snake_actions {
                 },
                 Option::None, // TODO area_hint
                 false,
-            );
+            )
+            .unwrap();
 
         let result = last_segment.previous_id;
 
@@ -547,7 +549,7 @@ pub mod snake_actions {
             );
 
         // Write the changes to the pixel
-        let _pu = core_actions
+        core_actions
             .update_pixel(
                 snake.owner,
                 get_contract_address(),
@@ -563,7 +565,8 @@ pub mod snake_actions {
                 },
                 Option::None,
                 false,
-            );
+            )
+            .unwrap();
         id
     }
 }

@@ -54,7 +54,7 @@ pub fn can_update_pixel(
 
     // Return if the pixel has no app (hook is not going to work)
     if pixel_app == contract_address_const::<0>() {
-        return PixelUpdateResult::NotAllowed;
+        return PixelUpdateResult::NotAllowed(pixel_update);
     }
 
     // At this point its likely that the pixel and/or area have a different owner
@@ -114,7 +114,7 @@ pub fn update_pixel(
 
         if let Result::Err(err) =
             call_on_post_update(ref world, pixel.app, pixel_update, caller_app, for_player) {
-            return PixelUpdateResult::Error(err);
+            return PixelUpdateResult::Error((pixel_update, err.into()));
         }
     }
 
@@ -168,7 +168,7 @@ fn call_on_pre_update(
     if out.is_err() {
         if let Option::Some(err) = out.err() {
             if *err.at(0) != 'ENTRYPOINT_NOT_FOUND' && *err.at(0) != 'CONTRACT_NOT_DEPLOYED' {
-                result = PixelUpdateResult::Error(*err.at(0));
+                result = PixelUpdateResult::Error((pixel_update, *err.at(0)));
             }
         }
     } else {
@@ -177,10 +177,10 @@ fn call_on_pre_update(
                 || (returned_update != pixel_update && !allow_modify) {
                 return PixelUpdateResult::Ok(returned_update);
             } else {
-                return PixelUpdateResult::NotAllowed;
+                return PixelUpdateResult::NotAllowed(pixel_update);
             }
         } else {
-            return PixelUpdateResult::NotAllowed;
+            return PixelUpdateResult::NotAllowed(pixel_update);
         }
     }
     result

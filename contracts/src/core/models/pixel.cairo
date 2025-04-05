@@ -24,8 +24,8 @@ pub struct Pixel {
 #[derive(Drop, Copy, Serde)]
 pub enum PixelUpdateResult {
     Ok: PixelUpdate,
-    NotAllowed,
-    Error: felt252,
+    NotAllowed: PixelUpdate,
+    Error: (PixelUpdate, felt252),
 }
 
 pub trait PixelUpdateResultTrait<PixelUpdateResult> {
@@ -52,8 +52,10 @@ pub impl PixelUpdateResultTraitImpl of PixelUpdateResultTrait<PixelUpdateResult>
     fn unwrap(self: PixelUpdateResult) -> PixelUpdate {
         match self {
             PixelUpdateResult::Ok(value) => value,
-            PixelUpdateResult::NotAllowed => panic!("Called `unwrap()` on a `NotAllowed` value"),
-            PixelUpdateResult::Error(_) => panic!("Called `unwrap()` on an `Error` value"),
+            PixelUpdateResult::NotAllowed(value) => panic!("{}_{} NotAllowed", value.x, value.y),
+            PixelUpdateResult::Error((
+                value, msg,
+            )) => panic!("{}_{} Error: {}", value.x, value.y, msg),
         }
     }
 }

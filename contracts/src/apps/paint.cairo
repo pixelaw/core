@@ -61,7 +61,6 @@ const PIXELS_PER_FELT: u16 = 7;
 #[dojo::contract]
 pub mod paint_actions {
     use dojo::model::{ModelStorage};
-    // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
 
@@ -202,7 +201,7 @@ pub mod paint_actions {
             );
 
             // Update color of the pixel
-            let _ = core_actions
+            core_actions
                 .update_pixel(
                     player,
                     system,
@@ -218,7 +217,8 @@ pub mod paint_actions {
                     },
                     Option::None, // TODO area_hint
                     false,
-                );
+                )
+                .unwrap();
         }
 
         /// Updates a row of pixels with provided image data.
@@ -257,7 +257,7 @@ pub mod paint_actions {
                 // are 0 padded.
                 // We unpack 4 bytes at a time and use them
 
-                let _ = core_actions
+                core_actions
                     .update_pixel(
                         player,
                         system,
@@ -275,7 +275,8 @@ pub mod paint_actions {
                         },
                         Option::None, // area_hint
                         false,
-                    );
+                    )
+                    .unwrap();
 
                 pixel_index += 1;
 
@@ -327,8 +328,7 @@ pub mod paint_actions {
             );
 
             // Update color of the pixel
-            // TODO check results?
-            let _result = core_actions
+            core_actions
                 .update_pixel(
                     player,
                     system,
