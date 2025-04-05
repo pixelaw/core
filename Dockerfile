@@ -83,8 +83,8 @@ HEALTHCHECK CMD curl --fail http://localhost:3000 && \
 
 COPY ./dojo_init /pixelaw/contracts/dojo_init
 COPY ./contracts/dojo_dev.toml /pixelaw/contracts/dojo_init
-COPY ./contracts/Scarb.toml /pixelaw/contracts/dojo_init
 COPY ./contracts/Scarb.lock /pixelaw/contracts/dojo_init
+COPY ./contracts/Scarb.toml /pixelaw/contracts/dojo_init
 
 
 # Run build separately to cache the dojo/scarb dependencies
@@ -93,6 +93,7 @@ RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     cd /pixelaw/contracts/dojo_init && sozo build
 
 
+COPY ./WORLD_ADDRESS /pixelaw/
 COPY ./contracts /pixelaw/contracts
 
 WORKDIR /pixelaw/contracts

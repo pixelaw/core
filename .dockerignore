@@ -5,5 +5,5 @@
 ./contracts/out
 ./contracts/accounts
 ./contracts/.vscode
-
+./contracts/manifest_*.json
 

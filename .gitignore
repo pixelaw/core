@@ -6,7 +6,7 @@ bindings/
 contracts/out
 contracts/db
 contracts/target
-#contracts/manifest_dev.json
+contracts/manifest_dev.json
 
 bindings/
 

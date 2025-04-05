@@ -91,9 +91,13 @@ kill_torii() {
 start_torii() {
     echo "torii: starting"
 
+    # Give katana some time to boot up
+    sleep 2
+
     kill_torii
     local rpc_url=$(get_rpc_url)
     echo "start_torii: $rpc_url $WORLD_ADDRESS"
+
     torii \
       --world $WORLD_ADDRESS \
       --rpc $rpc_url \
@@ -115,6 +119,8 @@ sozo_rebuild() {
 
     # Clear the target
     rm -rf $TARGET
+
+    rm -rf $MANIFEST
 
     sozo clean
     sozo \
@@ -153,15 +159,6 @@ sozo_migrate() {
 
     sleep 1
 }
-#
-#init_actions() {
-#    echo "init_actions"
-#    local actions=$(jq -r '.contracts[] | .tag' $MANIFEST)
-#
-#    for action in ${actions[@]}; do
-#        sozo --manifest-path $DEPLOY_SCARB --profile $PROFILE execute --wait $action init
-#    done
-#}
 
 
 
