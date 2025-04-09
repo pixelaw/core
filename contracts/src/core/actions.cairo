@@ -14,8 +14,6 @@ pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
 #[starknet::interface]
 pub trait IActions<T> {
-
-
     // Check if and how a Pixel can be updated, based on given params
     // It checks all ownership (pixel and Area) and hooks
     fn can_update_pixel(
@@ -98,15 +96,14 @@ pub trait IActions<T> {
     fn new_app(ref self: T, system: ContractAddress, name: felt252, icon: felt252) -> App;
 
 
-    /// Sends an alert to a player.
-    ///
-    /// # Arguments
-    ///
-    /// * `world` - A reference to the world dispatcher.
-    /// * `position` - The position associated with the alert.
-    /// * `player` - The player to alert.
-    /// * `message` - The message to send.
-    fn alert_player(ref self: T, position: Position, player: ContractAddress, message: felt252);
+    fn notification(
+        ref self: T,
+        position: Position,
+        color: u32,
+        from: Option<ContractAddress>,
+        to: Option<ContractAddress>,
+        text: felt252,
+    );
 
 
     fn add_area(
@@ -122,7 +119,7 @@ pub trait IActions<T> {
 pub mod actions {
     use dojo::event::EventStorage;
     use dojo::model::{ModelStorage};
-    use pixelaw::core::events::{Alert, QueueScheduled};
+    use pixelaw::core::events::{Notification, QueueScheduled};
     use pixelaw::core::models::area::{
         Area, BoundsTraitImpl, ROOT_ID, RTree, RTreeNodePackableImpl, RTreeTraitImpl,
     };
@@ -214,8 +211,13 @@ pub mod actions {
         }
 
 
-        fn alert_player(
-            ref self: ContractState, position: Position, player: ContractAddress, message: felt252,
+        fn notification(
+            ref self: ContractState,
+            position: Position,
+            color: u32,
+            from: Option<ContractAddress>,
+            to: Option<ContractAddress>,
+            text: felt252,
         ) {
             let mut world = self.world(@"pixelaw");
             let caller = get_caller_address();
@@ -223,16 +225,7 @@ pub mod actions {
 
             assert!(app.name != '', "cannot be called by a non-app");
 
-            world
-                .emit_event(
-                    @Alert {
-                        position,
-                        caller,
-                        player,
-                        message,
-                        timestamp: starknet::get_block_timestamp(),
-                    },
-                );
+            world.emit_event(@Notification { position, app: caller, color, from, to, text });
         }
 
 

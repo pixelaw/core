@@ -143,6 +143,15 @@ pub mod player_actions {
                     false,
                 )
                 .unwrap();
+
+            core_actions
+                .notification(
+                    player.position,
+                    default_params.color,
+                    Option::None,
+                    Option::Some(playerAddress),
+                    'Player changed something',
+                );
         }
 
         /// Interacts with a pixel based on default parameters.
@@ -181,7 +190,7 @@ pub mod player_actions {
                             text: Option::Some(0xefb88ff09fa78de2808de29980efb88f), // ️👶
                             app: Option::Some(get_contract_address()),
                             owner: Option::None,
-                            action: Option::None,
+                            action: Option::Some('configure'),
                         },
                         Option::None,
                         false,
@@ -204,7 +213,7 @@ pub mod player_actions {
             if (clicked_position == player.position) {
                 // TODO this is not supposed to happen, most likely a UI malfunction
                 // since the action is supposed to be "configure" for the Player's Pixel
-                panic!("Supposed to use 'configure'");
+                panic!("{}_{} Supposed to use 'configure'", clicked_position.x, clicked_position.y);
             }
 
             // Restore the previous pixel
@@ -239,7 +248,7 @@ pub mod player_actions {
             if moveto_playerpos.player != contract_address_const::<0x0>() {
                 // Another Player is already here. Whoops.
                 // TODO for now panic so it doesnt cost gas
-                panic!("Another player is here");
+                panic!("{}_{} Another player is here", moveto_pos.x, moveto_pos.y);
             }
 
             player.position = moveto_pos;

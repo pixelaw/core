@@ -15,12 +15,13 @@ pub struct QueueScheduled {
 
 #[derive(Drop, Debug, PartialEq, Serde)]
 #[dojo::event]
-pub struct Alert {
+pub struct Notification {
     #[key]
     pub position: Position,
-    pub caller: ContractAddress,
-    pub player: ContractAddress,
-    pub message: felt252,
-    pub timestamp: u64,
+    pub app: ContractAddress,
+    pub color: u32,
+    pub from: Option<ContractAddress>,
+    pub to: Option<ContractAddress>,
+    pub text: felt252,
 }
 
