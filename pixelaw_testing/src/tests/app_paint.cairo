@@ -30,6 +30,6 @@ fn test_paint_actions() {
             },
         );
 
-    let pixel_1_1: Pixel = world.read_model((1, 1));
+    let pixel_1_1: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel_1_1.color == color, 'should be the color');
 }

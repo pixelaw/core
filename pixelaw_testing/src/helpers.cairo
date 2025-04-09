@@ -7,18 +7,12 @@ use dojo_cairo_test::{
 
 use pixelaw::{
     apps::{
-        paint::{IPaintActionsDispatcher, IPaintActionsDispatcherTrait, paint_actions},
-        snake::{
-            ISnakeActionsDispatcher, ISnakeActionsDispatcherTrait, m_Snake, m_SnakeSegment,
-            snake_actions,
-        },
-        player::{
-            IPlayerActionsDispatcher, IPlayerActionsDispatcherTrait, m_Player, m_PositionPlayer,
-            player_actions,
-        },
+        paint::{IPaintActionsDispatcher, paint_actions},
+        snake::{ISnakeActionsDispatcher, m_Snake, m_SnakeSegment, snake_actions},
+        player::{IPlayerActionsDispatcher, m_Player, m_PositionPlayer, player_actions},
     },
     core::{
-        actions::{IActionsDispatcher, IActionsDispatcherTrait, actions},
+        actions::{IActionsDispatcher, actions},
         models::{
             area::{m_Area, m_RTree}, pixel::{m_Pixel}, queue::{m_QueueItem},
             registry::{m_App, m_AppName, m_CoreActionsAddress},
@@ -50,8 +44,6 @@ pub fn setup_core_initialized() -> (
 ) {
     let (world, core_actions, player_1, player_2) = setup_core();
 
-    core_actions.init();
-
     (world, core_actions, player_1, player_2)
 }
 
@@ -71,7 +63,7 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Player::TEST_CLASS_HASH),
             TestResource::Model(m_PositionPlayer::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
-            TestResource::Event(pixelaw::core::events::e_Alert::TEST_CLASS_HASH),
+            TestResource::Event(pixelaw::core::events::e_Notification::TEST_CLASS_HASH),
             TestResource::Contract(actions::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
             TestResource::Contract(paint_actions::TEST_CLASS_HASH),
@@ -109,7 +101,7 @@ pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, Contr
 
     world.sync_perms_and_inits(core_contract_defs());
 
-    let (core_actions_address, _) = world.dns(@"actions").unwrap();
+    let core_actions_address = world.dns_address(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
     // FIXME: Setup permissions
@@ -133,13 +125,13 @@ pub fn setup_apps(
 ) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
     world.sync_perms_and_inits(app_contract_defs());
 
-    let (paint_actions_address, _) = world.dns(@"paint_actions").unwrap();
+    let paint_actions_address = world.dns_address(@"paint_actions").unwrap();
     let paint_actions = IPaintActionsDispatcher { contract_address: paint_actions_address };
 
-    let (snake_actions_address, _) = world.dns(@"snake_actions").unwrap();
+    let snake_actions_address = world.dns_address(@"snake_actions").unwrap();
     let snake_actions = ISnakeActionsDispatcher { contract_address: snake_actions_address };
 
-    let (player_actions_address, _) = world.dns(@"player_actions").unwrap();
+    let player_actions_address = world.dns_address(@"player_actions").unwrap();
     let player_actions = IPlayerActionsDispatcher { contract_address: player_actions_address };
 
     (paint_actions, snake_actions, player_actions)
@@ -154,7 +146,6 @@ pub fn setup_apps_initialized(
         setup_apps(
         world,
     );
-
 
     (paint_actions, snake_actions, player_actions)
 }

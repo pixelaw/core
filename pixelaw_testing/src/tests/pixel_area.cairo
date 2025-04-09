@@ -20,8 +20,7 @@ fn test_pixel_with_invalid_position() {
 
     // Setup PixelUpdate with x/y that are u16, but not u15
     let pixel_update = PixelUpdate {
-        x: MAX_DIMENSION + 2,
-        y: MAX_DIMENSION + 3,
+        position: Position { x: MAX_DIMENSION + 2, y: MAX_DIMENSION + 3 },
         color: Option::Some(0xFF00FFFF),
         owner: Option::Some(player_1),
         app: Option::None,
@@ -49,12 +48,11 @@ fn test_add_new_pixel_in_owned_area() {
 
     set_caller(player_2);
 
-    let pixel: Pixel = world.read_model((POSITION_1.x, POSITION_1.y));
+    let pixel: Pixel = world.read_model(POSITION_1);
 
     // Setup PixelUpdate
     let pixel_update = PixelUpdate {
-        x: pixel.x,
-        y: pixel.y,
+        position: pixel.position,
         color: Option::Some(0xFF00FFFF),
         owner: Option::Some(player_2),
         app: Option::None,

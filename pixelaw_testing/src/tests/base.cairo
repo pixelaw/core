@@ -8,7 +8,7 @@ use pixelaw_testing::helpers::{
 use pixelaw::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
-        actions::{CORE_ACTIONS_KEY, IActionsDispatcherTrait}, events::{Alert},
+        actions::{CORE_ACTIONS_KEY, IActionsDispatcherTrait}, events::{Notification},
         models::{
             pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
             registry::{App, AppName, CoreActionsAddress},
@@ -20,18 +20,6 @@ use starknet::{
     contract_address_const, testing::{set_account_contract_address, set_contract_address},
 };
 
-
-#[test]
-fn test_init_core_actions() {
-    let (world, core_actions, _player_1, _player_2) = setup_core();
-    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
-    assert(core_address.value == ZERO_ADDRESS(), 'should be 0');
-
-    core_actions.init();
-
-    let core_address: CoreActionsAddress = world.read_model(CORE_ACTIONS_KEY);
-    assert(core_address.value != ZERO_ADDRESS(), 'should not be 0');
-}
 
 #[test]
 fn test_register_new_app() {
@@ -91,8 +79,7 @@ fn test_can_update_pixel() {
 
     // Setup PixelUpdate
     let pixel_update = PixelUpdate {
-        x: 12,
-        y: 12,
+        position: Position { x: 12, y: 12 },
         color: Option::Some(0xFF00FFFF),
         owner: Option::Some(player_1),
         app: Option::Some(paint_actions.contract_address),
@@ -102,7 +89,7 @@ fn test_can_update_pixel() {
     };
 
     set_caller(player_2);
-    let pixel: Pixel = world.read_model((position.x, position.y));
+    let pixel: Pixel = world.read_model(position);
 
     let has_access = core_actions
         .can_update_pixel(player_2, ZERO_ADDRESS(), pixel, pixel_update, Option::None, false)
@@ -126,8 +113,7 @@ fn test_update_pixel() {
 
     set_caller(player_1);
 
-    let x = 22;
-    let y = 23;
+    let position = Position { x: 22, y: 23 };
     let color: u32 = 0xFF00FFFF;
     let app = contract_address_const::<0xBEEFDEAD>();
     let owner = player_1;
@@ -136,8 +122,7 @@ fn test_update_pixel() {
     let action = 'myaction';
 
     let empty_pixel = Pixel {
-        x,
-        y,
+        position,
         color: 0,
         app: ZERO_ADDRESS(),
         owner: ZERO_ADDRESS(),
@@ -149,12 +134,11 @@ fn test_update_pixel() {
     };
 
     let mut changed_pixel = Pixel {
-        x, y, color, app, owner, text, timestamp, action, created_at: 0, updated_at: 0,
+        position, color, app, owner, text, timestamp, action, created_at: 0, updated_at: 0,
     };
 
     let pixel_update = PixelUpdate {
-        x,
-        y,
+        position,
         color: Option::Some(color),
         owner: Option::Some(owner),
         app: Option::Some(app),
@@ -163,14 +147,14 @@ fn test_update_pixel() {
         action: Option::Some(action),
     };
 
-    let pixel: Pixel = world.read_model((x, y));
+    let pixel: Pixel = world.read_model(position);
 
     assert(pixel == empty_pixel, 'pixel not empty');
 
     let _ = core_actions
         .update_pixel(ZERO_ADDRESS(), ZERO_ADDRESS(), pixel_update, Option::None, false);
 
-    let pixel: Pixel = world.read_model((x, y));
+    let pixel: Pixel = world.read_model(position);
 
     // TODO properly test created_at and updated_at (if we even keep them like this)
     changed_pixel.created_at = pixel.created_at;
@@ -235,10 +219,10 @@ fn test_get_callers() {
 }
 
 
-// TODO Try alerting with a nonexisting appkey (should panic)
+// TODO Try Notificationing with a nonexisting appkey (should panic)
 
 #[test]
-fn test_alert_player() {
+fn test_notification_player() {
     let (world, core_actions, player_1, _player_2) = setup_core_initialized();
     let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
 
@@ -254,7 +238,7 @@ fn test_alert_player() {
     drop_all_events(world.dispatcher.contract_address);
 
     // Call the action
-    core_actions.alert_player(position, player, message);
+    core_actions.notification(position, 0xFFFF, Option::None, Option::Some(player), message);
 
     // Assert that the correct event was emitted
     let event = starknet::testing::pop_log::<WorldEvent>(world.dispatcher.contract_address);
@@ -262,7 +246,8 @@ fn test_alert_player() {
 
     if let WorldEvent::EventEmitted(event) = event.unwrap() {
         assert(
-            event.selector == Event::<Alert>::selector(world.namespace_hash), 'bad event selector',
+            event.selector == Event::<Notification>::selector(world.namespace_hash),
+            'bad event selector',
         );
 
         // TODO complete test

@@ -39,13 +39,12 @@ fn test_process_queue() {
             id, 0, core_actions.contract_address.into(), SPAWN_PIXEL_ENTRYPOINT, calldata.span(),
         );
 
-    let pixel: Pixel = world.read_model((position.x, position.y));
+    let pixel: Pixel = world.read_model(position);
 
     // check timestamp
     assert(pixel.created_at == starknet::get_block_timestamp(), 'incorrect timestamp.created_at');
     assert(pixel.updated_at == starknet::get_block_timestamp(), 'incorrect timestamp.updated_at');
-    assert(pixel.x == position.x, 'incorrect timestamp.x');
-    assert(pixel.y == position.y, 'incorrect timestamp.y');
+    assert(pixel.position == position, 'incorrect position');
 }
 
 

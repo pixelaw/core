@@ -31,7 +31,7 @@ build-external-contracts = [
   "pixelaw::apps::snake::m_Snake",
   "pixelaw::apps::snake::m_SnakeSegment",
   "pixelaw::core::events::e_QueueScheduled",
-  "pixelaw::core::events::e_Alert",
+  "pixelaw::core::events::e_Notification",
   "pixelaw::core::actions::actions",
   "pixelaw::apps::paint::paint_actions",
   "pixelaw::apps::snake::snake_actions",

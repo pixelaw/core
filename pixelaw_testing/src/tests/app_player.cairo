@@ -39,7 +39,7 @@ fn test_player_interaction() {
         );
 
     // Verify the player was created at the correct position
-    let pixel: Pixel = world.read_model((1, 1));
+    let pixel: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel.color == player_color, 'Player not at 1,1 w color');
 
     // Move the player to a new position
@@ -56,10 +56,10 @@ fn test_player_interaction() {
         );
 
     // Verify the player moved correctly
-    let pixel_new: Pixel = world.read_model((2, 1));
+    let pixel_new: Pixel = world.read_model(Position { x: 2, y: 1 });
     assert(pixel_new.color == player_color, 'Player should have moved to 2,1');
 
     // Verify the old position is cleared
-    let pixel_old: Pixel = world.read_model((1, 1));
+    let pixel_old: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel_old.color != player_color, 'Old position should be cleared');
 }
