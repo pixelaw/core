@@ -14,7 +14,9 @@ use starknet::{ContractAddress};
 ///
 /// * `Option<Position>` - The next position as an `Option`. Returns `None` if the move is
 /// invalid.
-fn next_position(x: u16, y: u16, direction: Direction) -> Option<Position> {
+fn next_position(current_position: Position, direction: Direction) -> Option<Position> {
+    let Position { x, y } = current_position;
+
     match direction {
         Direction::None(()) => Option::Some(Position { x, y }),
         Direction::Left(()) => {
@@ -346,13 +348,11 @@ pub mod snake_actions {
 
             // Determine next pixel the head will move to
             // TODO finish refactor to Position
-            let next_move = next_position(
-                first_segment.position.x, first_segment.position.y, snake.direction,
-            );
+            let next_move = next_position(first_segment.position, snake.direction);
 
             if next_move.is_some() && !snake.is_dying {
                 // Load next pixel
-                let next_pixel: Pixel = world.read_model(next_move);
+                let next_pixel: Pixel = world.read_model(next_move.unwrap());
 
                 let has_write_access = core_actions
                     .can_update_pixel(
