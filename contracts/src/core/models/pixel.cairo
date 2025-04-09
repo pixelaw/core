@@ -1,4 +1,4 @@
-use pixelaw::core::utils::{MAX_DIMENSION};
+use pixelaw::core::utils::{MAX_DIMENSION, Position};
 use starknet::{ContractAddress};
 
 #[derive(Debug, Copy, Drop, Serde, PartialEq)]
@@ -6,9 +6,7 @@ use starknet::{ContractAddress};
 pub struct Pixel {
     // System properties
     #[key]
-    pub x: u16, // only 15 bits used, to a max of 32767
-    #[key]
-    pub y: u16, // only 15 bits used, to a max of 32767
+    pub position: Position,
     // User-changeable properties
     pub app: ContractAddress,
     pub color: u32,
@@ -52,18 +50,19 @@ pub impl PixelUpdateResultTraitImpl of PixelUpdateResultTrait<PixelUpdateResult>
     fn unwrap(self: PixelUpdateResult) -> PixelUpdate {
         match self {
             PixelUpdateResult::Ok(value) => value,
-            PixelUpdateResult::NotAllowed(value) => panic!("{}_{} NotAllowed", value.x, value.y),
+            PixelUpdateResult::NotAllowed(value) => panic!(
+                "{}_{} NotAllowed", value.position.x, value.position.y,
+            ),
             PixelUpdateResult::Error((
                 value, msg,
-            )) => panic!("{}_{} Error: {}", value.x, value.y, msg),
+            )) => panic!("{}_{} Error: {}", value.position.x, value.position.y, msg),
         }
     }
 }
 
-#[derive(PartialEq, Debug, Default, Copy, Drop, Serde, Introspect)]
+#[derive(PartialEq, Debug, Copy, Drop, Serde, Introspect)]
 pub struct PixelUpdate {
-    pub x: u16, // only 15 bits used, to a max of 32767
-    pub y: u16, // only 15 bits used, to a max of 32767
+    pub position: Position,
     pub color: Option<u32>,
     pub owner: Option<ContractAddress>,
     pub app: Option<ContractAddress>,
@@ -80,12 +79,15 @@ pub trait PixelUpdateTrait<PixelUpdate> {
 
 pub impl PixelUpdateTraitImpl of PixelUpdateTrait<PixelUpdate> {
     fn validate(self: PixelUpdate) {
-        assert(self.x <= MAX_DIMENSION && self.y <= MAX_DIMENSION, 'position overflow');
+        assert(
+            self.position.x <= MAX_DIMENSION && self.position.y <= MAX_DIMENSION,
+            'position overflow',
+        );
     }
 
     fn add_to_calldata(self: PixelUpdate, ref calldata: Array<felt252>) {
-        calldata.append(self.x.into());
-        calldata.append(self.y.into());
+        calldata.append(self.position.x.into());
+        calldata.append(self.position.y.into());
         match self.color {
             Option::Some(value) => {
                 calldata.append(0.into());

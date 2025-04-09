@@ -31,9 +31,7 @@ pub fn can_update_pixel(
     }
 
     // Load the area
-    let area_result = super::area::find_area_for_position(
-        ref world, Position { x: pixel.x, y: pixel.y }, area_id_hint,
-    );
+    let area_result = super::area::find_area_for_position(ref world, pixel.position, area_id_hint);
     if let Option::Some(area) = area_result {
         // Return true if the player is owner of the area
         if area.owner == for_player {
@@ -84,7 +82,7 @@ pub fn update_pixel(
     validate_callers(ref world, for_player);
 
     // Load the pixel
-    let mut pixel: Pixel = world.read_model((pixel_update.x, pixel_update.y));
+    let mut pixel: Pixel = world.read_model(pixel_update.position);
 
     let update_result = can_update_pixel(
         ref world, for_player, for_system, pixel, pixel_update, area_id_hint, allow_modify,
@@ -260,7 +258,11 @@ fn parseHookOutput(data: Span<felt252>) -> Option<PixelUpdate> {
     }
 
     // Now it just panics when trying to read outside of index
-    Option::Some(PixelUpdate { x, y, color, owner, app, text, timestamp, action })
+    Option::Some(
+        PixelUpdate {
+            position: Position { x: x, y: y }, color, owner, app, text, timestamp, action,
+        },
+    )
 }
 
 // Gives the appropriate App, based on availability in Pixel or Area

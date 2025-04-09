@@ -224,7 +224,7 @@ pub fn decode_rgba(self: u32) -> (u8, u8, u8, u8) {
 
 
 pub fn is_pixel_color(ref world: WorldStorage, position: Position, color: u32) -> bool {
-    let pixel: Pixel = world.read_model((position.x, position.y));
+    let pixel: Pixel = world.read_model(position);
     pixel.color == color
 }
 

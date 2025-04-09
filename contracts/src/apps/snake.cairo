@@ -1,5 +1,5 @@
 use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
-use pixelaw::core::utils::{DefaultParameters, Direction};
+use pixelaw::core::utils::{DefaultParameters, Direction, Position};
 use starknet::{ContractAddress};
 
 /// Calculates the next position based on the current coordinates and direction.
@@ -12,23 +12,27 @@ use starknet::{ContractAddress};
 ///
 /// # Returns
 ///
-/// * `Option<(u16, u16)>` - The next position as an `Option`. Returns `None` if the move is
+/// * `Option<Position>` - The next position as an `Option`. Returns `None` if the move is
 /// invalid.
-fn next_position(x: u16, y: u16, direction: Direction) -> Option<(u16, u16)> {
+fn next_position(x: u16, y: u16, direction: Direction) -> Option<Position> {
     match direction {
-        Direction::None(()) => Option::Some((x, y)),
-        Direction::Left(()) => { if x == 0 {
-            Option::None
-        } else {
-            Option::Some((x - 1, y))
-        } },
-        Direction::Right(()) => Option::Some((x + 1, y)),
-        Direction::Up(()) => { if y == 0 {
-            Option::None
-        } else {
-            Option::Some((x, y - 1))
-        } },
-        Direction::Down(()) => Option::Some((x, y + 1)),
+        Direction::None(()) => Option::Some(Position { x, y }),
+        Direction::Left(()) => {
+            if x == 0 {
+                Option::None
+            } else {
+                Option::Some(Position { x: x - 1, y })
+            }
+        },
+        Direction::Right(()) => Option::Some(Position { x: x + 1, y }),
+        Direction::Up(()) => {
+            if y == 0 {
+                Option::None
+            } else {
+                Option::Some(Position { x, y: y - 1 })
+            }
+        },
+        Direction::Down(()) => Option::Some(Position { x, y: y + 1 }),
     }
 }
 
@@ -79,8 +83,7 @@ pub struct SnakeSegment {
     pub id: u32,
     pub previous_id: u32,
     pub next_id: u32,
-    pub x: u16,
-    pub y: u16,
+    pub position: Position,
     pub pixel_original_color: u32,
     pub pixel_original_text: felt252,
     pub pixel_original_app: ContractAddress,
@@ -136,7 +139,7 @@ pub mod snake_actions {
 
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        DefaultParameters, Direction, MOVE_SELECTOR, Position, get_callers, get_core_actions,
+        DefaultParameters, Direction, MOVE_SELECTOR, get_callers, get_core_actions,
     };
     use starknet::{
         ContractAddress, contract_address_const, get_contract_address, get_execution_info,
@@ -216,7 +219,7 @@ pub mod snake_actions {
             let (player, system) = get_callers(ref world, default_params);
 
             // Check if there is already a Snake or SnakeSegment here
-            let pixel: Pixel = world.read_model((position.x, position.y));
+            let pixel: Pixel = world.read_model(position);
             let mut snake: Snake = world.read_model(player);
             //let mut snake = get!(world, player, Snake);
 
@@ -255,8 +258,7 @@ pub mod snake_actions {
                 id,
                 previous_id: id,
                 next_id: id,
-                x: position.x,
-                y: position.y,
+                position: position,
                 pixel_original_color: pixel.color,
                 pixel_original_text: pixel.text,
                 pixel_original_app: pixel.app,
@@ -272,8 +274,7 @@ pub mod snake_actions {
                     player,
                     system,
                     PixelUpdate {
-                        x: position.x,
-                        y: position.y,
+                        position,
                         color: Option::Some(color),
                         timestamp: Option::None,
                         text: Option::Some(text),
@@ -329,10 +330,9 @@ pub mod snake_actions {
                 snake.last_segment_id = remove_last_segment(ref world, core_actions, snake);
                 snake.length -= 1;
                 if snake.length == 0 {
-                    let position = Position { x: first_segment.x, y: first_segment.y };
                     core_actions
                         .notification(
-                            position,
+                            first_segment.position,
                             snake.color,
                             Option::None,
                             Option::Some(snake.owner),
@@ -345,13 +345,14 @@ pub mod snake_actions {
             }
 
             // Determine next pixel the head will move to
-            let next_move = next_position(first_segment.x, first_segment.y, snake.direction);
+            // TODO finish refactor to Position
+            let next_move = next_position(
+                first_segment.position.x, first_segment.position.y, snake.direction,
+            );
 
             if next_move.is_some() && !snake.is_dying {
-                let (next_x, next_y) = next_move.unwrap();
-
                 // Load next pixel
-                let next_pixel: Pixel = world.read_model((next_x, next_y));
+                let next_pixel: Pixel = world.read_model(next_move);
 
                 let has_write_access = core_actions
                     .can_update_pixel(
@@ -359,8 +360,7 @@ pub mod snake_actions {
                         get_contract_address(),
                         next_pixel,
                         PixelUpdate {
-                            x: next_x,
-                            y: next_y,
+                            position: next_move.unwrap(),
                             color: Option::Some(snake.color),
                             timestamp: Option::None,
                             text: Option::Some(snake.text),
@@ -467,7 +467,7 @@ pub mod snake_actions {
         ref world: WorldStorage, core_actions: ICoreActionsDispatcher, snake: Snake,
     ) -> u32 {
         let last_segment: SnakeSegment = world.read_model(snake.last_segment_id);
-        let pixel: Pixel = world.read_model((last_segment.x, last_segment.y));
+        let pixel: Pixel = world.read_model(last_segment.position);
 
         // Write the changes to the pixel
         core_actions
@@ -475,8 +475,7 @@ pub mod snake_actions {
                 snake.owner,
                 get_contract_address(),
                 PixelUpdate {
-                    x: pixel.x,
-                    y: pixel.y,
+                    position: pixel.position,
                     color: Option::Some(last_segment.pixel_original_color),
                     timestamp: Option::None,
                     text: Option::Some(last_segment.pixel_original_text),
@@ -531,8 +530,7 @@ pub mod snake_actions {
                     id,
                     previous_id: id, // The first segment has no previous, so it's itself
                     next_id: existing_segment.id,
-                    x: pixel.x,
-                    y: pixel.y,
+                    position: pixel.position,
                     pixel_original_color: pixel.color,
                     pixel_original_text: pixel.text,
                     pixel_original_app: pixel.app,
@@ -545,8 +543,7 @@ pub mod snake_actions {
                 snake.owner,
                 get_contract_address(),
                 PixelUpdate {
-                    x: pixel.x,
-                    y: pixel.y,
+                    position: pixel.position,
                     color: Option::Some(snake.color),
                     timestamp: Option::None,
                     text: Option::Some(snake.text),

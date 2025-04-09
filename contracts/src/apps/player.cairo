@@ -130,8 +130,7 @@ pub mod player_actions {
                     playerAddress,
                     get_contract_address(),
                     PixelUpdate {
-                        x: player.position.x,
-                        y: player.position.y,
+                        position: player.position,
                         color: Option::None,
                         timestamp: Option::None,
                         text: Option::Some(emoji.value),
@@ -183,8 +182,7 @@ pub mod player_actions {
                         playerAddress,
                         get_contract_address(),
                         PixelUpdate {
-                            x: clicked_position.x,
-                            y: clicked_position.y,
+                            position: clicked_position,
                             color: Option::Some(default_params.color),
                             timestamp: Option::None,
                             text: Option::Some(0xefb88ff09fa78de2808de29980efb88f), // ️👶
@@ -223,8 +221,7 @@ pub mod player_actions {
                     playerAddress,
                     get_contract_address(),
                     PixelUpdate {
-                        x: player.position.x,
-                        y: player.position.y,
+                        position: player.position,
                         color: Option::Some(player.pixel_original_color),
                         timestamp: Option::None,
                         text: Option::Some(player.pixel_original_text),
@@ -266,8 +263,7 @@ pub mod player_actions {
                     playerAddress,
                     get_contract_address(),
                     PixelUpdate {
-                        x: moveto_pos.x,
-                        y: moveto_pos.y,
+                        position: moveto_pos,
                         color: Option::Some(player.color),
                         timestamp: Option::None,
                         text: Option::Some(player.emoji),

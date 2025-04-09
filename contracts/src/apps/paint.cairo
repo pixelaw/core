@@ -60,7 +60,7 @@ pub mod paint_actions {
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
-        DefaultParameters, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
+        DefaultParameters, Position, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
     };
     use starknet::{ContractAddress, contract_address_const, get_contract_address};
     use super::IPaintActions;
@@ -72,6 +72,7 @@ pub mod paint_actions {
 
         core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
     }
+
     #[abi(embed_v0)]
     impl Actions of IPaintActions<ContractState> {
         /// Hook called before a pixel update.
@@ -144,7 +145,7 @@ pub mod paint_actions {
             let position = default_params.position;
 
             // Load the Pixel
-            let mut pixel: Pixel = world.read_model((position.x, position.y));
+            let mut pixel: Pixel = world.read_model(position);
 
             if pixel.color == default_params.color {
                 self.fade(default_params);
@@ -169,7 +170,7 @@ pub mod paint_actions {
             let (player, system) = get_callers(ref world, default_params);
 
             // Load the Pixel
-            let mut pixel: Pixel = world.read_model((position.x, position.y));
+            let mut pixel: Pixel = world.read_model(position);
 
             // TODO: Load Paint App Settings like the fade step time
             // For example for the cooldown feature
@@ -190,8 +191,7 @@ pub mod paint_actions {
                     player,
                     system,
                     PixelUpdate {
-                        x: position.x,
-                        y: position.y,
+                        position,
                         color: Option::Some(default_params.color),
                         timestamp: Option::None,
                         text: Option::None,
@@ -246,8 +246,7 @@ pub mod paint_actions {
                         player,
                         system,
                         PixelUpdate {
-                            x: position.x + pixel_index,
-                            y: position.y,
+                            position: Position { x: position.x + pixel_index, y: position.y },
                             color: Option::Some(
                                 extract(felt.into(), pixel_index % PIXELS_PER_FELT),
                             ),
@@ -294,7 +293,7 @@ pub mod paint_actions {
 
             let (player, system) = get_callers(ref world, default_params);
 
-            let pixel: Pixel = world.read_model((position.x, position.y));
+            let pixel: Pixel = world.read_model(position);
 
             let (r, g, b, a) = decode_rgba(pixel.color);
 
@@ -317,8 +316,7 @@ pub mod paint_actions {
                     player,
                     system,
                     PixelUpdate {
-                        x: position.x,
-                        y: position.y,
+                        position,
                         color: Option::Some(new_color),
                         timestamp: Option::None,
                         text: Option::None,
