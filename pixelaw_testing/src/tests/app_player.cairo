@@ -1,23 +1,22 @@
 use dojo::model::{ModelStorage};
 
 use pixelaw::core::models::pixel::{Pixel};
-use pixelaw::core::utils::{DefaultParameters, Position, Emoji};
-use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
+use pixelaw::core::utils::{DefaultParameters, Position};
 use pixelaw::apps::{
     player::{
-        IPlayerActionsDispatcher, IPlayerActionsDispatcherTrait, m_Player, m_PositionPlayer,
-        player_actions,
+        IPlayerActionsDispatcherTrait,
+
     },
 };
-use crate::helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
+use crate::helpers::{ setup_apps, setup_core};
 use starknet::{contract_address_const, testing::set_account_contract_address};
 
 #[test]
 #[available_gas(3000000000)]
 fn test_player_interaction() {
     // Initialize the world and apps
-    let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (_paint_actions, _snake_actions, player_actions) = setup_apps_initialized(world);
+    let (mut world, _core_actions, _player_1, _player_2) = setup_core();
+    let (_paint_actions, _snake_actions, player_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);

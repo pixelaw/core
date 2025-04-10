@@ -1,4 +1,4 @@
-use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core_initialized};
+use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
 use pixelaw::{
     core::{
         actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},
@@ -67,7 +67,7 @@ fn test_area_packing() {
 #[test]
 #[should_panic(expected: ('overlap topleft', 'ENTRYPOINT_FAILED'))]
 fn test_adding_overlapping() {
-    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_world, core_actions, player_1, _player_2) = setup_core();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     let _a2: Area = core_actions
@@ -85,7 +85,7 @@ fn test_adding_overlapping() {
 #[test]
 #[should_panic(expected: ('overlap containing', 'ENTRYPOINT_FAILED'))]
 fn test_adding_containing() {
-    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_world, core_actions, player_1, _player_2) = setup_core();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 
@@ -105,7 +105,7 @@ fn test_adding_containing() {
 
 #[test]
 fn test_remove() {
-    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core();
 
     let a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(a1.id);
@@ -117,7 +117,7 @@ fn test_remove() {
 #[test]
 #[should_panic(expected: ('not area', 'ENTRYPOINT_FAILED'))]
 fn test_remove_nonarea() {
-    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_world, core_actions, player_1, _player_2) = setup_core();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
     core_actions.remove_area(120);
@@ -125,7 +125,7 @@ fn test_remove_nonarea() {
 
 #[test]
 fn test_adding() {
-    let (mut world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, _player_2) = setup_core();
 
     let _a1: Area = core_actions.add_area(BOUNDS_1, player_1, WHITE_COLOR, ZERO_ADDRESS());
 

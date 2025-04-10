@@ -7,15 +7,15 @@ use pixelaw::apps::snake::{ISnakeActionsDispatcherTrait};
 use pixelaw::core::models::pixel::{Pixel};
 use pixelaw::core::utils::{DefaultParameters, Direction, Position};
 
-use crate::helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
+use crate::helpers::{set_caller, setup_apps, setup_core};
 use starknet::{contract_address_const, testing::set_account_contract_address};
 
 
 #[test]
 #[available_gas(3000000000)]
 fn test_playthrough() {
-    let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, _core_actions, _player_1, _player_2) = setup_core();
+    let (paint_actions, snake_actions, _player_actions) = setup_apps(ref world);
 
     let SNAKE_COLOR = 0xFF00FF;
 

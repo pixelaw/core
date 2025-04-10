@@ -2,16 +2,16 @@ use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
 use pixelaw_testing::helpers::{
-    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps_initialized,
-    setup_core, setup_core_initialized,
+    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps,
+    setup_core,
 };
 use pixelaw::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
-        actions::{CORE_ACTIONS_KEY, IActionsDispatcherTrait}, events::{Notification},
+        actions::{ IActionsDispatcherTrait}, events::{Notification},
         models::{
             pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
-            registry::{App, AppName, CoreActionsAddress},
+            registry::{App, AppName},
         },
         utils::{DefaultParameters, Position, get_callers},
     },
@@ -38,8 +38,8 @@ fn test_register_new_app() {
 
 #[test]
 fn test_paint_interaction() {
-    let (world, _core_actions, _player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, _core_actions, _player_1, _player_2) = setup_core();
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
 
     paint_actions
         .interact(
@@ -56,8 +56,8 @@ fn test_paint_interaction() {
 
 #[test]
 fn test_can_update_pixel() {
-    let (world, core_actions, player_1, player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, core_actions, player_1, player_2) = setup_core();
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
 
     // Scenario:
     // Check if Player2 can change Player1's pixel
@@ -109,7 +109,7 @@ fn test_can_update_pixel() {
 
 #[test]
 fn test_update_pixel() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, _player_2) = setup_core();
 
     set_caller(player_1);
 
@@ -166,7 +166,7 @@ fn test_update_pixel() {
 #[test]
 #[should_panic(expected: 'only core can override')]
 fn test_get_callers_non_core() {
-    let (mut world, _core_actions, _player_1, player_2) = setup_core_initialized();
+    let (mut world, _core_actions, _player_1, player_2) = setup_core();
     let system_override = starknet::contract_address_const::<0x69>();
 
     // Don't fake the calling contract, so this call fails
@@ -183,7 +183,7 @@ fn test_get_callers_non_core() {
 
 #[test]
 fn test_get_callers() {
-    let (mut world, core_actions, player_1, player_2) = setup_core_initialized();
+    let (mut world, core_actions, player_1, player_2) = setup_core();
 
     let system_override = starknet::contract_address_const::<0x69>();
 
@@ -223,8 +223,8 @@ fn test_get_callers() {
 
 #[test]
 fn test_notification_player() {
-    let (world, core_actions, player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, core_actions, player_1, _player_2) = setup_core();
+    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
 
     // Prep params
     let position = Position { x: 12, y: 12 };

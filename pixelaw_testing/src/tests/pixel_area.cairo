@@ -1,5 +1,5 @@
 use dojo::model::{ModelStorage};
-use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core_initialized};
+use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core};
 use pixelaw::{
     core::{
         actions::{IActionsDispatcherTrait},
@@ -16,7 +16,7 @@ const POSITION_1: Position = Position { x: 1, y: 1 };
 #[test]
 #[should_panic(expected: ('position overflow', 'ENTRYPOINT_FAILED'))]
 fn test_pixel_with_invalid_position() {
-    let (_world, core_actions, player_1, _player_2) = setup_core_initialized();
+    let (_world, core_actions, player_1, _player_2) = setup_core();
 
     // Setup PixelUpdate with x/y that are u16, but not u15
     let pixel_update = PixelUpdate {
@@ -34,7 +34,7 @@ fn test_pixel_with_invalid_position() {
 
 #[test]
 fn test_add_new_pixel_in_owned_area() {
-    let (world, core_actions, player_1, player_2) = setup_core_initialized();
+    let (world, core_actions, player_1, player_2) = setup_core();
 
     set_caller(player_1);
 

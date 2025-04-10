@@ -1,4 +1,4 @@
-use pixelaw_testing::helpers::{set_caller, setup_apps_initialized, setup_core_initialized};
+use pixelaw_testing::helpers::{set_caller, setup_apps, setup_core};
 use pixelaw::{
     apps::paint::{IPaintActionsDispatcherTrait}, apps::snake::{ISnakeActionsDispatcherTrait},
     core::{
@@ -9,15 +9,15 @@ use pixelaw::{
 
 #[test]
 fn test_app_permissions() {
-    let (world, _core_actions, player_1, _player_2) = setup_core_initialized();
-    let (_paint_actions, _snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, _core_actions, player_1, _player_2) = setup_core();
+    let (_paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
     set_caller(player_1);
 }
 
 #[test]
 fn test_hooks() {
-    let (world, _core_actions, player_1, _player_2) = setup_core_initialized();
-    let (paint_actions, snake_actions, _player_actions) = setup_apps_initialized(world);
+    let (mut world, _core_actions, player_1, _player_2) = setup_core();
+    let (paint_actions, snake_actions, _player_actions) = setup_apps(ref world);
 
     set_caller(player_1);
 

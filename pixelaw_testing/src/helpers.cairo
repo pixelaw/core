@@ -39,15 +39,26 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0>()
 }
 
-pub fn setup_core_initialized() -> (
-    WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress,
-) {
-    let (world, core_actions, player_1, player_2) = setup_core();
 
-    (world, core_actions, player_1, player_2)
+fn app_namespace_defs() -> NamespaceDef {
+    let ndef = NamespaceDef {
+        namespace: "pixelaw",
+        resources: [
+            TestResource::Model(m_Snake::TEST_CLASS_HASH),
+            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
+            TestResource::Model(m_Player::TEST_CLASS_HASH),
+            TestResource::Model(m_PositionPlayer::TEST_CLASS_HASH),
+            TestResource::Contract(snake_actions::TEST_CLASS_HASH),
+            TestResource::Contract(paint_actions::TEST_CLASS_HASH),
+            TestResource::Contract(player_actions::TEST_CLASS_HASH),
+        ]
+            .span(),
+    };
+
+    ndef
 }
 
-fn namespace_def() -> NamespaceDef {
+fn core_namespace_defs() -> NamespaceDef {
     let ndef = NamespaceDef {
         namespace: "pixelaw",
         resources: [
@@ -57,17 +68,10 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_CoreActionsAddress::TEST_CLASS_HASH),
             TestResource::Model(m_RTree::TEST_CLASS_HASH),
             TestResource::Model(m_Area::TEST_CLASS_HASH),
-            TestResource::Model(m_Snake::TEST_CLASS_HASH),
-            TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
             TestResource::Model(m_QueueItem::TEST_CLASS_HASH),
-            TestResource::Model(m_Player::TEST_CLASS_HASH),
-            TestResource::Model(m_PositionPlayer::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_QueueScheduled::TEST_CLASS_HASH),
             TestResource::Event(pixelaw::core::events::e_Notification::TEST_CLASS_HASH),
             TestResource::Contract(actions::TEST_CLASS_HASH),
-            TestResource::Contract(snake_actions::TEST_CLASS_HASH),
-            TestResource::Contract(paint_actions::TEST_CLASS_HASH),
-            TestResource::Contract(player_actions::TEST_CLASS_HASH),
         ]
             .span(),
     };
@@ -97,20 +101,15 @@ fn app_contract_defs() -> Span<ContractDef> {
 
 
 pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
-    let mut world = spawn_test_world([namespace_def()].span());
+
+
+    let mut world = spawn_test_world([core_namespace_defs()].span());
 
     world.sync_perms_and_inits(core_contract_defs());
 
     let core_actions_address = world.dns_address(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
 
-    // FIXME: Setup permissions
-    // world.dispatcher.grant_writer(selector_from_tag!("pixelaw-App"), core_actions_address);
-    // world.grant_writer(selector_from_tag!("pixelaw-AppName"), core_actions_address);
-    // world.grant_writer(selector_from_tag!("pixelaw-CoreActionsAddress"), core_actions_address);
-    // world.grant_writer(selector_from_tag!("pixelaw-Pixel"), core_actions_address);
-    // world.grant_writer(selector_from_tag!("pixelaw-RTree"), core_actions_address);
-    // world.grant_writer(selector_from_tag!("pixelaw-Area"), core_actions_address);
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -121,8 +120,11 @@ pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, Contr
 
 
 pub fn setup_apps(
-    world: WorldStorage,
+    ref world: WorldStorage,
 ) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
+
+    update_test_world(ref world, [app_namespace_defs()].span());
+
     world.sync_perms_and_inits(app_contract_defs());
 
     let paint_actions_address = world.dns_address(@"paint_actions").unwrap();
@@ -133,19 +135,6 @@ pub fn setup_apps(
 
     let player_actions_address = world.dns_address(@"player_actions").unwrap();
     let player_actions = IPlayerActionsDispatcher { contract_address: player_actions_address };
-
-    (paint_actions, snake_actions, player_actions)
-}
-
-pub fn setup_apps_initialized(
-    world: WorldStorage,
-) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
-    let (
-        paint_actions, snake_actions, player_actions,
-    ): (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) =
-        setup_apps(
-        world,
-    );
 
     (paint_actions, snake_actions, player_actions)
 }
