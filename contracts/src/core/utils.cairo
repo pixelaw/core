@@ -45,11 +45,11 @@ pub const MOVE_SELECTOR: felt252 =
 
 #[derive(Debug, PartialEq, Serde, Copy, Drop, Introspect)]
 pub enum Direction {
-    None: (),
-    Left: (),
-    Right: (),
-    Up: (),
-    Down: (),
+    None,
+    Left,
+    Right,
+    Up,
+    Down,
 }
 
 #[derive(Debug, Copy, Drop, Serde, Introspect)]

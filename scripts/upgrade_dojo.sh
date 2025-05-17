@@ -23,6 +23,7 @@ next_version=$1
 
 # Remove lockfile
 rm -f contracts/Scarb.lock
+rm -f pixelaw_testing/Scarb.lock
 
 # Find all files containing the previous version
 mapfile -t files < <(git grep -rl -- "$prev_version")

@@ -18,23 +18,23 @@ fn next_position(current_position: Position, direction: Direction) -> Option<Pos
     let Position { x, y } = current_position;
 
     match direction {
-        Direction::None(()) => Option::Some(Position { x, y }),
-        Direction::Left(()) => {
+        Direction::None => Option::Some(Position { x, y }),
+        Direction::Left => {
             if x == 0 {
                 Option::None
             } else {
                 Option::Some(Position { x: x - 1, y })
             }
         },
-        Direction::Right(()) => Option::Some(Position { x: x + 1, y }),
-        Direction::Up(()) => {
+        Direction::Right => Option::Some(Position { x: x + 1, y }),
+        Direction::Up => {
             if y == 0 {
                 Option::None
             } else {
                 Option::Some(Position { x, y: y - 1 })
             }
         },
-        Direction::Down(()) => Option::Some(Position { x, y: y + 1 }),
+        Direction::Down => Option::Some(Position { x, y: y + 1 }),
     }
 }
 

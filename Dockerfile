@@ -11,8 +11,8 @@ FROM nodejs AS dojo
 SHELL ["/bin/bash", "-c"]
 
 ARG ASDF_VERSION="v0.14.1"
-ARG SCARB_VERSION="2.9.4"
-ARG DOJO_VERSION="1.4.0"
+ARG SCARB_VERSION="2.10.1"
+ARG DOJO_VERSION="1.5.0"
 ARG STARKLI_VERSION="0.3.5"
 
 
@@ -35,31 +35,43 @@ RUN apt-get update && \
 RUN yarn global add ts-node pm2
 
 RUN \
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
-    chmod +x $HOME/.asdf/asdf.sh && \
-    echo "$HOME/.asdf/asdf.sh" >> ~/.bashrc && \
-    source ~/.bashrc
+    curl -L https://install.dojoengine.org | bash && \
+    . "/root/.dojo/env" && \
+    dojoup install
 
-ENV PATH="/root/.asdf/bin:/root/.asdf/shims:${PATH}"
 
 RUN \
-    asdf plugin add scarb && \
-    asdf install scarb ${SCARB_VERSION} && \
-    asdf global scarb ${SCARB_VERSION}
+    curl https://get.starkli.sh | sh && \
+    . ~/.starkli/env && \
+    starkliup
 
-RUN \
-    asdf plugin add dojo https://github.com/pixelaw/asdf-dojo && \
-    asdf install dojo ${DOJO_VERSION} && \
-    asdf global dojo ${DOJO_VERSION}
+ENV PATH="/root/.dojo/bin:/root/.starkli/bin:${PATH}"
+
+#RUN \
+#    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
+#    chmod +x $HOME/.asdf/asdf.sh && \
+#    echo "$HOME/.asdf/asdf.sh" >> ~/.bashrc && \
+#    source ~/.bashrc
+
+#
+#RUN \
+#    asdf plugin add scarb && \
+#    asdf install scarb ${SCARB_VERSION} && \
+#    asdf global scarb ${SCARB_VERSION}
+#
+#RUN \
+#    asdf plugin add dojo https://github.com/pixelaw/asdf-dojo && \
+#    asdf install dojo ${DOJO_VERSION} && \
+#    asdf global dojo ${DOJO_VERSION}
 
 
 # Install starkli
-# TODO right now getting 0.1.6 because newer seems not to be compatible with katana's JSON-RPC
-SHELL ["/bin/bash", "-c"]
-RUN curl https://get.starkli.sh | bash
-RUN source ~/.bashrc
-ENV PATH="/root/.starkli/bin:${PATH}"
-RUN starkliup -v ${STARKLI_VERSION}
+## TODO right now getting 0.1.6 because newer seems not to be compatible with katana's JSON-RPC
+#SHELL ["/bin/bash", "-c"]
+#RUN curl https://get.starkli.sh | bash
+#RUN source ~/.bashrc
+#ENV PATH="/root/.starkli/bin:${PATH}"
+#RUN starkliup -v ${STARKLI_VERSION}
 
 
 
