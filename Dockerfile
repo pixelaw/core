@@ -30,8 +30,7 @@ RUN apt-get update && \
     curl \
     build-essential \
     make \
-    zip  && \
-    apt-get autoremove && apt-get clean
+    zip
 
 
 RUN yarn global add ts-node pm2
