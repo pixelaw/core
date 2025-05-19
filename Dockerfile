@@ -50,8 +50,6 @@ RUN \
     starkliup
 
 
-
-
 ## Stage 2: Put the webapp files in place
 #FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
 #
