@@ -34,9 +34,10 @@ RUN apt-get update && \
 
 RUN yarn global add ts-node pm2
 
+ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
+
 RUN \
     curl -L https://install.dojoengine.org | bash && \
-    . "/root/.dojo/env" && \
     dojoup install
 
 
@@ -45,7 +46,6 @@ RUN \
     . ~/.starkli/env && \
     starkliup
 
-ENV PATH="/root/.dojo/bin:/root/.starkli/bin:${PATH}"
 
 #RUN \
 #    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
