@@ -17,7 +17,7 @@ env:
 
 jobs:
   buildImage:
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       packages: write
@@ -86,7 +86,7 @@ jobs:
 
   populateImage:
     needs: buildImage
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       packages: write
