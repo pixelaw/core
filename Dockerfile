@@ -15,7 +15,7 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /root
 
 
-RUN curl --keepalive-time 600 -iv --limit-rate 500K https://install.dojoengine.org | bash && \
+RUN curl --sslv3 --keepalive-time 600 -iv  https://install.dojoengine.org | bash && \
     pwd && ls -la && dojoup install
 
 ARG ASDF_VERSION="v0.14.1"
