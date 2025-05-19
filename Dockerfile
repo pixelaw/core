@@ -4,16 +4,16 @@
 
 FROM sitespeedio/node:ubuntu-24-04-nodejs-22.13.0 AS nodejs
 RUN npm install -g yarn
-
+RUN apt-get update && \
+    apt-get install -y \
+    curl
 
 FROM nodejs AS dojo
 
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /root
-RUN apt-get update && \
-    apt-get install -y \
-    curl 
+
 
 RUN curl -fsSL https://install.dojoengine.org | bash && \
     pwd && ls -la && dojoup install
