@@ -4,8 +4,8 @@ on:
   push:
     tags:
       - "v*.*.*"
-#    branches:
-#      - '**'
+    branches:
+      - '**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -59,7 +59,8 @@ jobs:
           build-args: |
             DOJO_VERSION=${{ env.DOJO_VERSION }}
           push: true
-          platforms: linux/amd64,linux/arm64
+#          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |

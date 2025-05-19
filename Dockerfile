@@ -38,6 +38,8 @@ ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
 
 RUN \
     curl -fsSL https://install.dojoengine.org | bash && \
+    pwd && \
+    ls -la && \
     dojoup install
 
 
