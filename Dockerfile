@@ -13,8 +13,8 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /root
 RUN apt-get update && \
     apt-get install -y \
-    curl \
-    
+    curl 
+
 RUN curl -fsSL https://install.dojoengine.org | bash && \
     pwd && ls -la && dojoup install
 
