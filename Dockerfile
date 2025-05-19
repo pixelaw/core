@@ -15,8 +15,9 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /root
 
 
-RUN curl --sslv3 --keepalive-time 600 -iv  https://install.dojoengine.org | bash && \
-    pwd && ls -la && dojoup install
+RUN curl -fsSL https://install.dojoengine.org -o install.sh \
+     && bash install.sh > install.log 2>&1 \
+     && tail -n50 install.log
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.10.1"
