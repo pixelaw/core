@@ -12,7 +12,7 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /root
 
-RUN curl -fsSL https://install.dojoengine.org | bash && \
+RUN wget https://install.dojoengine.org | bash && \
     pwd && ls -la && dojoup install
 
 ARG ASDF_VERSION="v0.14.1"
