@@ -51,38 +51,12 @@ RUN \
     starkliup
 
 
-#RUN \
-#    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
-#    chmod +x $HOME/.asdf/asdf.sh && \
-#    echo "$HOME/.asdf/asdf.sh" >> ~/.bashrc && \
-#    source ~/.bashrc
 
+
+## Stage 2: Put the webapp files in place
+#FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
 #
-#RUN \
-#    asdf plugin add scarb && \
-#    asdf install scarb ${SCARB_VERSION} && \
-#    asdf global scarb ${SCARB_VERSION}
-#
-#RUN \
-#    asdf plugin add dojo https://github.com/pixelaw/asdf-dojo && \
-#    asdf install dojo ${DOJO_VERSION} && \
-#    asdf global dojo ${DOJO_VERSION}
-
-
-# Install starkli
-## TODO right now getting 0.1.6 because newer seems not to be compatible with katana's JSON-RPC
-#SHELL ["/bin/bash", "-c"]
-#RUN curl https://get.starkli.sh | bash
-#RUN source ~/.bashrc
-#ENV PATH="/root/.starkli/bin:${PATH}"
-#RUN starkliup -v ${STARKLI_VERSION}
-
-
-
-# Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
-
-FROM ghcr.io/pixelaw/server:0.5.1 AS server
+#FROM ghcr.io/pixelaw/server:0.5.1 AS server
 
 
 # Stage 4: Setup runtime
@@ -124,8 +98,8 @@ RUN \
 # Install the final system
 
 WORKDIR /pixelaw
-COPY --from=web /pixelaw/web/ /pixelaw/web/
-COPY --from=server /app server/
+#COPY --from=web /pixelaw/web/ /pixelaw/web/
+#COPY --from=server /app server/
 
 COPY docker/scripts/ /pixelaw/scripts/
 COPY docker/ecosystem.config.js /pixelaw/core/docker/
