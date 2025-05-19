@@ -52,6 +52,14 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
+      - name: Cache /var/lib
+        uses: actions/cache@v3
+        with:
+          path: /var/lib
+          key: ${{ runner.os }}-varlib
+          restore-keys: |
+            ${{ runner.os }}-varlib
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:

@@ -10,6 +10,8 @@ FROM nodejs AS dojo
 
 SHELL ["/bin/bash", "-c"]
 
+WORKDIR /root
+
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.10.1"
 ARG DOJO_VERSION="1.5.0"
