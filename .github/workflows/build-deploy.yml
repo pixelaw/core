@@ -4,8 +4,8 @@ on:
   push:
     tags:
       - "v*.*.*"
-    branches:
-      - '**'
+#    branches:
+#      - '**'
 
 env:
   CARGO_TERM_COLOR: always
