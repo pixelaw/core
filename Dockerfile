@@ -4,11 +4,17 @@
 
 FROM sitespeedio/node:ubuntu-24-04-nodejs-22.13.0 AS nodejs
 RUN npm install -g yarn
-
+RUN apt-get update && \
+    apt-get install -y \
+    curl ca-certificates bash
 
 FROM nodejs AS dojo
 
 SHELL ["/bin/bash", "-c"]
+
+WORKDIR /root
+
+
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.10.1"
@@ -28,17 +34,20 @@ RUN apt-get update && \
     curl \
     build-essential \
     make \
-    zip  && \
-    apt-get autoremove && apt-get clean
+    zip
 
 
 RUN yarn global add ts-node pm2
 
+COPY dojo_init/dojo_install.sh .
+
 ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
 
 RUN \
-    curl -fsSL https://install.dojoengine.org | bash && \
+    bash dojo_install.sh && \
     dojoup install
+
+#
 
 
 RUN \
@@ -46,40 +55,12 @@ RUN \
     . ~/.starkli/env && \
     starkliup
 
-
-#RUN \
-#    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${ASDF_VERSION} && \
-#    chmod +x $HOME/.asdf/asdf.sh && \
-#    echo "$HOME/.asdf/asdf.sh" >> ~/.bashrc && \
-#    source ~/.bashrc
-
 #
-#RUN \
-#    asdf plugin add scarb && \
-#    asdf install scarb ${SCARB_VERSION} && \
-#    asdf global scarb ${SCARB_VERSION}
+### Stage 2: Put the webapp files in place
+##FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
+##
+##FROM ghcr.io/pixelaw/server:0.5.1 AS server
 #
-#RUN \
-#    asdf plugin add dojo https://github.com/pixelaw/asdf-dojo && \
-#    asdf install dojo ${DOJO_VERSION} && \
-#    asdf global dojo ${DOJO_VERSION}
-
-
-# Install starkli
-## TODO right now getting 0.1.6 because newer seems not to be compatible with katana's JSON-RPC
-#SHELL ["/bin/bash", "-c"]
-#RUN curl https://get.starkli.sh | bash
-#RUN source ~/.bashrc
-#ENV PATH="/root/.starkli/bin:${PATH}"
-#RUN starkliup -v ${STARKLI_VERSION}
-
-
-
-# Stage 2: Put the webapp files in place
-FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
-
-FROM ghcr.io/pixelaw/server:0.5.1 AS server
-
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
@@ -120,8 +101,8 @@ RUN \
 # Install the final system
 
 WORKDIR /pixelaw
-COPY --from=web /pixelaw/web/ /pixelaw/web/
-COPY --from=server /app server/
+#COPY --from=web /pixelaw/web/ /pixelaw/web/
+#COPY --from=server /app server/
 
 COPY docker/scripts/ /pixelaw/scripts/
 COPY docker/ecosystem.config.js /pixelaw/core/docker/
