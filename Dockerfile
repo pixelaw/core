@@ -14,9 +14,7 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /root
 
-COPY dojo_init/dojo_install.sh .
 
-RUN bash dojo_install.sh
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.10.1"
@@ -40,6 +38,13 @@ RUN apt-get update && \
 
 
 RUN yarn global add ts-node pm2
+
+COPY dojo_init/dojo_install.sh .
+
+RUN \
+    bash dojo_install.sh && \
+    dojoup install
+
 #
 #ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
 #
