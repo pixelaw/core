@@ -41,13 +41,14 @@ RUN yarn global add ts-node pm2
 
 COPY dojo_init/dojo_install.sh .
 
+ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
+
 RUN \
     bash dojo_install.sh && \
     dojoup install
 
 #
-#ENV PATH="/root/.dojo/bin:/root/.dojo/dojoup:/root/.starkli/bin:${PATH}"
-#
+
 #RUN \
 #    curl -fsSL https://install.dojoengine.org | bash
 #
