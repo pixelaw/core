@@ -14,10 +14,9 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /root
 
+COPY dojo_init/dojo_install.sh .
 
-RUN curl -fsSL https://install.dojoengine.org -o install.sh \
-     && bash install.sh > install.log 2>&1 \
-     && tail -n50 install.log
+RUN bash dojo_install.sh
 
 ARG ASDF_VERSION="v0.14.1"
 ARG SCARB_VERSION="2.10.1"
