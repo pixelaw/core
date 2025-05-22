@@ -22,7 +22,6 @@ sort-module-level-items = true
 sierra = true
 build-external-contracts = ["dojo::world::world_contract::world"]
 
-[profile.dev-pop]
 
 [profile.slot]
 

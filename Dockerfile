@@ -56,8 +56,9 @@ RUN \
 ### Stage 2: Put the webapp files in place
 ##FROM ghcr.io/pixelaw/vanilla:0.6.11 AS web
 ##
-##FROM ghcr.io/pixelaw/server:0.5.1 AS server
-#
+
+FROM ghcr.io/pixelaw/server:0.5.1 AS server
+
 
 # Stage 4: Setup runtime
 FROM dojo AS builder
@@ -99,7 +100,7 @@ RUN \
 
 WORKDIR /pixelaw
 #COPY --from=web /pixelaw/web/ /pixelaw/web/
-#COPY --from=server /app server/
+COPY --from=server /app server/
 
 COPY docker/scripts/ /pixelaw/scripts/
 COPY docker/ecosystem.config.js /pixelaw/core/docker/

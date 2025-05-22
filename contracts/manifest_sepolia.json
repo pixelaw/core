@@ -1,8 +1,8 @@
 {
   "world": {
-    "class_hash": "0x79d9ce84b97bcc2a631996c3100d57966fc2f5b061fb1ec4dfd0040976bcac6",
-    "address": "0x6f130c8e150882e39cbe878c650c8f35c86579180dbc77d0c1cbe169449b5f6",
-    "seed": "pixelaw",
+    "class_hash": "0x4c60dc46a8ca8bb47675b7b914053cef769afbf0e340523187336b72bd71d1f",
+    "address": "0x29f5f05845d3348af25b08d1415a0ea4b4df90892d734229931ba068a66e97",
+    "seed": "pixelaw_075",
     "name": "pixelaw",
     "entrypoints": [
       "uuid",
@@ -11,6 +11,7 @@
       "register_event",
       "register_model",
       "register_contract",
+      "register_library",
       "init_contract",
       "upgrade_event",
       "upgrade_model",
@@ -78,6 +79,10 @@
           {
             "name": "Unregistered",
             "type": "()"
+          },
+          {
+            "name": "Library",
+            "type": "(core::starknet::class_hash::ClassHash, core::felt252)"
           }
         ]
       },
@@ -92,6 +97,10 @@
           {
             "name": "metadata_uri",
             "type": "core::byte_array::ByteArray"
+          },
+          {
+            "name": "metadata_hash",
+            "type": "core::felt252"
           }
         ]
       },
@@ -354,6 +363,34 @@
             "outputs": [
               {
                 "type": "core::starknet::contract_address::ContractAddress"
+              }
+            ],
+            "state_mutability": "external"
+          },
+          {
+            "type": "function",
+            "name": "register_library",
+            "inputs": [
+              {
+                "name": "namespace",
+                "type": "core::byte_array::ByteArray"
+              },
+              {
+                "name": "class_hash",
+                "type": "core::starknet::class_hash::ClassHash"
+              },
+              {
+                "name": "name",
+                "type": "core::byte_array::ByteArray"
+              },
+              {
+                "name": "version",
+                "type": "core::byte_array::ByteArray"
+              }
+            ],
+            "outputs": [
+              {
+                "type": "core::starknet::class_hash::ClassHash"
               }
             ],
             "state_mutability": "external"
@@ -653,6 +690,22 @@
             ],
             "outputs": [],
             "state_mutability": "external"
+          },
+          {
+            "type": "function",
+            "name": "owners_count",
+            "inputs": [
+              {
+                "name": "resource",
+                "type": "core::felt252"
+              }
+            ],
+            "outputs": [
+              {
+                "type": "core::integer::u64"
+              }
+            ],
+            "state_mutability": "view"
           },
           {
             "type": "function",
@@ -963,6 +1016,28 @@
       },
       {
         "type": "event",
+        "name": "dojo::world::world_contract::world::LibraryRegistered",
+        "kind": "struct",
+        "members": [
+          {
+            "name": "name",
+            "type": "core::byte_array::ByteArray",
+            "kind": "key"
+          },
+          {
+            "name": "namespace",
+            "type": "core::byte_array::ByteArray",
+            "kind": "key"
+          },
+          {
+            "name": "class_hash",
+            "type": "core::starknet::class_hash::ClassHash",
+            "kind": "data"
+          }
+        ]
+      },
+      {
+        "type": "event",
         "name": "dojo::world::world_contract::world::EventEmitted",
         "kind": "struct",
         "members": [
@@ -1001,6 +1076,11 @@
           {
             "name": "uri",
             "type": "core::byte_array::ByteArray",
+            "kind": "data"
+          },
+          {
+            "name": "hash",
+            "type": "core::felt252",
             "kind": "data"
           }
         ]
@@ -1198,6 +1278,11 @@
             "kind": "nested"
           },
           {
+            "name": "LibraryRegistered",
+            "type": "dojo::world::world_contract::world::LibraryRegistered",
+            "kind": "nested"
+          },
+          {
             "name": "EventEmitted",
             "type": "dojo::world::world_contract::world::EventEmitted",
             "kind": "nested"
@@ -1243,8 +1328,8 @@
   },
   "contracts": [
     {
-      "address": "0x2d937e8236e56e1d833600b26478dcc0332a9b674d4a5452377a048a4625caf",
-      "class_hash": "0xabbea8e73f9e282fa460c36f5af8598994c6e365cbb0fe243bc1cdb283411d",
+      "address": "0x6e82adcb82e399385f7a2fb6a208dea94715351f0eea2978cd5fe0410d92e5b",
+      "class_hash": "0x5ee1e5ccf2ba9562397a0987ddce064091a0d8bfc3e8c95720990e966821b9c",
       "abi": [
         {
           "type": "impl",
@@ -1297,13 +1382,20 @@
           ]
         },
         {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
           "type": "impl",
           "name": "ActionsImpl",
           "interface_name": "pixelaw::core::actions::IActions"
         },
         {
           "type": "struct",
-          "name": "pixelaw::core::models::pixel::Pixel",
+          "name": "pixelaw::core::utils::Position",
           "members": [
             {
               "name": "x",
@@ -1312,6 +1404,16 @@
             {
               "name": "y",
               "type": "core::integer::u16"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::models::pixel::Pixel",
+          "members": [
+            {
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
             },
             {
               "name": "app",
@@ -1408,12 +1510,8 @@
           "name": "pixelaw::core::models::pixel::PixelUpdate",
           "members": [
             {
-              "name": "x",
-              "type": "core::integer::u16"
-            },
-            {
-              "name": "y",
-              "type": "core::integer::u16"
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
             },
             {
               "name": "color",
@@ -1465,11 +1563,11 @@
             },
             {
               "name": "NotAllowed",
-              "type": "()"
+              "type": "pixelaw::core::models::pixel::PixelUpdate"
             },
             {
               "name": "Error",
-              "type": "core::felt252"
+              "type": "(pixelaw::core::models::pixel::PixelUpdate, core::felt252)"
             }
           ]
         },
@@ -1502,20 +1600,6 @@
             {
               "name": "action",
               "type": "core::felt252"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "pixelaw::core::utils::Position",
-          "members": [
-            {
-              "name": "x",
-              "type": "core::integer::u16"
-            },
-            {
-              "name": "y",
-              "type": "core::integer::u16"
             }
           ]
         },
@@ -1591,13 +1675,6 @@
           "type": "interface",
           "name": "pixelaw::core::actions::IActions",
           "items": [
-            {
-              "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
             {
               "type": "function",
               "name": "can_update_pixel",
@@ -1744,18 +1821,26 @@
             },
             {
               "type": "function",
-              "name": "alert_player",
+              "name": "notification",
               "inputs": [
                 {
                   "name": "position",
                   "type": "pixelaw::core::utils::Position"
                 },
                 {
-                  "name": "player",
-                  "type": "core::starknet::contract_address::ContractAddress"
+                  "name": "color",
+                  "type": "core::integer::u32"
                 },
                 {
-                  "name": "message",
+                  "name": "from",
+                  "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+                },
+                {
+                  "name": "to",
+                  "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+                },
+                {
+                  "name": "text",
                   "type": "core::felt252"
                 }
               ],
@@ -1835,13 +1920,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -1955,13 +2033,13 @@
       "tag": "pixelaw-actions",
       "selector": "0x16928a49cfd8cf14e9f41e9d8f873890d1ab7d23b9a312d8a72f4031159876f",
       "systems": [
-        "init",
+        "dojo_init",
         "can_update_pixel",
         "update_pixel",
         "process_queue",
         "schedule_queue",
         "new_app",
-        "alert_player",
+        "notification",
         "add_area",
         "remove_area",
         "find_area_by_position",
@@ -1970,8 +2048,8 @@
       ]
     },
     {
-      "address": "0x163f19f0e2fbeb0d205838f11f5077233de350d6407191fffd21bc22111f275",
-      "class_hash": "0x21a2ccff36791e4791667895d760117b6f1cc81c521c471263c4bd2a26144ea",
+      "address": "0x652702ffc46c6cd620660333a3e0b389aa6bb1fdbebbdfa7b009c75914750f9",
+      "class_hash": "0x3120f39d77c1049f9d237764f850c239889ef2995fe51930093edb33d6da472",
       "abi": [
         {
           "type": "impl",
@@ -2024,9 +2102,30 @@
           ]
         },
         {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
           "type": "impl",
           "name": "Actions",
           "interface_name": "pixelaw::apps::paint::IPaintActions"
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::utils::Position",
+          "members": [
+            {
+              "name": "x",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "y",
+              "type": "core::integer::u16"
+            }
+          ]
         },
         {
           "type": "enum",
@@ -2089,12 +2188,8 @@
           "name": "pixelaw::core::models::pixel::PixelUpdate",
           "members": [
             {
-              "name": "x",
-              "type": "core::integer::u16"
-            },
-            {
-              "name": "y",
-              "type": "core::integer::u16"
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
             },
             {
               "name": "color",
@@ -2160,20 +2255,6 @@
         },
         {
           "type": "struct",
-          "name": "pixelaw::core::utils::Position",
-          "members": [
-            {
-              "name": "x",
-              "type": "core::integer::u16"
-            },
-            {
-              "name": "y",
-              "type": "core::integer::u16"
-            }
-          ]
-        },
-        {
-          "type": "struct",
           "name": "pixelaw::core::utils::DefaultParameters",
           "members": [
             {
@@ -2212,13 +2293,6 @@
           "type": "interface",
           "name": "pixelaw::apps::paint::IPaintActions",
           "items": [
-            {
-              "type": "function",
-              "name": "init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
             {
               "type": "function",
               "name": "on_pre_update",
@@ -2316,13 +2390,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -2436,7 +2503,7 @@
       "tag": "pixelaw-paint_actions",
       "selector": "0x2afb94fee3f58a7234658d0fd5366da8a9c48a4978cc6fff464344d2720123d",
       "systems": [
-        "init",
+        "dojo_init",
         "on_pre_update",
         "on_post_update",
         "interact",
@@ -2447,8 +2514,448 @@
       ]
     },
     {
-      "address": "0x7b86c7fc42eec87f64b3d621b6cd84db4d723fed73ad6b30d1a7b8056928552",
-      "class_hash": "0x439245065fbcde3d0f13a3e462ce2cec94c9ab2519b16c296dbf1d243aea9ae",
+      "address": "0x60a6dd8e29890c1fa7f4164c58ee06691c37df24999253e8839fbdc2a1c106a",
+      "class_hash": "0x37915c6f87a16935cebc8241f8458addace325296057483323e0cfd80224b4d",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "player_actions__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "player_actions__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
+          "type": "impl",
+          "name": "Actions",
+          "interface_name": "pixelaw::apps::player::IPlayerActions"
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::utils::Position",
+          "members": [
+            {
+              "name": "x",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "y",
+              "type": "core::integer::u16"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::integer::u32>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::starknet::contract_address::ContractAddress>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::felt252>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::felt252"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::integer::u64>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::integer::u64"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::models::pixel::PixelUpdate",
+          "members": [
+            {
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
+            },
+            {
+              "name": "color",
+              "type": "core::option::Option::<core::integer::u32>"
+            },
+            {
+              "name": "owner",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "app",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "text",
+              "type": "core::option::Option::<core::felt252>"
+            },
+            {
+              "name": "timestamp",
+              "type": "core::option::Option::<core::integer::u64>"
+            },
+            {
+              "name": "action",
+              "type": "core::option::Option::<core::felt252>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::models::registry::App",
+          "members": [
+            {
+              "name": "system",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "icon",
+              "type": "core::felt252"
+            },
+            {
+              "name": "action",
+              "type": "core::felt252"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "pixelaw::core::models::pixel::PixelUpdate"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::utils::DefaultParameters",
+          "members": [
+            {
+              "name": "player_override",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "system_override",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "area_hint",
+              "type": "core::option::Option::<core::integer::u64>"
+            },
+            {
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
+            },
+            {
+              "name": "color",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::utils::Emoji",
+          "members": [
+            {
+              "name": "value",
+              "type": "core::felt252"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "pixelaw::apps::player::IPlayerActions",
+          "items": [
+            {
+              "type": "function",
+              "name": "on_pre_update",
+              "inputs": [
+                {
+                  "name": "pixel_update",
+                  "type": "pixelaw::core::models::pixel::PixelUpdate"
+                },
+                {
+                  "name": "app_caller",
+                  "type": "pixelaw::core::models::registry::App"
+                },
+                {
+                  "name": "player_caller",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "on_post_update",
+              "inputs": [
+                {
+                  "name": "pixel_update",
+                  "type": "pixelaw::core::models::pixel::PixelUpdate"
+                },
+                {
+                  "name": "app_caller",
+                  "type": "pixelaw::core::models::registry::App"
+                },
+                {
+                  "name": "player_caller",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "interact",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "configure",
+              "inputs": [
+                {
+                  "name": "default_params",
+                  "type": "pixelaw::core::utils::DefaultParameters"
+                },
+                {
+                  "name": "emoji",
+                  "type": "pixelaw::core::utils::Emoji"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "pixelaw::apps::player::player_actions::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "pixelaw-player_actions",
+      "selector": "0x3523bab59c7ec5121909430b7315002180cb06076e33136f89c5d0ac830eddc",
+      "systems": [
+        "dojo_init",
+        "on_pre_update",
+        "on_post_update",
+        "interact",
+        "configure",
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x625698e138ac0d5eab1ecacfa3de70ee854833185debdfb07d7a1fe11299a1",
+      "class_hash": "0x7b9dfe1e7e32f1d9d5930e587f465a0712b4dce1e6728c61585a87d0248792f",
       "abi": [
         {
           "type": "impl",
@@ -2501,9 +3008,44 @@
           ]
         },
         {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
           "type": "impl",
           "name": "ActionsImpl",
           "interface_name": "pixelaw::apps::snake::ISnakeActions"
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::utils::Position",
+          "members": [
+            {
+              "name": "x",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "y",
+              "type": "core::integer::u16"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::integer::u32>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "enum",
@@ -2512,6 +3054,20 @@
             {
               "name": "Some",
               "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::felt252>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::felt252"
             },
             {
               "name": "None",
@@ -2535,15 +3091,71 @@
         },
         {
           "type": "struct",
-          "name": "pixelaw::core::utils::Position",
+          "name": "pixelaw::core::models::pixel::PixelUpdate",
           "members": [
             {
-              "name": "x",
-              "type": "core::integer::u16"
+              "name": "position",
+              "type": "pixelaw::core::utils::Position"
             },
             {
-              "name": "y",
-              "type": "core::integer::u16"
+              "name": "color",
+              "type": "core::option::Option::<core::integer::u32>"
+            },
+            {
+              "name": "owner",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "app",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "text",
+              "type": "core::option::Option::<core::felt252>"
+            },
+            {
+              "name": "timestamp",
+              "type": "core::option::Option::<core::integer::u64>"
+            },
+            {
+              "name": "action",
+              "type": "core::option::Option::<core::felt252>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "pixelaw::core::models::registry::App",
+          "members": [
+            {
+              "name": "system",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "icon",
+              "type": "core::felt252"
+            },
+            {
+              "name": "action",
+              "type": "core::felt252"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "pixelaw::core::models::pixel::PixelUpdate"
+            },
+            {
+              "name": "None",
+              "type": "()"
             }
           ]
         },
@@ -2605,8 +3217,45 @@
           "items": [
             {
               "type": "function",
-              "name": "init",
-              "inputs": [],
+              "name": "on_pre_update",
+              "inputs": [
+                {
+                  "name": "pixel_update",
+                  "type": "pixelaw::core::models::pixel::PixelUpdate"
+                },
+                {
+                  "name": "app_caller",
+                  "type": "pixelaw::core::models::registry::App"
+                },
+                {
+                  "name": "player_caller",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::option::Option::<pixelaw::core::models::pixel::PixelUpdate>"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "on_post_update",
+              "inputs": [
+                {
+                  "name": "pixel_update",
+                  "type": "pixelaw::core::models::pixel::PixelUpdate"
+                },
+                {
+                  "name": "app_caller",
+                  "type": "pixelaw::core::models::registry::App"
+                },
+                {
+                  "name": "player_caller",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             },
@@ -2643,13 +3292,6 @@
               "state_mutability": "external"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
         },
         {
           "type": "impl",
@@ -2763,71 +3405,92 @@
       "tag": "pixelaw-snake_actions",
       "selector": "0x4f96710669719291ad9660428d2dc9c921f129b75ddf0f70e8bf5837ea4157e",
       "systems": [
-        "init",
+        "dojo_init",
+        "on_pre_update",
+        "on_post_update",
         "interact",
         "move",
         "upgrade"
       ]
     }
   ],
+  "libraries": [],
   "models": [
     {
       "members": [],
-      "class_hash": "0x4126d6e4961b0891df9f5647f81e0af4045bdb9a2872c22075c1bfc17b55f22",
+      "class_hash": "0x45a9143a176abab8f3546d5ca5f0cf1c41c745bf70606387a6f244fca67e648",
       "tag": "pixelaw-App",
       "selector": "0x3650456503601ce448928ac87c54e3a6e95e76d725a59c95c7201324c9b2b74"
     },
     {
       "members": [],
-      "class_hash": "0x2ba73deeca772ba3ea99c58ae9fc6631b0a1ef0e6530ca57e415697a3b70223",
+      "class_hash": "0x345c31d73a04d5045f765c0dc8aa944d22fd0c703516767571665bffeadeb3c",
       "tag": "pixelaw-AppName",
       "selector": "0x3b816829f5d924b5acc1c44d28b6b61b4edd94e62444c536b2bdc85c0e70a2a"
     },
     {
       "members": [],
-      "class_hash": "0x1076206636fb7cb2929e09e6920c14f549108c858590f0799ad4424c77e361d",
+      "class_hash": "0x3058b76a0031175f26c6a95636265aaad5dee26d2e66f06be7bfc2b4c717963",
       "tag": "pixelaw-AppUser",
       "selector": "0x4eda3c525958eca36164ba6f96e2b7591304838960197934ac8ae0a4b08b20f"
     },
     {
       "members": [],
-      "class_hash": "0x3c0506cf801a4349d6232bde3c2c25e75d7c330ee9ae2da7969f9ff9c80e018",
+      "class_hash": "0x79ebb5cf341b5b4499ba2a75aca98a0b8c59a6200cc091d9d3263b6625ce884",
       "tag": "pixelaw-Area",
       "selector": "0x41f22f1725b6e571bd66653e79fd700d80cc35c56f9dc5d663802e57478194"
     },
     {
       "members": [],
-      "class_hash": "0x31ff6eee4b955a226958d02a083d47abdb898855259081b6c5b7b4cbe279481",
+      "class_hash": "0x7e7c906113db0332205b1a00ca83ff19a334088cc014d1d55c3a81cc14e0cf5",
       "tag": "pixelaw-CoreActionsAddress",
       "selector": "0x5379e1ce3a70cb70f1e96dae1b142164574f33d4e32cebdb965b5aec30222c5"
     },
     {
       "members": [],
-      "class_hash": "0x4bd730ead645bf5e5b5ff968ca8aa6fc7c67380b5c7059a50de52b48d433851",
+      "class_hash": "0x2e99446ebae84a6ebd546c43aca208e6934dba6cec68bbe4ed990bdd4cbfc63",
+      "tag": "pixelaw-Dummy",
+      "selector": "0x252cb2801257ae924f3f4741d013509d14d57145968637863e6278424d0759c"
+    },
+    {
+      "members": [],
+      "class_hash": "0x2046d7e02431f4dbabea577b4663abb523416af7dbd2ac8f65ef09af9d3a6bf",
       "tag": "pixelaw-Pixel",
       "selector": "0x7e607b2fbb4cfb3fb9d1258fa2ff3aa94f17b3820e42bf1e6a43e2de3f5772e"
     },
     {
       "members": [],
-      "class_hash": "0x7c55eccc696dee3d0c42c81897b8ffab4e9d9b3645737e9660c5fad052b1510",
+      "class_hash": "0x677c22e397f006bc3bfed600c0607930be1abb3c4709333e1af09aad88bbb5",
+      "tag": "pixelaw-Player",
+      "selector": "0x30a1b371016270e1d0c33e176d9d07ab01d801d8b1f0e1fd1d45534137f2ce"
+    },
+    {
+      "members": [],
+      "class_hash": "0x5cc52ac7ea49c9ce97a5c5924d5f52a481d22d724fc762a98a8a177a8cc5687",
+      "tag": "pixelaw-PositionPlayer",
+      "selector": "0x7a71117629f37cebec5ec1f4930ee80bddaa90188845ffce91d2e3b001c429c"
+    },
+    {
+      "members": [],
+      "class_hash": "0x3b288083669fee196d9bdee45c37d5e56c04ddfbc9167950cce30480ad2b8c4",
       "tag": "pixelaw-QueueItem",
       "selector": "0x549a17f23ab80595d9abd4d989a3d4bf0c1987ebc08ad48aecab0f1e8c311b4"
     },
     {
       "members": [],
-      "class_hash": "0x2be7e4ac4e699fdf934d3bb4f155ab124e999e4077f1c9fbd664594c4e91db2",
+      "class_hash": "0x3091bf46364c22b510e32164f4aa31d42fcf5d5f332b7e866157e553351f72f",
       "tag": "pixelaw-RTree",
       "selector": "0x3baaf9fe25823e8928b6fc6400e28e98d4b7618ff56faf269a11f3400a1c105"
     },
     {
       "members": [],
-      "class_hash": "0x4d26801f7bd975f48f95e2b23770d5360badc44f19b84cf8af8535d89c9627c",
+      "class_hash": "0x55223dc4d275d565ec36a877dabe62dbd833b1d9da3e68d6bc68bbe503fdebd",
       "tag": "pixelaw-Snake",
       "selector": "0x62b876d4cd94e88d2c363c3515ce2c9e8af1badad47a8dc96966543970658c1"
     },
     {
       "members": [],
-      "class_hash": "0x63a30177d958faf98d3b6a13a99bb8bc178cbc6fb04c4ef5290dc8301cca00",
+      "class_hash": "0x13f29ce0859553bd15f832e864574f2fa425e875d29ab38cebf77b76ae4cf2f",
       "tag": "pixelaw-SnakeSegment",
       "selector": "0x302de0d87f8997cb65a4f7edb9a792706446961826bd4a16cbfb47fa09146ed"
     }
@@ -2835,32 +3498,16 @@
   "events": [
     {
       "members": [],
-      "class_hash": "0x6a2206c941d303a072c00d112da416b3d0842d94d9fb31efd13749aaaa13da2",
-      "tag": "pixelaw-Alert",
-      "selector": "0x2a2938533e310a064aa2181f2cbb5914d80ac492be60f23fd358a49f47c26a2"
+      "class_hash": "0x579e3c4d0087da9334823c22fd6c9e50bbe1b23d8c99eab64b3d65b36a3806a",
+      "tag": "pixelaw-Notification",
+      "selector": "0x10496ac2cbbf647b99b3f4b883051a7513473c2d7f553d5557226533626b7a7"
     },
     {
       "members": [],
-      "class_hash": "0x9e4c29d3b299995b711b6be440f349ffcb8bba71bc41cd33c445aaf60aa746",
-      "tag": "pixelaw-Died",
-      "selector": "0x7d747e04206de964d63ff53216dcde822fd170b7c1d55ef7fc92dce1d6dbad8"
-    },
-    {
-      "members": [],
-      "class_hash": "0x3c8ceb8a7ff4aade3c14b66fa8ed2ba2403c087474c5fde88e79963bb3b6aab",
-      "tag": "pixelaw-Moved",
-      "selector": "0x2b409f0cebc7c8b0091267d7ed51567a6c0aae7147a86c07b854a1cc448aa28"
-    },
-    {
-      "members": [],
-      "class_hash": "0x5ec4f584c6d9fbbc46ce74bbb5a974734b59845d5107da7730005a6078603f2",
-      "tag": "pixelaw-QueueProcessed",
-      "selector": "0x6998c9cd795c72fd0cab90978a79bcdbe098723ec9a67e725a17104677743eb"
-    },
-    {
-      "members": [],
-      "class_hash": "0x285c23ee8661e296aca2a3eb8c6390c3735f151a7d5e5dff544f644ab363b00",
+      "class_hash": "0x6baf3fcbf940e0ca499f0c88456425a11937ae7f1139a8717b8f9366d414d20",
       "tag": "pixelaw-QueueScheduled",
       "selector": "0x32e74bc9762cc0dcdb6c7b67b35ded5b22a785e7c924673d6163369e6c6f769"
     }
-  ]
+  ],
+  "external_contracts": []
+}

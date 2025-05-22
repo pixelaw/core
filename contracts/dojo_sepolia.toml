@@ -1,7 +1,7 @@
 [world]
 description = "PixeLAW world"
 name = "pixelaw"
-seed = "pixelaw"
+seed = "pixelaw_075"
 
 [world.socials]
 x = "https://x.com/0xPixeLAW"
@@ -13,16 +13,21 @@ default = "pixelaw"
 mappings = {}
 
 [env]
-rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 keystore_path = "accounts/sepolia.deployer.keystore.json"
 account_address = "0xbacdf8ccd3aa527cab838e5ea45e045dbb0e12e2da4434579df99d9233253b"
-world_address = "0x6f130c8e150882e39cbe878c650c8f35c86579180dbc77d0c1cbe169449b5f6"
+#world_address = "0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf2009f4"
+#chain_id = "SN_SEPOLIA"
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia" # or env: STARKNET_RPC_URL
+
+
 
 [writers]
 "pixelaw-App" = ["pixelaw-actions"]
 "pixelaw-AppName" = ["pixelaw-actions"]
 "pixelaw-AppUser" = ["pixelaw-actions"]
 "pixelaw-CoreActionsAddress" = ["pixelaw-actions"]
+"pixelaw-QueueScheduled" = ["pixelaw-actions"]
+"pixelaw-Notification" = ["pixelaw-actions"]
 "pixelaw-Pixel" = [
   "pixelaw-actions",
   "pixelaw-paint_actions",
@@ -33,3 +38,14 @@ world_address = "0x6f130c8e150882e39cbe878c650c8f35c86579180dbc77d0c1cbe169449b5
 "pixelaw-RTree" = ["pixelaw-actions"]
 "pixelaw-Area" = ["pixelaw-actions"]
 "pixelaw-SnakeSegment" = ["pixelaw-snake_actions"]
+"pixelaw-Player" = ["pixelaw-player_actions"]
+"pixelaw-PositionPlayer" = ["pixelaw-player_actions"]
+
+[migration]
+order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions"]
+
+[init_call_args]
+"pixelaw-actions" = []
+"pixelaw-snake_actions" = []
+"pixelaw-paint_actions" = []
+"pixelaw-player_actions" = []

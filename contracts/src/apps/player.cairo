@@ -203,7 +203,7 @@ pub mod player_actions {
                 positionPlayer.player = playerAddress;
                 world.write_model(@positionPlayer);
 
-                println!("Created new Player");
+                //println!("Created new Player");
                 return;
             }
 
@@ -283,7 +283,7 @@ pub mod player_actions {
             positionPlayer.player = contract_address_const::<0x0>();
             world.write_model(@positionPlayer);
 
-            println!("Moving Player!")
+            //println!("Moving Player!")
         }
     }
 

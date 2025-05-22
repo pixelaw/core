@@ -30,8 +30,7 @@ allowed-libfuncs-list.name = "experimental"
 [features]
 default = []
 
-[profile.dev-pop]
-
+[profile.dev]
 [profile.slot]
-
 [profile.sepolia]
+[profile.mainnet]

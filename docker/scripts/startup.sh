@@ -15,7 +15,7 @@ if [ "$DISABLE_KATANA" != "1" ] && [ ! -f "$GENESIS" ]; then
   cp "$STORAGE_INIT_DIR/genesis.json" "$GENESIS"
 fi
 
-pushd /pixelaw/web && sh vite-envs.sh && popd
+#pushd /pixelaw/web && sh vite-envs.sh && popd
 
 # Start all applications defined in ecosystem.config.js with PM2
 if [ "$DISABLE_KATANA" == "1" ]; then
