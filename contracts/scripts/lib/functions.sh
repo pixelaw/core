@@ -103,6 +103,7 @@ start_torii() {
       --rpc $rpc_url \
       --db-dir $TORII_DB \
       --http.cors_origins "*" \
+      --indexing.pending \
      > $TORII_LOG 2>&1 &
 
      # Wait for logfile to exist and not be empty
