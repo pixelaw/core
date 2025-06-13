@@ -54,7 +54,7 @@ done
 echo "$next_version" > DOJO_VERSION
 
 # Install the new dojo
-asdf install dojo "$next_version"
+dojoup
 
 # Rebuild
 cd contracts
