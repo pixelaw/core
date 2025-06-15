@@ -16,7 +16,7 @@ use starknet::{contract_address_const, testing::set_account_contract_address};
 fn test_player_interaction() {
     // Initialize the world and apps
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
-    let (_paint_actions, _snake_actions, player_actions) = setup_apps(ref world);
+    let (_paint_actions, _snake_actions, player_actions, _house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);

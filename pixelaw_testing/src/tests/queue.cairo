@@ -51,7 +51,7 @@ fn test_process_queue() {
 #[test]
 fn test_queue_full() {
     let (mut world, core_actions, player_1, _player_2) = setup_core();
-    let (_, snake_actions, _player_actions) = setup_apps(ref world);
+    let (_, snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     let SNAKE_COLOR = 0xFF00FF;
 
