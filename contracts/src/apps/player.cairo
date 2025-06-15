@@ -286,7 +286,6 @@ pub mod player_actions {
 
             positionPlayer.player = contract_address_const::<0x0>();
             world.write_model(@positionPlayer);
-
             //println!("Moving Player!")
         }
     }

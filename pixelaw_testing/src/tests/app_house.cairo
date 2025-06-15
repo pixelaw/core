@@ -5,7 +5,9 @@ use pixelaw::core::utils::{DefaultParameters, Position};
 use pixelaw::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
 use pixelaw::apps::player::{Player};
 use crate::helpers::{setup_core, setup_apps};
-use starknet::{contract_address_const, testing::{set_account_contract_address, set_block_timestamp}};
+use starknet::{
+    contract_address_const, testing::{set_account_contract_address, set_block_timestamp},
+};
 
 // House app test constants
 const HOUSE_COLOR: u32 = 0x8B4513FF; // Brown color
@@ -39,12 +41,12 @@ fn test_build_house() {
     // Verify that the center of the house has the correct color and emoji
     let center_pixel: Pixel = world.read_model(Position { x: 11, y: 11 });
     assert(center_pixel.color == HOUSE_COLOR, 'House center should be brown');
-    
+
     // Check if player has a house in the registry
     let player_house: PlayerHouse = world.read_model(player1);
     assert(player_house.has_house, 'Player should have a house');
     assert(player_house.house_position == house_position, 'House position mismatch');
-    
+
     // Check that the house model was created correctly
     let house: House = world.read_model(house_position);
     assert(house.owner == player1, 'House owner mismatch');
@@ -95,7 +97,7 @@ fn test_collect_life() {
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);
-    
+
     // Set the initial timestamp
     let initial_timestamp: u64 = 1000;
     set_block_timestamp(initial_timestamp);
@@ -112,14 +114,14 @@ fn test_collect_life() {
                 color: HOUSE_COLOR,
             },
         );
-    
+
     // Get the initial player data
     let player_data: Player = world.read_model(player1);
     let initial_lives: u32 = player_data.lives;
-    
+
     // Fast forward time to enable life collection
     set_block_timestamp(initial_timestamp + LIFE_REGENERATION_TIME + 1);
-    
+
     // Collect life
     house_actions
         .collect_life(
@@ -131,14 +133,17 @@ fn test_collect_life() {
                 color: HOUSE_COLOR,
             },
         );
-    
+
     // Check if player gained a life
     let player_data_after: Player = world.read_model(player1);
     assert(player_data_after.lives == initial_lives + 1, 'Player should gain a life');
-    
+
     // Check if the house's last_life_generated was updated
     let house: House = world.read_model(house_position);
-    assert(house.last_life_generated == initial_timestamp + LIFE_REGENERATION_TIME + 1, 'Last life time not updated');
+    assert(
+        house.last_life_generated == initial_timestamp + LIFE_REGENERATION_TIME + 1,
+        'Last life time not updated',
+    );
 }
 
 #[test]
@@ -151,7 +156,7 @@ fn test_collect_life_too_soon() {
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);
-    
+
     // Set the initial timestamp
     let initial_timestamp: u64 = 1000;
     set_block_timestamp(initial_timestamp);
@@ -168,10 +173,10 @@ fn test_collect_life_too_soon() {
                 color: HOUSE_COLOR,
             },
         );
-    
+
     // Fast forward time but not enough (only half the required time)
     set_block_timestamp(initial_timestamp + LIFE_REGENERATION_TIME / 2);
-    
+
     // Try to collect life too soon - should fail
     house_actions
         .collect_life(

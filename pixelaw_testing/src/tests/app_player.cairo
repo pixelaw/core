@@ -2,13 +2,8 @@ use dojo::model::{ModelStorage};
 
 use pixelaw::core::models::pixel::{Pixel};
 use pixelaw::core::utils::{DefaultParameters, Position};
-use pixelaw::apps::{
-    player::{
-        IPlayerActionsDispatcherTrait,
-
-    },
-};
-use crate::helpers::{ setup_apps, setup_core};
+use pixelaw::apps::{player::{IPlayerActionsDispatcherTrait}};
+use crate::helpers::{setup_apps, setup_core};
 use starknet::{contract_address_const, testing::set_account_contract_address};
 
 #[test]

@@ -10,7 +10,7 @@ pub struct House {
     position: Position, // Top-left corner position of the 3x3 house
     pub owner: ContractAddress, // Owner of the house
     pub created_at: u64, // Timestamp when house was created
-    pub last_life_generated: u64, // Timestamp when last life was generated
+    pub last_life_generated: u64 // Timestamp when last life was generated
 }
 
 /// Model to track if a player already has a house
@@ -20,7 +20,7 @@ pub struct PlayerHouse {
     #[key]
     player: ContractAddress,
     pub has_house: bool, // Whether player has a house or not
-    pub house_position: Position, // Position of the player's house (if they have one)
+    pub house_position: Position // Position of the player's house (if they have one)
 }
 
 /// Events for House app
@@ -42,8 +42,12 @@ pub struct LifeCollected {
 
 #[starknet::interface]
 pub trait IHouseActions<T> {
-    fn on_pre_update(ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress) -> Option<PixelUpdate>;
-    fn on_post_update(ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress);
+    fn on_pre_update(
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
+    ) -> Option<PixelUpdate>;
+    fn on_post_update(
+        ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
+    );
     fn build_house(ref self: T, default_params: DefaultParameters);
     fn collect_life(ref self: T, default_params: DefaultParameters);
 }
@@ -58,15 +62,17 @@ pub const LIFE_REGENERATION_TIME: u64 = 86400; // 24 hours in seconds (one day)
 #[dojo::contract]
 pub mod house_actions {
     use dojo::model::{ModelStorage};
-    use super::{House, PlayerHouse, IHouseActions};
-    use pixelaw::core::models::registry::App;
+    use pixelaw::apps::player::{Player};
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
-    use pixelaw::core::utils::{DefaultParameters, get_callers, get_core_actions, Position};
-    use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_contract_address};
-    use pixelaw::apps::player::{Player};
+    use pixelaw::core::models::registry::App;
+    use pixelaw::core::utils::{DefaultParameters, Position, get_callers, get_core_actions};
+    use starknet::{
+        ContractAddress, contract_address_const, get_block_timestamp, get_contract_address,
+    };
     use super::{APP_ICON, APP_KEY, HOUSE_SIZE, LIFE_REGENERATION_TIME};
-    
+    use super::{House, IHouseActions, PlayerHouse};
+
     /// Initialize the House App
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
@@ -108,8 +114,7 @@ pub mod house_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) {
-            // No action needed
+        ) {// No action needed
         }
         /// Build a new house at the specified position
         ///
@@ -122,7 +127,7 @@ pub mod house_actions {
             // Load important variables
             let core_actions = get_core_actions(ref world);
             let (player, system) = get_callers(ref world, default_params);
-            
+
             let position = default_params.position;
             let current_timestamp = get_block_timestamp();
 
@@ -136,7 +141,9 @@ pub mod house_actions {
             while x < HOUSE_SIZE {
                 let mut y = 0;
                 while y < HOUSE_SIZE {
-                    let check_position = Position { x: position.x + x.into(), y: position.y + y.into() };
+                    let check_position = Position {
+                        x: position.x + x.into(), y: position.y + y.into(),
+                    };
                     let pixel: Pixel = world.read_model(check_position);
                     if pixel.app != contract_address_const::<0>() {
                         is_area_free = false;
@@ -170,8 +177,10 @@ pub mod house_actions {
             while x < HOUSE_SIZE {
                 let mut y = 0;
                 while y < HOUSE_SIZE {
-                    let house_position = Position { x: position.x + x.into(), y: position.y + y.into() };
-                    
+                    let house_position = Position {
+                        x: position.x + x.into(), y: position.y + y.into(),
+                    };
+
                     // Generate different appearance for different parts of the house
                     let (color, text) = if x == 1 && y == 1 {
                         // Center is the main part
@@ -198,10 +207,10 @@ pub mod house_actions {
                                 text: Option::Some(text),
                                 app: Option::Some(get_contract_address()),
                                 owner: Option::Some(player),
-                                action: Option::None
+                                action: Option::None,
                             },
                             Option::None,
-                            false
+                            false,
                         )
                         .unwrap();
 
@@ -211,13 +220,14 @@ pub mod house_actions {
             };
 
             // Emit notification instead of direct event
-            core_actions.notification(
-                position,
-                default_params.color,
-                Option::Some(player),
-                Option::None,
-                'House built!'
-            );
+            core_actions
+                .notification(
+                    position,
+                    default_params.color,
+                    Option::Some(player),
+                    Option::None,
+                    'House built!',
+                );
         }
 
         /// Collect a life from your house (once per day)
@@ -231,7 +241,7 @@ pub mod house_actions {
             // Load important variables
             let core_actions = get_core_actions(ref world);
             let (player, _system) = get_callers(ref world, default_params);
-            
+
             let current_timestamp = get_block_timestamp();
 
             // Check if player is already max lives
@@ -249,7 +259,7 @@ pub mod house_actions {
             // Check if enough time has passed for life regeneration
             assert!(
                 current_timestamp >= house.last_life_generated + LIFE_REGENERATION_TIME,
-                "Life not ready yet"
+                "Life not ready yet",
             );
 
             // Update house last_life_generated timestamp
@@ -261,13 +271,14 @@ pub mod house_actions {
             world.write_model(@player_data);
 
             // Send notification instead of direct event
-            core_actions.notification(
-                player_house.house_position,
-                default_params.color,
-                Option::Some(player),
-                Option::None,
-                'Life collected!'
-            );
+            core_actions
+                .notification(
+                    player_house.house_position,
+                    default_params.color,
+                    Option::Some(player),
+                    Option::None,
+                    'Life collected!',
+                );
         }
     }
 }

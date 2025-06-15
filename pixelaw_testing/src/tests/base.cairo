@@ -2,17 +2,13 @@ use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
 use pixelaw_testing::helpers::{
-    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps,
-    setup_core,
+    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps, setup_core,
 };
 use pixelaw::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
-        actions::{ IActionsDispatcherTrait}, events::{Notification},
-        models::{
-            pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
-            registry::{App, AppName},
-        },
+        actions::{IActionsDispatcherTrait}, events::{Notification},
+        models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App, AppName}},
         utils::{DefaultParameters, Position, get_callers},
     },
 };

@@ -107,15 +107,12 @@ fn app_contract_defs() -> Span<ContractDef> {
 
 
 pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
-
-
     let mut world = spawn_test_world([core_namespace_defs()].span());
 
     world.sync_perms_and_inits(core_contract_defs());
 
     let core_actions_address = world.dns_address(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
-
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -127,8 +124,12 @@ pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, Contr
 
 pub fn setup_apps(
     ref world: WorldStorage,
-) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher, IHouseActionsDispatcher) {
-
+) -> (
+    IPaintActionsDispatcher,
+    ISnakeActionsDispatcher,
+    IPlayerActionsDispatcher,
+    IHouseActionsDispatcher,
+) {
     update_test_world(ref world, [app_namespace_defs()].span());
 
     world.sync_perms_and_inits(app_contract_defs());

@@ -7,9 +7,7 @@ use pixelaw::core::{
     actions::{IActionsDispatcherTrait}, events::{QueueScheduled}, models::pixel::{Pixel},
     utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
-use pixelaw_testing::helpers::{
-    drop_all_events, set_caller, setup_apps, setup_core,
-};
+use pixelaw_testing::helpers::{drop_all_events, set_caller, setup_apps, setup_core};
 use starknet::{testing::{set_block_timestamp}};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
