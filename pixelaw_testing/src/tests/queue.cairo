@@ -7,9 +7,7 @@ use pixelaw::core::{
     actions::{IActionsDispatcherTrait}, events::{QueueScheduled}, models::pixel::{Pixel},
     utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
-use pixelaw_testing::helpers::{
-    drop_all_events, set_caller, setup_apps, setup_core,
-};
+use pixelaw_testing::helpers::{drop_all_events, set_caller, setup_apps, setup_core};
 use starknet::{testing::{set_block_timestamp}};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;
@@ -51,7 +49,7 @@ fn test_process_queue() {
 #[test]
 fn test_queue_full() {
     let (mut world, core_actions, player_1, _player_2) = setup_core();
-    let (_, snake_actions, _player_actions) = setup_apps(ref world);
+    let (_, snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     let SNAKE_COLOR = 0xFF00FF;
 
