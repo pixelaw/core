@@ -7,10 +7,10 @@ use starknet::{ContractAddress};
 #[dojo::model]
 pub struct House {
     #[key]
-    position: Position, // Top-left corner position of the 3x3 house
-    pub owner: ContractAddress, // Owner of the house
-    pub created_at: u64, // Timestamp when house was created
-    pub last_life_generated: u64 // Timestamp when last life was generated
+    pub position: Position,
+    pub owner: ContractAddress,
+    pub created_at: u64,
+    pub last_life_generated: u64,
 }
 
 /// Model to track if a player already has a house
@@ -18,26 +18,9 @@ pub struct House {
 #[dojo::model]
 pub struct PlayerHouse {
     #[key]
-    player: ContractAddress,
-    pub has_house: bool, // Whether player has a house or not
-    pub house_position: Position // Position of the player's house (if they have one)
-}
-
-/// Events for House app
-#[derive(Copy, Drop, Serde)]
-#[dojo::event]
-pub struct HouseBuilt {
-    #[key]
-    player: ContractAddress,
-    position: Position,
-}
-
-#[derive(Copy, Drop, Serde)]
-#[dojo::event]
-pub struct LifeCollected {
-    #[key]
-    player: ContractAddress,
-    house_position: Position,
+    pub player: ContractAddress,
+    pub has_house: bool,
+    pub house_position: Position,
 }
 
 #[starknet::interface]
