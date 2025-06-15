@@ -114,7 +114,7 @@ pub mod house_actions {
             pixel_update: PixelUpdate,
             app_caller: App,
             player_caller: ContractAddress,
-        ) {// No action needed
+        ) { // No action needed
         }
         /// Build a new house at the specified position
         ///

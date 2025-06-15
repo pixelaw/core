@@ -30,6 +30,7 @@ jobs:
           scarb-version: "2.10.1"
       - run: |
           cd contracts && scarb fmt --check
+          cd pixelaw_testing && scarb fmt --check
   core-test:
     runs-on: ubuntu-latest
     steps:
