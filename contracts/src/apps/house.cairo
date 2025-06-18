@@ -80,8 +80,29 @@ pub mod house_actions {
             app_caller: App,
             player_caller: ContractAddress,
         ) -> Option<PixelUpdate> {
+            let mut _world = self.world(@"pixelaw");
+
             // Default is to not allow anything
-            Option::None
+            let mut result = Option::None;
+
+            // Check which app is calling
+            if app_caller.name == 'player' {
+                let pixel_pos = pixel_update.position;
+                //let pixel: Pixel = world.read_model(pixel_pos);
+                let player_house: PlayerHouse = world.read_model(player_caller);
+                if player_house.has_house && player_house.player == player_caller {
+                    let Position { x: hx, y: hy } = player_house.house_position;
+
+                    let is_inside_house = pixel_pos.x >= hx && pixel_pos.x < hx
+                        + HOUSE_SIZE.into() && pixel_pos.y >= hy && pixel_pos.y < hy
+                        + HOUSE_SIZE.into();
+
+                    if is_inside_house {
+                        result = Option::Some(pixel_update);
+                    }
+                }
+            }
+            result
         }
 
         /// Hook called after a pixel update.
