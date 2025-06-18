@@ -39,7 +39,7 @@ pub trait IHouseActions<T> {
 pub const APP_KEY: felt252 = 'house';
 pub const APP_ICON: felt252 = 0x1f3e0; // 🏠 emoji
 pub const HOUSE_SIZE: u8 = 3; // 3x3 house
-pub const LIFE_REGENERATION_TIME: u64 = 86400; // 24 hours in seconds (one day)
+pub const LIFE_REGENERATION_TIME: u64 = 120; // every 2 minutes can collect a life
 
 /// House actions contract
 #[dojo::contract]
