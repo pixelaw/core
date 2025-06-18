@@ -80,7 +80,7 @@ pub mod house_actions {
             app_caller: App,
             player_caller: ContractAddress,
         ) -> Option<PixelUpdate> {
-            let mut _world = self.world(@"pixelaw");
+            let mut world = self.world(@"pixelaw");
 
             // Default is to not allow anything
             let mut result = Option::None;
