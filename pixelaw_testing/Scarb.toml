@@ -28,6 +28,8 @@ build-external-contracts = [
   "pixelaw::core::models::area::m_RTree",
   "pixelaw::apps::player::m_Player",
   "pixelaw::apps::player::m_PositionPlayer",
+  "pixelaw::apps::house::m_House",
+  "pixelaw::apps::house::m_PlayerHouse",
   "pixelaw::apps::snake::m_Snake",
   "pixelaw::apps::snake::m_SnakeSegment",
   "pixelaw::core::events::e_QueueScheduled",
@@ -35,7 +37,8 @@ build-external-contracts = [
   "pixelaw::core::actions::actions",
   "pixelaw::apps::paint::paint_actions",
   "pixelaw::apps::snake::snake_actions",
-  "pixelaw::apps::player::player_actions"
+  "pixelaw::apps::player::player_actions",
+  "pixelaw::apps::house::house_actions"
 ]
 
 
