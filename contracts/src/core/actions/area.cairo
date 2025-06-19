@@ -27,6 +27,7 @@ pub fn add_area(
     owner: ContractAddress,
     color: u32,
     app: ContractAddress,
+    ensure_empty: bool // TODO finish impl
 ) -> Area {
     // Add node in the RTree index
     let id = add_area_node(ref world, bounds);
@@ -544,4 +545,3 @@ fn update_ancestors(
     // Update the parents
     update_ancestors(ref world, ancestors, level - 1, parent_updated_children);
 }
-
