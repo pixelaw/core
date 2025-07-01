@@ -10,14 +10,14 @@ use pixelaw::{
 #[test]
 fn test_app_permissions() {
     let (mut world, _core_actions, player_1, _player_2) = setup_core();
-    let (_paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
+    let (_paint_actions, _snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
     set_caller(player_1);
 }
 
 #[test]
 fn test_hooks() {
     let (mut world, _core_actions, player_1, _player_2) = setup_core();
-    let (paint_actions, snake_actions, _player_actions) = setup_apps(ref world);
+    let (paint_actions, snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     set_caller(player_1);
 
