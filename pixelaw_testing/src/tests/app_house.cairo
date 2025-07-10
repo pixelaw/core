@@ -11,7 +11,7 @@ use starknet::{
 
 // House app test constants
 const HOUSE_COLOR: u32 = 0x8B4513FF; // Brown color
-const LIFE_REGENERATION_TIME: u64 = 86400; // 24 hours in seconds
+const LIFE_REGENERATION_TIME: u64 = 120; // 2 minutes in seconds (matches house.cairo)
 
 #[test]
 #[available_gas(3000000000)]
@@ -26,9 +26,9 @@ fn test_build_house() {
     // Define the position for our house (top-left corner)
     let house_position = Position { x: 10, y: 10 };
 
-    // Build a house at the specified position
+    // Build a house at the specified position using interact
     house_actions
-        .build_house(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -63,9 +63,9 @@ fn test_build_second_house() {
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);
 
-    // Build first house
+    // Build first house using interact
     house_actions
-        .build_house(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -77,7 +77,7 @@ fn test_build_second_house() {
 
     // Try to build a second house - should fail
     house_actions
-        .build_house(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -102,10 +102,10 @@ fn test_collect_life() {
     let initial_timestamp: u64 = 1000;
     set_block_timestamp(initial_timestamp);
 
-    // Build a house
+    // Build a house using interact
     let house_position = Position { x: 10, y: 10 };
     house_actions
-        .build_house(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -122,9 +122,9 @@ fn test_collect_life() {
     // Fast forward time to enable life collection
     set_block_timestamp(initial_timestamp + LIFE_REGENERATION_TIME + 1);
 
-    // Collect life
+    // Collect life using interact (click on house)
     house_actions
-        .collect_life(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -161,10 +161,10 @@ fn test_collect_life_too_soon() {
     let initial_timestamp: u64 = 1000;
     set_block_timestamp(initial_timestamp);
 
-    // Build a house
+    // Build a house using interact
     let house_position = Position { x: 10, y: 10 };
     house_actions
-        .build_house(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
@@ -179,7 +179,7 @@ fn test_collect_life_too_soon() {
 
     // Try to collect life too soon - should fail
     house_actions
-        .collect_life(
+        .interact(
             DefaultParameters {
                 player_override: Option::None,
                 system_override: Option::None,
