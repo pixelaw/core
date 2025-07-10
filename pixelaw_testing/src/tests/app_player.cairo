@@ -2,7 +2,7 @@ use dojo::model::{ModelStorage};
 
 use pixelaw::core::models::pixel::{Pixel};
 use pixelaw::core::utils::{DefaultParameters, Position};
-use pixelaw::apps::{player::{IPlayerActionsDispatcherTrait}};
+use pixelaw::apps::{player::{IPlayerActionsDispatcherTrait, Player, PLAYER_LIVES}};
 use crate::helpers::{setup_apps, setup_core};
 use starknet::{contract_address_const, testing::set_account_contract_address};
 
@@ -36,6 +36,11 @@ fn test_player_interaction() {
     let pixel: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel.color == player_color, 'Player not at 1,1 w color');
 
+    // Verify the player model was created with correct lives
+    let player_data: Player = world.read_model(player1);
+    assert(player_data.lives == PLAYER_LIVES, 'Player should have 5 lives');
+    assert(player_data.position == initial_position, 'Player position mismatch');
+
     // Move the player to a new position
     let new_position = Position { x: 2, y: 1 };
     player_actions
@@ -56,4 +61,9 @@ fn test_player_interaction() {
     // Verify the old position is cleared
     let pixel_old: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel_old.color != player_color, 'Old position should be cleared');
+
+    // Verify the player model was updated with the new position
+    let player_data_after: Player = world.read_model(player1);
+    assert(player_data_after.position == new_position, 'Player position not updated');
+    assert(player_data_after.lives == PLAYER_LIVES, 'Player lives should remain same');
 }
