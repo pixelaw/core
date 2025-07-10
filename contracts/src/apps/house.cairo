@@ -31,13 +31,14 @@ pub trait IHouseActions<T> {
     fn on_post_update(
         ref self: T, pixel_update: PixelUpdate, app_caller: App, player_caller: ContractAddress,
     );
+    fn interact(ref self: T, default_params: DefaultParameters);
     fn build_house(ref self: T, default_params: DefaultParameters);
     fn collect_life(ref self: T, default_params: DefaultParameters);
 }
 
 /// House app constants
 pub const APP_KEY: felt252 = 'house';
-pub const APP_ICON: felt252 = 0x1f3e0; // 🏠 emoji
+pub const APP_ICON: felt252 = 0xf09f8fa0; // 🏡 emoji
 pub const HOUSE_SIZE: u8 = 3; // 3x3 house
 pub const LIFE_REGENERATION_TIME: u64 = 120; // every 2 minutes can collect a life
 
@@ -120,6 +121,43 @@ pub mod house_actions {
             player_caller: ContractAddress,
         ) { // No action needed
         }
+
+        /// Interacts with a pixel based on default parameters.
+        ///
+        /// Determines whether to build a house or collect life based on the current state.
+        ///
+        /// # Arguments
+        ///
+        /// * `default_params` - Default parameters including position and color.
+        fn interact(ref self: ContractState, default_params: DefaultParameters) {
+            let mut world = self.world(@"pixelaw");
+            let (player, _system) = get_callers(ref world, default_params);
+            let position = default_params.position;
+
+            // Check if player has a house
+            let player_house: PlayerHouse = world.read_model(player);
+            
+            if !player_house.has_house {
+                // Player doesn't have a house, try to build one
+                self.build_house(default_params);
+            } else {
+                // Player has a house, check if they clicked on their house
+                let house_position = player_house.house_position;
+                let Position { x: hx, y: hy } = house_position;
+                
+                let is_clicking_on_house = position.x >= hx && position.x < hx + HOUSE_SIZE.into()
+                    && position.y >= hy && position.y < hy + HOUSE_SIZE.into();
+                
+                if is_clicking_on_house {
+                    // Player clicked on their house, collect life
+                    self.collect_life(default_params);
+                } else {
+                    // Player clicked elsewhere, try to build (will fail since they already have one)
+                    self.build_house(default_params);
+                }
+            }
+        }
+
         /// Build a new house at the specified position
         ///
         /// # Arguments
