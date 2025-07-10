@@ -40,7 +40,6 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0>()
 }
 
-
 fn app_namespace_defs() -> NamespaceDef {
     let ndef = NamespaceDef {
         namespace: "pixelaw",

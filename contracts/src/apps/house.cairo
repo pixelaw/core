@@ -281,7 +281,7 @@ pub mod house_actions {
 
             let current_timestamp = get_block_timestamp();
 
-            // Check if player is already max lives
+            // Get player data
             let mut player_data: Player = world.read_model(player);
 
             // Check if player has a house
