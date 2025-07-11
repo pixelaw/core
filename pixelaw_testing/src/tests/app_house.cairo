@@ -5,9 +5,9 @@ use pixelaw::core::utils::{DefaultParameters, Position};
 use pixelaw::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
 use pixelaw::apps::player::{IPlayerActionsDispatcherTrait};
 use pixelaw::apps::player::{Player};
-use crate::helpers::{setup_core, setup_apps};
+use crate::helpers::{setup_core, setup_apps, set_caller};
 use starknet::{
-    contract_address_const, testing::{set_account_contract_address, set_block_timestamp},
+    contract_address_const, testing::{set_block_timestamp},
 };
 
 // House app test constants
@@ -22,7 +22,7 @@ fn test_build_house() {
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
-    set_account_contract_address(player1);
+    set_caller(player1);
 
     // Define the position for our house (top-left corner)
     let house_position = Position { x: 10, y: 10 };
@@ -52,8 +52,6 @@ fn test_build_house() {
     // Check that the house model was created correctly
     let house: House = world.read_model(house_position);
     assert(house.owner == player1, 'House owner mismatch');
-    
-    
 }
 
 #[test]
@@ -65,7 +63,7 @@ fn test_build_second_house() {
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
-    set_account_contract_address(player1);
+    set_caller(player1);
 
     // Build first house using interact
     house_actions
@@ -100,7 +98,7 @@ fn test_collect_life() {
     let (_paint_actions, _snake_actions, player_actions, house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
-    set_account_contract_address(player1);
+    set_caller(player1);
 
 
     // Define initial position and color
@@ -175,7 +173,7 @@ fn test_collect_life_too_soon() {
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
-    set_account_contract_address(player1);
+    set_caller(player1);
 
     // Set the initial timestamp
     let initial_timestamp: u64 = 1000;
