@@ -127,22 +127,29 @@ pub fn get_callers(
     let mut system = contract_address_const::<0>();
 
     let core_address = get_core_actions_address(ref world);
-    // let caller_contract = get_caller_address();
-    let caller_contract = get_contract_address();
+    let caller_contract = get_caller_address();
+    //let caller_contract = get_contract_address();
+    let account_contract_address = get_tx_info().unbox().account_contract_address;
 
+    //println!("get_caller_address: {:?}", get_caller_address());
+    //println!("get_contract_address: {:?}", get_contract_address());
+    //println!("account_contract_address: {:?}", account_contract_address);
+
+    // Determine which player is calling
     if let Option::Some(override) = params.player_override {
         // TODO this doesnt work when queue
-        assert(get_caller_address() == core_address, 'only core can override');
+        assert(get_contract_address() == core_address, 'p: only core can override');
         player = override;
     } else {
-        player = get_tx_info().unbox().account_contract_address;
+        player = get_caller_address();
     }
 
+    // Determine which system is calling (contract)
     if let Option::Some(override) = params.system_override {
-        assert(get_caller_address() == core_address, 'only core can override');
+        assert(get_contract_address() == core_address, 's: only core can override');
         system = override;
     } else {
-        system = caller_contract;
+        system = get_contract_address();
     }
     (player, system)
 }

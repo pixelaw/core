@@ -14,4 +14,5 @@ torii \
   --world $WORLD_ADDRESS \
   --http.cors_origins "*" \
   --db-dir $TORII_DB \
-  --http.addr 0.0.0.0
+  --http.addr 0.0.0.0 \
+  --indexing.pending

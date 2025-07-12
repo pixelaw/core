@@ -160,7 +160,7 @@ fn test_update_pixel() {
 }
 
 #[test]
-#[should_panic(expected: 'only core can override')]
+#[should_panic(expected: 'p: only core can override')]
 fn test_get_callers_non_core() {
     let (mut world, _core_actions, _player_1, player_2) = setup_core();
     let system_override = starknet::contract_address_const::<0x69>();
@@ -201,10 +201,11 @@ fn test_get_callers() {
 
     // Test with 0 address, we expect the caller
     set_account_contract_address(player_1);
-
+println!("1");
     let (player, system) = get_callers(ref world, no_override);
     assert(player == player_1, 'should return player1');
     assert(system == ZERO_ADDRESS(), 'should return zero');
+println!("2");
 
     // impersonate core_actions so the override is allowed
     set_contract_address(core_actions.contract_address);
