@@ -210,6 +210,7 @@ pub mod house_actions {
             world.write_model(@house);
 
             // Mark player as having a house
+            player_house.player = player;
             player_house.has_house = true;
             player_house.house_position = position;
             world.write_model(@player_house);
@@ -282,7 +283,6 @@ pub mod house_actions {
 
             // Check if player is already max lives
             let mut player_data: Player = world.read_model(player);
-            assert!(player_data.lives < 5, "Player already has max lives");
 
             // Check if player has a house
             let player_house: PlayerHouse = world.read_model(player);
