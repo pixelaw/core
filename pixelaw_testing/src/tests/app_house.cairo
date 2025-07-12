@@ -3,6 +3,7 @@ use dojo::model::{ModelStorage};
 use pixelaw::core::models::pixel::{Pixel};
 use pixelaw::core::utils::{DefaultParameters, Position};
 use pixelaw::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
+use pixelaw::apps::player::{IPlayerActionsDispatcherTrait};
 use pixelaw::apps::player::{Player};
 use crate::helpers::{setup_core, setup_apps};
 use starknet::{
@@ -44,17 +45,20 @@ fn test_build_house() {
 
     // Check if player has a house in the registry
     let player_house: PlayerHouse = world.read_model(player1);
-    assert(player_house.has_house, 'Player should have a house');
+    assert(player_house.player == player1, 'Owner mismatch');
+    assert(player_house.has_house == true, 'Player should have a house');
     assert(player_house.house_position == house_position, 'House position mismatch');
-
+    
     // Check that the house model was created correctly
     let house: House = world.read_model(house_position);
     assert(house.owner == player1, 'House owner mismatch');
+    
+    
 }
 
 #[test]
 #[available_gas(3000000000)]
-#[should_panic(expected: ('Player already has a house', 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Player already has a house", 'ENTRYPOINT_FAILED'))]
 fn test_build_second_house() {
     // Initialize the world
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
@@ -93,11 +97,27 @@ fn test_build_second_house() {
 fn test_collect_life() {
     // Initialize the world
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
-    let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
+    let (_paint_actions, _snake_actions, player_actions, house_actions) = setup_apps(ref world);
 
     let player1 = contract_address_const::<0x1337>();
     set_account_contract_address(player1);
 
+
+    // Define initial position and color
+    let initial_position = Position { x: 1, y: 1 };
+    let player_color = 0xFF00FF;
+
+    // Interact with a pixel to create a new player
+    player_actions
+        .interact(
+            DefaultParameters {
+                player_override: Option::None,
+                system_override: Option::None,
+                area_hint: Option::None,
+                position: initial_position,
+                color: player_color,
+            },
+        );
     // Set the initial timestamp
     let initial_timestamp: u64 = 1000;
     set_block_timestamp(initial_timestamp);
@@ -148,7 +168,7 @@ fn test_collect_life() {
 
 #[test]
 #[available_gas(3000000000)]
-#[should_panic(expected: ('Life not ready yet', 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Life not ready yet", 'ENTRYPOINT_FAILED'))]
 fn test_collect_life_too_soon() {
     // Initialize the world
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
