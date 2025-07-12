@@ -8,7 +8,7 @@ use pixelaw::core::models::pixel::{Pixel};
 use pixelaw::core::utils::{DefaultParameters, Direction, Position};
 
 use crate::helpers::{set_caller, setup_apps, setup_core};
-use starknet::{contract_address_const, testing::set_account_contract_address};
+use starknet::{contract_address_const};
 
 
 #[test]
@@ -24,7 +24,7 @@ fn test_playthrough() {
     let player2 = contract_address_const::<0x42>();
 
     // Impersonate player1
-    set_account_contract_address(player1);
+    set_caller(player1);
     let pixel: Pixel = world.read_model(Position { x: 1, y: 1 });
     assert(pixel.color != SNAKE_COLOR, 'wrong pixel color for 1,1');
 
