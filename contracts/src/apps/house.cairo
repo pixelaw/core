@@ -225,17 +225,11 @@ pub mod house_actions {
 
                     // Generate different appearance for different parts of the house
                     let (color, text) = if x == 1 && y == 1 {
-                        // Center is the main part
-                        (0x8B4513FF, 0x1f3e0) // Brown with house emoji
-                    } else if x == 1 && y == 0 {
-                        // Door
-                        (0x8B4513FF, 0x1f6aa) // Brown with door emoji
-                    } else if (x == 0 || x == 2) && (y == 0 || y == 2) {
-                        // Corners
-                        (0x8B4513FF, 0x1f3e0) // Brown with house emoji
+                        // Center is the main part with house emoji
+                        (0x8B4513FF, 0xf09f8fa0) // Brown with house emoji
                     } else {
-                        // Walls
-                        (0x8B4513FF, 0x1f9f1) // Brown with brick emoji
+                        // All other parts are just brown without emoji
+                        (0x8B4513FF, 0x0) // Brown with no text
                     };
 
                     core_actions
