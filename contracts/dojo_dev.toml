@@ -33,12 +33,15 @@ world_address = "0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf200
 "pixelaw-SnakeSegment" = ["pixelaw-snake_actions"]
 "pixelaw-Player" = ["pixelaw-player_actions"]
 "pixelaw-PositionPlayer" = ["pixelaw-player_actions"]
+"pixelaw-House" = ["pixelaw-house_actions"]
+"pixelaw-PlayerHouse" = ["pixelaw-house_actions"]
 
 [migration]
-order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions"]
+order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions","pixelaw-house_actions"]
 
 [init_call_args]
 "pixelaw-actions" = []
 "pixelaw-snake_actions" = []
 "pixelaw-paint_actions" = []
 "pixelaw-player_actions" = []
+"pixelaw-house_actions" = []
