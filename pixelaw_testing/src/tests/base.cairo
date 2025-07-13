@@ -13,7 +13,7 @@ use pixelaw::{
     },
 };
 use starknet::{
-    contract_address_const, testing::{set_account_contract_address, set_contract_address},
+    contract_address_const, testing::{set_caller_address, set_contract_address},
 };
 
 
@@ -200,12 +200,11 @@ fn test_get_callers() {
     };
 
     // Test with 0 address, we expect the caller
-    set_account_contract_address(player_1);
-println!("1");
+    set_caller_address(player_1);
+    set_contract_address(ZERO_ADDRESS());
     let (player, system) = get_callers(ref world, no_override);
     assert(player == player_1, 'should return player1');
     assert(system == ZERO_ADDRESS(), 'should return zero');
-println!("2");
 
     // impersonate core_actions so the override is allowed
     set_contract_address(core_actions.contract_address);
