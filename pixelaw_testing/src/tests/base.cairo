@@ -12,9 +12,7 @@ use pixelaw::{
         utils::{DefaultParameters, Position, get_callers},
     },
 };
-use starknet::{
-    contract_address_const, testing::{set_caller_address, set_contract_address},
-};
+use starknet::{contract_address_const, testing::{set_caller_address, set_contract_address}};
 
 
 #[test]

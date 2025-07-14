@@ -6,9 +6,7 @@ use pixelaw::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
 use pixelaw::apps::player::{IPlayerActionsDispatcherTrait};
 use pixelaw::apps::player::{Player};
 use crate::helpers::{setup_core, setup_apps, set_caller};
-use starknet::{
-    contract_address_const, testing::{set_block_timestamp},
-};
+use starknet::{contract_address_const, testing::{set_block_timestamp}};
 
 // House app test constants
 const HOUSE_COLOR: u32 = 0x8B4513FF; // Brown color
@@ -48,7 +46,7 @@ fn test_build_house() {
     assert(player_house.player == player1, 'Owner mismatch');
     assert(player_house.has_house == true, 'Player should have a house');
     assert(player_house.house_position == house_position, 'House position mismatch');
-    
+
     // Check that the house model was created correctly
     let house: House = world.read_model(house_position);
     assert(house.owner == player1, 'House owner mismatch');
@@ -99,7 +97,6 @@ fn test_collect_life() {
 
     let player1 = contract_address_const::<0x1337>();
     set_caller(player1);
-
 
     // Define initial position and color
     let initial_position = Position { x: 1, y: 1 };

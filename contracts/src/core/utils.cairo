@@ -6,9 +6,7 @@ use pixelaw::core::models::{
     pixel::{Pixel},
     {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
 };
-use starknet::{
-    ContractAddress, contract_address_const, get_caller_address, get_contract_address,
-};
+use starknet::{ContractAddress, contract_address_const, get_caller_address, get_contract_address};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
