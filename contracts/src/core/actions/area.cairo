@@ -544,4 +544,3 @@ fn update_ancestors(
     // Update the parents
     update_ancestors(ref world, ancestors, level - 1, parent_updated_children);
 }
-

@@ -2,23 +2,17 @@ use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
 use pixelaw_testing::helpers::{
-    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps,
-    setup_core,
+    RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps, setup_core,
 };
 use pixelaw::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
-        actions::{ IActionsDispatcherTrait}, events::{Notification},
-        models::{
-            pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait},
-            registry::{App, AppName},
-        },
+        actions::{IActionsDispatcherTrait}, events::{Notification},
+        models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App, AppName}},
         utils::{DefaultParameters, Position, get_callers},
     },
 };
-use starknet::{
-    contract_address_const, testing::{set_account_contract_address, set_contract_address},
-};
+use starknet::{contract_address_const, testing::{set_caller_address, set_contract_address}};
 
 
 #[test]
@@ -39,7 +33,7 @@ fn test_register_new_app() {
 #[test]
 fn test_paint_interaction() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
+    let (paint_actions, _snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     paint_actions
         .interact(
@@ -57,7 +51,7 @@ fn test_paint_interaction() {
 #[test]
 fn test_can_update_pixel() {
     let (mut world, core_actions, player_1, player_2) = setup_core();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
+    let (paint_actions, _snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     // Scenario:
     // Check if Player2 can change Player1's pixel
@@ -204,12 +198,11 @@ fn test_get_callers() {
     };
 
     // Test with 0 address, we expect the caller
-    set_account_contract_address(player_1);
-println!("1");
+    set_caller_address(player_1);
+    set_contract_address(ZERO_ADDRESS());
     let (player, system) = get_callers(ref world, no_override);
     assert(player == player_1, 'should return player1');
     assert(system == ZERO_ADDRESS(), 'should return zero');
-println!("2");
 
     // impersonate core_actions so the override is allowed
     set_contract_address(core_actions.contract_address);
@@ -225,7 +218,7 @@ println!("2");
 #[test]
 fn test_notification_player() {
     let (mut world, core_actions, player_1, _player_2) = setup_core();
-    let (paint_actions, _snake_actions, _player_actions) = setup_apps(ref world);
+    let (paint_actions, _snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
     // Prep params
     let position = Position { x: 12, y: 12 };
