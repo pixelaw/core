@@ -76,10 +76,11 @@ fn test_queue_full() {
             Direction::Right,
         );
 
-    // Pop the 3 previous events we're not handling right now
+    // Pop the 4 previous events we're not handling right now
     let _ = starknet::testing::pop_log_raw(event_contract); // Store Snake model
-    let _ = starknet::testing::pop_log_raw(event_contract); // Store Segment model
+    let _ = starknet::testing::pop_log_raw(event_contract); // Store Segment model  
     let _ = starknet::testing::pop_log_raw(event_contract); // Store Pixel model
+    let _ = starknet::testing::pop_log_raw(event_contract); // Additional event
 
     // Prep the expected event struct
     let called_system = snake_actions.contract_address;
