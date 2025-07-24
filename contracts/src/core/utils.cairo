@@ -6,9 +6,7 @@ use pixelaw::core::models::{
     pixel::{Pixel},
     {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
 };
-use starknet::{
-    ContractAddress, contract_address_const, get_caller_address, get_contract_address, get_tx_info,
-};
+use starknet::{ContractAddress, contract_address_const, get_caller_address, get_contract_address};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
@@ -127,9 +125,9 @@ pub fn get_callers(
     let mut system = contract_address_const::<0>();
 
     let core_address = get_core_actions_address(ref world);
-    let caller_contract = get_caller_address();
+    //let caller_contract = get_caller_address();
     //let caller_contract = get_contract_address();
-    let account_contract_address = get_tx_info().unbox().account_contract_address;
+    //let account_contract_address = get_tx_info().unbox().account_contract_address;
 
     //println!("get_caller_address: {:?}", get_caller_address());
     //println!("get_contract_address: {:?}", get_contract_address());

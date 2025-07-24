@@ -10,6 +10,7 @@ use pixelaw::{
         paint::{IPaintActionsDispatcher, paint_actions},
         snake::{ISnakeActionsDispatcher, m_Snake, m_SnakeSegment, snake_actions},
         player::{IPlayerActionsDispatcher, m_Player, m_PositionPlayer, player_actions},
+        house::{IHouseActionsDispatcher, m_House, m_PlayerHouse, house_actions},
     },
     core::{
         actions::{IActionsDispatcher, actions},
@@ -39,7 +40,6 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0>()
 }
 
-
 fn app_namespace_defs() -> NamespaceDef {
     let ndef = NamespaceDef {
         namespace: "pixelaw",
@@ -48,9 +48,12 @@ fn app_namespace_defs() -> NamespaceDef {
             TestResource::Model(m_SnakeSegment::TEST_CLASS_HASH),
             TestResource::Model(m_Player::TEST_CLASS_HASH),
             TestResource::Model(m_PositionPlayer::TEST_CLASS_HASH),
+            TestResource::Model(m_House::TEST_CLASS_HASH),
+            TestResource::Model(m_PlayerHouse::TEST_CLASS_HASH),
             TestResource::Contract(snake_actions::TEST_CLASS_HASH),
             TestResource::Contract(paint_actions::TEST_CLASS_HASH),
             TestResource::Contract(player_actions::TEST_CLASS_HASH),
+            TestResource::Contract(house_actions::TEST_CLASS_HASH),
         ]
             .span(),
     };
@@ -95,21 +98,20 @@ fn app_contract_defs() -> Span<ContractDef> {
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
         ContractDefTrait::new(@"pixelaw", @"player_actions")
             .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
+        ContractDefTrait::new(@"pixelaw", @"house_actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"pixelaw")].span()),
     ]
         .span()
 }
 
 
 pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, ContractAddress) {
-
-
     let mut world = spawn_test_world([core_namespace_defs()].span());
 
     world.sync_perms_and_inits(core_contract_defs());
 
     let core_actions_address = world.dns_address(@"actions").unwrap();
     let core_actions = IActionsDispatcher { contract_address: core_actions_address };
-
 
     // Setup players
     let player_1 = contract_address_const::<0x1337>();
@@ -121,8 +123,12 @@ pub fn setup_core() -> (WorldStorage, IActionsDispatcher, ContractAddress, Contr
 
 pub fn setup_apps(
     ref world: WorldStorage,
-) -> (IPaintActionsDispatcher, ISnakeActionsDispatcher, IPlayerActionsDispatcher) {
-
+) -> (
+    IPaintActionsDispatcher,
+    ISnakeActionsDispatcher,
+    IPlayerActionsDispatcher,
+    IHouseActionsDispatcher,
+) {
     update_test_world(ref world, [app_namespace_defs()].span());
 
     world.sync_perms_and_inits(app_contract_defs());
@@ -136,7 +142,10 @@ pub fn setup_apps(
     let player_actions_address = world.dns_address(@"player_actions").unwrap();
     let player_actions = IPlayerActionsDispatcher { contract_address: player_actions_address };
 
-    (paint_actions, snake_actions, player_actions)
+    let house_actions_address = world.dns_address(@"house_actions").unwrap();
+    let house_actions = IHouseActionsDispatcher { contract_address: house_actions_address };
+
+    (paint_actions, snake_actions, player_actions, house_actions)
 }
 
 

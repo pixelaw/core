@@ -24,6 +24,7 @@ pub struct Player {
     pub pixel_original_app: ContractAddress,
     pub pixel_original_text: felt252,
     pub pixel_original_action: felt252,
+    pub lives: u32,
 }
 
 
@@ -50,6 +51,7 @@ pub trait IPlayerActions<T> {
 
 pub const APP_KEY: felt252 = 'player';
 const APP_ICON: felt252 = 0xf09f9883; // 😃
+pub const PLAYER_LIVES: u32 = 5;
 
 #[dojo::contract]
 pub mod player_actions {
@@ -64,7 +66,7 @@ pub mod player_actions {
     use starknet::{ContractAddress, contract_address_const, get_contract_address};
     use super::IPlayerActions;
 
-    use super::{APP_ICON, APP_KEY};
+    use super::{APP_ICON, APP_KEY, PLAYER_LIVES};
     use super::{Player, PositionPlayer};
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
@@ -175,6 +177,7 @@ pub mod player_actions {
 
             // Check if Player exists yet
             // Its either a bug or feature... when Player is on 0,0 it can "teleport"
+            // now he would also recover to full lives :'D
             if player.position.x == 0 && player.position.y == 0 {
                 // just try to create the Player on the Pixel clicked, if it panics its ok
                 core_actions
@@ -198,6 +201,7 @@ pub mod player_actions {
                 player.position = clicked_position;
                 player.color = default_params.color;
                 player.emoji = 0xefb88ff09fa78de2808de29980efb88f; // ️👶
+                player.lives = PLAYER_LIVES;
                 world.write_model(@player);
 
                 positionPlayer.player = playerAddress;
@@ -282,7 +286,6 @@ pub mod player_actions {
 
             positionPlayer.player = contract_address_const::<0x0>();
             world.write_model(@positionPlayer);
-
             //println!("Moving Player!")
         }
     }
