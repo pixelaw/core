@@ -64,4 +64,4 @@ shell:
 
 # Run contract tests
 test:
-    cd contracts && sozo test
+    cd pixelaw_testing && sozo test
