@@ -12,10 +12,10 @@ if [ $# -eq 0 ]; then
 fi
 
 # Check that git commit is empty
-if ! git diff-index --quiet HEAD --; then
-    echo "There are uncommitted changes. Please commit or stash them before running this script."
-    exit 1
-fi
+# if ! git diff-index --quiet HEAD --; then
+#     echo "There are uncommitted changes. Please commit or stash them before running this script."
+#     exit 1
+# fi
 
 
 prev_version=$(cat VERSION)
