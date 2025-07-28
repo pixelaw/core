@@ -28,7 +28,7 @@ just docker-bash            # Run Docker container with bash shell
 ### Contract Development
 ```bash
 cd contracts
-sozo build                  # Build contracts
+sozo build                  # Build contracts (compiles Cairo code)
 sozo migrate apply          # Deploy contracts to running Katana
 scarb run init              # Initialize deployed contracts
 ```
