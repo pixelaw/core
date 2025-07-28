@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Build and Test
 ```bash
-make build          # Build contracts using sozo
-make test           # Run contract tests with sozo
+just build          # Build contracts using sozo
+just test           # Run contract tests with sozo
 cd pixelaw_testing && sozo test  # Run tests from testing package
 ```
 
@@ -15,14 +15,14 @@ cd pixelaw_testing && sozo test  # Run tests from testing package
 ```bash
 docker compose up -d        # Start Keiko (includes Katana RPC, Torii indexer, dashboard)
 docker compose down         # Stop Keiko
-make shell                  # Access running Keiko container shell
+just shell                  # Access running Keiko container shell
 ```
 
 ### Docker Operations
 ```bash
-make docker_build           # Build Docker image (requires .account file)
-make docker_run             # Run Docker container with ports 3000, 5050, 8080
-make docker_bash            # Run Docker container with bash shell
+just docker-build           # Build Docker image (requires .account file)
+just docker-run             # Run Docker container with ports 3000, 5050, 8080
+just docker-bash            # Run Docker container with bash shell
 ```
 
 ### Contract Development
@@ -51,7 +51,7 @@ sozo test                   # Run comprehensive test suite
 
 ### Technology Stack
 - **Cairo 2.10.1**: Smart contract language for Starknet
-- **Dojo Framework 1.5.0**: ECS-based blockchain game development framework
+- **Dojo Framework 1.5.1**: ECS-based blockchain game development framework
 - **Starknet 2.10.1**: Layer 2 blockchain platform
 - **Scarb 2.10.1**: Package manager and build tool
 
@@ -95,7 +95,7 @@ scripts/                # Release and upgrade scripts
 - `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
 - `docker-compose.yml`: Keiko development environment
 - `VERSION`: Core version (0.7.7)
-- `DOJO_VERSION`: Dojo version (1.5.0)
+- `DOJO_VERSION`: Dojo version (1.5.1)
 
 ### Testing Strategy
 - Unit tests embedded in source files using `#[cfg(test)]`

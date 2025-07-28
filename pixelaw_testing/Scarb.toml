@@ -38,10 +38,8 @@ build-external-contracts = [
   "pixelaw::apps::paint::paint_actions",
   "pixelaw::apps::snake::snake_actions",
   "pixelaw::apps::player::player_actions",
-  "pixelaw::apps::house::house_actions"
+  "pixelaw::apps::house::house_actions",
 ]
-
-
 
 
 [lib]
