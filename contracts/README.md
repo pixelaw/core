@@ -16,7 +16,7 @@ Follow the asdf installation instructions.
 
 ```
 asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
-asdf install dojo 1.5.1
+asdf install dojo 1.6.2
 ```
 
 ### Install scarb
@@ -187,5 +187,3 @@ The App is also tracking score for each Player.
       - UI then calls the functions with only the hash value
     - Reveal
       - there will be 2 params: "rv_NAME" (the actual param) and "rs_NAME" (the used salt)
-
-

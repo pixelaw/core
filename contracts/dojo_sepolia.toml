@@ -15,10 +15,9 @@ mappings = {}
 [env]
 keystore_path = "accounts/sepolia.deployer.keystore.json"
 account_address = "0xbacdf8ccd3aa527cab838e5ea45e045dbb0e12e2da4434579df99d9233253b"
-#world_address = "0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf2009f4"
+#world_address = "0x548b7044c88b3338e88e3c0ea356eb9dcf65388c90ec7c9d9031547af30d1d1"
 #chain_id = "SN_SEPOLIA"
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia" # or env: STARKNET_RPC_URL
-
 
 
 [writers]
@@ -42,7 +41,12 @@ rpc_url = "https://api.cartridge.gg/x/starknet/sepolia" # or env: STARKNET_RPC_U
 "pixelaw-PositionPlayer" = ["pixelaw-player_actions"]
 
 [migration]
-order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions"]
+order_inits = [
+  "pixelaw-actions",
+  "pixelaw-snake_actions",
+  "pixelaw-paint_actions",
+  "pixelaw-player_actions",
+]
 
 [init_call_args]
 "pixelaw-actions" = []

@@ -51,7 +51,7 @@ sozo test                   # Run comprehensive test suite
 
 ### Technology Stack
 - **Cairo 2.10.1**: Smart contract language for Starknet
-- **Dojo Framework 1.5.1**: ECS-based blockchain game development framework
+- **Dojo Framework 1.6.2**: ECS-based blockchain game development framework
 - **Starknet 2.10.1**: Layer 2 blockchain platform
 - **Scarb 2.10.1**: Package manager and build tool
 
@@ -95,7 +95,7 @@ scripts/                # Release and upgrade scripts
 - `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
 - `docker-compose.yml`: Keiko development environment
 - `VERSION`: Core version (0.7.7)
-- `DOJO_VERSION`: Dojo version (1.5.1)
+- `DOJO_VERSION`: Dojo version (1.6.2)
 
 ### Testing Strategy
 - Unit tests embedded in source files using `#[cfg(test)]`

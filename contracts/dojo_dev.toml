@@ -12,7 +12,7 @@ mappings = {}
 rpc_url = "http://localhost:5050/"
 account_address = "0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec"
 private_key = "0xc5b2fcab997346f3ea1c00b002ecf6f382c5f9c9659a3894eb783c5320f912"
-world_address = "0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf2009f4"
+world_address = "0x548b7044c88b3338e88e3c0ea356eb9dcf65388c90ec7c9d9031547af30d1d1"
 
 [writers]
 "pixelaw-App" = ["pixelaw-actions"]
@@ -37,7 +37,13 @@ world_address = "0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf200
 "pixelaw-PlayerHouse" = ["pixelaw-house_actions"]
 
 [migration]
-order_inits=["pixelaw-actions","pixelaw-snake_actions","pixelaw-paint_actions","pixelaw-player_actions","pixelaw-house_actions"]
+order_inits = [
+  "pixelaw-actions",
+  "pixelaw-snake_actions",
+  "pixelaw-paint_actions",
+  "pixelaw-player_actions",
+  "pixelaw-house_actions",
+]
 
 [init_call_args]
 "pixelaw-actions" = []

@@ -15,7 +15,7 @@ services:
       - PUBLIC_RPC_URL=http://127.0.0.1:5050
       - PUBLIC_TORII_URL=http://127.0.0.1:8080
       - PUBLIC_RELAY_URL=http://127.0.0.1:8080
-      - WORLD_ADDRESS=0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf2009f4
+      - WORLD_ADDRESS=0x548b7044c88b3338e88e3c0ea356eb9dcf65388c90ec7c9d9031547af30d1d1
       - WORLD_ID=local
       - SERVER_PORT=3000
       - WORLDS_URL=https://raw.githubusercontent.com/pixelaw/config/refs/heads/main/web.config.json
