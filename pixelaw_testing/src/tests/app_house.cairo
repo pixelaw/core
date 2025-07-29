@@ -54,7 +54,7 @@ fn test_build_house() {
 
 #[test]
 #[available_gas(3000000000)]
-#[should_panic(expected: ("Player already has a house", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("20_20 Player already has a house", 'ENTRYPOINT_FAILED'))]
 fn test_build_second_house() {
     // Initialize the world
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();

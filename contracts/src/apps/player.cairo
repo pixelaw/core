@@ -62,7 +62,9 @@ pub mod player_actions {
 
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::utils::{DefaultParameters, Emoji, Position, get_callers, get_core_actions};
+    use pixelaw::core::utils::{
+        DefaultParameters, Emoji, Position, get_callers, get_core_actions, panic_at_position,
+    };
     use starknet::{ContractAddress, contract_address_const, get_contract_address};
     use super::IPlayerActions;
 
@@ -215,7 +217,7 @@ pub mod player_actions {
             if (clicked_position == player.position) {
                 // TODO this is not supposed to happen, most likely a UI malfunction
                 // since the action is supposed to be "configure" for the Player's Pixel
-                panic!("{}_{} Supposed to use 'configure'", clicked_position.x, clicked_position.y);
+                panic_at_position(clicked_position, "Supposed to use 'configure'");
             }
 
             // Restore the previous pixel
@@ -249,7 +251,7 @@ pub mod player_actions {
             if moveto_playerpos.player != contract_address_const::<0x0>() {
                 // Another Player is already here. Whoops.
                 // TODO for now panic so it doesnt cost gas
-                panic!("{}_{} Another player is here", moveto_pos.x, moveto_pos.y);
+                panic_at_position(moveto_pos, "Another player is here");
             }
 
             player.position = moveto_pos;

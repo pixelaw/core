@@ -50,7 +50,9 @@ pub mod house_actions {
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
-    use pixelaw::core::utils::{DefaultParameters, Position, get_callers, get_core_actions};
+    use pixelaw::core::utils::{
+        DefaultParameters, Position, get_callers, get_core_actions, panic_at_position,
+    };
     use starknet::{
         ContractAddress, contract_address_const, get_block_timestamp, get_contract_address,
     };
@@ -177,7 +179,9 @@ pub mod house_actions {
 
             // Check if player already has a house
             let mut player_house: PlayerHouse = world.read_model(player);
-            assert!(!player_house.has_house, "Player already has a house");
+            if player_house.has_house {
+                panic_at_position(position, "Player already has a house");
+            }
 
             // Ensure the area is free (3x3)
             let mut is_area_free = true;
@@ -200,7 +204,9 @@ pub mod house_actions {
                 }
                 x += 1;
             };
-            assert!(is_area_free, "Area is not free for building a house");
+            if !is_area_free {
+                panic_at_position(position, "Area is not free for building a house");
+            }
 
             // Create house record
             let house = House {
@@ -288,17 +294,23 @@ pub mod house_actions {
 
             // Check if player has a house
             let player_house: PlayerHouse = world.read_model(player);
-            assert!(player_house.has_house, "Player does not have a house");
+            if !player_house.has_house {
+                panic_at_position(default_params.position, "Player does not have a house");
+            }
 
             // Get the house data
             let mut house: House = world.read_model(player_house.house_position);
-            assert!(house.owner == player, "Not the owner of this house");
+            if house.owner != player {
+                panic_at_position(player_house.house_position, "Not the owner of this house");
+            }
 
             // Check if enough time has passed for life regeneration
-            assert!(
-                current_timestamp >= house.last_life_generated + LIFE_REGENERATION_TIME,
-                "Life not ready yet",
-            );
+            if current_timestamp < house.last_life_generated + LIFE_REGENERATION_TIME {
+                let time_remaining = house.last_life_generated
+                    + LIFE_REGENERATION_TIME
+                    - current_timestamp;
+                panic!("Life not ready yet, {} seconds remaining", time_remaining);
+            }
 
             // Update house last_life_generated timestamp
             house.last_life_generated = current_timestamp;

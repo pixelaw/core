@@ -248,3 +248,10 @@ pub fn max<T, +PartialOrd<T>, +Copy<T>, +Drop<T>>(a: T, b: T) -> T {
         b
     }
 }
+
+/// Helper function to panic with position-based error messages
+/// Following the convention that position-related errors should include coordinates
+/// in the format "{}_{} error message"
+pub fn panic_at_position(position: Position, message: ByteArray) {
+    panic!("{}_{} {}", position.x, position.y, message);
+}
