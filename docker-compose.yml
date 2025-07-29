@@ -1,40 +1,40 @@
 services:
-  keiko:
-    image: ghcr.io/pixelaw/keiko:0.2.0
-    container_name: keiko
-    command: ["./keiko", "--disable-validate", "--disable-fee"]
+  pixelaw-core:
+    image: "ghcr.io/pixelaw/core:latest"
+    platform: linux/x86_64
+    container_name: pixelaw-core
+    environment:
+      - DISABLE_FEE=true
+      - DISABLE_VALIDATE=true
+      - RUST_LOG=info,hyper=off
+      - INVOKE_MAX_STEPS=4000000
+      - RPC_URL=http://127.0.0.1:5050
+      - TORII_URL=http://127.0.0.1:8080
+      - RELAY_URL=http://127.0.0.1:8080
+      - PUBLIC_SERVER_URL=http://127.0.0.1:3000
+      - PUBLIC_RPC_URL=http://127.0.0.1:5050
+      - PUBLIC_TORII_URL=http://127.0.0.1:8080
+      - PUBLIC_RELAY_URL=http://127.0.0.1:8080
+      - WORLD_ADDRESS=0x06187e6ecbeba16f0ca4cbf17ea3887ff4abad114d0e345b5d6987edaf2009f4
+      - WORLD_ID=local
+      - SERVER_PORT=3000
+      - WORLDS_URL=https://raw.githubusercontent.com/pixelaw/config/refs/heads/main/web.config.json
+      - PREVENT_EXIT=1
     ports:
-      - "127.0.0.1:3000:3000"
       - "127.0.0.1:5050:5050"
+      - "127.0.0.1:3000:3000"
       - "127.0.0.1:8080:8080"
-      - "127.0.0.1:9090:9090/tcp"
-      - "127.0.0.1:9090:9090/udp"
+      - "127.0.0.1:9090:9090"
     restart: unless-stopped
-    volumes:
-      - ./contracts/genesis_template.json:/keiko/storage_init/config/genesis.json
-      - ./contracts/target/dev/manifest.json:/keiko/storage_init/config/manifest.json
-      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/core.json
-      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/paint.json
-      - ./contracts/target/dev/manifest.json:/keiko/storage_init/manifests/snake.json
-      - log:/keiko/log
-      - storage:/keiko/storage
-#      - ./keiko_data/log:/keiko/log
-#      - ./keiko_data/storage:/keiko/storage
     networks:
       - pixelaw
-    environment:
-      - PUBLIC_NODE_URL=http://localhost:5050
-      - PUBLIC_TORII=http://localhost:8080
-      - RUST_LOG=info
-      - DISABLE_VALIDATE=true
-      - DISABLE_FEE=true
-      - CHAIN_ID=KATANA_LOCAL
-      - WORLD_ADDRESS=0x608cc3b3f4cf88e180bd3222dbf4af8afc1f0dbe93b2c30cd58f86ea6ccdbbf
-volumes:
-  storage:
-  log:
-
+    volumes:
+      - storage:/pixelaw/storage
+      - log:/pixelaw/log
+    # command: ["/bin/sh", "-c", "/pixelaw/scripts/startup.sh"]
 networks:
   pixelaw:
     driver: bridge
-
+volumes:
+  storage:
+  log:
