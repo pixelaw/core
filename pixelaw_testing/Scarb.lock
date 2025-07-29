@@ -24,14 +24,14 @@ source = "git+https://github.com/dojoengine/dojo?tag=v1.6.2#d6e847c51ecd0121a43c
 
 [[package]]
 name = "pixelaw"
-version = "0.7.8"
+version = "0.7.9"
 dependencies = [
  "dojo",
 ]
 
 [[package]]
 name = "pixelaw_testing"
-version = "0.7.8"
+version = "0.7.9"
 dependencies = [
  "dojo",
  "dojo_cairo_test",

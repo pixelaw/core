@@ -6,8 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Build and Test
 ```bash
-just build          # Build contracts using sozo
-just test           # Run contract tests with sozo
+just build                    # Build contracts using sozo
+just test                     # Run all contract tests with sozo
+just test_filtered "filter"   # Run filtered tests (e.g., just test_filtered "house")
 cd pixelaw_testing && sozo test  # Run tests from testing package
 ```
 
@@ -38,6 +39,7 @@ scarb run init              # Initialize deployed contracts
 cd pixelaw_testing
 sozo build                  # Build test contracts
 sozo test                   # Run comprehensive test suite
+sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
 ```
 
 ## Architecture
@@ -93,7 +95,7 @@ scripts/                # Release and upgrade scripts
 ### Key Configuration Files
 - `contracts/Scarb.toml`: Main package with Dojo dependencies
 - `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
-- `docker-compose.yml`: Keiko development environment
+- `docker-compose.yml`: Docker development environment, running Katana and Torii
 - `VERSION`: Core version (0.7.7)
 - `DOJO_VERSION`: Dojo version (1.6.2)
 
@@ -102,6 +104,7 @@ scripts/                # Release and upgrade scripts
 - Integration tests in dedicated `pixelaw_testing` package
 - Comprehensive test coverage for all apps and core functionality
 - Tests organized by component (area, interop, pixel_area, queue, etc.)
+- Use `just test_filtered "pattern"` or `sozo test --filter "pattern"` for focused testing during development
 
 ### Development Guidelines
 - Follow Cairo naming conventions (snake_case for functions, PascalCase for types)
@@ -110,3 +113,7 @@ scripts/                # Release and upgrade scripts
 - Write tests for all new functionality
 - Use Cairo Coder MCP for Cairo-specific development tasks
 - Always run `scarb build` after writing Cairo code to ensure compilation
+
+### Error Handling Convention
+- Use `panic!` for error conditions instead of `assert!` to match other apps
+- **For position-related errors, use the `panic_at_position()` helper function from `pixelaw::core::utils`**

@@ -56,7 +56,7 @@ docker-bash:
 
 # Build contracts
 build:
-    cd contracts && sozo build
+    cd contracts && scarb fmt && sozo build
 
 # Access running Keiko container shell
 shell:
@@ -64,4 +64,8 @@ shell:
 
 # Run contract tests
 test:
-    cd pixelaw_testing && sozo test
+    cd pixelaw_testing && scarb fmt && sozo test
+
+# Run filtered contract tests
+test_filtered filter:
+    cd pixelaw_testing && scarb fmt && sozo test --filter {{ filter }}
