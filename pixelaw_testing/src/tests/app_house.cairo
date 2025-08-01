@@ -163,7 +163,7 @@ fn test_collect_life() {
 
 #[test]
 #[available_gas(3000000000)]
-#[should_panic(expected: ("Life not ready yet", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Life not ready yet, 60 seconds remaining", 'ENTRYPOINT_FAILED'))]
 fn test_collect_life_too_soon() {
     // Initialize the world
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
