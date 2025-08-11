@@ -255,3 +255,60 @@ pub fn max<T, +PartialOrd<T>, +Copy<T>, +Drop<T>>(a: T, b: T) -> T {
 pub fn panic_at_position(position: Position, message: ByteArray) {
     panic!("{}_{} {}", position.x, position.y, message);
 }
+
+/// Check if a rectangular area is completely free from any app pixels
+///
+/// # Arguments
+/// * `world` - World storage reference
+/// * `top_left` - Top-left corner of the area to check
+/// * `width` - Width of the area in pixels
+/// * `height` - Height of the area in pixels
+///
+/// # Returns
+/// * `true` if the area is completely free (no pixels owned by any app), `false` otherwise
+pub fn is_area_free(ref world: WorldStorage, top_left: Position, width: u16, height: u16) -> bool {
+    let mut y_offset: u16 = 0;
+
+    loop {
+        if y_offset >= height {
+            break true; // All rows checked, area is free
+        }
+
+        let mut x_offset: u16 = 0;
+        let mut row_is_free = true;
+
+        loop {
+            if x_offset >= width {
+                break; // End of row
+            }
+
+            // Calculate current position with bounds checking
+            let current_x = top_left.x + x_offset;
+            let current_y = top_left.y + y_offset;
+
+            // Check for overflow
+            if current_x < top_left.x || current_y < top_left.y {
+                row_is_free = false;
+                break; // Overflow detected
+            }
+
+            let current_position = Position { x: current_x, y: current_y };
+            let pixel: Pixel = world.read_model(current_position);
+
+            // Check if pixel is occupied by any app
+            if pixel.app != contract_address_const::<0>() {
+                row_is_free = false;
+                break; // Found occupied pixel
+            }
+
+            x_offset += 1;
+        };
+
+        // If row has conflict, entire area is not free
+        if !row_is_free {
+            break false;
+        }
+
+        y_offset += 1;
+    }
+}
