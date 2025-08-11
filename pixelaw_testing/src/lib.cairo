@@ -11,4 +11,5 @@ mod tests {
     mod interop;
     mod pixel_area;
     mod queue;
+    mod utils;
 }
