@@ -242,9 +242,6 @@ pub mod player_actions {
 
             let moveto_pos = move_towards(player.position, clicked_position);
 
-            // Load pixel we want to move to
-            let mut moveto_pixel: Pixel = world.read_model((moveto_pos.x, moveto_pos.y));
-
             // Check if there is a Player on the destination pixel (then cannot move there)
             let mut moveto_playerpos: PositionPlayer = world.read_model(moveto_pos);
 
@@ -254,28 +251,50 @@ pub mod player_actions {
                 panic_at_position(moveto_pos, "Another player is here");
             }
 
-            player.position = moveto_pos;
-            player.pixel_original_text = moveto_pixel.text;
-            player.pixel_original_app = moveto_pixel.app;
-            player.pixel_original_color = moveto_pixel.color;
-            player.pixel_original_action = moveto_pixel.action;
-
-            world.write_model(@player);
-
-            // Move to the new position
-            // TODO Provide better feedback if it fails (maybe because of a hook)
+            // Step 1: Trigger hooks without visual changes - this will reveal maze cells
             core_actions
                 .update_pixel(
                     playerAddress,
                     get_contract_address(),
                     PixelUpdate {
                         position: moveto_pos,
-                        color: Option::Some(player.color),
+                        color: Option::None,           // Don't change color yet
                         timestamp: Option::None,
-                        text: Option::Some(player.emoji),
-                        app: Option::Some(get_contract_address()),
+                        text: Option::None,           // Don't change text yet
+                        app: Option::Some(get_contract_address()), // Claim for player app (triggers hooks)
                         owner: Option::None,
                         action: Option::Some('configure'),
+                    },
+                    Option::None,
+                    false,
+                )
+                .unwrap();
+
+            // Step 2: Read post-hook pixel state (after maze reveal, etc.)
+            let revealed_pixel: Pixel = world.read_model(moveto_pos);
+
+            // Step 3: Save the correct restoration state (post-hook state)
+            player.position = moveto_pos;
+            player.pixel_original_text = revealed_pixel.text;      // Post-hook revealed text
+            player.pixel_original_app = revealed_pixel.app;        // Should be player app now  
+            player.pixel_original_color = revealed_pixel.color;    // Post-hook revealed color
+            player.pixel_original_action = revealed_pixel.action;
+
+            world.write_model(@player);
+
+            // Step 4: Apply player visual appearance on top of the revealed pixel
+            core_actions
+                .update_pixel(
+                    playerAddress,
+                    get_contract_address(),
+                    PixelUpdate {
+                        position: moveto_pos,
+                        color: Option::Some(player.color),        // Now apply player color
+                        timestamp: Option::None,
+                        text: Option::Some(player.emoji),         // Now apply player emoji  
+                        app: Option::None,                        // Already set to player app
+                        owner: Option::None,
+                        action: Option::None,                     // Keep existing action
                     },
                     Option::None,
                     false,
