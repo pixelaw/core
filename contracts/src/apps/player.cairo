@@ -263,7 +263,7 @@ pub mod player_actions {
                         text: Option::None,           // Don't change text yet
                         app: Option::Some(get_contract_address()), // Claim for player app (triggers hooks)
                         owner: Option::None,
-                        action: Option::Some('configure'),
+                        action: Option::None,
                     },
                     Option::None,
                     false,
@@ -294,7 +294,7 @@ pub mod player_actions {
                         text: Option::Some(player.emoji),         // Now apply player emoji  
                         app: Option::None,                        // Already set to player app
                         owner: Option::None,
-                        action: Option::None,                     // Keep existing action
+                        action: Option::Some('configure'),                     // Keep existing action
                     },
                     Option::None,
                     false,
