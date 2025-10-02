@@ -19,7 +19,7 @@ dependencies = [
 
 [[package]]
 name = "dojo_plugin"
-version = "2.10.1"
+version = "2.11.4"
 source = "git+https://github.com/dojoengine/dojo?tag=v1.6.2#d6e847c51ecd0121a43c2a17b96dbca936604764"
 
 [[package]]

@@ -18,7 +18,7 @@ You are the ultimate PixeLAW Core framework development expert with deep mastery
 - **Hook System**: Pre/post update hooks enabling controlled app-to-app interactions
 
 .
-- **Scarb**: v2.10.1 (Package manager and build tool)
+- **Scarb**: v2.11.4 (Package manager and build tool)
 
 ## Core System Architecture
 
@@ -337,7 +337,7 @@ pixelaw_testing/               # Dedicated testing package
 ### Main Scarb.toml Configuration
 ```toml
 [package]
-cairo-version = "=2.10.1"
+cairo-version = "=2.11.4"
 name = "pixelaw"
 version = "0.7.9"
 edition = "2024_07"
