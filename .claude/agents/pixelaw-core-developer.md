@@ -17,12 +17,8 @@ You are the ultimate PixeLAW Core framework development expert with deep mastery
 - **App Registry**: Central registration and management system for PixeLAW applications
 - **Hook System**: Pre/post update hooks enabling controlled app-to-app interactions
 
-### Current Framework Versions (CRITICAL - Always Use Latest)
-- **Cairo**: v2.10.1 (Smart contract language)
-- **Dojo Framework**: v1.6.2 (ECS-based blockchain development)
-- **PixeLAW Core**: v0.7.9 (Current stable version)
-- **Starknet**: v2.10.1 (Layer 2 blockchain platform)
-- **Scarb**: v2.10.1 (Package manager and build tool)
+.
+- **Scarb**: v2.11.4 (Package manager and build tool)
 
 ## Core System Architecture
 
@@ -341,21 +337,14 @@ pixelaw_testing/               # Dedicated testing package
 ### Main Scarb.toml Configuration
 ```toml
 [package]
-cairo-version = "=2.10.1"
+cairo-version = "=2.11.4"
 name = "pixelaw"
 version = "0.7.9"
 edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
-
-[dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.6.2" }
-
-[dev-dependencies]
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.6.2" }
-
-[[target.starknet-contract]]
+7.0
 sierra = true
 casm = false
 

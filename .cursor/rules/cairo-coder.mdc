@@ -12,7 +12,7 @@ These coding rules provide a comprehensive guide to developing secure, efficient
 
 Keep the MCP queries atomic, related to a specific concept. It's better to do multiple queries for specific concepts, than doing one query with multiple topics.
 
-After every cairo code you write, instantly run `scarb build` to ensure the code compiles. Don't write too much code without trying to compile.
+After every cairo code you write, instantly run `sozo build` to ensure the code compiles. Don't write too much code without trying to compile.
 
 ## 1. Project Setup and Structure
 A typical Cairo project is organized as follows:
@@ -76,7 +76,7 @@ allow-prebuilt-plugins = ["snforge_std"]
 ### Compiling and Testing
 - Compile your project using:
   
-  scarb build
+  sozo build
   
 - Run tests using:
   

@@ -52,10 +52,10 @@ sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
 - **Queued Actions**: Future actions that can be scheduled during execution
 
 ### Technology Stack
-- **Cairo 2.10.1**: Smart contract language for Starknet
-- **Dojo Framework 1.6.2**: ECS-based blockchain game development framework
-- **Starknet 2.10.1**: Layer 2 blockchain platform
-- **Scarb 2.10.1**: Package manager and build tool
+- **Cairo 2.11.4**: Smart contract language for Starknet
+- **Dojo Framework 1.7.0-alpha.0**: ECS-based blockchain game development framework
+- **Starknet 2.11.4**: Layer 2 blockchain platform
+- **Scarb 2.11.4**: Package manager and build tool
 
 ### Project Structure
 ```
@@ -97,7 +97,7 @@ scripts/                # Release and upgrade scripts
 - `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
 - `docker-compose.yml`: Docker development environment, running Katana and Torii
 - `VERSION`: Core version (0.7.7)
-- `DOJO_VERSION`: Dojo version (1.6.2)
+- `DOJO_VERSION`: Dojo version (1.7.0-alpha.0)
 
 ### Testing Strategy
 - Unit tests embedded in source files using `#[cfg(test)]`
@@ -112,7 +112,7 @@ scripts/                # Release and upgrade scripts
 - Implement proper error handling with detailed error messages
 - Write tests for all new functionality
 - Use Cairo Coder MCP for Cairo-specific development tasks
-- Always run `scarb build` after writing Cairo code to ensure compilation
+- Always run `sozo build` after writing Cairo code to ensure compilation
 
 ### Error Handling Convention
 - Use `panic!` for error conditions instead of `assert!` to match other apps
