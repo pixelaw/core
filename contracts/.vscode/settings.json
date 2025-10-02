@@ -2,6 +2,6 @@
   "cairo1.enableLanguageServer": true,
   "cairo1.languageServerPath": "${userHome}/.asdf/installs/dojo/1.7.0-alpha.0/bin/dojo-language-server",
   "cairo1.enableScarb": true,
-  "cairo1.scarbPath": "${userHome}/.asdf/installs/scarb/2.11.4/bin/scarb",
+  "cairo1.scarbPath": "${userHome}/.asdf/installs/scarb/2.10.1/bin/scarb",
   "cairo1.preferScarbLanguageServer": false
 }

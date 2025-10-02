@@ -52,10 +52,10 @@ sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
 - **Queued Actions**: Future actions that can be scheduled during execution
 
 ### Technology Stack
-- **Cairo 2.11.4**: Smart contract language for Starknet
+- **Cairo 2.10.1**: Smart contract language for Starknet
 - **Dojo Framework 1.7.0-alpha.0**: ECS-based blockchain game development framework
-- **Starknet 2.11.4**: Layer 2 blockchain platform
-- **Scarb 2.11.4**: Package manager and build tool
+- **Starknet 2.10.1**: Layer 2 blockchain platform
+- **Scarb 2.10.1**: Package manager and build tool
 
 ### Project Structure
 ```

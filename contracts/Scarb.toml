@@ -1,5 +1,5 @@
 [package]
-cairo-version = "2.11.4"
+cairo-version = "2.10.1"
 name = "pixelaw"
 version = "0.7.9"
 homepage = "https://github.com/pixelaw/core"
@@ -10,10 +10,10 @@ sierra-replace-ids = true
 
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.0-alpha.0" }
-starknet = "2.11.4"
+starknet = "2.10.1"
 
 [dev-dependencies]
-#cairo_test = "2.11.4"
+#cairo_test = "2.10.1"
 #pixelaw_test_helpers = { path = "../test_helpers" }
 #dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.0-alpha.0" }
 
