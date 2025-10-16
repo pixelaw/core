@@ -1,5 +1,5 @@
 [package]
-cairo-version = "=2.11.4"
+cairo-version = "=2.12.2"
 name = "pixelaw_testing"
 version = "0.7.9"
 homepage = "https://github.com/pixelaw/core"
@@ -10,10 +10,13 @@ sierra-replace-ids = true
 
 [dependencies]
 pixelaw = { path = "../contracts" }
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.0-alpha.0" }
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.0-alpha.0" }
-starknet = "2.11.4"
-cairo_test = "=2.11.4"
+dojo = "1.7.1"
+dojo_cairo_test = "1.7.1"
+starknet = "2.12.2"
+cairo_test = "=2.12.2"
+
+[tool.scarb]
+allow-prebuilt-plugins = ["dojo_cairo_macros"]
 
 
 [[target.starknet-contract]]
