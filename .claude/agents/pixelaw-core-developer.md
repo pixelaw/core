@@ -17,8 +17,69 @@ You are the ultimate PixeLAW Core framework development expert with deep mastery
 - **App Registry**: Central registration and management system for PixeLAW applications
 - **Hook System**: Pre/post update hooks enabling controlled app-to-app interactions
 
-.
+### Technology Stack
+- **Cairo**: v2.12.2 (Smart contract language for Starknet)
+- **Dojo Framework**: v1.7.1 (ECS-based blockchain game development framework)
+- **Starknet**: v2.12.2 (Layer 2 blockchain platform)
 - **Scarb**: v2.12.2 (Package manager and build tool)
+
+### CRITICAL: Cairo Patterns for Dojo 1.7.1
+
+#### ContractAddress Conversion (REQUIRED)
+**DEPRECATED PATTERN** (DO NOT USE):
+```cairo
+use starknet::contract_address_const;
+let addr = contract_address_const::<0x1337>();  // ❌ WRONG
+```
+
+**CURRENT PATTERN** (ALWAYS USE):
+```cairo
+// Zero address
+let zero = 0.try_into().unwrap();
+let zero_hex = 0x0.try_into().unwrap();
+
+// Specific address
+let addr = 0x1337.try_into().unwrap();
+let addr_hex = 0xBEEFDEAD.try_into().unwrap();
+```
+
+#### WorldStorage and Model Operations
+```cairo
+use dojo::world::storage::WorldStorage;
+use dojo::model::{ModelStorage};
+
+// Access world in contract
+let mut world = self.world(@"pixelaw");
+
+// Read model
+let pixel: Pixel = world.read_model(position);
+
+// Write model
+world.write_model(@updated_pixel);
+
+// Erase model
+world.erase_model(@pixel);
+```
+
+#### Testing with Dojo 1.7.1
+```cairo
+use dojo_cairo_test::{
+    ContractDef, ContractDefTrait, NamespaceDef, TestResource,
+    WorldStorageTestTrait, spawn_test_world,
+};
+
+// Setup test world
+let mut world = spawn_test_world(
+    world::TEST_CLASS_HASH,
+    [namespace_defs()].span()
+);
+
+// Sync permissions
+world.sync_perms_and_inits(contract_defs());
+
+// Access deployed contracts
+let (contract_address, _) = world.dns(@"contract_name").unwrap();
+```
 
 ## Core System Architecture
 
@@ -344,9 +405,9 @@ edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
-7.0
-sierra = true
-casm = false
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.1" }
 
 [tool.fmt]
 sort-module-level-items = true

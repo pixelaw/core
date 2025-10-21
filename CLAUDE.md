@@ -53,7 +53,7 @@ sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
 
 ### Technology Stack
 - **Cairo 2.12.2**: Smart contract language for Starknet
-- **Dojo Framework 1.7.0-alpha.0**: ECS-based blockchain game development framework
+- **Dojo Framework 1.7.1**: ECS-based blockchain game development framework
 - **Starknet 2.12.2**: Layer 2 blockchain platform
 - **Scarb 2.12.2**: Package manager and build tool
 
@@ -96,8 +96,8 @@ scripts/                # Release and upgrade scripts
 - `contracts/Scarb.toml`: Main package with Dojo dependencies
 - `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
 - `docker-compose.yml`: Docker development environment, running Katana and Torii
-- `VERSION`: Core version (0.7.7)
-- `DOJO_VERSION`: Dojo version (1.7.0-alpha.0)
+- `VERSION`: Core version (0.7.9)
+- `DOJO_VERSION`: Dojo version (1.7.1)
 
 ### Testing Strategy
 - Unit tests embedded in source files using `#[cfg(test)]`
@@ -114,6 +114,41 @@ scripts/                # Release and upgrade scripts
 - Use Cairo Coder MCP for Cairo-specific development tasks
 - Always run `sozo build` after writing Cairo code to ensure compilation
 
+### Cairo Patterns (Dojo 1.7.1)
+
+#### ContractAddress Conversion
+- **DEPRECATED**: `contract_address_const::<VALUE>()`
+- **CURRENT**: Use `VALUE.try_into().unwrap()` for ContractAddress conversion
+- Examples:
+  ```cairo
+  // Zero address
+  let zero = 0.try_into().unwrap();
+  let zero_hex = 0x0.try_into().unwrap();
+
+  // Specific address
+  let addr = 0x1337.try_into().unwrap();
+  ```
+
+#### WorldStorage and Models
+- Import: `use dojo::world::storage::WorldStorage;`
+- Import: `use dojo::model::{ModelStorage};`
+- Read models: `world.read_model(key)`
+- Write models: `world.write_model(@model)`
+- Erase models: `world.erase_model(@model)`
+
+#### Testing Patterns
+- Use `dojo_cairo_test` for test utilities
+- Import test resources: `TestResource`, `NamespaceDef`, `ContractDef`
+- Spawn test world: `spawn_test_world(world::TEST_CLASS_HASH, [namespace_defs].span())`
+- Sync permissions: `world.sync_perms_and_inits(contract_defs)`
+- Access contracts via DNS: `world.dns(@"contract_name").unwrap()`
+
 ### Error Handling Convention
 - Use `panic!` for error conditions instead of `assert!` to match other apps
 - **For position-related errors, use the `panic_at_position()` helper function from `pixelaw::core::utils`**
+
+### Migration Notes (Dojo 1.5.0 → 1.7.1)
+- All `contract_address_const` usages replaced with `.try_into().unwrap()` pattern
+- Updated to Dojo 1.7.1 with WorldStorage and ModelStorage traits
+- All 33 core tests passing after migration
+- No breaking changes to app interfaces
