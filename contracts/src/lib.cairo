@@ -1,11 +1,11 @@
-mod apps {
+pub mod apps {
     pub mod house;
     pub mod paint;
     pub mod player;
     pub mod snake;
 }
 
-mod core {
+pub mod core {
     pub mod actions;
     pub mod events;
     pub mod models;
