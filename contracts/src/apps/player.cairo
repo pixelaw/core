@@ -65,7 +65,7 @@ pub mod player_actions {
     use pixelaw::core::utils::{
         DefaultParameters, Emoji, Position, get_callers, get_core_actions, panic_at_position,
     };
-    use starknet::{ContractAddress, contract_address_const, get_contract_address};
+    use starknet::{ContractAddress, get_contract_address};
     use super::IPlayerActions;
 
     use super::{APP_ICON, APP_KEY, PLAYER_LIVES};
@@ -74,7 +74,7 @@ pub mod player_actions {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);
 
-        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        core_actions.new_app(0.try_into().unwrap(), APP_KEY, APP_ICON);
     }
     #[abi(embed_v0)]
     impl Actions of IPlayerActions<ContractState> {
@@ -245,7 +245,7 @@ pub mod player_actions {
             // Check if there is a Player on the destination pixel (then cannot move there)
             let mut moveto_playerpos: PositionPlayer = world.read_model(moveto_pos);
 
-            if moveto_playerpos.player != contract_address_const::<0x0>() {
+            if moveto_playerpos.player != 0x0.try_into().unwrap() {
                 // Another Player is already here. Whoops.
                 // TODO for now panic so it doesnt cost gas
                 panic_at_position(moveto_pos, "Another player is here");
@@ -305,7 +305,7 @@ pub mod player_actions {
             moveto_playerpos.player = playerAddress;
             world.write_model(@moveto_playerpos);
 
-            positionPlayer.player = contract_address_const::<0x0>();
+            positionPlayer.player = 0x0.try_into().unwrap();
             world.write_model(@positionPlayer);
             //println!("Moving Player!")
         }

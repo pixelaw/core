@@ -54,7 +54,7 @@ pub mod house_actions {
         DefaultParameters, Position, get_callers, get_core_actions, panic_at_position,
     };
     use starknet::{
-        ContractAddress, contract_address_const, get_block_timestamp, get_contract_address,
+        ContractAddress, get_block_timestamp, get_contract_address,
     };
     use super::{APP_ICON, APP_KEY, HOUSE_SIZE, LIFE_REGENERATION_TIME};
     use super::{House, IHouseActions, PlayerHouse};
@@ -63,7 +63,7 @@ pub mod house_actions {
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);
-        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        core_actions.new_app(0.try_into().unwrap(), APP_KEY, APP_ICON);
     }
 
     // impl: implement functions specified in trait
@@ -193,7 +193,7 @@ pub mod house_actions {
                         x: position.x + x.into(), y: position.y + y.into(),
                     };
                     let pixel: Pixel = world.read_model(check_position);
-                    if pixel.app != contract_address_const::<0>() {
+                    if pixel.app != 0.try_into().unwrap() {
                         is_area_free = false;
                         break;
                     }

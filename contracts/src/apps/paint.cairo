@@ -62,7 +62,7 @@ pub mod paint_actions {
     use pixelaw::core::utils::{
         DefaultParameters, Position, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
     };
-    use starknet::{ContractAddress, contract_address_const, get_contract_address};
+    use starknet::{ContractAddress, get_contract_address};
     use super::IPaintActions;
 
     use super::{APP_ICON, APP_KEY, PIXELS_PER_FELT};
@@ -70,7 +70,7 @@ pub mod paint_actions {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);
 
-        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        core_actions.new_app(0.try_into().unwrap(), APP_KEY, APP_ICON);
     }
 
     #[abi(embed_v0)]
@@ -178,7 +178,7 @@ pub mod paint_actions {
 
             // Check if 5 seconds have passed or if the sender is the owner
             assert!(
-                pixel.owner == contract_address_const::<0>()
+                pixel.owner == 0.try_into().unwrap()
                     || pixel.owner == player
                     || starknet::get_block_timestamp()
                     - pixel.timestamp >= COOLDOWN_SECS,

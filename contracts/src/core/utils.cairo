@@ -6,7 +6,7 @@ use pixelaw::core::models::{
     pixel::{Pixel},
     {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
 };
-use starknet::{ContractAddress, contract_address_const, get_caller_address, get_contract_address};
+use starknet::{ContractAddress, get_caller_address, get_contract_address};
 
 
 pub const POW_2_96: u128 = 0x1000000000000000000000000_u128;
@@ -121,8 +121,8 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
 pub fn get_callers(
     ref world: WorldStorage, params: DefaultParameters,
 ) -> (ContractAddress, ContractAddress) {
-    let mut player = contract_address_const::<0>();
-    let mut system = contract_address_const::<0>();
+    let mut player = 0.try_into().unwrap();
+    let mut system = 0.try_into().unwrap();
 
     let core_address = get_core_actions_address(ref world);
     //let caller_contract = get_caller_address();
@@ -296,7 +296,7 @@ pub fn is_area_free(ref world: WorldStorage, top_left: Position, width: u16, hei
             let pixel: Pixel = world.read_model(current_position);
 
             // Check if pixel is occupied by any app
-            if pixel.app != contract_address_const::<0>() {
+            if pixel.app != 0.try_into().unwrap() {
                 row_is_free = false;
                 break; // Found occupied pixel
             }

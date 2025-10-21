@@ -11,7 +11,7 @@ use pixelaw::core::utils::{
     ON_POST_UPDATE_HOOK, ON_PRE_UPDATE_HOOK, Position, get_core_actions_address,
 };
 use starknet::{
-    ContractAddress, contract_address_const, get_contract_address, get_tx_info,
+    ContractAddress, get_contract_address, get_tx_info,
     syscalls::{call_contract_syscall},
 };
 
@@ -38,12 +38,12 @@ pub fn can_update_pixel(
             return PixelUpdateResult::Ok(pixel_update);
         }
         // Return true if neither area nor pixel have an owner
-        if area.owner == contract_address_const::<0>()
-            && pixel.owner == contract_address_const::<0>() {
+        if area.owner == 0.try_into().unwrap()
+            && pixel.owner == 0.try_into().unwrap() {
             return PixelUpdateResult::Ok(pixel_update);
         }
         // Return true if there is no area and pixel has no owner
-    } else if pixel.owner == contract_address_const::<0>() {
+    } else if pixel.owner == 0.try_into().unwrap() {
         return PixelUpdateResult::Ok(pixel_update);
     }
 
@@ -51,7 +51,7 @@ pub fn can_update_pixel(
     let pixel_app = determine_app(pixel, area_result);
 
     // Return if the pixel has no app (hook is not going to work)
-    if pixel_app == contract_address_const::<0>() {
+    if pixel_app == 0.try_into().unwrap() {
         return PixelUpdateResult::NotAllowed(pixel_update);
     }
 
@@ -108,7 +108,7 @@ pub fn update_pixel(
     world.write_model(@pixel);
 
     // Call on_post_update if the pixel has an app
-    if pixel.app != contract_address_const::<0>() {
+    if pixel.app != 0.try_into().unwrap() {
         let mut caller_app: App = world.read_model(for_system);
 
         if let Result::Err(err) =
@@ -267,8 +267,8 @@ fn parseHookOutput(data: Span<felt252>) -> Option<PixelUpdate> {
 
 // Gives the appropriate App, based on availability in Pixel or Area
 fn determine_app(pixel: Pixel, area_result: Option<Area>) -> ContractAddress {
-    let mut result = contract_address_const::<0>();
-    if pixel.app == contract_address_const::<0>() {
+    let mut result = 0.try_into().unwrap();
+    if pixel.app == 0.try_into().unwrap() {
         if let Option::Some(area) = area_result {
             result = area.app;
         }

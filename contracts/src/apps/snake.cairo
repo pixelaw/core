@@ -144,7 +144,7 @@ pub mod snake_actions {
         DefaultParameters, Direction, MOVE_SELECTOR, get_callers, get_core_actions,
     };
     use starknet::{
-        ContractAddress, contract_address_const, get_contract_address, get_execution_info,
+        ContractAddress, get_contract_address, get_execution_info,
     };
     use super::ISnakeActions;
     use super::next_position;
@@ -159,7 +159,7 @@ pub mod snake_actions {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);
 
-        core_actions.new_app(contract_address_const::<0>(), APP_KEY, APP_ICON);
+        core_actions.new_app(0.try_into().unwrap(), APP_KEY, APP_ICON);
     }
 
     /// Implementation of the Snake actions.
@@ -375,7 +375,7 @@ pub mod snake_actions {
 
                 // Determine what happens to the snake
                 // MOVE, GROW, SHRINK, DIE
-                if next_pixel.owner == contract_address_const::<0>() {
+                if next_pixel.owner == 0.try_into().unwrap() {
                     // Snake just moves
                     // Add a new segment on the next pixel and update the snake
 
