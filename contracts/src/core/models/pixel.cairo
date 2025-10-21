@@ -60,7 +60,7 @@ pub impl PixelUpdateResultTraitImpl of PixelUpdateResultTrait<PixelUpdateResult>
     }
 }
 
-#[derive(PartialEq, Debug, Copy, Drop, Serde, Introspect)]
+#[derive(PartialEq, Debug, Copy, Drop, Serde, Introspect, DojoStore)]
 pub struct PixelUpdate {
     pub position: Position,
     pub color: Option<u32>,

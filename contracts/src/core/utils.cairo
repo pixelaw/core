@@ -41,8 +41,9 @@ pub const INTERACT_SELECTOR: felt252 =
 pub const MOVE_SELECTOR: felt252 =
     0x239e4c8fbd11b680d7214cfc26d1780d5c099453f0832beb15fd040aebd4ebb;
 
-#[derive(Debug, PartialEq, Serde, Copy, Drop, Introspect)]
+#[derive(Debug, PartialEq, Serde, Copy, Drop, Introspect, DojoStore, Default)]
 pub enum Direction {
+    #[default]
     None,
     Left,
     Right,
@@ -50,19 +51,19 @@ pub enum Direction {
     Down,
 }
 
-#[derive(Debug, Copy, Drop, Serde, Introspect)]
+#[derive(Debug, Copy, Drop, Serde, Introspect, DojoStore)]
 pub struct Emoji {
     pub value: felt252,
 }
 
-#[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
+#[derive(Debug, Copy, Drop, Serde, Introspect, DojoStore, PartialEq)]
 pub struct Position {
     pub x: u16,
     pub y: u16,
 }
 
 
-#[derive(Debug, Copy, Drop, Serde, Introspect, PartialEq)]
+#[derive(Debug, Copy, Drop, Serde, Introspect, DojoStore, PartialEq)]
 pub struct Bounds {
     pub x_min: u16,
     pub y_min: u16,
@@ -71,7 +72,7 @@ pub struct Bounds {
 }
 
 
-#[derive(Copy, Drop, Serde, Introspect, Debug)]
+#[derive(Copy, Drop, Serde, Introspect, DojoStore, Debug)]
 pub struct DefaultParameters {
     pub player_override: Option<ContractAddress>,
     pub system_override: Option<ContractAddress>,
