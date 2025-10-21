@@ -368,29 +368,30 @@ contracts/
 │   │       ├── queue.cairo    # Queue system models
 │   │       ├── registry.cairo # App registry models
 │   │       └── dummy.cairo    # Placeholder models
-│   └── apps/                  # Default applications
-│       ├── house.cairo        # House building app
-│       ├── paint.cairo        # Paint app
-│       ├── player.cairo       # Player management
-│       └── snake.cairo        # Snake game
+│   ├── apps/                  # Default applications
+│   │   ├── house.cairo        # House building app
+│   │   ├── paint.cairo        # Paint app
+│   │   ├── player.cairo       # Player management
+│   │   └── snake.cairo        # Snake game
+│   └── tests/                 # Comprehensive test suite
+│       ├── helpers.cairo      # Test utility functions
+│       ├── core/              # Core functionality tests
+│       │   ├── base.cairo     # Basic functionality tests
+│       │   ├── pixel_area.cairo  # Pixel and area tests
+│       │   ├── queue.cairo    # Queue system tests
+│       │   ├── area.cairo     # Area management tests
+│       │   ├── interop.cairo  # App interaction tests
+│       │   └── utils.cairo    # Utility tests
+│       └── apps/              # Individual app tests
+│           ├── app_house.cairo
+│           ├── app_paint.cairo
+│           ├── app_player.cairo
+│           └── app_snake.cairo
 ├── Scarb.toml                 # Main package configuration
-├── Scarb_deploy.toml          # Deployment configuration  
+├── Scarb_deploy.toml          # Deployment configuration
 ├── dojo_dev.toml             # Development profile
 ├── dojo_sepolia.toml         # Sepolia testnet profile
 └── dojo_mainnet.toml         # Mainnet profile
-
-pixelaw_testing/               # Dedicated testing package
-├── src/
-│   ├── lib.cairo             # Test module declarations
-│   ├── helpers.cairo         # Test utility functions
-│   └── tests/                # Comprehensive test suite
-│       ├── base.cairo        # Basic functionality tests
-│       ├── pixel_area.cairo  # Pixel and area tests
-│       ├── queue.cairo       # Queue system tests
-│       ├── area.cairo        # Area management tests
-│       ├── interop.cairo     # App interaction tests
-│       ├── app_*.cairo       # Individual app tests
-└── Scarb.toml                # Testing package config
 ```
 
 ## Core Configuration Files
@@ -444,7 +445,7 @@ use pixelaw::core::actions::{IActionsDispatcher, IActionsDispatcherTrait, action
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate, m_Pixel};
 use pixelaw::core::models::registry::{App, m_App};
 use pixelaw::core::utils::{Position, DefaultParameters, encode_rgba};
-use pixelaw_testing::helpers::{setup_core, set_caller};
+use crate::tests::helpers::{setup_core, set_caller};
 
 #[test]
 #[available_gas(3000000000)]
@@ -843,13 +844,19 @@ When working on PixeLAW Core, you MUST:
 # Quick build validation
 just build
 
-# Run comprehensive core tests
+# Run comprehensive core tests (all 33 tests)
 just test
 
 # Run filtered tests for specific components
 just test_filtered "pixel"
 just test_filtered "area"
 just test_filtered "queue"
+
+# Run tests directly with sozo
+cd contracts
+sozo test                   # Run all tests
+sozo test --filter "house"  # Run specific app tests
+sozo test --filter "pixel"  # Run pixel-related tests
 
 # Start development environment
 docker compose up -d

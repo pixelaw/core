@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 just build                    # Build contracts using sozo
 just test                     # Run all contract tests with sozo
 just test_filtered "filter"   # Run filtered tests (e.g., just test_filtered "house")
-cd pixelaw_testing && sozo test  # Run tests from testing package
+cd contracts && sozo test     # Run tests directly with sozo
 ```
 
 ### Development Environment
@@ -36,10 +36,10 @@ scarb run init              # Initialize deployed contracts
 
 ### Testing-Specific Commands
 ```bash
-cd pixelaw_testing
-sozo build                  # Build test contracts
+cd contracts
 sozo test                   # Run comprehensive test suite
 sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
+sozo test --filter "pixel"  # Run pixel-related tests
 ```
 
 ## Architecture
@@ -60,14 +60,15 @@ sozo test --filter "house"  # Run filtered tests (e.g., house, player, area)
 ### Project Structure
 ```
 contracts/               # Main Cairo smart contracts
-├── src/core/           # Core actions, events, models, utils
-├── src/apps/           # Default apps (house, paint, player, snake)
+├── src/
+│   ├── core/           # Core actions, events, models, utils
+│   ├── apps/           # Default apps (house, paint, player, snake)
+│   └── tests/          # Comprehensive test suite
+│       ├── apps/       # App-specific tests
+│       ├── core/       # Core functionality tests
+│       └── helpers.cairo  # Test utilities
 ├── Scarb.toml          # Main package configuration
 └── Scarb_deploy.toml   # Deployment configuration
-
-pixelaw_testing/        # Dedicated testing package
-├── src/tests/          # Comprehensive test suite
-└── Scarb.toml          # Testing package configuration
 
 docker/                 # Docker development configuration
 scripts/                # Release and upgrade scripts
@@ -93,18 +94,20 @@ scripts/                # Release and upgrade scripts
 - **Sozo**: Dojo CLI for building, testing, and deployment
 
 ### Key Configuration Files
-- `contracts/Scarb.toml`: Main package with Dojo dependencies
-- `pixelaw_testing/Scarb.toml`: Testing package with test dependencies
+- `contracts/Scarb.toml`: Main package with Dojo dependencies and test configuration
 - `docker-compose.yml`: Docker development environment, running Katana and Torii
 - `VERSION`: Core version (0.7.9)
 - `DOJO_VERSION`: Dojo version (1.7.1)
 
 ### Testing Strategy
-- Unit tests embedded in source files using `#[cfg(test)]`
-- Integration tests in dedicated `pixelaw_testing` package
-- Comprehensive test coverage for all apps and core functionality
-- Tests organized by component (area, interop, pixel_area, queue, etc.)
-- Use `just test_filtered "pattern"` or `sozo test --filter "pattern"` for focused testing during development
+- All tests located in `contracts/src/tests/` directory
+- Test organization:
+  - `tests/core/` - Core functionality tests (area, pixel, queue, interop)
+  - `tests/apps/` - App-specific tests (house, paint, player, snake)
+  - `tests/helpers.cairo` - Shared test utilities and setup functions
+- Comprehensive test coverage for all apps and core functionality (33 tests)
+- Use `just test_filtered "pattern"` or `cd contracts && sozo test --filter "pattern"` for focused testing
+- All tests use `dojo_cairo_test` for world setup and model access
 
 ### Development Guidelines
 - Follow Cairo naming conventions (snake_case for functions, PascalCase for types)
@@ -137,11 +140,13 @@ scripts/                # Release and upgrade scripts
 - Erase models: `world.erase_model(@model)`
 
 #### Testing Patterns
+- All tests in `contracts/src/tests/` directory
 - Use `dojo_cairo_test` for test utilities
 - Import test resources: `TestResource`, `NamespaceDef`, `ContractDef`
 - Spawn test world: `spawn_test_world(world::TEST_CLASS_HASH, [namespace_defs].span())`
 - Sync permissions: `world.sync_perms_and_inits(contract_defs)`
 - Access contracts via DNS: `world.dns(@"contract_name").unwrap()`
+- Use helper functions from `tests/helpers.cairo`: `setup_core()`, `setup_apps()`, `set_caller()`
 
 ### Error Handling Convention
 - Use `panic!` for error conditions instead of `assert!` to match other apps

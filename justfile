@@ -64,8 +64,8 @@ shell:
 
 # Run contract tests
 test:
-    cd pixelaw_testing && scarb fmt && sozo test
+    cd contracts && scarb fmt && sozo test
 
 # Run filtered contract tests
 test_filtered filter:
-    cd pixelaw_testing && scarb fmt && sozo test --filter {{ filter }}
+    cd contracts && scarb fmt && sozo test --filter {{ filter }}
