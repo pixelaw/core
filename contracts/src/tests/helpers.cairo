@@ -9,24 +9,24 @@ use crate::{
     apps::{
         paint::{IPaintActionsDispatcher, paint_actions},
         snake::{
-            ISnakeActionsDispatcher, Snake, SnakeSegment, snake_actions, m_Snake, m_SnakeSegment,
+            ISnakeActionsDispatcher, snake_actions, m_Snake, m_SnakeSegment,
         },
         player::{
-            IPlayerActionsDispatcher, Player, PositionPlayer, player_actions, m_Player,
+            IPlayerActionsDispatcher, player_actions, m_Player,
             m_PositionPlayer,
         },
         house::{
-            IHouseActionsDispatcher, House, PlayerHouse, house_actions, m_House, m_PlayerHouse,
+            IHouseActionsDispatcher, house_actions, m_House, m_PlayerHouse,
         },
     },
     core::{
         actions::{IActionsDispatcher, actions},
-        events::{QueueScheduled, Notification, e_QueueScheduled, e_Notification},
+        events::{e_QueueScheduled, e_Notification},
         models::{
-            area::{Area, RTree, m_Area, m_RTree},
-            pixel::{Pixel, m_Pixel},
-            queue::{QueueItem, m_QueueItem},
-            registry::{App, AppName, CoreActionsAddress, m_App, m_AppName, m_CoreActionsAddress},
+            area::{m_Area, m_RTree},
+            pixel::{m_Pixel},
+            queue::{m_QueueItem},
+            registry::{m_App, m_AppName, m_CoreActionsAddress},
         },
         utils::{Position},
     },
