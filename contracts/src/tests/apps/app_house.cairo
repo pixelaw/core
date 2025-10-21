@@ -1,12 +1,12 @@
 use dojo::model::{ModelStorage};
 
-use pixelaw::core::models::pixel::{Pixel};
-use pixelaw::core::utils::{DefaultParameters, Position};
-use pixelaw::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
-use pixelaw::apps::player::{IPlayerActionsDispatcherTrait};
-use pixelaw::apps::player::{Player};
-use crate::helpers::{setup_core, setup_apps, set_caller};
-use starknet::{contract_address_const, testing::{set_block_timestamp}};
+use crate::core::models::pixel::{Pixel};
+use crate::core::utils::{DefaultParameters, Position};
+use crate::apps::house::{IHouseActionsDispatcherTrait, House, PlayerHouse};
+use crate::apps::player::{IPlayerActionsDispatcherTrait};
+use crate::apps::player::{Player};
+use crate::tests::helpers::{setup_core, setup_apps, set_caller};
+use starknet::{testing::{set_block_timestamp}};
 
 // House app test constants
 const HOUSE_COLOR: u32 = 0x8B4513FF; // Brown color
@@ -19,7 +19,7 @@ fn test_build_house() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_caller(player1);
 
     // Define the position for our house (top-left corner)
@@ -60,7 +60,7 @@ fn test_build_second_house() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_caller(player1);
 
     // Build first house using interact
@@ -95,7 +95,7 @@ fn test_collect_life() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (_paint_actions, _snake_actions, player_actions, house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_caller(player1);
 
     // Define initial position and color
@@ -169,7 +169,7 @@ fn test_collect_life_too_soon() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (_paint_actions, _snake_actions, _player_actions, house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_caller(player1);
 
     // Set the initial timestamp

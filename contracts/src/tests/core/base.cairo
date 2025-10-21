@@ -1,10 +1,10 @@
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
-use pixelaw_testing::helpers::{
+use crate::tests::helpers::{
     RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps, setup_core,
 };
-use pixelaw::{
+use crate::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
         actions::{IActionsDispatcherTrait}, events::{Notification},
@@ -12,14 +12,14 @@ use pixelaw::{
         utils::{DefaultParameters, Position, get_callers},
     },
 };
-use starknet::{contract_address_const, testing::{set_caller_address, set_contract_address}};
+use starknet::{testing::{set_caller_address, set_contract_address}};
 
 
 #[test]
 fn test_register_new_app() {
     let (world, core_actions, _player_1, _player_2) = setup_core();
     let app_name = 'myname';
-    let mock_app1_system = contract_address_const::<0xBEAD>();
+    let mock_app1_system = 0xBEAD.try_into().unwrap();
     let _new_app1: App = core_actions.new_app(mock_app1_system, app_name, '');
     // TODO check return values
 
@@ -109,7 +109,7 @@ fn test_update_pixel() {
 
     let position = Position { x: 22, y: 23 };
     let color: u32 = 0xFF00FFFF;
-    let app = contract_address_const::<0xBEEFDEAD>();
+    let app = 0xBEEFDEAD.try_into().unwrap();
     let owner = player_1;
     let text = 'mytext';
     let timestamp: u64 = 123123;
@@ -161,7 +161,7 @@ fn test_update_pixel() {
 #[should_panic(expected: 'p: only core can override')]
 fn test_get_callers_non_core() {
     let (mut world, _core_actions, _player_1, player_2) = setup_core();
-    let system_override = starknet::contract_address_const::<0x69>();
+    let system_override = 0x69.try_into().unwrap();
 
     // Don't fake the calling contract, so this call fails
 
@@ -179,7 +179,7 @@ fn test_get_callers_non_core() {
 fn test_get_callers() {
     let (mut world, core_actions, player_1, player_2) = setup_core();
 
-    let system_override = starknet::contract_address_const::<0x69>();
+    let system_override = 0x69.try_into().unwrap();
 
     let no_override = DefaultParameters {
         player_override: Option::None,

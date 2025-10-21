@@ -31,14 +31,4 @@ version = "0.7.9"
 dependencies = [
  "dojo",
  "dojo_cairo_test",
- "pixelaw_testing",
-]
-
-[[package]]
-name = "pixelaw_testing"
-version = "0.7.9"
-dependencies = [
- "dojo",
- "dojo_cairo_test",
- "pixelaw",
 ]

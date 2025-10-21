@@ -1,5 +1,5 @@
-use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
-use pixelaw::{
+use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
+use crate::{
     core::{
         actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},
         models::{

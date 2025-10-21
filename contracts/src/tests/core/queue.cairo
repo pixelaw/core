@@ -2,12 +2,12 @@ use core::{poseidon::poseidon_hash_span};
 use dojo::event::{Event};
 use dojo::model::{ModelStorage};
 use dojo::world::world::Event as WorldEvent;
-use pixelaw::apps::snake::{ISnakeActionsDispatcherTrait};
-use pixelaw::core::{
+use crate::apps::snake::{ISnakeActionsDispatcherTrait};
+use crate::core::{
     actions::{IActionsDispatcherTrait}, events::{QueueScheduled}, models::pixel::{Pixel},
     utils::{DefaultParameters, Direction, Position, SNAKE_MOVE_ENTRYPOINT},
 };
-use pixelaw_testing::helpers::{drop_all_events, set_caller, setup_apps, setup_core};
+use crate::tests::helpers::{drop_all_events, set_caller, setup_apps, setup_core};
 use starknet::{testing::{set_block_timestamp}};
 const SPAWN_PIXEL_ENTRYPOINT: felt252 =
     0x01c199924ae2ed5de296007a1ac8aa672140ef2a973769e4ad1089829f77875a;

@@ -14,7 +14,6 @@ starknet = "2.12.2"
 
 [dev-dependencies]
 cairo_test = "2.12.2"
-pixelaw_testing = { path = "../pixelaw_testing" }
 dojo_cairo_test = "1.7.1"
 
 [tool.scarb]

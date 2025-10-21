@@ -1,11 +1,11 @@
 use dojo::model::{ModelStorage};
 
-use pixelaw::apps::paint::{IPaintActionsDispatcherTrait};
-use pixelaw::core::models::pixel::{Pixel};
-use pixelaw::core::utils::{DefaultParameters, Position, encode_rgba};
+use crate::apps::paint::{IPaintActionsDispatcherTrait};
+use crate::core::models::pixel::{Pixel};
+use crate::core::utils::{DefaultParameters, Position, encode_rgba};
 
-use crate::helpers::{setup_apps, setup_core};
-use starknet::{contract_address_const, testing::set_account_contract_address};
+use crate::tests::helpers::{setup_apps, setup_core};
+use starknet::{testing::set_account_contract_address};
 
 #[test]
 #[available_gas(3000000000)]
@@ -14,7 +14,7 @@ fn test_paint_actions() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (paint_actions, _snake_actions, _player_actions, _house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_account_contract_address(player1);
 
     let color = encode_rgba(1, 0, 0, 1);

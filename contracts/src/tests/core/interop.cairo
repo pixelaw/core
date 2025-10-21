@@ -1,5 +1,5 @@
-use pixelaw_testing::helpers::{set_caller, setup_apps, setup_core};
-use pixelaw::{
+use crate::tests::helpers::{set_caller, setup_apps, setup_core};
+use crate::{
     apps::paint::{IPaintActionsDispatcherTrait}, apps::snake::{ISnakeActionsDispatcherTrait},
     core::{
         models::{area::{ChildrenPackableImpl, RTreeNodePackableImpl}},

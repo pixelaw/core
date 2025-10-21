@@ -1,10 +1,9 @@
 use dojo::model::{ModelStorage};
 
-use pixelaw::core::models::pixel::{Pixel};
-use pixelaw::core::utils::{DefaultParameters, Position};
-use pixelaw::apps::{player::{IPlayerActionsDispatcherTrait, Player, PLAYER_LIVES}};
-use crate::helpers::{setup_apps, setup_core, set_caller};
-use starknet::{contract_address_const};
+use crate::core::models::pixel::{Pixel};
+use crate::core::utils::{DefaultParameters, Position};
+use crate::apps::{player::{IPlayerActionsDispatcherTrait, Player, PLAYER_LIVES}};
+use crate::tests::helpers::{setup_apps, setup_core, set_caller};
 
 #[test]
 #[available_gas(3000000000)]
@@ -13,7 +12,7 @@ fn test_player_interaction() {
     let (mut world, _core_actions, _player_1, _player_2) = setup_core();
     let (_paint_actions, _snake_actions, player_actions, _house_actions) = setup_apps(ref world);
 
-    let player1 = contract_address_const::<0x1337>();
+    let player1 = 0x1337.try_into().unwrap();
     set_caller(player1);
 
     // Define initial position and color

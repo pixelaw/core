@@ -1,7 +1,7 @@
-use pixelaw_testing::helpers::{
+use crate::tests::helpers::{
     RED_COLOR, WHITE_COLOR, set_caller, setup_apps, setup_core,
 };
-use pixelaw::{
+use crate::{
     apps::{paint::{IPaintActionsDispatcherTrait}},
     core::{
         utils::{DefaultParameters, Position, is_area_free},

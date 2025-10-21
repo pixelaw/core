@@ -1,6 +1,6 @@
 use dojo::model::{ModelStorage};
-use pixelaw_testing::helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core};
-use pixelaw::{
+use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core};
+use crate::{
     core::{
         actions::{IActionsDispatcherTrait},
         models::{

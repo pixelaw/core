@@ -1,14 +1,13 @@
 use dojo::model::{ModelStorage};
 
-use pixelaw::apps::paint::{IPaintActionsDispatcherTrait};
+use crate::apps::paint::{IPaintActionsDispatcherTrait};
 
-use pixelaw::apps::snake::{ISnakeActionsDispatcherTrait};
+use crate::apps::snake::{ISnakeActionsDispatcherTrait};
 
-use pixelaw::core::models::pixel::{Pixel};
-use pixelaw::core::utils::{DefaultParameters, Direction, Position};
+use crate::core::models::pixel::{Pixel};
+use crate::core::utils::{DefaultParameters, Direction, Position};
 
-use crate::helpers::{set_caller, setup_apps, setup_core};
-use starknet::{contract_address_const};
+use crate::tests::helpers::{set_caller, setup_apps, setup_core};
 
 
 #[test]
@@ -20,8 +19,8 @@ fn test_playthrough() {
     let SNAKE_COLOR = 0xFF00FF;
 
     // Setup players
-    let player1 = contract_address_const::<0x1337>();
-    let player2 = contract_address_const::<0x42>();
+    let player1 = 0x1337.try_into().unwrap();
+    let player2 = 0x42.try_into().unwrap();
 
     // Impersonate player1
     set_caller(player1);
