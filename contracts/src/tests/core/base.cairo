@@ -1,18 +1,16 @@
-use dojo::event::{Event};
-use dojo::model::{ModelStorage};
+use dojo::event::Event;
+use dojo::model::ModelStorage;
 use dojo::world::world::Event as WorldEvent;
+use starknet::testing::{set_caller_address, set_contract_address};
+use crate::apps::paint::IPaintActionsDispatcherTrait;
+use crate::core::actions::IActionsDispatcherTrait;
+use crate::core::events::Notification;
+use crate::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
+use crate::core::models::registry::{App, AppName};
+use crate::core::utils::{DefaultParameters, Position, get_callers};
 use crate::tests::helpers::{
     RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps, setup_core,
 };
-use crate::{
-    apps::{paint::{IPaintActionsDispatcherTrait}},
-    core::{
-        actions::{IActionsDispatcherTrait}, events::{Notification},
-        models::{pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait}, registry::{App, AppName}},
-        utils::{DefaultParameters, Position, get_callers},
-    },
-};
-use starknet::{testing::{set_caller_address, set_contract_address}};
 
 
 #[test]

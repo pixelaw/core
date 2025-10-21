@@ -1,16 +1,12 @@
-use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
-use crate::{
-    core::{
-        actions::area::{find_node_for_position}, actions::{IActionsDispatcherTrait},
-        models::{
-            area::{
-                Area, ChildrenPackableImpl, FIRST_RTREENODE, ROOT_ID, ROOT_RTREENODE,
-                ROOT_RTREENODE_EMPTY, RTreeNode, RTreeNodePackableImpl,
-            },
-        },
-        utils, utils::{Bounds, Position},
-    },
+use crate::core::actions::IActionsDispatcherTrait;
+use crate::core::actions::area::find_node_for_position;
+use crate::core::models::area::{
+    Area, ChildrenPackableImpl, FIRST_RTREENODE, ROOT_ID, ROOT_RTREENODE, ROOT_RTREENODE_EMPTY,
+    RTreeNode, RTreeNodePackableImpl,
 };
+use crate::core::utils;
+use crate::core::utils::{Bounds, Position};
+use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
 
 // Declare constants for bounds and positions
 const BOUNDS_1: Bounds = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };

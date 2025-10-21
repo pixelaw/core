@@ -1,4 +1,4 @@
-use dojo::model::{ModelStorage};
+use dojo::model::ModelStorage;
 use dojo::world::storage::WorldStorage;
 //use dojo::{world::{IWorldDispatcher, IWorldDispatcherTrait}};
 use pixelaw::core::{
@@ -10,7 +10,7 @@ use pixelaw::core::{
     },
     utils::{Bounds, MAX_DIMENSION, Position},
 };
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 use super::super::models::area::BoundsTrait;
 
 pub fn remove_area(ref world: WorldStorage, area_id: u64) {
@@ -85,7 +85,7 @@ pub fn find_node_for_position(
             found_child_id = id;
             break;
         }
-    };
+    }
 
     found_child_id
 }
@@ -243,7 +243,7 @@ fn spanning_bounds(nodes: Span<u64>) -> Bounds {
         if b.y_max > result.y_max {
             result.y_max = b.y_max;
         }
-    };
+    }
 
     result
 }
@@ -266,7 +266,7 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
     for child in children {
         let tn: RTreeNode = (*child).unpack();
         bounds.append(tn.bounds);
-    };
+    }
 
     while i < children.len() {
         while j < children.len() {
@@ -286,9 +286,9 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
             }
 
             j += 1;
-        };
+        }
         i += 1;
-    };
+    }
 
     // These two are the "worst" combination, so can be seed for the split
     let mut arr1 = array![*children[seed_child_1]];
@@ -318,7 +318,7 @@ fn distribute_children(children: Span<u64>) -> (Span<u64>, Span<u64>) {
         }
 
         i += 1;
-    };
+    }
 
     (arr1.span(), arr2.span())
 }
@@ -360,7 +360,7 @@ fn choose_best_child(parent: RTreeNode, children: Span<u64>, new: Bounds) -> u64
         } else if new_area == best_new_area && child.bounds.area() < best_child_area {
             best_child_id = *child_id;
         }
-    };
+    }
 
     (best_child_id)
 }
@@ -414,7 +414,7 @@ pub fn find_smallest_node_spanning_bounds(
 
             break;
         }
-    };
+    }
     result
 }
 

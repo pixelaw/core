@@ -1,11 +1,9 @@
-use dojo::model::{ModelStorage};
-
-use crate::apps::paint::{IPaintActionsDispatcherTrait};
-use crate::core::models::pixel::{Pixel};
+use dojo::model::ModelStorage;
+use starknet::testing::set_account_contract_address;
+use crate::apps::paint::IPaintActionsDispatcherTrait;
+use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Position, encode_rgba};
-
 use crate::tests::helpers::{setup_apps, setup_core};
-use starknet::{testing::set_account_contract_address};
 
 #[test]
 #[available_gas(3000000000)]

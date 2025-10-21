@@ -1,6 +1,7 @@
-use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
+use pixelaw::core::models::pixel::PixelUpdate;
+use pixelaw::core::models::registry::App;
 use pixelaw::core::utils::{DefaultParameters, Position};
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 
 /// House Model to keep track of houses and their owners
 #[derive(Copy, Drop, Serde)]
@@ -45,19 +46,18 @@ pub const LIFE_REGENERATION_TIME: u64 = 120; // every 2 minutes can collect a li
 /// House actions contract
 #[dojo::contract]
 pub mod house_actions {
-    use dojo::model::{ModelStorage};
-    use pixelaw::apps::player::{Player};
-    use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
+    use dojo::model::ModelStorage;
+    use pixelaw::apps::player::Player;
+    use pixelaw::core::actions::IActionsDispatcherTrait as ICoreActionsDispatcherTrait;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         DefaultParameters, Position, get_callers, get_core_actions, panic_at_position,
     };
-    use starknet::{
-        ContractAddress, get_block_timestamp, get_contract_address,
+    use starknet::{ContractAddress, get_block_timestamp, get_contract_address};
+    use super::{
+        APP_ICON, APP_KEY, HOUSE_SIZE, House, IHouseActions, LIFE_REGENERATION_TIME, PlayerHouse,
     };
-    use super::{APP_ICON, APP_KEY, HOUSE_SIZE, LIFE_REGENERATION_TIME};
-    use super::{House, IHouseActions, PlayerHouse};
 
     /// Initialize the House App
     fn dojo_init(ref self: ContractState) {
@@ -198,12 +198,12 @@ pub mod house_actions {
                         break;
                     }
                     y += 1;
-                };
+                }
                 if !is_area_free {
                     break;
                 }
                 x += 1;
-            };
+            }
             if !is_area_free {
                 panic_at_position(position, "Area is not free for building a house");
             }
@@ -260,9 +260,9 @@ pub mod house_actions {
                         .unwrap();
 
                     y += 1;
-                };
+                }
                 x += 1;
-            };
+            }
 
             // Emit notification instead of direct event
             core_actions

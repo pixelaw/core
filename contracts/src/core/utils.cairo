@@ -1,11 +1,11 @@
-use dojo::model::{ModelStorage};
+use dojo::model::ModelStorage;
 use dojo::world::storage::WorldStorage;
 use pixelaw::core::actions::{CORE_ACTIONS_KEY, IActionsDispatcher};
-use pixelaw::core::models::registry::{CoreActionsAddress};
-use pixelaw::core::models::{
-    pixel::{Pixel},
-    {area::{BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl}},
+use pixelaw::core::models::area::{
+    BoundsTraitImpl, ChildrenPackableImpl, RTreeNodePackableImpl, RTreeTraitImpl,
 };
+use pixelaw::core::models::pixel::Pixel;
+use pixelaw::core::models::registry::CoreActionsAddress;
 use starknet::{ContractAddress, get_caller_address, get_contract_address};
 
 
@@ -106,7 +106,7 @@ pub fn starknet_keccak(data: Span<felt252>) -> felt252 {
         }
         u256_data.append((*data[i]).into());
         i += 1;
-    };
+    }
 
     let mut hash = core::keccak::keccak_u256s_be_inputs(u256_data.span());
     let low = core::integer::u128_byte_reverse(hash.high);
@@ -303,7 +303,7 @@ pub fn is_area_free(ref world: WorldStorage, top_left: Position, width: u16, hei
             }
 
             x_offset += 1;
-        };
+        }
 
         // If row has conflict, entire area is not free
         if !row_is_free {

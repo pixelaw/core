@@ -2,7 +2,7 @@
 // https://github.com/dojoengine/dojo/issues/3066
 // Typescript bindings: structs not exported
 
-use pixelaw::core::models::pixel::{PixelUpdate};
+use pixelaw::core::models::pixel::PixelUpdate;
 use pixelaw::core::utils::{Bounds, DefaultParameters, Emoji};
 
 #[dojo::model]

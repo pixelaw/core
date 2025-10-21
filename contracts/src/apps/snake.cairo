@@ -1,6 +1,7 @@
-use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
+use pixelaw::core::models::pixel::PixelUpdate;
+use pixelaw::core::models::registry::App;
 use pixelaw::core::utils::{DefaultParameters, Direction, Position};
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 
 /// Calculates the next position based on the current coordinates and direction.
 ///
@@ -130,27 +131,20 @@ pub trait ISnakeActions<T> {
 
 #[dojo::contract]
 pub mod snake_actions {
-    use dojo::model::{ModelStorage};
+    use dojo::model::ModelStorage;
+    use dojo::world::IWorldDispatcherTrait;
     use dojo::world::storage::WorldStorage;
-    use dojo::world::{IWorldDispatcherTrait};
     use pixelaw::core::actions::{
         IActionsDispatcher as ICoreActionsDispatcher,
         IActionsDispatcherTrait as ICoreActionsDispatcherTrait,
     };
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
-
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         DefaultParameters, Direction, MOVE_SELECTOR, get_callers, get_core_actions,
     };
-    use starknet::{
-        ContractAddress, get_contract_address, get_execution_info,
-    };
-    use super::ISnakeActions;
-    use super::next_position;
-
-    use super::{APP_ICON, APP_KEY};
-    use super::{Snake, SnakeSegment};
+    use starknet::{ContractAddress, get_contract_address, get_execution_info};
+    use super::{APP_ICON, APP_KEY, ISnakeActions, Snake, SnakeSegment, next_position};
 
 
     const SNAKE_MAX_LENGTH: u8 = 255;

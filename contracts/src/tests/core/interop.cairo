@@ -1,11 +1,8 @@
+use crate::apps::paint::IPaintActionsDispatcherTrait;
+use crate::apps::snake::ISnakeActionsDispatcherTrait;
+use crate::core::models::area::{ChildrenPackableImpl, RTreeNodePackableImpl};
+use crate::core::utils::{DefaultParameters, Direction, Position};
 use crate::tests::helpers::{set_caller, setup_apps, setup_core};
-use crate::{
-    apps::paint::{IPaintActionsDispatcherTrait}, apps::snake::{ISnakeActionsDispatcherTrait},
-    core::{
-        models::{area::{ChildrenPackableImpl, RTreeNodePackableImpl}},
-        utils::{DefaultParameters, Direction, Position},
-    },
-};
 
 #[test]
 fn test_app_permissions() {

@@ -1,5 +1,5 @@
-use pixelaw::core::utils::{Position};
-use starknet::{ContractAddress};
+use pixelaw::core::utils::Position;
+use starknet::ContractAddress;
 
 
 #[derive(Drop, Debug, PartialEq, Serde)]

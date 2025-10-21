@@ -1,39 +1,20 @@
 use dojo::world::{IWorldDispatcherTrait, WorldStorage, WorldStorageTrait, world};
-
 use dojo_cairo_test::{
     ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait,
     spawn_test_world,
 };
-
-use crate::{
-    apps::{
-        paint::{IPaintActionsDispatcher, paint_actions},
-        snake::{
-            ISnakeActionsDispatcher, snake_actions, m_Snake, m_SnakeSegment,
-        },
-        player::{
-            IPlayerActionsDispatcher, player_actions, m_Player,
-            m_PositionPlayer,
-        },
-        house::{
-            IHouseActionsDispatcher, house_actions, m_House, m_PlayerHouse,
-        },
-    },
-    core::{
-        actions::{IActionsDispatcher, actions},
-        events::{e_QueueScheduled, e_Notification},
-        models::{
-            area::{m_Area, m_RTree},
-            pixel::{m_Pixel},
-            queue::{m_QueueItem},
-            registry::{m_App, m_AppName, m_CoreActionsAddress},
-        },
-        utils::{Position},
-    },
-};
-
-
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
+use crate::apps::house::{IHouseActionsDispatcher, house_actions, m_House, m_PlayerHouse};
+use crate::apps::paint::{IPaintActionsDispatcher, paint_actions};
+use crate::apps::player::{IPlayerActionsDispatcher, m_Player, m_PositionPlayer, player_actions};
+use crate::apps::snake::{ISnakeActionsDispatcher, m_Snake, m_SnakeSegment, snake_actions};
+use crate::core::actions::{IActionsDispatcher, actions};
+use crate::core::events::{e_Notification, e_QueueScheduled};
+use crate::core::models::area::{m_Area, m_RTree};
+use crate::core::models::pixel::m_Pixel;
+use crate::core::models::queue::m_QueueItem;
+use crate::core::models::registry::{m_App, m_AppName, m_CoreActionsAddress};
+use crate::core::utils::Position;
 
 
 pub const TEST_POSITION: Position = Position { x: 1, y: 1 };
@@ -177,7 +158,9 @@ pub fn update_test_world(ref world: WorldStorage, namespaces_defs: Span<Namespac
                 TestResource::Contract(ch) => {
                     world
                         .dispatcher
-                        .register_contract((*ch).try_into().unwrap(), namespace.clone(), (*ch).try_into().unwrap());
+                        .register_contract(
+                            (*ch).try_into().unwrap(), namespace.clone(), (*ch).try_into().unwrap(),
+                        );
                 },
                 TestResource::Library((
                     _ch, _name, _version,

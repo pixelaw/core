@@ -1,8 +1,6 @@
-use dojo::model::{ModelStorage};
-
+use dojo::model::ModelStorage;
 use dojo::world::storage::WorldStorage;
 use pixelaw::core::models::area::{BoundsTraitImpl, RTreeNodePackableImpl, RTreeTraitImpl};
-
 use pixelaw::core::models::registry::{App, AppName};
 use starknet::{ContractAddress, get_caller_address};
 

@@ -1,7 +1,8 @@
 //use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
-use pixelaw::core::utils::{DefaultParameters};
-use starknet::{ContractAddress};
+use pixelaw::core::models::pixel::PixelUpdate;
+use pixelaw::core::models::registry::App;
+use pixelaw::core::utils::DefaultParameters;
+use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IPaintActions<T> {
@@ -53,19 +54,15 @@ const PIXELS_PER_FELT: u16 = 7;
 
 #[dojo::contract]
 pub mod paint_actions {
-    use dojo::model::{ModelStorage};
-
-    use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
-
+    use dojo::model::ModelStorage;
+    use pixelaw::core::actions::IActionsDispatcherTrait as ICoreActionsDispatcherTrait;
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         DefaultParameters, Position, decode_rgba, encode_rgba, get_callers, get_core_actions, subu8,
     };
     use starknet::{ContractAddress, get_contract_address};
-    use super::IPaintActions;
-
-    use super::{APP_ICON, APP_KEY, PIXELS_PER_FELT};
+    use super::{APP_ICON, APP_KEY, IPaintActions, PIXELS_PER_FELT};
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);

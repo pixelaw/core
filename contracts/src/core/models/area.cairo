@@ -1,6 +1,5 @@
-use pixelaw::core::utils::{Bounds, Position, max, min};
-use pixelaw::core::utils::{MAX_DIMENSION};
-use starknet::{ContractAddress};
+use pixelaw::core::utils::{Bounds, MAX_DIMENSION, Position, max, min};
+use starknet::ContractAddress;
 
 pub const TWO_POW_188: u256 = 0x100000000000000000000000000000000000000000000000;
 pub const TWO_POW_124: u256 = 0x10000000000000000000000000000000;
@@ -94,7 +93,7 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
             if *child_id != child_id_existing {
                 output.append(*child_id);
             }
-        };
+        }
         output
     }
 
@@ -117,7 +116,7 @@ pub impl RTreeTraitImpl of RTreeTrait<RTree> {
             if *child_id != child_id_existing {
                 output.append(*child_id);
             }
-        };
+        }
         output.append(child_id_new);
         output
     }
@@ -224,7 +223,7 @@ pub impl ChildrenPackableImpl of Packable<Span<u64>, felt252> {
                     }
                 }
             }
-        };
+        }
 
         out.span()
     }

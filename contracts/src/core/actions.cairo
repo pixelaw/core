@@ -2,12 +2,11 @@ pub mod app;
 pub mod area;
 pub mod pixel;
 pub mod queue;
-
-use pixelaw::core::models::area::{Area};
+use pixelaw::core::models::area::Area;
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult};
-use pixelaw::core::models::registry::{App};
+use pixelaw::core::models::registry::App;
 use pixelaw::core::utils::{Bounds, Position};
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 
 pub const CORE_ACTIONS_KEY: felt252 = 'core_actions';
 
@@ -118,7 +117,7 @@ pub trait IActions<T> {
 #[dojo::contract]
 pub mod actions {
     use dojo::event::EventStorage;
-    use dojo::model::{ModelStorage};
+    use dojo::model::ModelStorage;
     use pixelaw::core::events::{Notification, QueueScheduled};
     use pixelaw::core::models::area::{
         Area, BoundsTraitImpl, ROOT_ID, RTree, RTreeNodePackableImpl, RTreeTraitImpl,
@@ -127,7 +126,7 @@ pub mod actions {
     use pixelaw::core::models::registry::{App, CoreActionsAddress};
     use pixelaw::core::utils::{Bounds, Position};
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
-    use super::{IActions};
+    use super::IActions;
 
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
@@ -269,7 +268,7 @@ pub mod actions {
             }
             for area_id in area_ids {
                 result.append(world.read_model(area_id));
-            };
+            }
             result.span()
         }
     }

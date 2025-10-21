@@ -1,19 +1,15 @@
-use dojo::model::{ModelStorage};
+use dojo::model::ModelStorage;
 use dojo::world::storage::WorldStorage;
 
 //use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use pixelaw::core::models::area::{Area, BoundsTraitImpl, RTreeNodePackableImpl, RTreeTraitImpl};
 use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResult, PixelUpdateTrait};
-
-
 use pixelaw::core::models::registry::{App, AppCalldataTrait};
 use pixelaw::core::utils::{
     ON_POST_UPDATE_HOOK, ON_PRE_UPDATE_HOOK, Position, get_core_actions_address,
 };
-use starknet::{
-    ContractAddress, get_contract_address, get_tx_info,
-    syscalls::{call_contract_syscall},
-};
+use starknet::syscalls::call_contract_syscall;
+use starknet::{ContractAddress, get_contract_address, get_tx_info};
 
 
 pub fn can_update_pixel(
@@ -38,8 +34,7 @@ pub fn can_update_pixel(
             return PixelUpdateResult::Ok(pixel_update);
         }
         // Return true if neither area nor pixel have an owner
-        if area.owner == 0.try_into().unwrap()
-            && pixel.owner == 0.try_into().unwrap() {
+        if area.owner == 0.try_into().unwrap() && pixel.owner == 0.try_into().unwrap() {
             return PixelUpdateResult::Ok(pixel_update);
         }
         // Return true if there is no area and pixel has no owner

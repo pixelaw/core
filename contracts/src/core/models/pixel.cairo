@@ -1,5 +1,5 @@
 use pixelaw::core::utils::{MAX_DIMENSION, Position};
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 
 #[derive(Debug, Copy, Drop, Serde, PartialEq)]
 #[dojo::model]

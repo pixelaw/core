@@ -1,7 +1,8 @@
 //use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use pixelaw::core::models::{pixel::{PixelUpdate}, registry::{App}};
+use pixelaw::core::models::pixel::PixelUpdate;
+use pixelaw::core::models::registry::App;
 use pixelaw::core::utils::{DefaultParameters, Emoji, Position};
-use starknet::{ContractAddress};
+use starknet::ContractAddress;
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -55,21 +56,17 @@ pub const PLAYER_LIVES: u32 = 5;
 
 #[dojo::contract]
 pub mod player_actions {
-    use dojo::model::{ModelStorage};
+    use dojo::model::ModelStorage;
     // use dojo::world::{IWorldDispatcherTrait, WorldStorageTrait, WorldStorage};
 
     use pixelaw::core::actions::{IActionsDispatcherTrait as ICoreActionsDispatcherTrait};
-
     use pixelaw::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
     use pixelaw::core::models::registry::App;
     use pixelaw::core::utils::{
         DefaultParameters, Emoji, Position, get_callers, get_core_actions, panic_at_position,
     };
     use starknet::{ContractAddress, get_contract_address};
-    use super::IPlayerActions;
-
-    use super::{APP_ICON, APP_KEY, PLAYER_LIVES};
-    use super::{Player, PositionPlayer};
+    use super::{APP_ICON, APP_KEY, IPlayerActions, PLAYER_LIVES, Player, PositionPlayer};
     fn dojo_init(ref self: ContractState) {
         let mut world = self.world(@"pixelaw");
         let core_actions = get_core_actions(ref world);
@@ -258,10 +255,12 @@ pub mod player_actions {
                     get_contract_address(),
                     PixelUpdate {
                         position: moveto_pos,
-                        color: Option::None,           // Don't change color yet
+                        color: Option::None, // Don't change color yet
                         timestamp: Option::None,
-                        text: Option::None,           // Don't change text yet
-                        app: Option::Some(get_contract_address()), // Claim for player app (triggers hooks)
+                        text: Option::None, // Don't change text yet
+                        app: Option::Some(
+                            get_contract_address(),
+                        ), // Claim for player app (triggers hooks)
                         owner: Option::None,
                         action: Option::None,
                     },
@@ -275,9 +274,9 @@ pub mod player_actions {
 
             // Step 3: Save the correct restoration state (post-hook state)
             player.position = moveto_pos;
-            player.pixel_original_text = revealed_pixel.text;      // Post-hook revealed text
-            player.pixel_original_app = revealed_pixel.app;        // Should be player app now  
-            player.pixel_original_color = revealed_pixel.color;    // Post-hook revealed color
+            player.pixel_original_text = revealed_pixel.text; // Post-hook revealed text
+            player.pixel_original_app = revealed_pixel.app; // Should be player app now  
+            player.pixel_original_color = revealed_pixel.color; // Post-hook revealed color
             player.pixel_original_action = revealed_pixel.action;
 
             world.write_model(@player);
@@ -289,12 +288,12 @@ pub mod player_actions {
                     get_contract_address(),
                     PixelUpdate {
                         position: moveto_pos,
-                        color: Option::Some(player.color),        // Now apply player color
+                        color: Option::Some(player.color), // Now apply player color
                         timestamp: Option::None,
-                        text: Option::Some(player.emoji),         // Now apply player emoji  
-                        app: Option::None,                        // Already set to player app
+                        text: Option::Some(player.emoji), // Now apply player emoji  
+                        app: Option::None, // Already set to player app
                         owner: Option::None,
-                        action: Option::Some('configure'),                     // Keep existing action
+                        action: Option::Some('configure') // Keep existing action
                     },
                     Option::None,
                     false,
