@@ -40,6 +40,6 @@ jobs:
       - uses: asdf-vm/actions/setup@v3
       - run: |
           asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
-          asdf install dojo 1.7.0-alpha.0
-          asdf global dojo 1.7.0-alpha.0
+          asdf install dojo 1.7.1
+          asdf global dojo 1.7.1
           cd pixelaw_testing && sozo test

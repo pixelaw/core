@@ -16,7 +16,7 @@ Follow the asdf installation instructions.
 
 ```
 asdf plugin add dojo https://github.com/dojoengine/asdf-dojo
-asdf install dojo 1.7.0-alpha.0
+asdf install dojo 1.7.1
 ```
 
 ### Install scarb
