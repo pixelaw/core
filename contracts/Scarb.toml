@@ -13,6 +13,7 @@ dojo = "1.7.1"
 starknet = "2.12.2"
 
 [dev-dependencies]
+pixelaw_test_utils = { path = "../pixelaw_test_utils" }
 cairo_test = "2.12.2"
 dojo_cairo_test = "1.7.1"
 
