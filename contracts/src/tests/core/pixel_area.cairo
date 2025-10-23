@@ -3,7 +3,7 @@ use crate::core::actions::IActionsDispatcherTrait;
 use crate::core::models::area::{Area, ChildrenPackableImpl, RTreeNodePackableImpl};
 use crate::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
 use crate::core::utils::{Bounds, MAX_DIMENSION, Position};
-use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core};
+use pixelaw_test_utils::{WHITE_COLOR, ZERO_ADDRESS, set_caller, setup_core};
 const BOUNDS_1: Bounds = Bounds { x_min: 0, y_min: 0, x_max: 1000, y_max: 1000 };
 const POSITION_1: Position = Position { x: 1, y: 1 };
 

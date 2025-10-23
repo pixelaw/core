@@ -1,6 +1,6 @@
 use crate::apps::paint::IPaintActionsDispatcherTrait;
 use crate::core::utils::{DefaultParameters, Position, is_area_free};
-use crate::tests::helpers::{RED_COLOR, WHITE_COLOR, set_caller, setup_apps, setup_core};
+use pixelaw_test_utils::{RED_COLOR, WHITE_COLOR, set_caller, setup_apps, setup_core};
 
 #[test]
 fn test_is_area_free_empty_area() {

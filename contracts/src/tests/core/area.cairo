@@ -6,7 +6,7 @@ use crate::core::models::area::{
 };
 use crate::core::utils;
 use crate::core::utils::{Bounds, Position};
-use crate::tests::helpers::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
+use pixelaw_test_utils::{WHITE_COLOR, ZERO_ADDRESS, setup_core};
 
 // Declare constants for bounds and positions
 const BOUNDS_1: Bounds = Bounds { x_min: 10, y_min: 10, x_max: 19, y_max: 19 };

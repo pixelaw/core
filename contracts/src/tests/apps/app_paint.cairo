@@ -3,7 +3,7 @@ use starknet::testing::set_account_contract_address;
 use crate::apps::paint::IPaintActionsDispatcherTrait;
 use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Position, encode_rgba};
-use crate::tests::helpers::{setup_apps, setup_core};
+use pixelaw_test_utils::{setup_apps, setup_core};
 
 #[test]
 #[available_gas(3000000000)]

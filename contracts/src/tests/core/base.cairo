@@ -8,7 +8,7 @@ use crate::core::events::Notification;
 use crate::core::models::pixel::{Pixel, PixelUpdate, PixelUpdateResultTrait};
 use crate::core::models::registry::{App, AppName};
 use crate::core::utils::{DefaultParameters, Position, get_callers};
-use crate::tests::helpers::{
+use pixelaw_test_utils::{
     RED_COLOR, TEST_POSITION, ZERO_ADDRESS, drop_all_events, set_caller, setup_apps, setup_core,
 };
 

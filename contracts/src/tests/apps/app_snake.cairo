@@ -3,7 +3,7 @@ use crate::apps::paint::IPaintActionsDispatcherTrait;
 use crate::apps::snake::ISnakeActionsDispatcherTrait;
 use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Direction, Position};
-use crate::tests::helpers::{set_caller, setup_apps, setup_core};
+use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 
 
 #[test]
