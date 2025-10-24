@@ -15,7 +15,7 @@ mappings = {}
 [env]
 keystore_path = "accounts/sepolia.deployer.keystore.json"
 account_address = "0xbacdf8ccd3aa527cab838e5ea45e045dbb0e12e2da4434579df99d9233253b"
-#world_address = "0x548b7044c88b3338e88e3c0ea356eb9dcf65388c90ec7c9d9031547af30d1d1"
+#world_address = "0x022b2a8f75422d28500cb40b8b8f49f761f8a9206a870e22c3b1859cd4f07bed"
 #chain_id = "SN_SEPOLIA"
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia" # or env: STARKNET_RPC_URL
 

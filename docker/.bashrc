@@ -24,5 +24,4 @@ alias slog="tail -f $SERVER_LOG -n 50"
 
 alias ll="ls -lah"
 
-echo "World Address: $WORLD_ADDRESS"
 echo "View logs with klog, tlog and slog commands"

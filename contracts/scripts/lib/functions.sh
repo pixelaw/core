@@ -30,7 +30,7 @@ rpc["mainnet"]="https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
 
 export STARKNET_RPC="${rpc[$PROFILE]}"
 
-export WORLD_ADDRESS=$(cat ../WORLD_ADDRESS)
+export DOJO_WORLD_ADDRESS=$(cat ../DOJO_WORLD_ADDRESS)
 
 clear_katana() {
     echo "clear_katana"
@@ -99,7 +99,7 @@ start_torii() {
     echo "start_torii: $rpc_url $WORLD_ADDRESS"
 
     torii \
-      --world $WORLD_ADDRESS \
+      --world $DOJO_WORLD_ADDRESS \
       --rpc $rpc_url \
       --db-dir $TORII_DB \
       --http.cors_origins "*" \
@@ -130,6 +130,9 @@ sozo_rebuild() {
         build \
         --typescript \
         --bindings-output $OUT
+
+    # Note: sozo build does NOT create manifest.json - only sozo migrate does
+    echo "Build complete. Manifest will be created during sozo migrate."
 }
 
 sozo_account_deploy() {
@@ -345,7 +348,7 @@ paint() {
 }
 
 check_needed_commands() {
-  commands=("jq" "katana" "starkli" "zip" "sozo" "sqlite3")
+  commands=("jq" "katana" "zip" "sozo" "sqlite3")
 
   for cmd in "${commands[@]}"; do
       if ! command -v $cmd &> /dev/null; then

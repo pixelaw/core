@@ -38,7 +38,7 @@ docker-run:
         --rm \
         -ti \
         -p 3000:3000 -p 5050:5050 -p 8080:8080 \
-        -e WORLD_ADDRESS=0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2 \
+        -e DOJO_WORLD_ADDRESS=0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2 \
         -e SERVER_PORT=3000 \
         {{ repo }}:{{ core_version }}
 
@@ -49,7 +49,7 @@ docker-bash:
         --rm \
         -ti \
         -p 3000:3000 -p 5050:5050 -p 8080:8080 \
-        -e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
+        -e DOJO_WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
         -e SERVER_PORT=3000 \
         {{ repo }}:{{ core_version }} \
         /bin/bash

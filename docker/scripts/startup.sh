@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "World address: $WORLD_ADDRESS"
+echo "World address: $DOJO_WORLD_ADDRESS"
 echo "Server port: $SERVER_PORT"
 
 source /root/.bashrc

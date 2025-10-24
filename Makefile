@@ -5,7 +5,7 @@ export
 REPO = ghcr.io/pixelaw/core
 CORE_VERSION = $(shell cat VERSION)
 DOJO_VERSION = $(shell cat DOJO_VERSION)
-
+DOJO_WORLD_ADDRESS = $(shell cat DOJO_WORLD_ADDRESS)
 
 docker_build_populate:
 	echo $$private_key && \
@@ -33,7 +33,7 @@ docker_run:
 		--rm \
 		-ti \
 		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
-		-e WORLD_ADDRESS=0x60916a73fe631fcba3b2a930e21c6f7bb2533ea398c7bfa75c72f71a8709fc2 \
+		-e DOJO_WORLD_ADDRESS=$(DOJO_WORLD_ADDRESS) \
 		-e SERVER_PORT=3000 \
 		$(REPO):$(CORE_VERSION)
 
@@ -43,7 +43,7 @@ docker_bash:
 		--rm \
 		-ti \
 		-p 3000:3000 -p 5050:5050 -p 8080:8080 \
-		-e WORLD_ADDRESS=0xfc685b398bc4692ab3a4acd380859e71f97d2c319f188854d3a01948ba276a \
+		-e DOJO_WORLD_ADDRESS=$(DOJO_WORLD_ADDRESS) \
 		-e SERVER_PORT=3000 \
 		$(REPO):$(CORE_VERSION) \
 		/bin/bash

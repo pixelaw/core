@@ -43,10 +43,10 @@ echo "Deploying world"
 sozo migrate --name $WORLD_NAME
 
 # Get world address from manifest
-WORLD_ADDRESS=$(cat target/dev/manifest.json | jq -r '.world.address')
+DOJO_WORLD_ADDRESS=$(cat target/dev/manifest.json | jq -r '.world.address')
 
 echo "Deploying torii"
-slot deployments create $WORLD_NAME torii --rpc $RPC_URL --world $WORLD_ADDRESS --start-block 0
+slot deployments create $WORLD_NAME torii --rpc $RPC_URL --world $DOJO_WORLD_ADDRESS --start-block 0
 
 echo "Running post deployment"
 scarb run slot_post_deploy
@@ -58,7 +58,7 @@ echo -e "{\
 \n\t\"SLOT_TORII\": \"$TORII_URL\", \
 \n\t\"SEED\": $SEED, \
 \n\t\"TOTAL_ACCOUNTS\": $TOTAL_ACCOUNTS, \
-\n\t\"WORLD_ADDRESS\": \"$WORLD_ADDRESS\" \
+\n\t\"DOJO_WORLD_ADDRESS\": \"$DOJO_WORLD_ADDRESS\" \
 \n}" > $TARGET_DIRECTORY/deployment.json
 
 

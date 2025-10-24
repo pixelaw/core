@@ -15,7 +15,7 @@ services:
       - PUBLIC_RPC_URL=http://127.0.0.1:5050
       - PUBLIC_TORII_URL=http://127.0.0.1:8080
       - PUBLIC_RELAY_URL=http://127.0.0.1:8080
-      - WORLD_ADDRESS=0x548b7044c88b3338e88e3c0ea356eb9dcf65388c90ec7c9d9031547af30d1d1
+      - DOJO_WORLD_ADDRESS=0x022b2a8f75422d28500cb40b8b8f49f761f8a9206a870e22c3b1859cd4f07bed
       - WORLD_ID=local
       - SERVER_PORT=3000
       - WORLDS_URL=https://raw.githubusercontent.com/pixelaw/config/refs/heads/main/web.config.json

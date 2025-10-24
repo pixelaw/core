@@ -11,7 +11,7 @@ fi
 
 torii \
   --rpc $RPC_URL \
-  --world $WORLD_ADDRESS \
+  --world $DOJO_WORLD_ADDRESS \
   --http.cors_origins "*" \
   --db-dir $TORII_DB \
   --http.addr 0.0.0.0 \
