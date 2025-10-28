@@ -1,8 +1,8 @@
 use dojo::model::ModelStorage;
+use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 use crate::apps::player::{IPlayerActionsDispatcherTrait, PLAYER_LIVES, Player};
 use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Position};
-use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 
 #[test]
 #[available_gas(3000000000)]

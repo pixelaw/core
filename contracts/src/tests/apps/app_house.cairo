@@ -1,10 +1,10 @@
 use dojo::model::ModelStorage;
+use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 use starknet::testing::set_block_timestamp;
 use crate::apps::house::{House, IHouseActionsDispatcherTrait, PlayerHouse};
 use crate::apps::player::{IPlayerActionsDispatcherTrait, Player};
 use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Position};
-use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 
 // House app test constants
 const HOUSE_COLOR: u32 = 0x8B4513FF; // Brown color

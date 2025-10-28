@@ -1,9 +1,9 @@
 use dojo::model::ModelStorage;
+use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 use crate::apps::paint::IPaintActionsDispatcherTrait;
 use crate::apps::snake::ISnakeActionsDispatcherTrait;
 use crate::core::models::pixel::Pixel;
 use crate::core::utils::{DefaultParameters, Direction, Position};
-use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 
 
 #[test]

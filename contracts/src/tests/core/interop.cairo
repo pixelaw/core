@@ -1,8 +1,8 @@
+use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 use crate::apps::paint::IPaintActionsDispatcherTrait;
 use crate::apps::snake::ISnakeActionsDispatcherTrait;
 use crate::core::models::area::{ChildrenPackableImpl, RTreeNodePackableImpl};
 use crate::core::utils::{DefaultParameters, Direction, Position};
-use pixelaw_test_utils::{set_caller, setup_apps, setup_core};
 
 #[test]
 fn test_app_permissions() {
