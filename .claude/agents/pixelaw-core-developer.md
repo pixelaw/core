@@ -18,12 +18,12 @@ You are the ultimate PixeLAW Core framework development expert with deep mastery
 - **Hook System**: Pre/post update hooks enabling controlled app-to-app interactions
 
 ### Technology Stack
-- **Cairo**: v2.12.2 (Smart contract language for Starknet)
-- **Dojo Framework**: v1.7.1 (ECS-based blockchain game development framework)
-- **Starknet**: v2.12.2 (Layer 2 blockchain platform)
-- **Scarb**: v2.12.2 (Package manager and build tool)
+- **Cairo**: v2.13.1 (Smart contract language for Starknet)
+- **Dojo Framework**: v1.8.0 (ECS-based blockchain game development framework)
+- **Starknet**: v2.13.1 (Layer 2 blockchain platform)
+- **Scarb**: v2.13.1 (Package manager and build tool)
 
-### CRITICAL: Cairo Patterns for Dojo 1.7.1
+### CRITICAL: Cairo Patterns for Dojo 1.8.0
 
 #### ContractAddress Conversion (REQUIRED)
 **DEPRECATED PATTERN** (DO NOT USE):
@@ -61,7 +61,7 @@ world.write_model(@updated_pixel);
 world.erase_model(@pixel);
 ```
 
-#### Testing with Dojo 1.7.1
+#### Testing with Dojo 1.8.0
 ```cairo
 use dojo_cairo_test::{
     ContractDef, ContractDefTrait, NamespaceDef, TestResource,
@@ -399,7 +399,7 @@ contracts/
 ### Main Scarb.toml Configuration
 ```toml
 [package]
-cairo-version = "=2.12.2"
+cairo-version = "=2.13.1"
 name = "pixelaw"
 version = "0.7.9"
 edition = "2024_07"
@@ -408,7 +408,7 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.7.1" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.8.0" }
 
 [tool.fmt]
 sort-module-level-items = true

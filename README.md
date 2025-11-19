@@ -156,7 +156,7 @@ PixeLAW Core ships with four default apps demonstrating core patterns:
 
 ### 🐳 Production-Ready Docker Image
 Multi-stage Docker build with:
-- Pre-compiled contracts with Dojo 1.7.1
+- Pre-compiled contracts with Dojo 1.8.0
 - Katana RPC node (port 5050)
 - Torii indexer (port 8080)
 - Pre-initialized blockchain snapshot for instant startup
@@ -166,7 +166,7 @@ Multi-stage Docker build with:
 - `justfile` commands for common tasks
 - `pixelaw_test_utils` package with testing helpers
 - Comprehensive error messages with position tracking
-- Modern Dojo 1.7.1 patterns and best practices
+- Modern Dojo 1.8.0 patterns and best practices
 
 ---
 
@@ -175,12 +175,12 @@ Multi-stage Docker build with:
 | Component | Version | Notes |
 |-----------|---------|-------|
 | **PixeLAW Core** | `0.8.0-dev` | Current development version |
-| **Dojo Framework** | `1.7.1` | ECS framework for blockchain games |
-| **Cairo** | `2.12.2` | Smart contract language |
-| **Scarb** | `2.12.2` | Package manager and build tool |
-| **Starknet** | `2.12.2` | Layer 2 blockchain |
+| **Dojo Framework** | `1.8.0` | ECS framework for blockchain games |
+| **Cairo** | `2.13.1` | Smart contract language |
+| **Scarb** | `2.13.1` | Package manager and build tool |
+| **Starknet** | `2.13.1` | Layer 2 blockchain |
 
-> **⚠️ Breaking Changes in Dojo 1.7.1**: If upgrading from earlier versions, see the migration guide in `examples/DOJO_1.7.1_UPGRADE_GUIDE.md`
+> **⚠️ Breaking Changes in Dojo 1.8.0**: If upgrading from earlier versions, see the migration guide in `examples/DOJO_1.8.0_UPGRADE_GUIDE.md`
 
 ---
 

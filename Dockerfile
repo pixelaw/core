@@ -39,9 +39,7 @@ RUN asdf --version
 # Install Dojo toolchain with version-aligned components
 RUN asdf plugin add scarb && \
   asdf install scarb 2.13.1 && \
-  asdf install sozo 1.8.0 && \
-  asdf set --home scarb 2.13.1 && \
-  asdf set --home sozo 1.8.0 && \
+  asdf global scarb 2.13.1 && \
   asdf reshim
 
 # Verify all tools are installed and accessible via asdf shims

@@ -52,10 +52,10 @@ sozo test --filter "pixel"  # Run pixel-related tests
 - **Queued Actions**: Future actions that can be scheduled during execution
 
 ### Technology Stack
-- **Cairo 2.12.2**: Smart contract language for Starknet
-- **Dojo Framework 1.7.1**: ECS-based blockchain game development framework
-- **Starknet 2.12.2**: Layer 2 blockchain platform
-- **Scarb 2.12.2**: Package manager and build tool
+- **Cairo 2.13.1**: Smart contract language for Starknet
+- **Dojo Framework 1.8.0**: ECS-based blockchain game development framework
+- **Starknet 2.13.1**: Layer 2 blockchain platform
+- **Scarb 2.13.1**: Package manager and build tool
 
 ### Project Structure
 ```
@@ -97,7 +97,7 @@ scripts/                # Release and upgrade scripts
 - `contracts/Scarb.toml`: Main package with Dojo dependencies and test configuration
 - `docker-compose.yml`: Docker development environment, running Katana and Torii
 - `VERSION`: Core version (0.7.9)
-- `DOJO_VERSION`: Dojo version (1.7.1)
+- `DOJO_VERSION`: Dojo version (1.8.0)
 
 ### Testing Strategy
 - All tests located in `contracts/src/tests/` directory
@@ -117,7 +117,7 @@ scripts/                # Release and upgrade scripts
 - Use Cairo Coder MCP for Cairo-specific development tasks
 - Always run `sozo build` after writing Cairo code to ensure compilation
 
-### Cairo Patterns (Dojo 1.7.1)
+### Cairo Patterns (Dojo 1.8.0)
 
 #### ContractAddress Conversion
 - **DEPRECATED**: `contract_address_const::<VALUE>()`
@@ -152,8 +152,8 @@ scripts/                # Release and upgrade scripts
 - Use `panic!` for error conditions instead of `assert!` to match other apps
 - **For position-related errors, use the `panic_at_position()` helper function from `pixelaw::core::utils`**
 
-### Migration Notes (Dojo 1.5.0 → 1.7.1)
+### Migration Notes (Dojo 1.5.0 → 1.8.0)
 - All `contract_address_const` usages replaced with `.try_into().unwrap()` pattern
-- Updated to Dojo 1.7.1 with WorldStorage and ModelStorage traits
+- Updated to Dojo 1.8.0 with WorldStorage and ModelStorage traits
 - All 33 core tests passing after migration
 - No breaking changes to app interfaces

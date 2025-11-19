@@ -9,13 +9,13 @@ edition = "2024_07"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = "=1.8.0"
-starknet = "=2.13.1"
+dojo = "1.8.0"
+starknet = "2.13.1"
 
 [dev-dependencies]
 pixelaw_test_utils = { path = "../pixelaw_test_utils" }
-cairo_test = "=2.13.1"
-dojo_cairo_test = "=1.8.0"
+cairo_test = "2.13.1"
+dojo_cairo_test = "1.8.0"
 
 [tool.scarb]
 allow-prebuilt-plugins = ["dojo_cairo_macros"]

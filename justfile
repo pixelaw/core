@@ -9,6 +9,22 @@ repo := "ghcr.io/pixelaw/core"
 core_version := `cat VERSION`
 dojo_version := `cat DOJO_VERSION`
 
+
+
+claude:
+  #!/usr/bin/env bash
+  set -a
+  source .claude.env
+  set +a
+
+  PROMPT=$(cat .claude.prompt)
+
+  clear && claude \
+    --dangerously-skip-permissions \
+    --append-system-prompt "$PROMPT"
+
+
+
 # Build Docker image with populated data
 docker-build-populate:
     @echo $private_key
