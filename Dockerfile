@@ -24,7 +24,7 @@
 # Base Stage: Set up Dojo toolchain
 # ==============================================================================
 
-# Base: Dojo v1.8.0 image with asdf version manager pre-installed
+# Base: Dojo toolchain (sozo, scarb, cairo compiler)
 FROM ghcr.io/dojoengine/dojo:v1.8.0 AS dojo
 
 # Install system dependencies required for building and running PixeLAW
