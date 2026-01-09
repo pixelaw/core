@@ -1,0 +1,21 @@
+#!/command/with-contenv /bin/bash
+exec 2>&1
+source /root/.bashrc
+
+if [ "$DISABLE_KATANA" == "1" ]; then
+    echo "Katana disabled, sleeping forever"
+    exec sleep infinity
+fi
+
+exec katana \
+    --chain-id "$WORLD_ID" \
+    --http.addr 0.0.0.0 \
+    --invoke-max-steps 4294967295 \
+    --dev \
+    --dev.seed 0 \
+    --dev.no-fee \
+    --dev.accounts 10 \
+    --block-time 2000 \
+    --db-dir "$KATANA_DB" \
+    --http.cors_origins "*" \
+    --explorer

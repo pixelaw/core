@@ -4,8 +4,7 @@
 # This Dockerfile creates a complete PixeLAW development environment that runs:
 # 1. Katana - Local Starknet blockchain node (port 5050)
 # 2. Torii - World state indexer with GraphQL API (port 8080)
-# 3. Server - PixeLAW backend API (port 3000)
-# All services are managed by PM2 process manager.
+# All services are managed by s6-overlay process supervisor.
 #
 # Version requirements (must match contracts/Scarb.toml):
 # - Dojo: 1.8.0 (sozo, katana, torii)
@@ -24,28 +23,7 @@
 # Base Stage: Set up Dojo toolchain
 # ==============================================================================
 
-# Base: Dojo toolchain (sozo, scarb, cairo compiler)
-FROM ghcr.io/dojoengine/dojo:v1.8.0 AS dojo
-
-# Install system dependencies required for building and running PixeLAW
-RUN apt-get update && \
-  apt-get install -y \
-  jq git procps nano net-tools sqlite3 curl build-essential make zip \
-  && rm -rf /var/lib/apt/lists/*
-
-# Verify asdf is available (pre-installed in Dojo image)
-RUN asdf --version
-
-# Install Dojo toolchain with version-aligned components
-RUN asdf plugin add scarb && \
-  asdf install scarb 2.13.1 && \
-  asdf global scarb 2.13.1 && \
-  asdf reshim
-
-# Verify all tools are installed and accessible via asdf shims
-RUN asdf current
-
-FROM ghcr.io/pixelaw/server:0.5.1 AS server
+FROM ghcr.io/pixelaw/base:latest AS dojo
 
 # ==============================================================================
 # Build Stage: Compile contracts and generate blockchain snapshot
@@ -59,6 +37,9 @@ COPY ./pixelaw_test_utils /pixelaw/pixelaw_test_utils
 COPY ./contracts /pixelaw/contracts
 
 WORKDIR /pixelaw/contracts
+
+RUN sozo --version
+
 # Note: --network=host allows scarb to fetch git dependencies during build
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
@@ -71,27 +52,36 @@ RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
 
 FROM dojo AS runtime
 
-# Install Node.js and PM2 for process management
-# PM2 manages katana, torii, and server processes (see ecosystem.config.js)
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+# s6-overlay version for process supervision
+ARG S6_OVERLAY_VERSION=3.2.0.2
 
-    
-COPY --from=server /app /pixelaw/server/
-# Install PM2 and Yarn globally
-RUN --mount=type=cache,target=/root/.npm \
-    npm install -g pm2 yarn
+# Install s6-overlay for proper init and process supervision
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
+    tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz && \
+    rm /tmp/s6-overlay-*.tar.xz
+
+# Install netcat for service health checks
+RUN apt-get update && \
+    apt-get install -y netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy pre-built blockchain snapshot from builder
 COPY --from=builder /pixelaw/storage_init /pixelaw/storage_init
 
 # Copy runtime configuration files
 COPY docker/scripts/ /pixelaw/scripts/
-COPY docker/ecosystem.config.js /pixelaw/core/docker/
 COPY docker/.env.example /pixelaw/core/docker/
 COPY docker/.bashrc /root/
 COPY ./tools/ /pixelaw/tools/
+
+# Copy s6-overlay service definitions
+COPY docker/s6-rc.d /etc/s6-overlay/s6-rc.d
+
+# Make all scripts executable
+RUN chmod +x /pixelaw/scripts/*.sh && \
+    chmod +x /etc/s6-overlay/s6-rc.d/*/run 2>/dev/null || true
 
 # Copy DOJO_WORLD_ADDRESS file (read by .bashrc, can be overridden via docker-compose.yml)
 COPY ./DOJO_WORLD_ADDRESS /pixelaw/
@@ -103,23 +93,23 @@ RUN mkdir -p /pixelaw/log /pixelaw/storage
 WORKDIR /pixelaw
 
 # Environment variables (can be overridden via docker-compose.yml)
+ENV HOME=/root
+ENV PATH="/opt/asdf/shims:/opt/asdf/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV PUBLIC_TORII=http://localhost:8080
 ENV STARKNET_RPC=http://localhost:5050
-ENV VITE_PUBLIC_ETH_CONTRACT_ADDRESS=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
 
-# Health check: Verify all three services are responding
-HEALTHCHECK CMD curl --fail http://localhost:3000 && \
-                curl --fail http://localhost:5050 && \
-                curl --fail http://localhost:8080 || exit 1
+# Health check: Verify services are responding
+# Start period allows services time to initialize before checks begin
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl --fail http://localhost:5050 && \
+        curl --fail http://localhost:8080 || exit 1
 
-LABEL org.opencontainers.image.description="PixeLAW core container with Katana, Torii, and Server"
+LABEL org.opencontainers.image.description="PixeLAW core container with Katana and Torii"
 
 # Katana RPC
 EXPOSE 5050
 # Torii GraphQL/gRPC
 EXPOSE 8080
-# PixeLAW Server API
-EXPOSE 3000
 
-# Start all services via startup script
-CMD ["bash", "./scripts/startup.sh"]
+# s6-overlay handles process supervision
+ENTRYPOINT ["/init"]
