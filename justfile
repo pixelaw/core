@@ -50,9 +50,10 @@ docker-run:
         --name pixelaw \
         --rm \
         -ti \
-        -p 3000:3000 -p 5050:5050 -p 8080:8080 \
+        -p 5050:5050 -p 8080:8080 \
         -e DOJO_WORLD_ADDRESS={{ dojo_world_address }} \
-        -e SERVER_PORT=3000 \
+        -e WORLD_ID=local \
+        -e RPC_URL=http://127.0.0.1:5050 \
         {{ repo }}:{{ core_version }}
 
 # Run Docker container with bash shell
@@ -61,19 +62,32 @@ docker-bash:
         --name pixelaw \
         --rm \
         -ti \
-        -p 3000:3000 -p 5050:5050 -p 8080:8080 \
+        -p 5050:5050 -p 8080:8080 \
         -e DOJO_WORLD_ADDRESS={{ dojo_world_address }} \
-        -e SERVER_PORT=3000 \
+        -e WORLD_ID=local \
+        -e RPC_URL=http://127.0.0.1:5050 \
         {{ repo }}:{{ core_version }} \
         /bin/bash
+
+# Start docker-compose services
+up:
+    docker compose up -d
+
+# Stop docker-compose services
+down:
+    docker compose down
+
+# View docker-compose logs
+logs:
+    docker compose logs -f
 
 # Build contracts
 build:
     cd contracts && scarb fmt && sozo build
 
-# Access running Keiko container shell
+# Access running container shell
 shell:
-    docker compose exec keiko bash
+    docker compose exec pixelaw-core bash
 
 # Run contract tests
 test:

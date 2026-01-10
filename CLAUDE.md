@@ -14,15 +14,16 @@ cd contracts && sozo test     # Run tests directly with sozo
 
 ### Development Environment
 ```bash
-docker compose up -d        # Start Keiko (includes Katana RPC, Torii indexer, dashboard)
-docker compose down         # Stop Keiko
-just shell                  # Access running Keiko container shell
+just up                     # Start docker-compose (Katana + Torii)
+just down                   # Stop docker-compose
+just logs                   # View container logs
+just shell                  # Access running container shell
 ```
 
 ### Docker Operations
 ```bash
 just docker-build           # Build Docker image (requires .account file)
-just docker-run             # Run Docker container with ports 3000, 5050, 8080
+just docker-run             # Run Docker container (standalone, ports 5050, 8080)
 just docker-bash            # Run Docker container with bash shell
 ```
 
@@ -46,7 +47,7 @@ sozo test --filter "pixel"  # Run pixel-related tests
 
 ### Core Concepts
 - **Pixel World**: 2D Cartesian plane where each position (x,y) represents a Pixel
-- **Pixel Properties**: position, app, color, owner, text, alert, timestamp  
+- **Pixel Properties**: position, app, color, owner, text, alert, timestamp
 - **Apps**: Define pixel behavior and interactions (one app per pixel)
 - **App2App**: Controlled interactions between different apps
 - **Queued Actions**: Future actions that can be scheduled during execution
@@ -70,7 +71,14 @@ contracts/               # Main Cairo smart contracts
 ├── Scarb.toml          # Main package configuration
 └── Scarb_deploy.toml   # Deployment configuration
 
-docker/                 # Docker development configuration
+docker/                 # Docker configuration
+├── s6-rc.d/            # s6-overlay service definitions
+│   ├── init-storage/   # Oneshot: extract pre-built snapshot
+│   ├── katana/         # Longrun: Starknet dev node
+│   └── torii/          # Longrun: World indexer
+├── scripts/            # Runtime scripts
+└── .bashrc             # Container environment
+
 scripts/                # Release and upgrade scripts
 ```
 
@@ -90,16 +98,62 @@ scripts/                # Release and upgrade scripts
 ### Development Tools
 - **Katana**: Local Starknet development node (port 5050)
 - **Torii**: World state indexer and GraphQL API (port 8080)
-- **Keiko**: Combined development container with dashboard (port 3000)
 - **Sozo**: Dojo CLI for building, testing, and deployment
 
 ### Key Configuration Files
 - `contracts/Scarb.toml`: Main package with Dojo dependencies and test configuration
-- `docker-compose.yml`: Docker development environment, running Katana and Torii
-- `VERSION`: Core version (0.7.9)
+- `docker-compose.yml`: Docker development environment with inlet integration
+- `docker/s6-rc.d/`: s6-overlay service definitions
+- `VERSION`: Core version
 - `DOJO_VERSION`: Dojo version (1.8.0)
 
-### Testing Strategy
+## Docker Architecture
+
+### Process Supervision: s6-overlay
+The container uses [s6-overlay](https://github.com/just-containers/s6-overlay) for process management instead of PM2/Node.js. This provides:
+- Proper PID 1 init handling
+- Clean process supervision and automatic restart
+- No Node.js runtime dependency
+- Smaller image size
+
+### Service Dependency Chain
+```
+init-storage (oneshot)
+    └── Extracts pre-built katana_db.zip snapshot
+        │
+        ▼
+katana (longrun, port 5050)
+    └── Starts with PRE-MIGRATED database
+        │
+        ▼
+torii (longrun, port 8080)
+    └── Waits for katana:5050, indexes world
+```
+
+### Build-Time Snapshot
+Contracts are compiled and migrated at **build time**, not runtime:
+1. `create_snapshot_docker.sh` runs during `docker build`
+2. Starts temporary katana, runs `sozo migrate`
+3. Zips the database to `/pixelaw/storage_init/katana_db.zip`
+4. Container starts instantly with contracts already deployed
+
+### Networking: Inlet
+The container uses [inlet](https://github.com/perhaps-works/inlet) for ingress instead of exposed ports:
+
+```yaml
+# docker-compose.yml
+environment:
+  - INLET_CONFIG={"service":[{"port":5050,"domains":["katana.pixelaw.perhaps.works"]},{"port":8080,"domains":["torii.pixelaw.perhaps.works"]}]}
+```
+
+Access services via:
+- **Katana**: https://katana.pixelaw.perhaps.works/
+- **Torii**: https://torii.pixelaw.perhaps.works/
+
+### s6-overlay Service Scripts
+Service run scripts use `#!/command/with-contenv /bin/bash` shebang to preserve container environment variables. Located in `docker/s6-rc.d/<service>/run`.
+
+## Testing Strategy
 - All tests located in `contracts/src/tests/` directory
 - Test organization:
   - `tests/core/` - Core functionality tests (area, pixel, queue, interop)
@@ -109,7 +163,7 @@ scripts/                # Release and upgrade scripts
 - Use `just test_filtered "pattern"` or `cd contracts && sozo test --filter "pattern"` for focused testing
 - All tests use `dojo_cairo_test` for world setup and model access
 
-### Development Guidelines
+## Development Guidelines
 - Follow Cairo naming conventions (snake_case for functions, PascalCase for types)
 - Use ECS patterns with Dojo components and systems
 - Implement proper error handling with detailed error messages

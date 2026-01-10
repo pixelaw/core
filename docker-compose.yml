@@ -14,9 +14,7 @@ services:
       - PUBLIC_TORII_URL=http://127.0.0.1:8080
       - DOJO_WORLD_ADDRESS=0x022b2a8f75422d28500cb40b8b8f49f761f8a9206a870e22c3b1859cd4f07bed
       - WORLD_ID=local
-    ports:
-      - "127.0.0.1:5050:5050"
-      - "127.0.0.1:8080:8080"
+      - INLET_CONFIG={"service":[{"port":5050,"domains":["katana.pixelaw.perhaps.works"]},{"port":8080,"domains":["torii.pixelaw.perhaps.works"]}]}
     restart: unless-stopped
     networks:
       - pixelaw
