@@ -1,50 +1,83 @@
-# Load environment variables from ./.account
+# PixeLAW Core Justfile
+#
+# Docker Images:
+#   just docker-build-base      Build base image (toolchain only)
+#   just docker-build-core      Build core image (contracts migrated)
+#   just docker-build-populated Build populated image (with pixel art)
+#
+# Development:
+#   just up                     Start local environment (docker-compose)
+#   just down                   Stop local environment
+#   just build                  Build contracts
+#   just test                   Run tests
+#   just docker-test            Run tests using Docker (sozo 1.8.5)
+#
+# Deployment:
+#   just deploy-sepolia         Deploy to Sepolia testnet
+#   just deploy-slot NAME       Deploy to Cartridge Slot
 
 set dotenv-load := true
 set dotenv-path := "./.account"
 
 # Repository configuration
-
 repo := "ghcr.io/pixelaw/core"
+base_repo := "ghcr.io/pixelaw/base"
 core_version := `cat VERSION`
 dojo_version := `cat DOJO_VERSION`
 dojo_world_address := `cat DOJO_WORLD_ADDRESS`
 
-claude:
-    #!/usr/bin/env bash
-    set -a
-    source .claude.env
-    set +a
+# ==============================================================================
+# Docker Image Builds
+# ==============================================================================
 
-    PROMPT=$(cat .claude.prompt)
-
-    clear && claude \
-      --dangerously-skip-permissions \
-      --append-system-prompt "$PROMPT"
-
-# Build Docker image with populated data
-docker-build-populate:
-    @echo $private_key
-    docker build -f populate.Dockerfile -t {{ repo }}:{{ core_version }}-populated \
-        --build-arg DOJO_VERSION={{ dojo_version }} \
-        --build-arg GENERATE_POPULATED_CORE=false \
-        --secret id=DOJO_KEYSTORE_PASSWORD \
-        --network=host \
-        --pull=false \
+# Build base image (Dojo toolchain only)
+docker-build-base:
+    docker build -f base.Dockerfile \
+        -t {{ base_repo }}:{{ dojo_version }} \
+        -t {{ base_repo }}:latest \
         --progress=plain .
 
-# Build Docker image
-docker-build:
-    @echo $private_key
-    docker build -t {{ repo }}:{{ core_version }} -t {{ repo }}:latest \
-        --build-arg DOJO_VERSION={{ dojo_version }} \
-        --build-arg GENERATE_POPULATED_CORE=false \
+# Build core image (contracts compiled and migrated)
+docker-build-core:
+    docker build \
+        -t {{ repo }}:{{ core_version }} \
+        -t {{ repo }}:latest \
         --secret id=DOJO_KEYSTORE_PASSWORD \
         --network=host \
-        --pull=false \
         --progress=plain .
 
-# Run Docker container with default ports
+# Build populated image (with pixel art data)
+docker-build-populated:
+    docker build -f populate.Dockerfile \
+        -t {{ repo }}:{{ core_version }}-populated \
+        -t {{ repo }}:latest-populated \
+        --network=host \
+        --progress=plain .
+
+# Build all images in sequence
+docker-build-all: docker-build-base docker-build-core docker-build-populated
+
+# ==============================================================================
+# Docker Runtime
+# ==============================================================================
+
+# Start docker-compose services
+up:
+    docker compose up -d
+
+# Stop docker-compose services
+down:
+    docker compose down
+
+# View docker-compose logs
+logs:
+    docker compose logs -f
+
+# Access running container shell
+shell:
+    docker compose exec pixelaw-core bash
+
+# Run Docker container standalone (without docker-compose)
 docker-run:
     docker run \
         --name pixelaw \
@@ -69,25 +102,13 @@ docker-bash:
         {{ repo }}:{{ core_version }} \
         /bin/bash
 
-# Start docker-compose services
-up:
-    docker compose up -d
-
-# Stop docker-compose services
-down:
-    docker compose down
-
-# View docker-compose logs
-logs:
-    docker compose logs -f
+# ==============================================================================
+# Contract Development
+# ==============================================================================
 
 # Build contracts
 build:
     cd contracts && scarb fmt && sozo build
-
-# Access running container shell
-shell:
-    docker compose exec pixelaw-core bash
 
 # Run contract tests
 test:
@@ -96,6 +117,67 @@ test:
 # Run filtered contract tests
 test_filtered filter:
     cd contracts && scarb fmt && sozo test --filter {{ filter }}
+
+# Build contracts using Docker
+docker-build-contracts:
+    docker run --rm \
+        --entrypoint sozo \
+        -e HOME=/tmp \
+        -v {{ justfile_directory() }}/contracts:/pixelaw/contracts \
+        -v {{ justfile_directory() }}/pixelaw_test_utils:/pixelaw/pixelaw_test_utils \
+        -w /pixelaw/contracts \
+        {{ repo }}:latest \
+        build
+
+# Run contract tests using Docker
+docker-test:
+    docker run --rm \
+        --entrypoint sozo \
+        -e HOME=/tmp \
+        -v {{ justfile_directory() }}/contracts:/pixelaw/contracts \
+        -v {{ justfile_directory() }}/pixelaw_test_utils:/pixelaw/pixelaw_test_utils \
+        -w /pixelaw/contracts \
+        {{ repo }}:latest \
+        test
+
+# Run filtered contract tests using Docker
+docker-test-filtered filter:
+    docker run --rm \
+        --entrypoint sozo \
+        -e HOME=/tmp \
+        -v {{ justfile_directory() }}/contracts:/pixelaw/contracts \
+        -v {{ justfile_directory() }}/pixelaw_test_utils:/pixelaw/pixelaw_test_utils \
+        -w /pixelaw/contracts \
+        {{ repo }}:latest \
+        test --filter {{ filter }}
+
+# ==============================================================================
+# Deployment
+# ==============================================================================
+
+# Deploy to Sepolia testnet
+deploy-sepolia:
+    scripts/deploy/sepolia.sh
+
+# Deploy to Cartridge Slot
+deploy-slot name:
+    scripts/deploy/slot.sh {{ name }}
+
+# ==============================================================================
+# Claude Code
+# ==============================================================================
+
+claude:
+    #!/usr/bin/env bash
+    set -a
+    source .claude.env
+    set +a
+
+    PROMPT=$(cat .claude.prompt)
+
+    clear && claude \
+      --dangerously-skip-permissions \
+      --append-system-prompt "$PROMPT"
 
 # Start tmux with 4 Claude Code panes (or reattach if exists)
 claude4:

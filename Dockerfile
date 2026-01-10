@@ -31,20 +31,22 @@ FROM ghcr.io/pixelaw/base:latest AS dojo
 
 FROM dojo AS builder
 
-# Copy contract source code and dependencies
+# Copy source code and build scripts
 COPY ./DOJO_WORLD_ADDRESS /pixelaw/
 COPY ./pixelaw_test_utils /pixelaw/pixelaw_test_utils
 COPY ./contracts /pixelaw/contracts
+COPY ./scripts /pixelaw/scripts
 
-WORKDIR /pixelaw/contracts
+WORKDIR /pixelaw
 
 RUN sozo --version
 
+# Build contracts and create snapshot
 # Note: --network=host allows scarb to fetch git dependencies during build
 RUN --mount=type=cache,id=scarb_cache,target=/root/.cache/scarb \
     --mount=type=secret,id=DOJO_KEYSTORE_PASSWORD \
     --network=host \
-    bash scripts/create_snapshot_docker.sh dev
+    bash scripts/docker/build-core.sh dev
 
 # ==============================================================================
 # Runtime Stage: Combine binaries and pre-built artifacts

@@ -22,7 +22,10 @@ just shell                  # Access running container shell
 
 ### Docker Operations
 ```bash
-just docker-build           # Build Docker image (requires .account file)
+just docker-build-base      # Build base image (toolchain only)
+just docker-build-core      # Build core image (contracts migrated)
+just docker-build-populated # Build populated image (with pixel art)
+just docker-build-all       # Build all images in sequence
 just docker-run             # Run Docker container (standalone, ports 5050, 8080)
 just docker-bash            # Run Docker container with bash shell
 ```
@@ -54,7 +57,7 @@ sozo test --filter "pixel"  # Run pixel-related tests
 
 ### Technology Stack
 - **Cairo 2.13.1**: Smart contract language for Starknet
-- **Dojo Framework 1.8.0**: ECS-based blockchain game development framework
+- **Dojo Framework 1.8.5**: ECS-based blockchain game development framework
 - **Starknet 2.13.1**: Layer 2 blockchain platform
 - **Scarb 2.13.1**: Package manager and build tool
 
@@ -71,15 +74,26 @@ contracts/               # Main Cairo smart contracts
 ├── Scarb.toml          # Main package configuration
 └── Scarb_deploy.toml   # Deployment configuration
 
-docker/                 # Docker configuration
+scripts/                 # Build and deployment scripts
+├── docker/             # Docker image build scripts
+│   ├── functions.sh    # Shared functions (start_katana, sozo_*, etc.)
+│   ├── build-core.sh   # Build core image (runs during docker build)
+│   └── build-populated.sh  # Build populated image
+├── deploy/             # Network deployment scripts
+│   ├── sepolia.sh      # Deploy to Sepolia testnet
+│   └── slot.sh         # Deploy to Cartridge Slot
+├── data/               # Data files
+│   └── pixel-art.sh    # Pixel art sozo commands for populated image
+├── prepare_release.sh  # Version release preparation
+└── upgrade_dojo.sh     # Dojo version upgrade helper
+
+docker/                 # Runtime s6-overlay configuration
 ├── s6-rc.d/            # s6-overlay service definitions
 │   ├── init-storage/   # Oneshot: extract pre-built snapshot
 │   ├── katana/         # Longrun: Starknet dev node
 │   └── torii/          # Longrun: World indexer
-├── scripts/            # Runtime scripts
+├── scripts/            # Runtime scripts (init-storage.sh, etc.)
 └── .bashrc             # Container environment
-
-scripts/                # Release and upgrade scripts
 ```
 
 ### Default Apps
@@ -105,7 +119,7 @@ scripts/                # Release and upgrade scripts
 - `docker-compose.yml`: Docker development environment with inlet integration
 - `docker/s6-rc.d/`: s6-overlay service definitions
 - `VERSION`: Core version
-- `DOJO_VERSION`: Dojo version (1.8.0)
+- `DOJO_VERSION`: Dojo version (1.8.5)
 
 ## Docker Architecture
 
@@ -130,10 +144,27 @@ torii (longrun, port 8080)
     └── Waits for katana:5050, indexes world
 ```
 
+### Docker Images
+
+Three Docker images form a hierarchy:
+
+```
+ghcr.io/dojoengine/dojo:v1.8.0     (official Dojo base image)
+  └── ghcr.io/pixelaw/base         (base.Dockerfile)
+        │   Dojo toolchain only (sozo, katana, torii, scarb)
+        │
+        └── ghcr.io/pixelaw/core   (Dockerfile)
+              │   Contracts compiled and migrated
+              │   katana_db.zip snapshot ready to run
+              │
+              └── ghcr.io/pixelaw/core-populated   (populate.Dockerfile)
+                    Pixel art data pre-populated
+```
+
 ### Build-Time Snapshot
 Contracts are compiled and migrated at **build time**, not runtime:
-1. `create_snapshot_docker.sh` runs during `docker build`
-2. Starts temporary katana, runs `sozo migrate`
+1. `scripts/docker/build-core.sh` runs during `docker build`
+2. Starts temporary katana, runs `sozo build` and `sozo migrate`
 3. Zips the database to `/pixelaw/storage_init/katana_db.zip`
 4. Container starts instantly with contracts already deployed
 
@@ -171,7 +202,7 @@ Service run scripts use `#!/command/with-contenv /bin/bash` shebang to preserve 
 - Use Cairo Coder MCP for Cairo-specific development tasks
 - Always run `sozo build` after writing Cairo code to ensure compilation
 
-### Cairo Patterns (Dojo 1.8.0)
+### Cairo Patterns (Dojo 1.8.5)
 
 #### ContractAddress Conversion
 - **DEPRECATED**: `contract_address_const::<VALUE>()`
@@ -206,8 +237,8 @@ Service run scripts use `#!/command/with-contenv /bin/bash` shebang to preserve 
 - Use `panic!` for error conditions instead of `assert!` to match other apps
 - **For position-related errors, use the `panic_at_position()` helper function from `pixelaw::core::utils`**
 
-### Migration Notes (Dojo 1.5.0 → 1.8.0)
+### Migration Notes (Dojo 1.5.0 → 1.8.5)
 - All `contract_address_const` usages replaced with `.try_into().unwrap()` pattern
-- Updated to Dojo 1.8.0 with WorldStorage and ModelStorage traits
+- Updated to Dojo 1.8.5 with WorldStorage and ModelStorage traits
 - All 33 core tests passing after migration
 - No breaking changes to app interfaces
