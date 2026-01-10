@@ -89,7 +89,7 @@ This document contains issues and improvement suggestions identified during the 
 - **Fix**: Add explicit bounds checking before array access
 
 ### 11. Contract Address Validation
-- **Location**: Various places using `contract_address_const::<0>()`
+- **Location**: Various places (now using `.try_into().unwrap()` pattern after migration)
 - **Issue**: No validation that addresses are deployed contracts
 - **Priority**: Low
 - **Fix**: Consider adding contract existence checks where critical

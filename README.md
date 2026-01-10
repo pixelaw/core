@@ -156,17 +156,17 @@ PixeLAW Core ships with four default apps demonstrating core patterns:
 
 ### 🐳 Production-Ready Docker Image
 Multi-stage Docker build with:
-- Pre-compiled contracts with Dojo 1.8.0
+- Pre-compiled contracts with Dojo 1.8.5
 - Katana RPC node (port 5050)
 - Torii indexer (port 8080)
 - Pre-initialized blockchain snapshot for instant startup
-- PM2 process management for all services
+- s6-overlay process supervision for all services
 
 ### 🔧 Developer-Friendly Tools
 - `justfile` commands for common tasks
 - `pixelaw_test_utils` package with testing helpers
 - Comprehensive error messages with position tracking
-- Modern Dojo 1.8.0 patterns and best practices
+- Modern Dojo 1.8.5 patterns and best practices
 
 ---
 
@@ -175,7 +175,7 @@ Multi-stage Docker build with:
 | Component | Version | Notes |
 |-----------|---------|-------|
 | **PixeLAW Core** | `0.8.0-dev` | Current development version |
-| **Dojo Framework** | `1.8.0` | ECS framework for blockchain games |
+| **Dojo Framework** | `1.8.5` | ECS framework for blockchain games |
 | **Cairo** | `2.13.1` | Smart contract language |
 | **Scarb** | `2.13.1` | Package manager and build tool |
 | **Starknet** | `2.13.1` | Layer 2 blockchain |
@@ -196,7 +196,7 @@ docker pull ghcr.io/pixelaw/core:latest
 
 # Or build locally
 cd core
-make docker_build
+just docker-build-core
 
 # Run with docker-compose
 docker compose up -d

@@ -61,7 +61,7 @@ Source: `~/reference/dojo/crates/dojo/world/src/utils.rs:7-14`
 ## Version Information
 
 Current setup:
-- Dojo: 1.8.0
+- Dojo: 1.8.5
 - Cairo: 2.13.1
 - Scarb: 2.13.1
 - Starknet: 2.13.1

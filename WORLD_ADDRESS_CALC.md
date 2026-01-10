@@ -2,7 +2,9 @@
 
 ## Current World Address
 
-**Dojo 1.8.0**: `0x04101f5a29dc3e9dc48e2d8918e8121315757f2d2bc56fb6213dfc949344c071`
+**Dojo 1.8.5**: (recalculate after Docker rebuild)
+
+> **Note**: World address changes with each Dojo version. Run `just docker-build-core` and check migration output for the new deterministic address.
 
 ## How World Address is Calculated
 
@@ -75,6 +77,7 @@ sozo hash compute "pixelaw"  # Get salt
 
 | Dojo Version | World Address                                                      |
 |--------------|-------------------------------------------------------------------|
+| 1.8.5        | (pending recalculation) |
 | 1.8.0        | `0x04101f5a29dc3e9dc48e2d8918e8121315757f2d2bc56fb6213dfc949344c071` |
 | 1.7.1        | (not recorded) |
 
